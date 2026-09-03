@@ -11,7 +11,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Contoh model data dasar (dapat disesuaikan)
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
