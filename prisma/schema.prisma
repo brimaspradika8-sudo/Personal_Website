@@ -11,10 +11,67 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String     @id @default(uuid()) @db.Uuid
+  name       String
+  email      String     @unique
+  avatar     String?
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  reactions  Reaction[]
+  comments   Comment[]
+}
+
+model Article {
+  id         String     @id @default(uuid()) @db.Uuid
+  title      String
+  slug       String     @unique
+  content    String
+  thumbnail  String?
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  reactions  Reaction[]
+  comments   Comment[]
+}
+
+model Reaction {
+  id         String       @id @default(uuid()) @db.Uuid
+  user_id    String       @db.Uuid
+  article_id String       @db.Uuid
+  type       ReactionType
+  created_at DateTime     @default(now())
+
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [article_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, article_id])
+}
+
+model Comment {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  article_id String   @db.Uuid
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [article_id], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id             String   @id @default(uuid()) @db.Uuid
+  title          String
+  slug           String   @unique
+  description    String
+  thumbnail      String?
+  demo_url       String?
+  repository_url String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 }
