@@ -29,9 +29,9 @@ export default async function DashboardPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         <header className="flex justify-between items-center pb-6 border-b border-slate-800">
           <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold">Halo, {dbUser?.name || user.user_metadata?.full_name || user.email?.split("@")[0]}! 👋</h1>
             <p className="text-slate-400 text-sm mt-1">
-              Selamat datang kembali, {dbUser?.name || user.email}
+              Selamat datang kembali di Dashboard.
             </p>
           </div>
           <form action={signOut}>
