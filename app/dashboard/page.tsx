@@ -60,7 +60,7 @@ export default async function DashboardPage() {
               <div className="space-y-2 text-sm text-slate-400">
                 <p><strong className="text-slate-300">DB ID:</strong> {dbUser.id}</p>
                 <p><strong className="text-slate-300">Nama:</strong> {dbUser.name}</p>
-                <p><strong className="text-slate-300">Terdaftar pada:</strong> {new Date(dbUser.createdAt).toLocaleString()}</p>
+                <p><strong className="text-slate-300">Terdaftar pada:</strong> {new Date(dbUser.created_at).toLocaleString()}</p>
               </div>
             ) : (
               <p className="text-sm text-amber-400">User belum tersinkronisasi ke database Prisma.</p>
