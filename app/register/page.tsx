@@ -19,6 +19,7 @@ export default function RegisterPage() {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const teddyContainerRef = useRef<HTMLDivElement>(null);
+  const toggleBtnRef = useRef<HTMLButtonElement>(null);
 
   // Animation frame reference & lerp targets for smooth numLook eye movement
   const targetLookRef = useRef(50);
@@ -186,7 +187,10 @@ export default function RegisterPage() {
     setPrivateFieldShowState(showPassword);
   };
 
-  const handlePasswordBlur = () => {
+  const handlePasswordBlur = (e?: React.FocusEvent<HTMLInputElement>) => {
+    if (e?.relatedTarget && toggleBtnRef.current?.contains(e.relatedTarget as Node)) {
+      return;
+    }
     setIsPasswordFocused(false);
     setPrivateFieldState(false);
     setPrivateFieldShowState(false);
@@ -195,7 +199,6 @@ export default function RegisterPage() {
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => {
       const nextShow = !prev;
-      setPrivateFieldState(true);
       setPrivateFieldShowState(nextShow);
       return nextShow;
     });
@@ -370,6 +373,8 @@ export default function RegisterPage() {
                   />
                   <button
                     type="button"
+                    ref={toggleBtnRef}
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={togglePasswordVisibility}
                     tabIndex={-1}
                     className="absolute right-0 text-slate-400 hover:text-slate-600 focus:outline-none p-1.5"

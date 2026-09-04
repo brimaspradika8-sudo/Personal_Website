@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const teddyContainerRef = useRef<HTMLDivElement>(null);
+  const toggleBtnRef = useRef<HTMLButtonElement>(null);
 
   // Animation frame reference & lerp targets for smooth numLook eye movement
   const targetLookRef = useRef(50);
@@ -179,7 +180,10 @@ export default function LoginPage() {
     setPrivateFieldShowState(showPassword);
   };
 
-  const handlePasswordBlur = () => {
+  const handlePasswordBlur = (e?: React.FocusEvent<HTMLInputElement>) => {
+    if (e?.relatedTarget && toggleBtnRef.current?.contains(e.relatedTarget as Node)) {
+      return;
+    }
     setIsPasswordFocused(false);
     setPrivateFieldState(false);
     setPrivateFieldShowState(false);
@@ -189,7 +193,6 @@ export default function LoginPage() {
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => {
       const nextShow = !prev;
-      setPrivateFieldState(true);
       setPrivateFieldShowState(nextShow);
       return nextShow;
     });
@@ -255,28 +258,100 @@ export default function LoginPage() {
     }
   }
 
+  // Speech bubble state message for Teddy
+  const [speechText, setSpeechText] = useState("Hai! Masukkan email & password ya! 👋");
+
   const isAnyLoading = loading || googleLoading || githubLoading;
+
+  // Sync speech bubble text with actions
+  useEffect(() => {
+    if (loading || googleLoading || githubLoading) {
+      setSpeechText("Sebentar ya, sedang diproses... ⏳");
+    } else if (error) {
+      setSpeechText("Waduh, email/password salah nih! 😅");
+    }
+  }, [loading, googleLoading, githubLoading, error]);
+
+  const handleEmailFocusCustom = () => {
+    handleEmailFocus();
+    if (!isAnyLoading && !error) {
+      setSpeechText("Aku perhatiin tulisan emailmu... 👀");
+    }
+  };
+
+  const handleEmailChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleEmailChange(e);
+    if (!isAnyLoading && !error) {
+      if (e.target.value.length > 0) {
+        setSpeechText("Sedang ketik email... ✉️");
+      } else {
+        setSpeechText("Aku perhatiin tulisan emailmu... 👀");
+      }
+    }
+  };
+
+  const handlePasswordFocusCustom = () => {
+    handlePasswordFocus();
+    if (!isAnyLoading && !error) {
+      setSpeechText(showPassword ? "Eits, kita ngintip bareng ya! 🫣" : "Tenang, aku tutup mata kok! 🙈");
+    }
+  };
+
+  const handlePasswordChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handlePasswordChange();
+    if (!isAnyLoading && !error) {
+      setSpeechText(showPassword ? "Eits, kita ngintip bareng ya! 🫣" : "Tenang, aku tutup mata kok! 🙈");
+    }
+  };
+
+  const togglePasswordVisibilityCustom = () => {
+    setShowPassword((prev) => {
+      const nextShow = !prev;
+      setPrivateFieldShowState(nextShow);
+      if (!isAnyLoading && !error) {
+        setSpeechText(nextShow ? "Eits, kita ngintip bareng ya! 🫣" : "Tenang, aku tutup mata kok! 🙈");
+      }
+      return nextShow;
+    });
+  };
 
   return (
     <div className="flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-start md:justify-center bg-[#0B132B] md:bg-[#DDE2E8] px-4 py-4 sm:p-6 md:p-8 font-sans text-slate-900 overflow-y-auto">
       {/* Outer Card Wrapper: Desktop 2-column card compact md:max-w-[800px] md:min-h-[480px], Mobile Vertical Flow Container */}
       <div className="w-full max-w-[420px] md:max-w-[800px] min-h-0 md:min-h-[480px] bg-transparent md:bg-white rounded-none md:rounded-[24px] shadow-none md:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.12)] overflow-visible md:overflow-hidden flex flex-col md:flex-row border-0 md:border md:border-slate-100 my-0 md:my-auto">
         
-        {/* Panel Kiri / Top Animation Section: On Desktop: Rich scenic gradient left panel with centered Teddy. On Mobile: Clean top section */}
-        <div className="w-full md:w-[45%] bg-transparent md:bg-gradient-to-br md:from-[#0F172A] md:via-[#1E1B4B] md:to-[#0B132B] p-0 md:p-6 flex flex-col items-center justify-center border-b-0 md:border-r md:border-slate-800 shrink-0 relative">
+        {/* Panel Kiri / Top Animation Section: On Desktop: Rich scenic gradient left panel with centered Teddy & 3D Stage. On Mobile: Clean top section */}
+        <div className="w-full md:w-[45%] bg-transparent md:bg-gradient-to-br md:from-[#0F172A] md:via-[#1E1B4B] md:to-[#0B132B] p-0 md:p-6 flex flex-col items-center justify-center border-b-0 md:border-r md:border-slate-800 shrink-0 relative overflow-hidden">
           {/* Ambient Lighting & Glow FX (Desktop only) */}
           <div className="hidden md:block absolute w-60 h-60 rounded-full bg-indigo-500/20 blur-3xl -top-10 -left-10 pointer-events-none" />
           <div className="hidden md:block absolute w-60 h-60 rounded-full bg-blue-600/15 blur-3xl -bottom-10 -right-10 pointer-events-none" />
           <div className="hidden md:block absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
-          {/* Title on Mobile Top - Exact text: "Brimas Website" */}
-          <h2 className="md:hidden text-xs sm:text-sm font-semibold tracking-wider text-slate-300 text-center mb-1 mt-1">
-            Brimas Website
-          </h2>
+          {/* 3D Spotlight Beam from Top */}
+          <div className="absolute top-0 w-48 sm:w-64 h-72 bg-gradient-to-b from-cyan-400/25 via-indigo-500/10 to-transparent clip-path-spotlight blur-md pointer-events-none z-0" />
+
+          {/* Dynamic Speech Bubble Floating Above Teddy */}
+          <div className="z-20 mb-1 md:mb-2 transition-all duration-300 transform hover:scale-105">
+            <div className="relative bg-white/95 backdrop-blur-md px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-[0_8px_25px_rgba(0,0,0,0.25)] border border-indigo-100 flex items-center gap-2 max-w-[280px]">
+              <span className="text-xs sm:text-sm font-semibold text-slate-800 tracking-tight text-center leading-tight">
+                {speechText}
+              </span>
+              {/* Speech Bubble Arrow Tail */}
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-x-[7px] border-x-transparent border-t-[8px] border-t-white/95 drop-shadow-xs" />
+            </div>
+          </div>
 
           {/* Rive Teddy Animation Container (Mobile: 340px with -mb-8 attachment; Desktop: 310px centered with md:-mt-4) */}
           <div ref={teddyContainerRef} className="w-[340px] h-[340px] md:w-[310px] md:h-[310px] relative flex items-center justify-center z-10 drop-shadow-2xl overflow-visible -mb-8 md:mb-0 md:-mt-4">
             <RiveComponent className="w-full h-full min-w-[220px] min-h-[220px]" />
+
+            {/* 3D Glass Pedestal Base beneath Teddy's Feet */}
+            <div className="absolute bottom-6 md:bottom-5 left-1/2 -translate-x-1/2 w-[220px] sm:w-[240px] md:w-[250px] h-[28px] md:h-[32px] rounded-[100%] bg-gradient-to-r from-indigo-500/30 via-cyan-400/40 to-indigo-500/30 border border-indigo-300/40 shadow-[0_0_30px_rgba(99,102,241,0.5)] backdrop-blur-sm -z-10 flex items-center justify-center">
+              <div className="w-[85%] h-[70%] rounded-[100%] bg-indigo-600/20 blur-xs border border-white/20 animate-pulse" />
+            </div>
+
+            {/* Floating Soft Shadow beneath Teddy */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[160px] md:w-[180px] h-[16px] rounded-[100%] bg-black/40 blur-md -z-20" />
           </div>
         </div>
 
@@ -311,8 +386,8 @@ export default function LoginPage() {
                   placeholder=""
                   required
                   value={emailText}
-                  onChange={handleEmailChange}
-                  onFocus={handleEmailFocus}
+                  onChange={handleEmailChangeCustom}
+                  onFocus={handleEmailFocusCustom}
                   onBlur={handleEmailBlur}
                   className="w-full border-b border-slate-300 bg-transparent py-1.5 text-sm sm:text-base text-slate-900 transition-colors focus:border-[#0B132B] focus:outline-none"
                 />
@@ -330,14 +405,16 @@ export default function LoginPage() {
                     name="password"
                     placeholder=""
                     required
-                    onChange={handlePasswordChange}
-                    onFocus={handlePasswordFocus}
+                    onChange={handlePasswordChangeCustom}
+                    onFocus={handlePasswordFocusCustom}
                     onBlur={handlePasswordBlur}
                     className="w-full border-b border-slate-300 bg-transparent py-1.5 pr-10 text-sm sm:text-base text-slate-900 transition-colors focus:border-[#0B132B] focus:outline-none [::-ms-reveal]:hidden"
                   />
                   <button
                     type="button"
-                    onClick={togglePasswordVisibility}
+                    ref={toggleBtnRef}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={togglePasswordVisibilityCustom}
                     tabIndex={-1}
                     className="absolute right-0 text-slate-400 hover:text-slate-600 focus:outline-none p-1.5"
                     aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
