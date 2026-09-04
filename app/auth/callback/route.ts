@@ -39,7 +39,12 @@ export async function GET(request: Request) {
 
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error && data.user?.email) {
+    if (error) {
+      console.error("[OAuth Callback Error] exchangeCodeForSession failed:", error.message, error);
+      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`);
+    }
+
+    if (data.user?.email) {
       const name =
         data.user.user_metadata?.full_name ??
         data.user.user_metadata?.name ??
