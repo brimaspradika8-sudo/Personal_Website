@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import { syncUserToDatabase } from "@/lib/actions/auth";
 
 export async function GET(request: Request) {
@@ -8,11 +9,37 @@ export async function GET(request: Request) {
   const next = searchParams.get("next") ?? "/dashboard";
 
   if (code) {
-    const supabase = await createClient();
+    const cookieStore = await cookies();
+    const supabaseUrl =
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      "https://ojrnfhdxilsecmqqbfrp.supabase.co";
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-anon-key";
+
+    // Create the redirect response upfront so cookies are attached to it
+    const response = NextResponse.redirect(`${origin}${next}`);
+
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            try {
+              cookieStore.set(name, value, options);
+            } catch {
+              // Ignore if called in context where cookieStore cannot set
+            }
+            response.cookies.set(name, value, options);
+          });
+        },
+      },
+    });
+
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user?.email) {
-      // Upsert ke tabel User berdasarkan email
       const name =
         data.user.user_metadata?.full_name ??
         data.user.user_metadata?.name ??
@@ -25,7 +52,7 @@ export async function GET(request: Request) {
         console.warn("OAuth callback user sync failed:", err);
       }
 
-      return NextResponse.redirect(`${origin}${next}`);
+      return response;
     }
   }
 
