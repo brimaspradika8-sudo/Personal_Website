@@ -19,7 +19,11 @@ export async function GET(request: Request) {
         data.user.user_metadata?.preferred_username ??
         data.user.user_metadata?.user_name;
 
-      await syncUserToDatabase(data.user.email, name);
+      try {
+        await syncUserToDatabase(data.user.email, name);
+      } catch (err) {
+        console.warn("OAuth callback user sync failed:", err);
+      }
 
       return NextResponse.redirect(`${origin}${next}`);
     }

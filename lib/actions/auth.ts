@@ -7,17 +7,27 @@ import { redirect } from "next/navigation";
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---
 // Sesuaikan nama field (name, email, dst) dengan schema.prisma kamu.
 export async function syncUserToDatabase(email: string, name?: string | null) {
-  return prisma.user.upsert({
-    where: { email },
-    update: {
-      // Update field yang mungkin berubah, misal nama dari Google
-      ...(name ? { name } : {}),
-    },
-    create: {
-      email,
-      name: name ?? email.split("@")[0],
-    },
-  });
+  try {
+    const dbPromise = prisma.user.upsert({
+      where: { email },
+      update: {
+        ...(name ? { name } : {}),
+      },
+      create: {
+        email,
+        name: name ?? email.split("@")[0],
+      },
+    });
+
+    const timeoutPromise = new Promise<null>((resolve) =>
+      setTimeout(() => resolve(null), 4000)
+    );
+
+    return await Promise.race([dbPromise, timeoutPromise]);
+  } catch (error) {
+    console.warn("Failed or timed out syncing user to database:", error);
+    return null;
+  }
 }
 
 // --- Login dengan Google (OAuth) ---
