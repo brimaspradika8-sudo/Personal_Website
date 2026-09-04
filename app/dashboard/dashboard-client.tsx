@@ -17,6 +17,7 @@ import {
   Sparkles,
   FolderGit2,
   LogOut,
+  LogIn,
   Copy,
   Check,
   ShieldCheck,
@@ -26,7 +27,15 @@ import {
   Activity,
   Briefcase,
   Compass,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
+
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import MobileBottomNav from "@/components/MobileBottomNav";
+import { soundFx } from "@/lib/audio/sound";
+import CommandPalette from "@/components/CommandPalette";
+import ProjectModal, { ProjectData } from "@/components/ProjectModal";
 
 interface DashboardClientProps {
   user: {
@@ -43,17 +52,27 @@ interface DashboardClientProps {
       avatar_url?: string;
       name?: string;
     };
-  };
+  } | null;
   dbUser: {
     id: string;
     email: string;
     name: string | null;
     created_at: Date | string;
   } | null;
+  dbProjects?: Array<{
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    thumbnail: string | null;
+    demo_url: string | null;
+    repository_url: string | null;
+    created_at: Date | string;
+  }>;
 }
 
-export default function DashboardClient({ user, dbUser }: DashboardClientProps) {
-  // Theme mode: "day" | "night"
+export default function DashboardClient({ user, dbUser, dbProjects = [] }: DashboardClientProps) {
+  const { lang, toggleLang, dict } = useLanguage();
   const [mode, setMode] = useState<"day" | "night">("day");
   const [loadSecondaryBg, setLoadSecondaryBg] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -61,26 +80,24 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedId, setCopiedId] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+  const [sfxEnabled, setSfxEnabled] = useState(true);
+  const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
 
-  // Load initial theme mode
+  // Load initial theme mode - Default is ALWAYS "day" (siang hari)
   useEffect(() => {
+    setSfxEnabled(soundFx.getIsEnabled());
+    const handleOpen = () => setCmdPaletteOpen(true);
+    window.addEventListener("open-command-palette", handleOpen);
+
     const savedMode = localStorage.getItem("landscape_mode");
-    if (savedMode === "day" || savedMode === "night") {
-      setMode(savedMode);
-      if (savedMode === "night") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    if (savedMode === "night") {
+      setMode("night");
+      document.documentElement.classList.add("dark");
     } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initialMode = prefersDark ? "night" : "day";
-      setMode(initialMode);
-      if (prefersDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+      // Default ke mode Siang Hari ("day")
+      setMode("day");
+      document.documentElement.classList.remove("dark");
     }
 
     // Delay loading secondary background GIF to prevent 38.7MB concurrent download on page start
@@ -88,8 +105,21 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       setLoadSecondaryBg(true);
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("open-command-palette", handleOpen);
+    };
   }, []);
+
+  const handleToggleSfx = () => {
+    const newState = soundFx.toggleMute();
+    setSfxEnabled(newState);
+    if (newState) soundFx.playClick();
+  };
+
+  const handleToggleLang = () => {
+    toggleLang();
+  };
 
   const handleToggleMode = () => {
     setLoadSecondaryBg(true);
@@ -106,14 +136,36 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
     });
   };
 
+  const t = {
+    beranda: lang === "id" ? "Beranda" : "Home",
+    tentang: lang === "id" ? "Tentang" : "About",
+    project: lang === "id" ? "Project" : "Projects",
+    kontak: lang === "id" ? "Kontak" : "Contact",
+    tagline: lang === "id" ? "Personal Retreat & Portfolio" : "Personal Retreat & Portfolio",
+    subtitle:
+      lang === "id"
+        ? "Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka yang elegan dengan lanskap teknologi terkini."
+        : "Building high-scalable web platforms, modern AI architecture solutions, and elegant UI experiences with cutting-edge tech.",
+    metricsTitle: lang === "id" ? "Jejak & Ringkasan Metrik" : "Milestones & Metric Overview",
+    projectsTitle: lang === "id" ? "Koleksi Project Explorasi" : "Exploration Project Collection",
+    authTitle: lang === "id" ? "Status Autentikasi & Database" : "Authentication & Database Status",
+    contactTitle:
+      lang === "id"
+        ? "Siap Berkolaborasi Dalam Eksplorasi Berikutnya?"
+        : "Ready to Collaborate on the Next Exploration?",
+    contactBtn: lang === "id" ? "Hubungi Saya" : "Contact Me",
+  };
+
   const handleCopyId = () => {
-    navigator.clipboard.writeText(user.id);
-    setCopiedId(true);
-    setTimeout(() => setCopiedId(false), 2000);
+    if (user?.id) {
+      navigator.clipboard.writeText(user.id);
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2000);
+    }
   };
 
   const handleCopyEmail = () => {
-    const emailToCopy = user.email || "brimaspradika8@gmail.com";
+    const emailToCopy = user?.email || "brimaspradika8@gmail.com";
     navigator.clipboard.writeText(emailToCopy);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
@@ -121,11 +173,11 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
 
   const userName =
     dbUser?.name ||
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
     "Brimas Pradika Utama";
-  const userEmail = user.email || "brimaspradika8@gmail.com";
-  const avatarSrc = user.user_metadata?.avatar_url || "/images/avatar.png";
+  const userEmail = user?.email || "brimaspradika8@gmail.com";
+  const avatarSrc = user?.user_metadata?.avatar_url || "/images/avatar.png";
 
   const isNight = mode === "night";
 
@@ -133,10 +185,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
     <div className={`relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-slate-100 transition-colors duration-700 selection:bg-amber-500 selection:text-stone-950 ${isNight ? "dark" : ""}`}>
       
       {/* ========================================================================= */}
-      {/* FULL-BLEED GIF LANDSCAPE BACKGROUND WITH SILKY SMOOTH CROSSFADE          */}
+      {/* FULL-BLEED LANDSCAPE BACKGROUND WITH SILKY SMOOTH GPU-ACCELERATED CROSSFADE */}
       {/* ========================================================================= */}
-      <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
-        {/* Desktop Day Landscape GIF (768px+) */}
+      <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none transform-gpu">
+        {/* Desktop Day Landscape (768px+) */}
         {(!isNight || loadSecondaryBg) && (
           <Image
             src="/animations/day-landscape.gif"
@@ -144,13 +196,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             fill
             priority={!isNight}
             unoptimized
-            className={`hidden md:block object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+            className={`hidden md:block object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
           />
         )}
 
-        {/* Desktop Night Landscape GIF (768px+) */}
+        {/* Desktop Night Landscape (768px+) */}
         {(isNight || loadSecondaryBg) && (
           <Image
             src="/animations/night-landscape.gif"
@@ -158,13 +210,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             fill
             priority={isNight}
             unoptimized
-            className={`hidden md:block object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+            className={`hidden md:block object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
           />
         )}
 
-        {/* Mobile Day Landscape GIF (<768px) */}
+        {/* Mobile Day Landscape (<768px) */}
         {(!isNight || loadSecondaryBg) && (
           <Image
             src="/animations/day-landscape-mobile.gif"
@@ -172,13 +224,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             fill
             priority={!isNight}
             unoptimized
-            className={`block md:hidden object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+            className={`block md:hidden object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
           />
         )}
 
-        {/* Mobile Night Landscape GIF (<768px) */}
+        {/* Mobile Night Landscape (<768px) */}
         {(isNight || loadSecondaryBg) && (
           <Image
             src="/animations/night-landscape-mobile.gif"
@@ -186,7 +238,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             fill
             priority={isNight}
             unoptimized
-            className={`block md:hidden object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+            className={`block md:hidden object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
           />
@@ -194,7 +246,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
 
         {/* Ambient Overlay Gradients for Optimal Text & Card Legibility */}
         <div
-          className={`absolute inset-0 transition-colors duration-1000 ${
+          className={`absolute inset-0 transition-colors duration-1000 transform-gpu ${
             isNight
               ? "bg-gradient-to-b from-slate-950/75 via-indigo-950/40 to-slate-950/85"
               : "bg-gradient-to-b from-amber-950/45 via-transparent to-amber-950/75 opacity-90 md:opacity-100"
@@ -231,19 +283,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             </span>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {/* Desktop Navigation Links: Dashboard, Project, Blog, Profile */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <a
               href="#hero"
               className="text-slate-200 hover:text-amber-300 transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
             >
-              Beranda
-            </a>
-            <a
-              href="#about"
-              className="text-slate-200 hover:text-amber-300 transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
-            >
-              Tentang
+              Dashboard
             </a>
             <a
               href="#projects"
@@ -252,33 +298,45 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               Project
             </a>
             <a
-              href="#contact"
+              href="#about"
               className="text-slate-200 hover:text-amber-300 transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
             >
-              Kontak
+              Blog
+            </a>
+            <a
+              href="/profile"
+              className="text-amber-300 hover:text-amber-200 font-bold transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
+            >
+              Profile
             </a>
           </nav>
 
-          {/* Far Right: Search Button + Day/Night Pill Switch Toggle + Mobile Hamburger */}
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          {/* Far Right: Search Button + Day/Night Pill Switch Toggle */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             
-            {/* Search Trigger Button - Desktop & sm+ */}
+            {/* Search / Command Palette Trigger Button (Ctrl + K) */}
             <button
-              onClick={() => setSearchOpen(true)}
-              className="hidden sm:flex p-2 sm:p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400"
-              aria-label="Search"
-              title="Search"
+              onClick={() => {
+                soundFx.playClick();
+                setCmdPaletteOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+              aria-label="Search Command Palette (Ctrl+K)"
+              title="Search (Ctrl + K)"
             >
-              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Search className="w-4 h-4 text-amber-400" />
+              <span className="hidden sm:inline text-[11px] font-mono font-semibold text-slate-300 bg-white/10 px-1.5 py-0.5 rounded border border-white/10">
+                ⌘K
+              </span>
             </button>
 
-            {/* DAY/NIGHT PILL SWITCH TOGGLE - Desktop & sm+ */}
+            {/* DAY/NIGHT PILL SWITCH TOGGLE (Switch Tema) */}
             <button
               type="button"
               onClick={handleToggleMode}
               aria-label={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
               title={isNight ? "Switch to Day Mode" : "Switch to Night Mode"}
-              className={`hidden sm:flex relative w-14 h-7 sm:w-16 sm:h-8 rounded-full p-1 border backdrop-blur-md transition-colors duration-500 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer ${
+              className={`flex relative w-14 h-7 sm:w-16 sm:h-8 rounded-full p-1 border backdrop-blur-md transition-colors duration-500 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer ${
                 isNight
                   ? "bg-slate-900/80 border-indigo-400/50"
                   : "bg-amber-900/60 border-amber-300/60"
@@ -297,100 +355,8 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               </div>
             </button>
 
-            {/* Mobile Menu Icon */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 sm:p-2.5 rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-amber-400"
-              aria-label="Toggle Navigation Menu"
-            >
-              {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
-            </button>
-
           </div>
         </div>
-
-        {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-stone-950/95 backdrop-blur-2xl border-b border-white/15 px-4 py-5 space-y-4 shadow-2xl animate-in slide-in-from-top-4 duration-300">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 gap-2">
-              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider truncate">
-                Navigasi Portfolio
-              </span>
-
-              <div className="flex items-center gap-2 shrink-0">
-                {/* Mobile Search Button */}
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setSearchOpen(true);
-                  }}
-                  className="p-1.5 px-2.5 rounded-full bg-white/10 text-white text-xs border border-white/20 flex items-center gap-1.5"
-                >
-                  <Search className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Cari</span>
-                </button>
-
-                {/* Mobile Day/Night Toggle */}
-                <button
-                  type="button"
-                  onClick={handleToggleMode}
-                  className={`p-1.5 px-2.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 ${
-                    isNight
-                      ? "bg-slate-900 border-indigo-400/50 text-indigo-300"
-                      : "bg-amber-900/60 border-amber-300/60 text-amber-200"
-                  }`}
-                >
-                  {isNight ? (
-                    <>
-                      <Moon className="w-3.5 h-3.5 text-indigo-300" />
-                      <span>Night 🌙</span>
-                    </>
-                  ) : (
-                    <>
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Day ☀️</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2.5 pt-1">
-              <a
-                href="#hero"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-white hover:text-amber-300 p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-400/40 transition-all"
-              >
-                <Compass className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Beranda</span>
-              </a>
-              <a
-                href="#about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-white hover:text-amber-300 p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-400/40 transition-all"
-              >
-                <Activity className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Tentang</span>
-              </a>
-              <a
-                href="#projects"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-white hover:text-amber-300 p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-400/40 transition-all"
-              >
-                <Mountain className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Project</span>
-              </a>
-              <a
-                href="#contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-white hover:text-amber-300 p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-400/40 transition-all"
-              >
-                <Send className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Kontak</span>
-              </a>
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Search Modal Overlay */}
@@ -430,12 +396,12 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         {/* ========================================================================= */}
         {/* 1. HERO SECTION (Landscape Full-Bleed Viewport Overlay)                  */}
         {/* ========================================================================= */}
-        <section id="hero" className="min-h-[70vh] sm:min-h-[85vh] flex flex-col justify-center items-center text-center space-y-6 sm:space-y-10 py-6 sm:py-12 w-full max-w-full px-2 sm:px-4 box-border">
+        <section id="hero" className="flex flex-col justify-center items-center text-center space-y-4 sm:space-y-8 pt-20 pb-4 sm:pt-32 sm:pb-12 w-full max-w-full px-2 sm:px-4 box-border">
           
           {/* Circular Profile Avatar with Thick White/Gold Border & Subtle Glow */}
           <div className="relative group shrink-0">
             <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 blur-md opacity-80 group-hover:opacity-100 transition duration-500 animate-pulse" />
-            <div className="relative w-24 h-24 sm:w-40 sm:h-40 rounded-full overflow-hidden border-4 border-white dark:border-amber-200/80 shadow-2xl">
+            <div className="relative w-20 h-20 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white dark:border-amber-200/80 shadow-2xl">
               <Image
                 src={avatarSrc}
                 alt={userName}
@@ -448,7 +414,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           </div>
 
           {/* Large Name in Display Serif Font */}
-          <div className="space-y-3 sm:space-y-5 w-full max-w-5xl mx-auto px-2">
+          <div className="space-y-2.5 sm:space-y-4 w-full max-w-5xl mx-auto px-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold bg-white/10 text-amber-300 border border-white/20 backdrop-blur-md shadow-inner max-w-full truncate">
               <Compass className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span className="truncate">Personal Retreat & Portfolio</span>
@@ -458,9 +424,9 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               {userName}
             </h1>
             
-            <p className="font-display text-xs sm:text-lg lg:text-xl text-amber-200/90 font-medium tracking-normal sm:tracking-wide drop-shadow-md leading-relaxed max-w-sm sm:max-w-xl mx-auto break-words">
-              Wilderness Explorer & Full-Stack Architect
-            </p>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-950/80 border border-amber-400/50 text-amber-300 text-xs sm:text-base font-bold backdrop-blur-md shadow-xl shadow-black/50 max-w-full">
+              <span className="truncate">Full-Stack Architect & Personal Portfolio</span>
+            </div>
           </div>
 
           {/* Tagline & Short Description inside Glassmorphism Card */}
@@ -529,10 +495,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
             <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-wide flex items-center gap-3">
               <Activity className="w-6 h-6 text-amber-400" />
-              <span>Jejak & Ringkasan Metrik</span>
+              <span>{dict.stats.title}</span>
             </h2>
             <span className="text-xs font-semibold text-amber-200/80 tracking-widest uppercase">
-              Wilderness Milestones
+              {dict.stats.badge}
             </span>
           </div>
 
@@ -547,7 +513,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             }`}>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                  Project Selesai
+                  {dict.stats.projects}
                 </span>
                 <div className="p-2.5 rounded-2xl bg-white/10 text-amber-300 group-hover:scale-110 transition-transform">
                   <FolderGit2 className="w-4 h-4" />
@@ -633,10 +599,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             <div>
               <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-wide flex items-center gap-3">
                 <Mountain className="w-6 h-6 text-amber-400" />
-                <span>Koleksi Project Explorasi</span>
+                <span>{dict.projects.title}</span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-300">
-                Karya pilihan yang dibangun dengan perhatian terhadap detail dan estetika
+                {dict.projects.subtitle}
               </p>
             </div>
 
@@ -646,7 +612,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               rel="noopener noreferrer"
               className="text-xs font-bold text-amber-300 hover:text-amber-200 inline-flex items-center gap-1.5 shrink-0"
             >
-              <span>GitHub Repository</span>
+              <span>{dict.projects.githubRepo}</span>
               <ArrowUpRight className="w-4 h-4" />
             </a>
           </div>
@@ -706,13 +672,25 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                       </svg>
                       <span>Code</span>
                     </a>
-                    <a
-                      href="#projects"
-                      className="text-amber-300 hover:underline flex items-center gap-1"
+                    <button
+                      onClick={() => {
+                        soundFx.playClick();
+                        setSelectedProject({
+                          id: "1",
+                          title: "DevPulse Analytics",
+                          description: "Dashboard analitik real-time untuk memantau metrik performa server, visualisasi data interaktif, dan notifikasi anomali.",
+                          thumbnail: "/images/project1.png",
+                          demo_url: "#projects",
+                          repository_url: "https://github.com/brimaspradika8-sudo",
+                          techStack: ["Next.js 16", "TypeScript", "Prisma", "Tailwind CSS", "Chart.js"],
+                        });
+                      }}
+                      onMouseEnter={() => soundFx.playHover()}
+                      className="text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <span>Preview</span>
                       <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -771,19 +749,31 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                       </svg>
                       <span>Code</span>
                     </a>
-                    <a
-                      href="#projects"
-                      className="text-amber-300 hover:underline flex items-center gap-1"
+                    <button
+                      onClick={() => {
+                        soundFx.playClick();
+                        setSelectedProject({
+                          id: "2",
+                          title: "OmniCommerce AI",
+                          description: "Platform belanja e-commerce cerdas dengan rekomendasi AI otomatis dan checkout pembayaran instan.",
+                          thumbnail: "/images/project2.png",
+                          demo_url: "#projects",
+                          repository_url: "https://github.com/brimaspradika8-sudo",
+                          techStack: ["Supabase", "React 19", "OpenAI", "Tailwind CSS"],
+                        });
+                      }}
+                      onMouseEnter={() => soundFx.playHover()}
+                      className="text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <span>Preview</span>
                       <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Project Card 3: Wilderness Sync Workspace */}
+            {/* Project Card 3: Cloud Sync Workspace */}
             <div className={`backdrop-blur-md border rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col group ${
               isNight
                 ? "bg-slate-950/50 border-indigo-500/30 hover:border-indigo-400/60"
@@ -792,7 +782,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               <div className="relative w-full h-48 bg-gradient-to-br from-amber-950 via-stone-900 to-indigo-950 p-6 flex flex-col justify-between overflow-hidden">
                 <div className="flex items-center justify-between z-10">
                   <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase tracking-widest">
-                    Wilderness Realtime
+                    Cloud Sync Realtime
                   </span>
                   <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
                 </div>
@@ -865,30 +855,40 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-display font-bold text-lg text-white">Status Autentikasi & Database</h3>
+                <h3 className="font-display font-bold text-lg text-white">{dict.auth.title}</h3>
                 <p className="text-xs text-slate-300">Supabase Auth Session & Prisma PostgreSQL Connection</p>
               </div>
             </div>
 
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-2xl text-xs font-bold text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-400/30 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-rose-400"
+            {user ? (
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-2xl text-xs font-bold text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-400/30 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>{dict.auth.logout}</span>
+                </button>
+              </form>
+            ) : (
+              <a
+                href="/login"
+                className="px-4 py-2 rounded-2xl text-xs font-bold text-amber-300 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
-                <LogOut className="w-4 h-4" />
-                <span>Sign Out</span>
-              </button>
-            </form>
+                <LogIn className="w-4 h-4" />
+                <span>Login / Masuk</span>
+              </a>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-              <p className="text-xs text-slate-300 font-medium">Email Terdaftar</p>
+              <p className="text-xs text-slate-300 font-medium">{dict.auth.userEmail}</p>
               <p className="text-xs font-semibold text-white truncate">{userEmail}</p>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-              <p className="text-xs text-slate-300 font-medium">Status Prisma DB</p>
+              <p className="text-xs text-slate-300 font-medium">{dict.auth.dbStatus}</p>
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-xs font-semibold text-emerald-300">
@@ -900,14 +900,16 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-slate-300 font-medium">Supabase User ID</p>
-                <button
-                  onClick={handleCopyId}
-                  className="text-xs text-amber-300 hover:underline font-bold"
-                >
-                  {copiedId ? "Tersalin!" : "Salin"}
-                </button>
+                {user?.id && (
+                  <button
+                    onClick={handleCopyId}
+                    className="text-xs text-amber-300 hover:underline font-bold"
+                  >
+                    {copiedId ? "Tersalin!" : "Salin"}
+                  </button>
+                )}
               </div>
-              <p className="text-[11px] font-mono text-slate-200 truncate">{user.id}</p>
+              <p className="text-[11px] font-mono text-slate-200 truncate">{user?.id || "Guest (Public Session)"}</p>
             </div>
           </div>
         </section>
@@ -924,7 +926,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <span>Mari Terhubung</span>
               </div>
               <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-wide">
-                Siap Berkolaborasi Dalam Eksplorasi Berikutnya?
+                {dict.contact.title}
               </h2>
               <p className="text-slate-200 text-xs sm:text-sm leading-relaxed">
                 Saya selalu terbuka untuk diskusi project baru, pengembangan aplikasi berskala besar, dan konsultasi teknis.
@@ -937,7 +939,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-bold text-sm shadow-xl shadow-amber-500/20 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <Mail className="w-4 h-4" />
-                <span>Hubungi Saya</span>
+                <span>{dict.contact.btn}</span>
               </a>
 
               <button
@@ -954,19 +956,36 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 backdrop-blur-md bg-stone-950/60 py-8 text-center text-xs text-slate-300">
+      <footer className="relative z-10 border-t border-white/10 backdrop-blur-md bg-stone-950/60 py-8 pb-24 md:pb-8 text-center text-xs text-slate-300">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="font-display font-medium text-amber-200/90">
-            © {new Date().getFullYear()} {userName} — Wilderness & Personal Retreat. All rights reserved.
+            © {new Date().getFullYear()} {userName} — Personal Portfolio & Retreat. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <a href="#hero" className="hover:text-amber-300 transition-colors">Beranda</a>
-            <a href="#about" className="hover:text-amber-300 transition-colors">Tentang</a>
-            <a href="#projects" className="hover:text-amber-300 transition-colors">Project</a>
-            <a href="#contact" className="hover:text-amber-300 transition-colors">Kontak</a>
+            <a href="#hero" className="hover:text-amber-300 transition-colors">{dict.nav.home}</a>
+            <a href="#about" className="hover:text-amber-300 transition-colors">{dict.nav.about}</a>
+            <a href="#projects" className="hover:text-amber-300 transition-colors">{dict.nav.projects}</a>
+            <a href="#contact" className="hover:text-amber-300 transition-colors">{dict.nav.contact}</a>
           </div>
         </div>
       </footer>
+
+      {/* Floating Center Mobile Bottom Tab Bar */}
+      <MobileBottomNav />
+
+      {/* Command Palette Keyboard Shortcut Modal */}
+      <CommandPalette
+        isOpen={cmdPaletteOpen}
+        onClose={() => setCmdPaletteOpen(false)}
+        onToggleTheme={handleToggleMode}
+        isNight={isNight}
+      />
+
+      {/* Project Detail Preview Modal */}
+      <ProjectModal
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
 
     </div>
   );

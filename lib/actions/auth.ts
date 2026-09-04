@@ -210,3 +210,34 @@ export async function signOut() {
   await supabase.auth.signOut();
   redirect("/login");
 }
+
+// --- Update Profile (Nama & Avatar) ---
+export async function updateUserProfile(name: string, avatarUrl: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Harus login terlebih dahulu untuk mengubah profil." };
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      full_name: name,
+      name: name,
+      avatar_url: avatarUrl,
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  if (user.email) {
+    await syncUserToDatabase(user.email, name);
+  }
+
+  return { success: true };
+}

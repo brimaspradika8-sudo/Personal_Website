@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "about": "Tentang",
+    "projects": "Project",
+    "articles": "Artikel",
+    "contact": "Kontak",
+    "profile": "Profile",
+    "login": "Masuk"
+  },
+  "hero": {
+    "greeting": "Selamat Datang di Portofolio",
+    "role": "Full-Stack Architect & Personal Portfolio",
+    "description": "Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka yang elegan dengan lanskap teknologi terkini.",
+    "exploreBtn": "Jelajahi Project",
+    "contactBtn": "Hubungi Saya"
+  },
+  "stats": {
+    "title": "Jejak & Ringkasan Metrik",
+    "badge": "Professional Milestones",
+    "projects": "Project Selesai",
+    "commits": "Total Commits",
+    "articles": "Artikel Diterbitkan",
+    "experience": "Tahun Pengalaman"
+  },
+  "projects": {
+    "title": "Koleksi Project Eksplorasi",
+    "badge": "Portofolio Pilihan",
+    "subtitle": "Karya pilihan yang dibangun dengan perhatian terhadap detail dan estetika",
+    "githubRepo": "GitHub Repository",
+    "code": "Kode",
+    "preview": "Lihat Live"
+  },
+  "auth": {
+    "title": "Status Autentikasi & Database",
+    "userEmail": "Email Pengguna",
+    "role": "Peran",
+    "dbStatus": "Status DB",
+    "logout": "Keluar"
+  },
+  "contact": {
+    "title": "Siap Berkolaborasi Dalam Eksplorasi Berikutnya?",
+    "btn": "Hubungi Saya"
+  },
+  "footer": {
+    "rights": "Semua Hak Cipta Dilindungi."
+  }
+}

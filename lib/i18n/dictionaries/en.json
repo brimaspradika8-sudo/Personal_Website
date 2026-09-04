@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "articles": "Articles",
+    "contact": "Contact",
+    "profile": "Profile",
+    "login": "Sign In"
+  },
+  "hero": {
+    "greeting": "Welcome to Portfolio",
+    "role": "Full-Stack Architect & Personal Portfolio",
+    "description": "Building high-scalable web platforms, modern AI architecture solutions, and elegant UI experiences with cutting-edge tech stack.",
+    "exploreBtn": "Explore Projects",
+    "contactBtn": "Contact Me"
+  },
+  "stats": {
+    "title": "Milestones & Metric Overview",
+    "badge": "Professional Milestones",
+    "projects": "Completed Projects",
+    "commits": "Total Commits",
+    "articles": "Articles Published",
+    "experience": "Years Experience"
+  },
+  "projects": {
+    "title": "Exploration Project Collection",
+    "badge": "Featured Portfolio",
+    "subtitle": "Selected works crafted with attention to detail and aesthetic excellence",
+    "githubRepo": "GitHub Repository",
+    "code": "Code",
+    "preview": "Live Preview"
+  },
+  "auth": {
+    "title": "Authentication & Database Status",
+    "userEmail": "User Email",
+    "role": "Role",
+    "dbStatus": "DB Status",
+    "logout": "Sign Out"
+  },
+  "contact": {
+    "title": "Ready to Collaborate on the Next Exploration?",
+    "btn": "Contact Me"
+  },
+  "footer": {
+    "rights": "All Rights Reserved."
+  }
+}

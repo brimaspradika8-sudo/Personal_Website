@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRive, useStateMachineInput } from "@rive-app/react-canvas";
+import Image from "next/image";
 import { signUpWithPassword, signInWithGoogle, signInWithGithub } from "@/lib/actions/auth";
 
 export default function RegisterPage() {
@@ -267,25 +268,46 @@ export default function RegisterPage() {
   const isAnyLoading = loading || googleLoading || githubLoading;
 
   return (
-    <div className="flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-start md:justify-center bg-[#0B132B] md:bg-[#DDE2E8] px-4 py-4 sm:p-6 md:p-8 font-sans text-slate-900 overflow-y-auto">
-      {/* Outer Card Wrapper: Desktop 2-column card compact md:max-w-[800px] md:min-h-[480px], Mobile Vertical Flow Container */}
-      <div className="w-full max-w-[420px] md:max-w-[800px] min-h-0 md:min-h-[480px] bg-transparent md:bg-white rounded-none md:rounded-[24px] shadow-none md:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.12)] overflow-visible md:overflow-hidden flex flex-col md:flex-row border-0 md:border md:border-slate-100 my-0 md:my-auto">
-        
-        {/* Panel Kiri / Top Animation Section */}
-        <div className="w-full md:w-[45%] bg-transparent md:bg-gradient-to-br md:from-[#0F172A] md:via-[#1E1B4B] md:to-[#0B132B] p-0 md:p-6 flex flex-col items-center justify-center border-b-0 md:border-r md:border-slate-800 shrink-0 relative">
-          {/* Ambient Lighting & Glow FX (Desktop only) */}
-          <div className="hidden md:block absolute w-60 h-60 rounded-full bg-indigo-500/20 blur-3xl -top-10 -left-10 pointer-events-none" />
-          <div className="hidden md:block absolute w-60 h-60 rounded-full bg-blue-600/15 blur-3xl -bottom-10 -right-10 pointer-events-none" />
-          <div className="hidden md:block absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+    <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-start md:justify-center bg-stone-900 px-4 py-4 sm:p-6 md:p-8 font-sans text-slate-900 overflow-y-auto">
+      {/* Full-Bleed Vivid Nature Landscape Background Layer */}
+      <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+        <Image
+          src="/animations/day-landscape.gif"
+          alt="Lush Nature Landscape Background"
+          fill
+          unoptimized
+          priority
+          className="object-cover w-full h-full opacity-85 filter brightness-105 contrast-105 scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-amber-950/20 to-stone-950/40 backdrop-blur-[1px]" />
+      </div>
 
-          {/* Title on Mobile Top - Exact text: "Brimas Website" */}
-          <h2 className="md:hidden text-xs sm:text-sm font-semibold tracking-wider text-slate-300 text-center mb-1 mt-1">
+      {/* Outer Card Wrapper */}
+      <div className="w-full max-w-[420px] md:max-w-[800px] min-h-0 md:min-h-[480px] bg-white/95 md:bg-white rounded-3xl md:rounded-[24px] shadow-2xl overflow-visible md:overflow-hidden flex flex-col md:flex-row border border-amber-300/40 my-0 md:my-auto backdrop-blur-xl">
+        
+        {/* Panel Kiri / Top Animation Section: Vibrant Forest & Sunrise Gradient with Amber/Emerald Glow */}
+        <div className="w-full md:w-[45%] bg-gradient-to-br from-emerald-950 via-stone-900 to-amber-950 p-4 md:p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-amber-300/30 shrink-0 relative overflow-hidden rounded-t-3xl md:rounded-none">
+          {/* Ambient Nature Lighting & Glow FX */}
+          <div className="hidden md:block absolute w-60 h-60 rounded-full bg-amber-400/30 blur-3xl -top-10 -left-10 pointer-events-none animate-pulse" />
+          <div className="hidden md:block absolute w-60 h-60 rounded-full bg-emerald-400/25 blur-3xl -bottom-10 -right-10 pointer-events-none" />
+          <div className="hidden md:block absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.08)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+
+          {/* Title on Mobile Top */}
+          <h2 className="md:hidden text-xs sm:text-sm font-bold tracking-wider text-amber-300 text-center mb-1 mt-1 uppercase">
             Brimas Website
           </h2>
 
           {/* Rive Teddy Animation Container */}
           <div ref={teddyContainerRef} className="w-[340px] h-[340px] md:w-[310px] md:h-[310px] relative flex items-center justify-center z-10 drop-shadow-2xl overflow-visible -mb-8 md:mb-0 md:-mt-4">
             <RiveComponent className="w-full h-full min-w-[220px] min-h-[220px]" />
+
+            {/* Organic Golden Emerald Glass Pedestal Base beneath Teddy's Feet */}
+            <div className="absolute bottom-6 md:bottom-5 left-1/2 -translate-x-1/2 w-[220px] sm:w-[240px] md:w-[250px] h-[28px] md:h-[32px] rounded-[100%] bg-gradient-to-r from-amber-500/35 via-emerald-400/40 to-amber-500/35 border border-amber-300/50 shadow-[0_0_30px_rgba(245,158,11,0.5)] backdrop-blur-sm -z-10 flex items-center justify-center">
+              <div className="w-[85%] h-[70%] rounded-[100%] bg-amber-500/30 blur-xs border border-white/30 animate-pulse" />
+            </div>
+
+            {/* Floating Soft Shadow beneath Teddy */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[160px] md:w-[180px] h-[16px] rounded-[100%] bg-black/50 blur-md -z-20" />
           </div>
         </div>
 
