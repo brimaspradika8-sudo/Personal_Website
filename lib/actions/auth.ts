@@ -30,10 +30,20 @@ export async function syncUserToDatabase(email: string, name?: string | null) {
   }
 }
 
+function getSiteUrl(): string {
+  let url =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.NEXT_PUBLIC_VERCEL_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+  url = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+  return url.endsWith("/") ? url.slice(0, -1) : url;
+}
+
 // --- Login dengan Google (OAuth) ---
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = getSiteUrl();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -56,7 +66,7 @@ export async function signInWithGoogle() {
 // --- Login dengan GitHub (OAuth) ---
 export async function signInWithGithub() {
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = getSiteUrl();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
@@ -110,13 +120,14 @@ export async function signUpWithPassword(formData: FormData) {
   const password = formData.get("password") as string;
 
   const supabase = await createClient();
+  const siteUrl = getSiteUrl();
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name: name }, // disimpan di user_metadata Supabase
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });
 
