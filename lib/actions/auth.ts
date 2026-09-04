@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---
 // Sesuaikan nama field (name, email, dst) dengan schema.prisma kamu.
@@ -30,25 +31,53 @@ export async function syncUserToDatabase(email: string, name?: string | null) {
   }
 }
 
-function getSiteUrl(): string {
-  let url =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.NEXT_PUBLIC_VERCEL_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+async function getSiteUrl(): Promise<string> {
+  // 1. Cek NEXT_PUBLIC_SITE_URL jika di-set manual
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    let url = process.env.NEXT_PUBLIC_SITE_URL.trim();
+    url = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+    return url.endsWith("/") ? url.slice(0, -1) : url;
+  }
 
-  url = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
-  return url.endsWith("/") ? url.slice(0, -1) : url;
+  // 2. Ambil dari request headers jika dipanggil saat HTTP request
+  try {
+    const headersList = await headers();
+    const origin = headersList.get("origin");
+    if (origin && !origin.includes("localhost")) {
+      return origin.endsWith("/") ? origin.slice(0, -1) : origin;
+    }
+
+    const host = headersList.get("x-forwarded-host") || headersList.get("host");
+    const proto = headersList.get("x-forwarded-proto") || "https";
+    if (host && !host.includes("localhost")) {
+      const fullUrl = `${proto}://${host}`;
+      return fullUrl.endsWith("/") ? fullUrl.slice(0, -1) : fullUrl;
+    }
+  } catch (e) {
+    // Fallback jika di luar request context
+  }
+
+  // 3. Cek VERCEL_URL dari environment otomatis Vercel
+  if (process.env.VERCEL_URL) {
+    let url = process.env.VERCEL_URL.trim();
+    url = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+    return url.endsWith("/") ? url.slice(0, -1) : url;
+  }
+
+  // 4. Default untuk pengembangan lokal
+  return "http://localhost:3000";
 }
 
 // --- Login dengan Google (OAuth) ---
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  const siteUrl = getSiteUrl();
+  const siteUrl = await getSiteUrl();
+  const redirectUrl = `${siteUrl}/auth/callback`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${siteUrl}/auth/callback`,
+      redirectTo: redirectUrl,
     },
   });
 
@@ -66,12 +95,13 @@ export async function signInWithGoogle() {
 // --- Login dengan GitHub (OAuth) ---
 export async function signInWithGithub() {
   const supabase = await createClient();
-  const siteUrl = getSiteUrl();
+  const siteUrl = await getSiteUrl();
+  const redirectUrl = `${siteUrl}/auth/callback`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: `${siteUrl}/auth/callback`,
+      redirectTo: redirectUrl,
     },
   });
 
@@ -120,7 +150,7 @@ export async function signUpWithPassword(formData: FormData) {
   const password = formData.get("password") as string;
 
   const supabase = await createClient();
-  const siteUrl = getSiteUrl();
+  const siteUrl = await getSiteUrl();
 
   const { data, error } = await supabase.auth.signUp({
     email,
