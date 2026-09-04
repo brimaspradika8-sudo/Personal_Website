@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { syncUserToDatabase } from "@/lib/actions/auth";
+import { getSupabaseEnv } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -10,11 +11,14 @@ export async function GET(request: Request) {
 
   if (code) {
     const cookieStore = await cookies();
-    const supabaseUrl =
-      process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      "https://ojrnfhdxilsecmqqbfrp.supabase.co";
-    const supabaseAnonKey =
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-anon-key";
+    const { supabaseUrl, supabaseAnonKey, isConfigured } = getSupabaseEnv();
+
+    if (!isConfigured) {
+      const msg = encodeURIComponent(
+        "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) tidak valid atau belum di-set di Dashboard Vercel."
+      );
+      return NextResponse.redirect(`${origin}/login?error=${msg}`);
+    }
 
     // Create the redirect response upfront so cookies are attached to it
     const response = NextResponse.redirect(`${origin}${next}`);
@@ -41,7 +45,11 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("[OAuth Callback Error] exchangeCodeForSession failed:", error.message, error);
-      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`);
+      let errMsg = error.message;
+      if (errMsg.toLowerCase().includes("invalid api key")) {
+        errMsg = "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) tidak valid atau belum di-set di Dashboard Vercel.";
+      }
+      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(errMsg)}`);
     }
 
     if (data.user?.email) {

@@ -1,9 +1,20 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getSupabaseEnv } from "@/lib/supabase/client";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+
+function formatAuthError(errorMsg: string): string {
+  if (
+    errorMsg.toLowerCase().includes("invalid api key") ||
+    errorMsg.toLowerCase().includes("invalid_api_key")
+  ) {
+    return "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) tidak valid atau belum di-set di Dashboard Vercel.";
+  }
+  return errorMsg;
+}
 
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---
 // Sesuaikan nama field (name, email, dst) dengan schema.prisma kamu.
@@ -70,6 +81,11 @@ async function getSiteUrl(): Promise<string> {
 
 // --- Login dengan Google (OAuth) ---
 export async function signInWithGoogle() {
+  const { isConfigured } = getSupabaseEnv();
+  if (!isConfigured) {
+    return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+  }
+
   const supabase = await createClient();
   const siteUrl = await getSiteUrl();
   const redirectUrl = `${siteUrl}/auth/callback`;
@@ -82,7 +98,7 @@ export async function signInWithGoogle() {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: formatAuthError(error.message) };
   }
 
   if (data.url) {
@@ -94,6 +110,11 @@ export async function signInWithGoogle() {
 
 // --- Login dengan GitHub (OAuth) ---
 export async function signInWithGithub() {
+  const { isConfigured } = getSupabaseEnv();
+  if (!isConfigured) {
+    return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+  }
+
   const supabase = await createClient();
   const siteUrl = await getSiteUrl();
   const redirectUrl = `${siteUrl}/auth/callback`;
@@ -106,7 +127,7 @@ export async function signInWithGithub() {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: formatAuthError(error.message) };
   }
 
   if (data.url) {
@@ -121,6 +142,11 @@ export async function signInWithPassword(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
+  const { isConfigured } = getSupabaseEnv();
+  if (!isConfigured) {
+    return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -129,7 +155,7 @@ export async function signInWithPassword(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: formatAuthError(error.message) };
   }
 
   // Pastikan user juga ada di tabel User sendiri
@@ -149,6 +175,11 @@ export async function signUpWithPassword(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
+  const { isConfigured } = getSupabaseEnv();
+  if (!isConfigured) {
+    return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+  }
+
   const supabase = await createClient();
   const siteUrl = await getSiteUrl();
 
@@ -162,7 +193,7 @@ export async function signUpWithPassword(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: formatAuthError(error.message) };
   }
 
   // Jika email confirmation di Supabase dimatikan, session langsung aktif

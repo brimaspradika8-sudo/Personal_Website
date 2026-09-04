@@ -1,12 +1,26 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useRive, useStateMachineInput } from "@rive-app/react-canvas";
 import { signInWithGoogle, signInWithGithub, signInWithPassword } from "@/lib/actions/auth";
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const urlError = searchParams.get("error");
+
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (urlError) {
+      let msg = decodeURIComponent(urlError);
+      if (msg.toLowerCase().includes("invalid api key") || msg.toLowerCase().includes("invalid_api_key")) {
+        msg = "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) tidak valid atau belum di-set di Dashboard Vercel.";
+      }
+      setError(msg);
+    }
+  }, [urlError]);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
@@ -524,3 +538,12 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0B132B]" />}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
