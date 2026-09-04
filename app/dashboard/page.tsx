@@ -18,9 +18,15 @@ export default async function DashboardPage() {
     try {
       const dbQuery = prisma.user.findUnique({
         where: { email: user.email },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          created_at: true,
+        },
       });
       const timeout = new Promise<null>((resolve) =>
-        setTimeout(() => resolve(null), 4000)
+        setTimeout(() => resolve(null), 1500)
       );
 
       dbUser = await Promise.race([dbQuery, timeout]);

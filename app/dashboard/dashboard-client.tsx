@@ -55,6 +55,7 @@ interface DashboardClientProps {
 export default function DashboardClient({ user, dbUser }: DashboardClientProps) {
   // Theme mode: "day" | "night"
   const [mode, setMode] = useState<"day" | "night">("day");
+  const [loadSecondaryBg, setLoadSecondaryBg] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,9 +82,17 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         document.documentElement.classList.remove("dark");
       }
     }
+
+    // Delay loading secondary background GIF to prevent 38.7MB concurrent download on page start
+    const timer = setTimeout(() => {
+      setLoadSecondaryBg(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleToggleMode = () => {
+    setLoadSecondaryBg(true);
     setMode((prev) => {
       const nextMode = prev === "day" ? "night" : "day";
       if (nextMode === "night") {
@@ -128,52 +137,60 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       {/* ========================================================================= */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
         {/* Desktop Day Landscape GIF (768px+) */}
-        <Image
-          src="/animations/day-landscape.gif"
-          alt="Daylight Landscape Desktop"
-          fill
-          priority
-          unoptimized
-          className={`hidden md:block object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
-            isNight ? "opacity-0" : "opacity-100"
-          }`}
-        />
+        {(!isNight || loadSecondaryBg) && (
+          <Image
+            src="/animations/day-landscape.gif"
+            alt="Daylight Landscape Desktop"
+            fill
+            priority={!isNight}
+            unoptimized
+            className={`hidden md:block object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+              isNight ? "opacity-0" : "opacity-100"
+            }`}
+          />
+        )}
 
         {/* Desktop Night Landscape GIF (768px+) */}
-        <Image
-          src="/animations/night-landscape.gif"
-          alt="Night Landscape Desktop"
-          fill
-          priority
-          unoptimized
-          className={`hidden md:block object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
-            isNight ? "opacity-100" : "opacity-0"
-          }`}
-        />
+        {(isNight || loadSecondaryBg) && (
+          <Image
+            src="/animations/night-landscape.gif"
+            alt="Night Landscape Desktop"
+            fill
+            priority={isNight}
+            unoptimized
+            className={`hidden md:block object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+              isNight ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
 
         {/* Mobile Day Landscape GIF (<768px) */}
-        <Image
-          src="/animations/day-landscape-mobile.gif"
-          alt="Daylight Landscape Mobile"
-          fill
-          priority
-          unoptimized
-          className={`block md:hidden object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
-            isNight ? "opacity-0" : "opacity-100"
-          }`}
-        />
+        {(!isNight || loadSecondaryBg) && (
+          <Image
+            src="/animations/day-landscape-mobile.gif"
+            alt="Daylight Landscape Mobile"
+            fill
+            priority={!isNight}
+            unoptimized
+            className={`block md:hidden object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+              isNight ? "opacity-0" : "opacity-100"
+            }`}
+          />
+        )}
 
         {/* Mobile Night Landscape GIF (<768px) */}
-        <Image
-          src="/animations/night-landscape-mobile.gif"
-          alt="Night Landscape Mobile"
-          fill
-          priority
-          unoptimized
-          className={`block md:hidden object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
-            isNight ? "opacity-100" : "opacity-0"
-          }`}
-        />
+        {(isNight || loadSecondaryBg) && (
+          <Image
+            src="/animations/night-landscape-mobile.gif"
+            alt="Night Landscape Mobile"
+            fill
+            priority={isNight}
+            unoptimized
+            className={`block md:hidden object-cover w-full h-full transition-opacity duration-1000 ease-in-out ${
+              isNight ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
 
         {/* Ambient Overlay Gradients for Optimal Text & Card Legibility */}
         <div
