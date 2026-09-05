@@ -16,26 +16,48 @@ function formatAuthError(errorMsg: string): string {
   return errorMsg;
 }
 
+import { revalidatePath } from "next/cache";
+
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---
 // Sesuaikan nama field (name, email, dst) dengan schema.prisma kamu.
-export async function syncUserToDatabase(email: string, name?: string | null) {
+export async function syncUserToDatabase(
+  email: string,
+  name?: string | null,
+  avatar?: string | null
+) {
   try {
-    const dbPromise = prisma.user.upsert({
+    const existingUser = await prisma.user.findUnique({
       where: { email },
-      update: {
-        ...(name ? { name } : {}),
-      },
-      create: {
-        email,
-        name: name ?? email.split("@")[0],
-      },
+      select: { id: true, name: true, avatar: true },
     });
 
-    const timeoutPromise = new Promise<null>((resolve) =>
-      setTimeout(() => resolve(null), 4000)
-    );
+    if (!existingUser) {
+      // First-time signup / first login with Google: save Google avatar ONCE as default in DB
+      return await prisma.user.create({
+        data: {
+          email,
+          name: name ?? email.split("@")[0],
+          avatar: avatar ?? null,
+        },
+      });
+    }
 
-    return await Promise.race([dbPromise, timeoutPromise]);
+    // Existing user: ONLY update avatar if existingUser.avatar is currently empty/null.
+    // Once user sets their own photo in DB, Google OAuth MUST NOT override it!
+    const shouldUpdateAvatar = !existingUser.avatar && Boolean(avatar);
+    const shouldUpdateName = !existingUser.name && Boolean(name);
+
+    if (shouldUpdateAvatar || shouldUpdateName) {
+      return await prisma.user.update({
+        where: { email },
+        data: {
+          ...(shouldUpdateName && name ? { name } : {}),
+          ...(shouldUpdateAvatar && avatar ? { avatar } : {}),
+        },
+      });
+    }
+
+    return existingUser;
   } catch (error) {
     console.warn("Failed or timed out syncing user to database:", error);
     return null;
@@ -162,7 +184,8 @@ export async function signInWithPassword(formData: FormData) {
   if (data.user?.email) {
     await syncUserToDatabase(
       data.user.email,
-      data.user.user_metadata?.full_name
+      data.user.user_metadata?.full_name,
+      data.user.user_metadata?.avatar_url
     );
   }
 
@@ -212,7 +235,7 @@ export async function signOut() {
 }
 
 // --- Update Profile (Nama & Avatar) ---
-export async function updateUserProfile(name: string, avatarUrl: string) {
+export async function updateUserProfile(name: string, avatarUrl?: string) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -227,7 +250,7 @@ export async function updateUserProfile(name: string, avatarUrl: string) {
     data: {
       full_name: name,
       name: name,
-      avatar_url: avatarUrl,
+      ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
     },
   });
 
@@ -236,8 +259,116 @@ export async function updateUserProfile(name: string, avatarUrl: string) {
   }
 
   if (user.email) {
-    await syncUserToDatabase(user.email, name);
+    await syncUserToDatabase(user.email, name, avatarUrl);
   }
 
+  revalidatePath("/dashboard");
+  revalidatePath("/profile");
+
   return { success: true };
+}
+
+// --- Upload Avatar File ke Supabase Storage & Database ---
+export async function uploadAvatarFile(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Harus login terlebih dahulu untuk mengunggah foto profil." };
+  }
+
+  const file = formData.get("avatarFile") as File | null;
+  if (!file || file.size === 0) {
+    return { error: "Silakan pilih file gambar avatar terlebih dahulu." };
+  }
+
+  if (!file.type.startsWith("image/")) {
+    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." };
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: "Ukuran file terlalu besar. Maksimal 5MB." };
+  }
+
+  try {
+    const fileExt = file.name.split(".").pop() || "png";
+    const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
+    const fileName = `${user.id}/${Date.now()}.${sanitizedExt}`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const fileBuffer = Buffer.from(arrayBuffer);
+
+    let { data: uploadData, error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, fileBuffer, {
+        contentType: file.type,
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.warn("Upload to 'avatars' bucket failed, attempting fallback:", uploadError.message);
+
+      if (
+        uploadError.message.includes("Bucket not found") ||
+        uploadError.message.includes("not_found") ||
+        uploadError.message.includes("does not exist")
+      ) {
+        const { error: createBucketError } = await supabase.storage.createBucket("avatars", {
+          public: true,
+        });
+
+        if (!createBucketError) {
+          const { error: retryError } = await supabase.storage
+            .from("avatars")
+            .upload(fileName, fileBuffer, {
+              contentType: file.type,
+              upsert: true,
+            });
+
+          if (retryError) {
+            return { error: `Gagal mengunggah foto ke Storage: ${retryError.message}` };
+          }
+        } else {
+          return { error: "Bucket Storage 'avatars' belum ada di Supabase. Silakan buat bucket 'avatars' di Supabase Dashboard -> Storage." };
+        }
+      } else {
+        return { error: `Gagal mengunggah foto ke Supabase Storage: ${uploadError.message}` };
+      }
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(fileName, {
+        transform: {
+          width: 250,
+          quality: 80,
+        },
+      });
+
+    const publicUrl = publicUrlData?.publicUrl;
+
+    if (!publicUrl) {
+      return { error: "Gagal mendapatkan Public URL foto profil dari Supabase Storage." };
+    }
+
+    const currentName =
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email?.split("@")[0] ||
+      "User";
+
+    const updateRes = await updateUserProfile(currentName, publicUrl);
+
+    if (updateRes.error) {
+      return { error: updateRes.error };
+    }
+
+    return { success: true, avatarUrl: publicUrl };
+  } catch (err: any) {
+    console.error("Unexpected error in uploadAvatarFile:", err);
+    return { error: err?.message || "Terjadi kesalahan saat mengunggah foto profil." };
+  }
 }

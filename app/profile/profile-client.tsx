@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   User as UserIcon,
   Mail,
@@ -28,8 +29,9 @@ import {
   AlertCircle,
   ExternalLink,
   MessageSquare,
+  UploadCloud,
 } from "lucide-react";
-import { signOut, updateUserProfile } from "@/lib/actions/auth";
+import { signOut, updateUserProfile, uploadAvatarFile } from "@/lib/actions/auth";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
@@ -53,12 +55,15 @@ interface ProfileClientProps {
     id: string;
     email: string;
     name: string | null;
+    avatar: string | null;
     created_at: Date | string;
   } | null;
 }
 
 export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const { lang, toggleLang, dict } = useLanguage();
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<"info" | "edit" | "settings" | "help">("info");
 
   // Form State for Edit Profile
@@ -67,11 +72,17 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
     "";
-  const defaultAvatar = user?.user_metadata?.avatar_url || "/images/avatar.png";
+  const userAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url;
+  const defaultAvatar =
+    userAvatar && !userAvatar.includes("dicebear")
+      ? userAvatar
+      : "/images/avatar.png";
 
   const [name, setName] = useState(defaultName);
   const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Settings State
@@ -83,11 +94,19 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     return "day";
   });
 
+  const [headerImgError, setHeaderImgError] = useState(false);
+
+  useEffect(() => {
+    setHeaderImgError(false);
+  }, [user?.id, dbUser?.id, avatarUrl]);
+
   const userName =
     dbUser?.name ||
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
     (user ? "User Brimas Retreat" : "Pengunjung Publik (Tamu)");
+  
+  const initialLetter = userName ? userName.charAt(0).toUpperCase() : "U";
   
   const userEmail = user?.email || "Belum Login (Sesi Tamu)";
   const avatarSrc = avatarUrl || "/images/avatar.png";
@@ -108,6 +127,26 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     "https://api.dicebear.com/7.x/thumbs/svg?seed=LandscapeDesign",
   ];
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setMessage({ type: "error", text: "File yang dipilih harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: "error", text: "Ukuran file foto terlalu besar (Maksimal 5MB)." });
+      return;
+    }
+
+    setSelectedFile(file);
+    const localPreview = URL.createObjectURL(file);
+    setAvatarUrl(localPreview);
+    setMessage({ type: "success", text: `Foto '${file.name}' dipilih. Klik 'Simpan Perubahan' di bawah untuk mengunggah ke Storage.` });
+  };
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -115,15 +154,41 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     setMessage(null);
 
     soundFx.playClick();
-    const res = await updateUserProfile(name, avatarUrl);
-    setSaving(false);
+    let finalAvatarUrl = avatarUrl;
 
-    if (res.error) {
-      setMessage({ type: "error", text: res.error });
+    if (selectedFile) {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("avatarFile", selectedFile);
+
+      const uploadRes = await uploadAvatarFile(formData);
+      setUploading(false);
+
+      if (uploadRes.error) {
+        setSaving(false);
+        setMessage({ type: "error", text: uploadRes.error });
+        return;
+      }
+
+      if (uploadRes.avatarUrl) {
+        finalAvatarUrl = uploadRes.avatarUrl;
+        setAvatarUrl(finalAvatarUrl);
+        setSelectedFile(null);
+      }
     } else {
-      setMessage({ type: "success", text: "Profil dan Avatar berhasil diperbarui!" });
-      setTimeout(() => setMessage(null), 4000);
+      const res = await updateUserProfile(name, finalAvatarUrl);
+      if (res.error) {
+        setSaving(false);
+        setMessage({ type: "error", text: res.error });
+        return;
+      }
     }
+
+    setSaving(false);
+    setMessage({ type: "success", text: "Profil & Foto Profil berhasil tersimpan secara permanen!" });
+    router.refresh();
+
+    setTimeout(() => setMessage(null), 5000);
   };
 
   const handleToggleSfx = () => {
@@ -151,10 +216,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* Background Nature Landscape */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
         <Image
-          src="/animations/day-landscape.gif"
+          src="/animations/day-landscape.webp"
           alt="Nature Background"
           fill
-          unoptimized
           priority
           className="object-cover w-full h-full opacity-40 filter brightness-90 contrast-105 blur-xs scale-105"
         />
@@ -186,14 +250,21 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           
           {/* Header User Banner */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 pb-6 border-b border-white/10 text-center sm:text-left">
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-amber-400/60 shadow-[0_0_25px_rgba(245,158,11,0.4)] shrink-0">
-              <Image
-                src={avatarSrc}
-                alt={userName}
-                fill
-                className="object-cover"
-                unoptimized
-              />
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-amber-400/60 shadow-[0_0_25px_rgba(245,158,11,0.4)] shrink-0 bg-stone-900 flex items-center justify-center font-extrabold text-amber-300">
+              {avatarSrc && !headerImgError ? (
+                <Image
+                  src={avatarSrc}
+                  alt={userName}
+                  fill
+                  className="object-cover"
+                  unoptimized={avatarSrc.startsWith("http")}
+                  onError={() => setHeaderImgError(true)}
+                />
+              ) : (
+                <span className="w-full h-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 text-stone-950 flex items-center justify-center font-extrabold text-xl sm:text-2xl uppercase shadow-inner">
+                  {initialLetter}
+                </span>
+              )}
             </div>
 
             <div className="space-y-1.5 flex-1">
@@ -396,10 +467,51 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     />
                   </div>
 
+                  {/* Upload Foto Dari Perangkat (Komputer/HP) */}
+                  <div className="space-y-2.5 p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <label className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2">
+                      <UploadCloud className="w-4 h-4 text-amber-400" />
+                      <span>Upload Foto Dari Perangkat (Komputer / HP)</span>
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileSelect}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-4 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs sm:text-sm border border-amber-400/30 flex items-center justify-center gap-2 backdrop-blur-md transition-all cursor-pointer"
+                      >
+                        <UploadCloud className="w-4 h-4" />
+                        <span>{selectedFile ? `Terpilih: ${selectedFile.name}` : "Pilih File Foto Baru..."}</span>
+                      </button>
+                      {selectedFile && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedFile(null);
+                            setAvatarUrl(defaultAvatar);
+                            setMessage(null);
+                          }}
+                          className="text-xs text-rose-400 hover:text-rose-300 font-semibold underline text-center sm:text-left cursor-pointer"
+                        >
+                          Batal
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-400">
+                      Format didukung: JPG, PNG, WEBP, GIF (Maksimal 5MB). Foto akan diunggah secara aman ke Supabase Storage & tersimpan di database.
+                    </p>
+                  </div>
+
                   {/* Preset Avatars Selection */}
                   <div className="space-y-3">
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-                      Pilih Preset Avatar Lanskap
+                      Atau Pilih Preset Avatar Lanskap
                     </label>
                     <div className="flex flex-wrap gap-3">
                       {presetAvatars.map((url, idx) => (
@@ -438,11 +550,17 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
                   <button
                     type="submit"
-                    disabled={saving}
+                    disabled={saving || uploading}
                     className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-stone-950 font-extrabold text-sm shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     <Save className="w-4 h-4" />
-                    <span>{saving ? "Menyimpan Perubahan..." : "Simpan Perubahan Profil"}</span>
+                    <span>
+                      {uploading
+                        ? "Mengunggah Foto ke Storage..."
+                        : saving
+                        ? "Menyimpan Perubahan..."
+                        : "Simpan Perubahan Profil"}
+                    </span>
                   </button>
                 </form>
               )}

@@ -37,6 +37,8 @@ model Article {
   updated_at DateTime   @updatedAt
   reactions  Reaction[]
   comments   Comment[]
+
+  @@index([created_at(sort: Desc)])
 }
 
 model Reaction {
@@ -50,6 +52,7 @@ model Reaction {
   article Article @relation(fields: [article_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, article_id])
+  @@index([article_id])
 }
 
 model Comment {
@@ -62,6 +65,10 @@ model Comment {
 
   user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   article Article @relation(fields: [article_id], references: [id], onDelete: Cascade)
+
+  @@index([article_id])
+  @@index([user_id])
+  @@index([created_at(sort: Desc)])
 }
 
 model Project {
@@ -74,4 +81,6 @@ model Project {
   repository_url String?
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
+
+  @@index([created_at(sort: Desc)])
 }

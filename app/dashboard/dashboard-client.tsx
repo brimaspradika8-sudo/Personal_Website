@@ -5,7 +5,6 @@ import Image from "next/image";
 import { signOut } from "@/lib/actions/auth";
 import {
   Mountain,
-  TreePine,
   Sun,
   Moon,
   Search,
@@ -31,11 +30,17 @@ import {
   VolumeX,
 } from "lucide-react";
 
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
 import CommandPalette from "@/components/CommandPalette";
 import ProjectModal, { ProjectData } from "@/components/ProjectModal";
+
+const ThemeToggle = dynamic(() => import("@/components/ThemeToggle"), {
+  ssr: false,
+  loading: () => <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-amber-500/10 animate-pulse shrink-0" />,
+});
 
 interface DashboardClientProps {
   user: {
@@ -57,6 +62,7 @@ interface DashboardClientProps {
     id: string;
     email: string;
     name: string | null;
+    avatar: string | null;
     created_at: Date | string;
   } | null;
   dbProjects?: Array<{
@@ -84,11 +90,17 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   const [sfxEnabled, setSfxEnabled] = useState(true);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
 
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
   // Load initial theme mode - Default is ALWAYS "day" (siang hari)
   useEffect(() => {
     setSfxEnabled(soundFx.getIsEnabled());
     const handleOpen = () => setCmdPaletteOpen(true);
     window.addEventListener("open-command-palette", handleOpen);
+
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
 
     const savedMode = localStorage.getItem("landscape_mode");
     if (savedMode === "night") {
@@ -100,13 +112,8 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       document.documentElement.classList.remove("dark");
     }
 
-    // Delay loading secondary background GIF to prevent 38.7MB concurrent download on page start
-    const timer = setTimeout(() => {
-      setLoadSecondaryBg(true);
-    }, 1500);
-
     return () => {
-      clearTimeout(timer);
+      window.removeEventListener("resize", checkMobile);
       window.removeEventListener("open-command-palette", handleOpen);
     };
   }, []);
@@ -165,19 +172,34 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   };
 
   const handleCopyEmail = () => {
-    const emailToCopy = user?.email || "brimaspradika8@gmail.com";
+    const emailToCopy = "brimaspradika8@gmail.com";
     navigator.clipboard.writeText(emailToCopy);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
-  const userName =
+  // Fixed Portfolio Owner Identity (Hero Section, Bio & Main Content)
+  const ownerName = "BRIMAS PRADIKA UTAMA";
+  const ownerAvatar = "/images/avatar.png";
+  const ownerEmail = "brimaspradika8@gmail.com";
+
+  // Dynamic Logged-in User Identity (Navbar Avatar Button & Auth Status Panel Only)
+  const navUserName =
     dbUser?.name ||
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
-    "Brimas Pradika Utama";
-  const userEmail = user?.email || "brimaspradika8@gmail.com";
-  const avatarSrc = user?.user_metadata?.avatar_url || "/images/avatar.png";
+    user?.email?.split("@")[0] ||
+    "Guest User";
+  const navUserEmail = user?.email || "Belum Login (Guest)";
+  const rawAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url;
+  const [avatarImgError, setAvatarImgError] = useState(false);
+
+  useEffect(() => {
+    setAvatarImgError(false);
+  }, [user?.id, dbUser?.id, rawAvatar]);
+
+  const initialLetter = navUserName ? navUserName.charAt(0).toUpperCase() : "U";
+  const showNavAvatarImg = Boolean(rawAvatar) && !avatarImgError;
 
   const isNight = mode === "night";
 
@@ -187,61 +209,56 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       {/* ========================================================================= */}
       {/* FULL-BLEED LANDSCAPE BACKGROUND WITH SILKY SMOOTH GPU-ACCELERATED CROSSFADE */}
       {/* ========================================================================= */}
+      {/* ========================================================================= */}
+      {/* FULL-BLEED LANDSCAPE BACKGROUND WITH SILKY SMOOTH GPU-ACCELERATED CROSSFADE */}
+      {/* ========================================================================= */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none transform-gpu">
-        {/* Desktop Day Landscape (768px+) */}
+        {/* Day Landscape Video */}
         {(!isNight || loadSecondaryBg) && (
-          <Image
-            src="/animations/day-landscape.gif"
-            alt="Daylight Landscape Desktop"
-            fill
-            priority={!isNight}
-            unoptimized
-            className={`hidden md:block object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
+          <video
+            key={isMobile ? "day-mobile" : "day-desktop"}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            className={`absolute inset-0 object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
-          />
+          >
+            <source
+              src={
+                isMobile
+                  ? "/animations/day-landscape-mobile.mp4"
+                  : "/animations/day-landscape.mp4"
+              }
+              type="video/mp4"
+            />
+          </video>
         )}
 
-        {/* Desktop Night Landscape (768px+) */}
+        {/* Night Landscape Video */}
         {(isNight || loadSecondaryBg) && (
-          <Image
-            src="/animations/night-landscape.gif"
-            alt="Night Landscape Desktop"
-            fill
-            priority={isNight}
-            unoptimized
-            className={`hidden md:block object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
+          <video
+            key={isMobile ? "night-mobile" : "night-desktop"}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            className={`absolute inset-0 object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
-          />
-        )}
-
-        {/* Mobile Day Landscape (<768px) */}
-        {(!isNight || loadSecondaryBg) && (
-          <Image
-            src="/animations/day-landscape-mobile.gif"
-            alt="Daylight Landscape Mobile"
-            fill
-            priority={!isNight}
-            unoptimized
-            className={`block md:hidden object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
-              isNight ? "opacity-0" : "opacity-100"
-            }`}
-          />
-        )}
-
-        {/* Mobile Night Landscape (<768px) */}
-        {(isNight || loadSecondaryBg) && (
-          <Image
-            src="/animations/night-landscape-mobile.gif"
-            alt="Night Landscape Mobile"
-            fill
-            priority={isNight}
-            unoptimized
-            className={`block md:hidden object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
-              isNight ? "opacity-100" : "opacity-0"
-            }`}
-          />
+          >
+            <source
+              src={
+                isMobile
+                  ? "/animations/night-landscape-mobile.mp4"
+                  : "/animations/night-landscape.mp4"
+              }
+              type="video/mp4"
+            />
+          </video>
         )}
 
         {/* Ambient Overlay Gradients for Optimal Text & Card Legibility */}
@@ -264,57 +281,50 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             : "bg-slate-950/60 backdrop-blur-md border-b border-white/10"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4 relative">
           
-          {/* Logo Mark + Brand Name */}
+          {/* 1. BRIMAS (Brand Logo Text - Far Left) */}
           <a
             href="#hero"
-            className="flex items-center gap-2 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-xl p-1 shrink-0"
+            className="flex items-center group focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-xl p-1 shrink-0"
           >
-            <div className={`p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border backdrop-blur-md transition-all duration-300 ${
-              isNight
-                ? "bg-indigo-950/60 border-indigo-400/40 text-amber-300 shadow-indigo-500/20"
-                : "bg-amber-950/40 border-amber-300/40 text-amber-300 shadow-amber-500/20"
-            } shadow-lg group-hover:scale-105`}>
-              <TreePine className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <span className="hidden sm:inline-block font-display text-base sm:text-xl font-bold tracking-wider text-white drop-shadow-md leading-none">
+            <span className="font-display text-lg sm:text-xl font-extrabold tracking-wider text-white drop-shadow-md leading-none hover:text-amber-300 transition-colors">
               BRIMAS
             </span>
           </a>
 
-          {/* Desktop Navigation Links: Dashboard, Project, Blog, Profile */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+          {/* 2. Desktop Navigation Links: Beranda, Project, Blog, About (Perfectly Centered) */}
+          <nav className="hidden md:flex items-center justify-center gap-4 lg:gap-8 text-sm font-semibold absolute left-1/2 -translate-x-1/2">
             <a
               href="#hero"
-              className="text-slate-200 hover:text-amber-300 transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
-              Dashboard
+              Beranda
             </a>
             <a
               href="#projects"
-              className="text-slate-200 hover:text-amber-300 transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
               Project
             </a>
             <a
               href="#about"
-              className="text-slate-200 hover:text-amber-300 transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
               Blog
             </a>
             <a
-              href="/profile"
-              className="text-amber-300 hover:text-amber-200 font-bold transition-colors py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-md"
+              href="#about"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
-              Profile
+              About
             </a>
           </nav>
 
-          {/* Far Right: Search Button + Day/Night Pill Switch Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* 3. Far Right Controls: Search, Switch Tema, Profile Avatar */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
             
-            {/* Search / Command Palette Trigger Button (Ctrl + K) */}
+            {/* Search Button (Ctrl + K) */}
             <button
               onClick={() => {
                 soundFx.playClick();
@@ -354,6 +364,32 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                 )}
               </div>
             </button>
+
+            {/* Profile Avatar Button (Pojok Kanan - Always Rendered as link to /profile) */}
+            <a
+              href="/profile"
+              onClick={() => soundFx.playClick()}
+              className="flex items-center group focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-full transition-transform hover:scale-105 shrink-0"
+              title={`Profil Saya (${navUserName})`}
+              aria-label="Profil Saya"
+            >
+              <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] shrink-0 bg-stone-900 flex items-center justify-center font-extrabold text-amber-300">
+                {showNavAvatarImg ? (
+                  <Image
+                    src={rawAvatar!}
+                    alt={navUserName}
+                    fill
+                    className="object-cover"
+                    unoptimized={rawAvatar!.startsWith("http")}
+                    onError={() => setAvatarImgError(true)}
+                  />
+                ) : (
+                  <span className="w-full h-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 text-stone-950 flex items-center justify-center font-extrabold text-xs sm:text-sm uppercase shadow-inner">
+                    {initialLetter}
+                  </span>
+                )}
+              </div>
+            </a>
 
           </div>
         </div>
@@ -403,12 +439,11 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 blur-md opacity-80 group-hover:opacity-100 transition duration-500 animate-pulse" />
             <div className="relative w-20 h-20 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white dark:border-amber-200/80 shadow-2xl">
               <Image
-                src={avatarSrc}
-                alt={userName}
+                src={ownerAvatar}
+                alt={ownerName}
                 fill
                 priority
                 className="object-cover"
-                unoptimized={avatarSrc.startsWith("http")}
               />
             </div>
           </div>
@@ -421,7 +456,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             </div>
             
             <h1 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight sm:tracking-wider text-white drop-shadow-lg uppercase leading-tight md:whitespace-nowrap max-w-full">
-              {userName}
+              {ownerName}
             </h1>
             
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-950/80 border border-amber-400/50 text-amber-300 text-xs sm:text-base font-bold backdrop-blur-md shadow-xl shadow-black/50 max-w-full">
@@ -477,7 +512,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
               </a>
 
               <a
-                href={`mailto:${userEmail}`}
+                href={`mailto:${ownerEmail}`}
                 className="p-3 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 aria-label="Email"
                 title="Email"
@@ -884,7 +919,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
               <p className="text-xs text-slate-300 font-medium">{dict.auth.userEmail}</p>
-              <p className="text-xs font-semibold text-white truncate">{userEmail}</p>
+              <p className="text-xs font-semibold text-white truncate">{navUserEmail}</p>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
@@ -935,7 +970,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
             <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
               <a
-                href={`mailto:${userEmail}`}
+                href={`mailto:${ownerEmail}`}
                 className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-bold text-sm shadow-xl shadow-amber-500/20 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <Mail className="w-4 h-4" />
@@ -959,7 +994,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       <footer className="relative z-10 border-t border-white/10 backdrop-blur-md bg-stone-950/60 py-8 pb-24 md:pb-8 text-center text-xs text-slate-300">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="font-display font-medium text-amber-200/90">
-            © {new Date().getFullYear()} {userName} — Personal Portfolio & Retreat. All rights reserved.
+            © {new Date().getFullYear()} {ownerName} — Personal Portfolio & Retreat. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a href="#hero" className="hover:text-amber-300 transition-colors">{dict.nav.home}</a>

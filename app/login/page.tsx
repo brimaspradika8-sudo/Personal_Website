@@ -3,9 +3,14 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useRive, useStateMachineInput } from "@rive-app/react-canvas";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { signInWithGoogle, signInWithGithub, signInWithPassword } from "@/lib/actions/auth";
+
+const RiveTeddyAnimation = dynamic(() => import("@/components/RiveTeddyAnimation"), {
+  ssr: false,
+  loading: () => <div className="w-[280px] h-[280px] rounded-full bg-amber-500/10 animate-pulse" />,
+});
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -32,167 +37,25 @@ function LoginForm() {
   const teddyContainerRef = useRef<HTMLDivElement>(null);
   const toggleBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Animation frame reference & lerp targets for smooth numLook eye movement
-  const targetLookRef = useRef(50);
-  const currentLookRef = useRef(50);
-  const animFrameRef = useRef<number | null>(null);
-
-  const STATE_MACHINE_NAME = "Login Machine";
-
-  // Load Rive animation with explicit stateMachine name 'Login Machine'
-  const { RiveComponent, rive } = useRive(
-    {
-      src: "/animations/auth-teddy.riv",
-      stateMachines: STATE_MACHINE_NAME,
-      autoplay: true,
-    },
-    {
-      shouldResizeCanvasToContainer: true,
-    }
-  );
-
-  const activeStateMachineName = rive?.stateMachineNames?.[0] || STATE_MACHINE_NAME;
-
-  useEffect(() => {
-    if (rive) {
-      console.log("[Rive Debug] Asset Loaded!", {
-        stateMachines: rive.stateMachineNames,
-        selected: activeStateMachineName,
-      });
-    }
-  }, [rive, activeStateMachineName]);
-
-  // Primary State Machine Inputs
-  const isFocusInput = useStateMachineInput(rive, activeStateMachineName, "isFocus");
-  const numLookInput = useStateMachineInput(rive, activeStateMachineName, "numLook");
-  const isPrivateFieldInput = useStateMachineInput(rive, activeStateMachineName, "isPrivateField");
-  const isPrivateFieldShowInput = useStateMachineInput(rive, activeStateMachineName, "isPrivateFieldShow");
-  const successTriggerInput = useStateMachineInput(rive, activeStateMachineName, "successTrigger");
-  const failTriggerInput = useStateMachineInput(rive, activeStateMachineName, "failTrigger");
-
-  // Safe setter helpers
-  const setFocusState = (focused: boolean) => {
-    if (isFocusInput) isFocusInput.value = focused;
-  };
-
-  const setNumLookValue = (val: number) => {
-    const clamped = Math.min(Math.max(val, 0), 100);
-    if (numLookInput) numLookInput.value = clamped;
-  };
-
-  const setPrivateFieldState = (covered: boolean) => {
-    if (isPrivateFieldInput) isPrivateFieldInput.value = covered;
-  };
-
-  const setPrivateFieldShowState = (peeking: boolean) => {
-    if (isPrivateFieldShowInput) isPrivateFieldShowInput.value = peeking;
-  };
-
-  const fireSuccessTrigger = () => {
-    if (successTriggerInput) successTriggerInput.fire();
-  };
-
-  const fireFailTrigger = () => {
-    if (failTriggerInput) failTriggerInput.fire();
-  };
-
-  // Ultra-responsive lerp animation loop for numLook (eye cursor tracking)
-  const updateSmoothNumLook = (targetVal: number) => {
-    targetLookRef.current = targetVal;
-    if (animFrameRef.current !== null) return;
-
-    const step = () => {
-      const diff = targetLookRef.current - currentLookRef.current;
-      if (Math.abs(diff) > 0.1) {
-        currentLookRef.current += diff * 0.45; // ultra-responsive lerp factor
-        setNumLookValue(currentLookRef.current);
-        animFrameRef.current = requestAnimationFrame(step);
-      } else {
-        currentLookRef.current = targetLookRef.current;
-        setNumLookValue(currentLookRef.current);
-        if (animFrameRef.current !== null) {
-          cancelAnimationFrame(animFrameRef.current);
-          animFrameRef.current = null;
-        }
-      }
-    };
-    animFrameRef.current = requestAnimationFrame(step);
-  };
-
-  // Ultra-Responsive Mouse Cursor Tracking
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      // Pause eye tracking if password field is focused (hands covering eyes)
-      if (isPasswordFocused || isPrivateFieldInput?.value) return;
-
-      let targetNumLook = 50;
-
-      if (teddyContainerRef.current) {
-        const rect = teddyContainerRef.current.getBoundingClientRect();
-        const teddyCenterX = rect.left + rect.width / 2;
-        const deltaX = e.clientX - teddyCenterX;
-        // Map deltaX from -450px to +450px to 0..100
-        targetNumLook = Math.min(Math.max(((deltaX + 450) / 900) * 100, 0), 100);
-      } else {
-        const mouseRatio = e.clientX / window.innerWidth;
-        targetNumLook = Math.min(Math.max(mouseRatio * 100, 0), 100);
-      }
-
-      setFocusState(true);
-      updateSmoothNumLook(targetNumLook);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [isPasswordFocused, isPrivateFieldInput]);
-
-  // Clean up animation frame on unmount
-  useEffect(() => {
-    return () => {
-      if (animFrameRef.current !== null) {
-        cancelAnimationFrame(animFrameRef.current);
-      }
-    };
-  }, []);
-
   // Event Handlers for Email Input
   const handleEmailFocus = () => {
     setIsPasswordFocused(false);
-    setFocusState(true);
-    setPrivateFieldState(false);
-    setPrivateFieldShowState(false);
-    updateSmoothNumLook(Math.min(emailText.length * 3.3, 100));
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const text = e.target.value;
-    setEmailText(text);
+    setEmailText(e.target.value);
     setIsPasswordFocused(false);
-    setFocusState(true);
-    setPrivateFieldState(false);
-    setPrivateFieldShowState(false);
-    updateSmoothNumLook(Math.min(text.length * 3.3, 100));
   };
 
-  const handleEmailBlur = () => {
-    // Keep eyes open and responsive
-  };
+  const handleEmailBlur = () => {};
 
   // Event Handlers for Password Input
   const handlePasswordFocus = () => {
     setIsPasswordFocused(true);
-    setFocusState(false);
-    setPrivateFieldState(true);
-    setPrivateFieldShowState(showPassword);
   };
 
   const handlePasswordChange = () => {
     setIsPasswordFocused(true);
-    setFocusState(false);
-    setPrivateFieldState(true);
-    setPrivateFieldShowState(showPassword);
   };
 
   const handlePasswordBlur = (e?: React.FocusEvent<HTMLInputElement>) => {
@@ -200,17 +63,11 @@ function LoginForm() {
       return;
     }
     setIsPasswordFocused(false);
-    setPrivateFieldState(false);
-    setPrivateFieldShowState(false);
   };
 
   // Toggle Password Visibility (Eye icon button)
   const togglePasswordVisibility = () => {
-    setShowPassword((prev) => {
-      const nextShow = !prev;
-      setPrivateFieldShowState(nextShow);
-      return nextShow;
-    });
+    setShowPassword((prev) => !prev);
   };
 
   // Form Submission
@@ -224,12 +81,6 @@ function LoginForm() {
     if (result?.error) {
       setError(result.error);
       setIsPasswordFocused(false);
-      setPrivateFieldState(false);
-      setPrivateFieldShowState(false);
-      setFocusState(false);
-      fireFailTrigger();
-    } else {
-      fireSuccessTrigger();
     }
   }
 
@@ -243,12 +94,7 @@ function LoginForm() {
       setError(result.error);
       setGoogleLoading(false);
       setIsPasswordFocused(false);
-      setPrivateFieldState(false);
-      setPrivateFieldShowState(false);
-      setFocusState(false);
-      fireFailTrigger();
     } else if (result?.url) {
-      fireSuccessTrigger();
       window.location.href = result.url;
     }
   }
@@ -263,12 +109,7 @@ function LoginForm() {
       setError(result.error);
       setGithubLoading(false);
       setIsPasswordFocused(false);
-      setPrivateFieldState(false);
-      setPrivateFieldShowState(false);
-      setFocusState(false);
-      fireFailTrigger();
     } else if (result?.url) {
-      fireSuccessTrigger();
       window.location.href = result.url;
     }
   }
@@ -335,10 +176,9 @@ function LoginForm() {
       {/* Full-Bleed Vivid Nature Landscape Background Layer */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
         <Image
-          src="/animations/day-landscape.gif"
+          src="/animations/day-landscape.webp"
           alt="Lush Nature Landscape Background"
           fill
-          unoptimized
           priority
           className="object-cover w-full h-full opacity-85 filter brightness-105 contrast-105 scale-105"
         />
@@ -371,7 +211,13 @@ function LoginForm() {
 
           {/* Rive Teddy Animation Container */}
           <div ref={teddyContainerRef} className="w-[340px] h-[340px] md:w-[310px] md:h-[310px] relative flex items-center justify-center z-10 drop-shadow-2xl overflow-visible -mb-8 md:mb-0 md:-mt-4">
-            <RiveComponent className="w-full h-full min-w-[220px] min-h-[220px]" />
+            <RiveTeddyAnimation
+              emailText={emailText}
+              isPasswordFocused={isPasswordFocused}
+              showPassword={showPassword}
+              error={error}
+              success={false}
+            />
 
             {/* Organic Golden Emerald Glass Pedestal Base beneath Teddy's Feet */}
             <div className="absolute bottom-6 md:bottom-5 left-1/2 -translate-x-1/2 w-[220px] sm:w-[240px] md:w-[250px] h-[28px] md:h-[32px] rounded-[100%] bg-gradient-to-r from-amber-500/35 via-emerald-400/40 to-amber-500/35 border border-amber-300/50 shadow-[0_0_30px_rgba(245,158,11,0.5)] backdrop-blur-sm -z-10 flex items-center justify-center">

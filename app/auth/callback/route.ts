@@ -59,8 +59,12 @@ export async function GET(request: Request) {
         data.user.user_metadata?.preferred_username ??
         data.user.user_metadata?.user_name;
 
+      const avatar =
+        data.user.user_metadata?.avatar_url ??
+        data.user.user_metadata?.picture;
+
       try {
-        await syncUserToDatabase(data.user.email, name);
+        await syncUserToDatabase(data.user.email, name, avatar);
       } catch (err) {
         console.warn("OAuth callback user sync failed:", err);
       }

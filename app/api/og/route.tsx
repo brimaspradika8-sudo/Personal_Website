@@ -2,8 +2,14 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const title = searchParams.get("title") || "Brimas Pradika Utama";
+    const subtitle = searchParams.get("subtitle") || "Full-Stack Architect & High-Scalable Web Systems";
+    const badge = searchParams.get("badge") || "🌲 BRIMAS PERSONAL RETREAT & PORTFOLIO";
+    const tagline = searchParams.get("tagline") || "Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka bergaya lanskap alam.";
+
     return new ImageResponse(
       (
         <div
@@ -15,7 +21,7 @@ export async function GET() {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#0c0a09",
-            backgroundImage: "radial-gradient(circle at center, rgba(245, 158, 11, 0.15) 0%, transparent 70%)",
+            backgroundImage: "radial-gradient(circle at center, rgba(245, 158, 11, 0.18) 0%, transparent 75%)",
             padding: "40px 60px",
             fontFamily: "sans-serif",
             color: "#ffffff",
@@ -27,7 +33,7 @@ export async function GET() {
             style={{
               position: "absolute",
               inset: "20px",
-              border: "1px solid rgba(251, 191, 36, 0.3)",
+              border: "1px solid rgba(251, 191, 36, 0.35)",
               borderRadius: "24px",
             }}
           />
@@ -43,20 +49,20 @@ export async function GET() {
               backgroundColor: "rgba(245, 158, 11, 0.2)",
               border: "1px solid rgba(251, 191, 36, 0.4)",
               color: "#fcd34d",
-              fontSize: "18px",
+              fontSize: "16px",
               fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: "2px",
               marginBottom: "24px",
             }}
           >
-            <span>🌲 BRIMAS PERSONAL RETREAT & PORTFOLIO</span>
+            <span>{badge}</span>
           </div>
 
           {/* Title */}
           <h1
             style={{
-              fontSize: "64px",
+              fontSize: title.length > 30 ? "48px" : "64px",
               fontWeight: 900,
               textAlign: "center",
               margin: 0,
@@ -66,34 +72,35 @@ export async function GET() {
               lineHeight: 1.1,
             }}
           >
-            Brimas Pradika Utama
+            {title}
           </h1>
 
           {/* Subtitle */}
           <p
             style={{
-              fontSize: "28px",
+              fontSize: "26px",
               color: "#fbbf24",
               fontWeight: 700,
               marginTop: "16px",
               marginBottom: "20px",
+              textAlign: "center",
             }}
           >
-            Full-Stack Architect & High-Scalable Web Systems
+            {subtitle}
           </p>
 
           {/* Tagline */}
           <p
             style={{
-              fontSize: "20px",
+              fontSize: "18px",
               color: "#cbd5e1",
               textAlign: "center",
-              maxWidth: "800px",
+              maxWidth: "850px",
               margin: 0,
               lineHeight: 1.4,
             }}
           >
-            Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka bergaya lanskap alam.
+            {tagline}
           </p>
         </div>
       ),
