@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "@/lib/actions/auth";
 import {
   Mountain,
   Sun,
@@ -12,24 +11,16 @@ import {
   Menu,
   X,
   Mail,
-  ExternalLink,
-  Code2,
   Sparkles,
   FolderGit2,
-  LogOut,
-  LogIn,
-  Copy,
-  Check,
-  ShieldCheck,
   ArrowUpRight,
   Send,
-  GitBranch,
-  Activity,
-  Briefcase,
   Compass,
   Volume2,
   VolumeX,
   User,
+  Check,
+  Copy,
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -94,6 +85,43 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
 
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [mousePos, setMousePos] = useState({ x: -200, y: -200 });
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    soundFx.playClick();
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3000);
+  };
+
+  const fullName = "BRIMAS PRADIKA UTAMA";
+  const [typedText, setTypedText] = useState("");
+  const [isTypingDone, setIsTypingDone] = useState(false);
+
+  useEffect(() => {
+    let index = 0;
+    setTypedText("");
+    setIsTypingDone(false);
+
+    const timer = setInterval(() => {
+      index++;
+      setTypedText(fullName.slice(0, index));
+      if (index >= fullName.length) {
+        setIsTypingDone(true);
+        clearInterval(timer);
+      }
+    }, 70);
+
+    return () => clearInterval(timer);
+  }, [fullName]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   // Load initial theme mode - Default is ALWAYS "day" (siang hari)
   useEffect(() => {
@@ -125,10 +153,12 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
     const newState = soundFx.toggleMute();
     setSfxEnabled(newState);
     if (newState) soundFx.playClick();
+    showToast(newState ? (lang === "id" ? "Efek Suara Diaktifkan 🔊" : "Sound FX Enabled 🔊") : (lang === "id" ? "Efek Suara Dimatikan 🔇" : "Sound FX Muted 🔇"));
   };
 
   const handleToggleLang = () => {
     toggleLang();
+    showToast(lang === "id" ? "Language switched to English 🌐" : "Bahasa diubah ke Indonesia 🌐");
   };
 
   const handleToggleMode = () => {
@@ -142,6 +172,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
         document.documentElement.classList.remove("dark");
         localStorage.setItem("landscape_mode", "day");
       }
+      showToast(nextMode === "night" ? (lang === "id" ? "Mode Malam Hari Diaktifkan 🌙" : "Night Mode Activated 🌙") : (lang === "id" ? "Mode Siang Hari Diaktifkan ☀️" : "Day Mode Activated ☀️"));
       return nextMode;
     });
   };
@@ -469,18 +500,15 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             {/* LEFT COLUMN: Main Text Content & Actions (md:col-span-7) */}
             <div className="md:col-span-7 space-y-4 sm:space-y-6 text-left order-1">
               
-              {/* 1. Small Gold Accent Badge (Sentence Case, No Sparkle Icon) */}
+              {/* 1. Small Gold Accent Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-bold tracking-wide backdrop-blur-md shadow-lg shadow-black/40 animate-[fadeIn_0.4s_ease-out_forwards]">
-                <span>Full-Stack Architect</span>
+                <span>{dict.hero.badge}</span>
               </div>
 
-              {/* 2. Mobile Profile Photo (Circle Shape, Shown ONLY on Mobile < 768px Right After Badge) */}
+              {/* 2. Mobile Profile Photo */}
               <div className="block md:hidden py-1 animate-[fadeIn_0.5s_ease-out_100ms_forwards]">
                 <div className="relative group w-32 h-32 sm:w-36 sm:h-36">
-                  {/* Soft Gold Radial Backdrop Glow */}
                   <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/30 via-yellow-500/20 to-amber-600/10 blur-xl -z-10" />
-                  
-                  {/* Circle Photo Container */}
                   <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-amber-300/80 shadow-[0_0_25px_rgba(245,158,11,0.3)] bg-stone-950">
                     <Image
                       src={ownerAvatar}
@@ -490,34 +518,38 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                       sizes="144px"
                       className="object-cover filter brightness-95 contrast-105"
                     />
-                    {/* Dark Vignette Overlay Mask to Soften Blue Backdrop into Warm Dark Theme */}
                     <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/40 mix-blend-multiply pointer-events-none" />
                     <div className="absolute inset-0 bg-stone-950/20 pointer-events-none" />
                   </div>
                 </div>
               </div>
 
-              {/* 3. Headline: Intro Title & Name with Unified Single Color */}
+              {/* 3. Headline */}
               <div className="space-y-1 sm:space-y-2 animate-[fadeIn_0.5s_ease-out_150ms_forwards]">
                 <p className="text-xs sm:text-sm md:text-base font-mono font-semibold uppercase tracking-widest text-amber-300/90">
-                  Full-Stack Architect &amp; AI Systems Developer
+                  {dict.hero.role}
                 </p>
-                <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wide uppercase leading-tight text-white drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)]">
-                  BRIMAS PRADIKA UTAMA
+                <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wide uppercase leading-tight text-white drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)] inline-flex items-center min-h-[1.2em]">
+                  <span>{typedText}</span>
+                  <span
+                    className={`inline-block w-[3px] sm:w-[5px] h-[0.75em] ml-1.5 bg-amber-400 shadow-[0_0_12px_#f59e0b] rounded-full ${
+                      isTypingDone ? "animate-pulse" : "animate-ping"
+                    }`}
+                  />
                 </h1>
               </div>
 
               {/* 4. Sub-headline */}
               <h2 className="text-sm sm:text-base md:text-xl font-semibold text-amber-200/90 tracking-tight animate-[fadeIn_0.5s_ease-out_200ms_forwards]">
-                Merancang sistem backend terdistribusi, platform AI modern, dan antarmuka web yang presisi.
+                {dict.hero.subheadline}
               </h2>
 
-              {/* 5. Paragraf Deskripsi Singkat */}
+              {/* 5. Paragraf Deskripsi */}
               <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-xl leading-relaxed font-sans animate-[fadeIn_0.5s_ease-out_250ms_forwards]">
-                Fokus pada performa arsitektur berskala tinggi, integrasi model AI cerdas, serta pengalaman antarmuka pengguna yang bersih dan intuitif.
+                {dict.hero.description}
               </p>
 
-              {/* 6. Dua Tombol CTA & Social Links (Target Tap Area Min 44x44px untuk Accessibility) */}
+              {/* 6. Dua Tombol CTA & Social Links */}
               <div className="flex flex-wrap items-center justify-start gap-3 sm:gap-4 pt-1 animate-[fadeIn_0.5s_ease-out_300ms_forwards]">
                 <a
                   href="#projects"
@@ -525,7 +557,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                   className="min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-stone-950 font-extrabold text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 transition-all duration-200 transform hover:scale-[1.03] hover:brightness-110 active:scale-95 cursor-pointer"
                 >
                   <FolderGit2 className="w-4 h-4" />
-                  <span>Lihat Project</span>
+                  <span>{dict.hero.viewProjects}</span>
                 </a>
 
                 <a
@@ -534,10 +566,10 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                   className="min-h-[44px] px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-amber-400/50 font-bold text-xs sm:text-sm backdrop-blur-md flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 cursor-pointer"
                 >
                   <Mail className="w-4 h-4 text-amber-300" />
-                  <span>Hubungi Saya</span>
+                  <span>{dict.hero.contactMe}</span>
                 </a>
 
-                {/* Social Icons (Min 44x44px Tap Target Size) */}
+                {/* Social Icons */}
                 <div className="flex items-center gap-2.5">
                   <a
                     href="https://github.com/brimaspradika8-sudo"
@@ -566,10 +598,10 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                 </div>
               </div>
 
-              {/* 7. Technologies Stack Row (Horizontal Scrollable on Mobile) */}
+              {/* 7. Technologies Stack Row */}
               <div className="pt-4 border-t border-white/10 space-y-2 animate-[fadeIn_0.5s_ease-out_350ms_forwards]">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  TEKNOLOGI &amp; ARSITEKTUR
+                  {dict.hero.techHeader}
                 </p>
                 <div className="flex flex-nowrap md:flex-wrap items-center justify-start gap-2 overflow-x-auto no-scrollbar pb-1">
                   {["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Prisma", "TailwindCSS"].map((tech) => (
@@ -585,16 +617,10 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
             </div>
 
-            {/* RIGHT COLUMN: Desktop Profile Picture (Circle Shape, Shown ONLY on Desktop md:flex) */}
+            {/* RIGHT COLUMN: Desktop Profile Picture */}
             <div className="hidden md:flex md:col-span-5 relative justify-end items-center order-2 py-4 animate-[fadeIn_0.6s_ease-out_150ms_forwards]">
-              
-              {/* Soft Gold Radial Backdrop Glow */}
-              <div className="absolute w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-gradient-to-tr from-amber-500/20 via-yellow-500/15 to-amber-600/10 blur-3xl -z-10" />
-
-              {/* Circle Profile Image Frame with Warm Dark Vignette & Gold Accent Border */}
               <div className="relative group">
                 <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-full overflow-hidden border-3 border-amber-300/70 shadow-[0_0_45px_rgba(245,158,11,0.25)] bg-stone-950">
-                  
                   <Image
                     src={ownerAvatar}
                     alt={ownerName}
@@ -603,123 +629,17 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                     sizes="(max-width: 768px) 288px, 320px"
                     className="object-cover transition-transform duration-500 group-hover:scale-105 filter brightness-95 contrast-105"
                   />
-                  
-                  {/* Dark Vignette Overlay Mask */}
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/40 mix-blend-multiply pointer-events-none" />
                   <div className="absolute inset-0 bg-stone-950/20 pointer-events-none" />
                 </div>
               </div>
-
             </div>
 
           </div>
         </section>
 
         {/* ========================================================================= */}
-        {/* 2. SECTION STATS (Organic Glassmorphism Cards)                           */}
-        {/* ========================================================================= */}
-        <section id="about" className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
-            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-wide flex items-center gap-3">
-              <Activity className="w-6 h-6 text-amber-400" />
-              <span>{dict.stats.title}</span>
-            </h2>
-            <span className="text-xs font-semibold text-amber-200/80 tracking-widest uppercase">
-              {dict.stats.badge}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            
-            {/* Stat Card 1 */}
-            {/* REPLACE: Update this metric with live dynamic API / DB query later */}
-            <div className={`backdrop-blur-md border rounded-3xl p-6 shadow-xl transition-all duration-300 group ${
-              isNight
-                ? "bg-slate-950/40 border-indigo-500/30 hover:border-indigo-400/60"
-                : "bg-amber-950/30 border-amber-300/30 hover:border-amber-400/60"
-            }`}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                  {dict.stats.projects}
-                </span>
-                <div className="p-2.5 rounded-2xl bg-white/10 text-amber-300 group-hover:scale-110 transition-transform">
-                  <FolderGit2 className="w-4 h-4" />
-                </div>
-              </div>
-              <p className="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                18+
-              </p>
-              <p className="text-xs text-slate-300 mt-1">Aplikasi & platform aktif</p>
-            </div>
-
-            {/* Stat Card 2 */}
-            {/* REPLACE: Update this metric with live dynamic API / DB query later */}
-            <div className={`backdrop-blur-md border rounded-3xl p-6 shadow-xl transition-all duration-300 group ${
-              isNight
-                ? "bg-slate-950/40 border-indigo-500/30 hover:border-indigo-400/60"
-                : "bg-amber-950/30 border-amber-300/30 hover:border-amber-400/60"
-            }`}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                  Pengalaman
-                </span>
-                <div className="p-2.5 rounded-2xl bg-white/10 text-amber-300 group-hover:scale-110 transition-transform">
-                  <Briefcase className="w-4 h-4" />
-                </div>
-              </div>
-              <p className="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                4+ Thn
-              </p>
-              <p className="text-xs text-slate-300 mt-1">Pengembangan software</p>
-            </div>
-
-            {/* Stat Card 3 */}
-            {/* REPLACE: Update this metric with live dynamic API / DB query later */}
-            <div className={`backdrop-blur-md border rounded-3xl p-6 shadow-xl transition-all duration-300 group ${
-              isNight
-                ? "bg-slate-950/40 border-indigo-500/30 hover:border-indigo-400/60"
-                : "bg-amber-950/30 border-amber-300/30 hover:border-amber-400/60"
-            }`}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                  Artikel & Riset
-                </span>
-                <div className="p-2.5 rounded-2xl bg-white/10 text-amber-300 group-hover:scale-110 transition-transform">
-                  <Code2 className="w-4 h-4" />
-                </div>
-              </div>
-              <p className="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                25+
-              </p>
-              <p className="text-xs text-slate-300 mt-1">Publikasi & wawasan</p>
-            </div>
-
-            {/* Stat Card 4 */}
-            {/* REPLACE: Update this metric with live dynamic API / DB query later */}
-            <div className={`backdrop-blur-md border rounded-3xl p-6 shadow-xl transition-all duration-300 group ${
-              isNight
-                ? "bg-slate-950/40 border-indigo-500/30 hover:border-indigo-400/60"
-                : "bg-amber-950/30 border-amber-300/30 hover:border-amber-400/60"
-            }`}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                  GitHub Commits
-                </span>
-                <div className="p-2.5 rounded-2xl bg-white/10 text-amber-300 group-hover:scale-110 transition-transform">
-                  <GitBranch className="w-4 h-4" />
-                </div>
-              </div>
-              <p className="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                1,200+
-              </p>
-              <p className="text-xs text-slate-300 mt-1">Kontribusi tahunan</p>
-            </div>
-
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 3. SECTION PROJECTS (Restyled Landscape Warm/Cool Accent Palette)       */}
+        {/* 2. SECTION PROJECTS (Koleksi Project - Segera Hadir)                    */}
         {/* ========================================================================= */}
         <section id="projects" className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
@@ -744,305 +664,50 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             </a>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            
-            {/* Project Card 1: DevPulse Analytics */}
-            <div className={`backdrop-blur-md border rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col group ${
-              isNight
-                ? "bg-slate-950/50 border-indigo-500/30 hover:border-indigo-400/60"
-                : "bg-stone-950/40 border-amber-300/30 hover:border-amber-400/60"
-            }`}>
-              <div className="relative w-full h-48 bg-stone-900 overflow-hidden">
-                <Image
-                  src="/images/project1.png"
-                  alt="DevPulse Analytics"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 to-transparent" />
-              </div>
+          {/* Segera Hadir (Coming Soon) Showcase Banner Card */}
+          <div className={`relative overflow-hidden backdrop-blur-xl border rounded-3xl p-8 sm:p-12 shadow-2xl transition-all duration-300 text-center flex flex-col items-center justify-center space-y-5 ${
+            isNight
+              ? "bg-slate-950/60 border-indigo-500/30"
+              : "bg-stone-950/60 border-amber-300/30"
+          }`}>
+            {/* Ambient Glow */}
+            <div className="absolute w-72 h-72 rounded-full bg-gradient-to-tr from-amber-500/15 via-yellow-500/10 to-amber-600/5 blur-3xl pointer-events-none" />
 
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="font-display text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
-                    DevPulse Analytics
-                  </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
-                    Dashboard analitik real-time untuk memantau metrik performa server, visualisasi data interaktif, dan notifikasi anomali.
-                  </p>
-                </div>
-
-                <div className="space-y-4 pt-3 border-t border-white/10">
-                  {/* Tech Badges */}
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/30">
-                      Next.js 16
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
-                      TypeScript
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-orange-500/20 text-orange-200 border border-orange-400/30">
-                      Prisma
-                    </span>
-                  </div>
-
-                  {/* Links */}
-                  <div className="flex items-center justify-between text-xs font-semibold">
-                    <a
-                      href="https://github.com/brimaspradika8-sudo"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-300 hover:text-white flex items-center gap-1.5"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                      </svg>
-                      <span>Code</span>
-                    </a>
-                    <button
-                      onClick={() => {
-                        soundFx.playClick();
-                        setSelectedProject({
-                          id: "1",
-                          title: "DevPulse Analytics",
-                          description: "Dashboard analitik real-time untuk memantau metrik performa server, visualisasi data interaktif, dan notifikasi anomali.",
-                          thumbnail: "/images/project1.png",
-                          demo_url: "#projects",
-                          repository_url: "https://github.com/brimaspradika8-sudo",
-                          techStack: ["Next.js 16", "TypeScript", "Prisma", "Tailwind CSS", "Chart.js"],
-                        });
-                      }}
-                      onMouseEnter={() => soundFx.playHover()}
-                      className="text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Preview</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {/* Badge Segera Hadir */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold tracking-widest uppercase backdrop-blur-md shadow-md">
+              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+              <span>{dict.projects.comingSoonBadge}</span>
             </div>
 
-            {/* Project Card 2: OmniCommerce AI */}
-            <div className={`backdrop-blur-md border rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col group ${
-              isNight
-                ? "bg-slate-950/50 border-indigo-500/30 hover:border-indigo-400/60"
-                : "bg-stone-950/40 border-amber-300/30 hover:border-amber-400/60"
-            }`}>
-              <div className="relative w-full h-48 bg-stone-900 overflow-hidden">
-                <Image
-                  src="/images/project2.png"
-                  alt="OmniCommerce AI"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 to-transparent" />
-              </div>
-
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="font-display text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
-                    OmniCommerce AI
-                  </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
-                    Platform belanja e-commerce cerdas dengan rekomendasi AI otomatis dan checkout pembayaran instan.
-                  </p>
-                </div>
-
-                <div className="space-y-4 pt-3 border-t border-white/10">
-                  {/* Tech Badges */}
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
-                      Supabase
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/30">
-                      React 19
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-orange-500/20 text-orange-200 border border-orange-400/30">
-                      OpenAI
-                    </span>
-                  </div>
-
-                  {/* Links */}
-                  <div className="flex items-center justify-between text-xs font-semibold">
-                    <a
-                      href="https://github.com/brimaspradika8-sudo"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-300 hover:text-white flex items-center gap-1.5"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                      </svg>
-                      <span>Code</span>
-                    </a>
-                    <button
-                      onClick={() => {
-                        soundFx.playClick();
-                        setSelectedProject({
-                          id: "2",
-                          title: "OmniCommerce AI",
-                          description: "Platform belanja e-commerce cerdas dengan rekomendasi AI otomatis dan checkout pembayaran instan.",
-                          thumbnail: "/images/project2.png",
-                          demo_url: "#projects",
-                          repository_url: "https://github.com/brimaspradika8-sudo",
-                          techStack: ["Supabase", "React 19", "OpenAI", "Tailwind CSS"],
-                        });
-                      }}
-                      onMouseEnter={() => soundFx.playHover()}
-                      className="text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Preview</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {/* Title & Description */}
+            <div className="space-y-2 max-w-xl">
+              <h3 className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-wide">
+                {dict.projects.comingSoonTitle}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                {dict.projects.comingSoonDesc}
+              </p>
             </div>
 
-            {/* Project Card 3: Cloud Sync Workspace */}
-            <div className={`backdrop-blur-md border rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col group ${
-              isNight
-                ? "bg-slate-950/50 border-indigo-500/30 hover:border-indigo-400/60"
-                : "bg-stone-950/40 border-amber-300/30 hover:border-amber-400/60"
-            }`}>
-              <div className="relative w-full h-48 bg-gradient-to-br from-amber-950 via-stone-900 to-indigo-950 p-6 flex flex-col justify-between overflow-hidden">
-                <div className="flex items-center justify-between z-10">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase tracking-widest">
-                    Cloud Sync Realtime
-                  </span>
-                  <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
-                </div>
-                <div className="space-y-1 z-10">
-                  <p className="text-xs text-amber-200 font-medium">Multiplayer Collaboration</p>
-                  <p className="font-display text-xl font-extrabold text-white">SyncBoard Retreat</p>
-                </div>
-                <div className="absolute -bottom-10 -right-10 w-44 h-44 rounded-full bg-amber-500/20 blur-2xl pointer-events-none" />
-              </div>
-
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="font-display text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
-                    SyncBoard Retreat
-                  </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
-                    Ruang kerja kolaboratif dengan animasi lanskap interaktif, kursor multiplayer langsung, dan berbagi snippet.
-                  </p>
-                </div>
-
-                <div className="space-y-4 pt-3 border-t border-white/10">
-                  {/* Tech Badges */}
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/30">
-                      Next.js
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">
-                      WebSockets
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
-                      PostgreSQL
-                    </span>
-                  </div>
-
-                  {/* Links */}
-                  <div className="flex items-center justify-between text-xs font-semibold">
-                    <a
-                      href="https://github.com/brimaspradika8-sudo"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-300 hover:text-white flex items-center gap-1.5"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                      </svg>
-                      <span>Code</span>
-                    </a>
-                    <a
-                      href="#projects"
-                      className="text-amber-300 hover:underline flex items-center gap-1"
-                    >
-                      <span>Preview</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 4. SYSTEM STATUS & AUTHENTICATION INTEGRATION PANEL                      */}
-        {/* ========================================================================= */}
-        <section className="backdrop-blur-md bg-stone-950/40 border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
-          <div className="flex items-center justify-between pb-4 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-2xl bg-white/10 text-amber-300 border border-white/20">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-display font-bold text-lg text-white">{dict.auth.title}</h3>
-                <p className="text-xs text-slate-300">Supabase Auth Session & Prisma PostgreSQL Connection</p>
-              </div>
-            </div>
-
-            {user ? (
-              <form action={signOut}>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-2xl text-xs font-bold text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-400/30 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-rose-400"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>{dict.auth.logout}</span>
-                </button>
-              </form>
-            ) : (
+            {/* GitHub Action Link */}
+            <div className="pt-2">
               <a
-                href="/login"
-                className="px-4 py-2 rounded-2xl text-xs font-bold text-amber-300 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                href="https://github.com/brimaspradika8-sudo"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => soundFx.playClick()}
+                className="min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-stone-950 font-extrabold text-xs sm:text-sm shadow-xl shadow-amber-500/20 inline-flex items-center justify-center gap-2 transition-all duration-200 transform hover:scale-[1.03] active:scale-95 cursor-pointer"
               >
-                <LogIn className="w-4 h-4" />
-                <span>Login / Masuk</span>
+                <FolderGit2 className="w-4 h-4" />
+                <span>{dict.projects.githubMonitor}</span>
+                <ArrowUpRight className="w-4 h-4" />
               </a>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-              <p className="text-xs text-slate-300 font-medium">{dict.auth.userEmail}</p>
-              <p className="text-xs font-semibold text-white truncate">{navUserEmail}</p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-              <p className="text-xs text-slate-300 font-medium">{dict.auth.dbStatus}</p>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs font-semibold text-emerald-300">
-                  {dbUser ? "Connected (#" + dbUser.id + ")" : "Active"}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-300 font-medium">Supabase User ID</p>
-                {user?.id && (
-                  <button
-                    onClick={handleCopyId}
-                    className="text-xs text-amber-300 hover:underline font-bold"
-                  >
-                    {copiedId ? "Tersalin!" : "Salin"}
-                  </button>
-                )}
-              </div>
-              <p className="text-[11px] font-mono text-slate-200 truncate">{user?.id || "Guest (Public Session)"}</p>
             </div>
           </div>
         </section>
 
         {/* ========================================================================= */}
-        {/* 5. SECTION CONTACT / RETREAT CTA (Bottom Section)                         */}
+        {/* 3. SECTION CONTACT / RETREAT CTA                                         */}
         {/* ========================================================================= */}
         <section id="contact" className="relative overflow-hidden backdrop-blur-xl bg-gradient-to-r from-amber-950/60 via-stone-950/70 to-indigo-950/70 p-8 sm:p-12 rounded-3xl border border-amber-300/30 text-white shadow-2xl text-center sm:text-left">
           
@@ -1050,20 +715,20 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             <div className="space-y-3 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-amber-300 border border-white/20 backdrop-blur-md">
                 <Send className="w-3.5 h-3.5" />
-                <span>Mari Terhubung</span>
+                <span>{lang === "id" ? "Mari Terhubung" : "Let's Connect"}</span>
               </div>
               <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-wide">
                 {dict.contact.title}
               </h2>
               <p className="text-slate-200 text-xs sm:text-sm leading-relaxed">
-                Saya selalu terbuka untuk diskusi project baru, pengembangan aplikasi berskala besar, dan konsultasi teknis.
+                {dict.contact.desc}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
               <a
                 href={`mailto:${ownerEmail}`}
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-bold text-sm shadow-xl shadow-amber-500/20 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-white"
+                className="min-h-[44px] px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-bold text-sm shadow-xl shadow-amber-500/20 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <Mail className="w-4 h-4" />
                 <span>{dict.contact.btn}</span>
@@ -1071,16 +736,33 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
               <button
                 onClick={handleCopyEmail}
-                className="px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-white"
+                className="min-h-[44px] px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer"
               >
                 {copiedEmail ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
-                <span>{copiedEmail ? "Email Tersalin!" : "Salin Email"}</span>
+                <span>{copiedEmail ? dict.contact.copied : dict.contact.copyEmail}</span>
               </button>
             </div>
           </div>
         </section>
 
       </main>
+
+      {/* UI 1: Ambient Gold Cursor Glow Follower (Desktop Only) */}
+      <div
+        className="pointer-events-none fixed z-30 hidden md:block w-80 h-80 rounded-full bg-amber-500/10 blur-3xl transition-transform duration-200 ease-out -translate-x-1/2 -translate-y-1/2"
+        style={{
+          left: `${mousePos.x}px`,
+          top: `${mousePos.y}px`,
+        }}
+      />
+
+      {/* UX 2: Floating Toast Notification Overlay */}
+      {toastMsg && (
+        <div className="fixed bottom-24 right-6 z-50 flex items-center gap-2.5 px-5 py-3.5 rounded-2xl bg-stone-950/95 border border-amber-400/60 text-amber-300 text-xs sm:text-sm font-extrabold shadow-2xl backdrop-blur-xl animate-bounce">
+          <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
+          <span>{toastMsg}</span>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 backdrop-blur-md bg-stone-950/60 py-8 pb-24 md:pb-8 text-center text-xs text-slate-300">

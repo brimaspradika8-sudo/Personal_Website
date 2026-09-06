@@ -9,38 +9,71 @@
     "login": "Masuk"
   },
   "hero": {
+    "badge": "Full-Stack Architect",
     "greeting": "Selamat Datang di Portofolio",
-    "role": "Full-Stack Architect & Personal Portfolio",
-    "description": "Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka yang elegan dengan lanskap teknologi terkini.",
-    "exploreBtn": "Jelajahi Project",
-    "contactBtn": "Hubungi Saya"
-  },
-  "stats": {
-    "title": "Jejak & Ringkasan Metrik",
-    "badge": "Professional Milestones",
-    "projects": "Project Selesai",
-    "commits": "Total Commits",
-    "articles": "Artikel Diterbitkan",
-    "experience": "Tahun Pengalaman"
+    "role": "Full-Stack Architect & AI Systems Developer",
+    "subheadline": "Merancang sistem backend terdistribusi, platform AI modern, dan antarmuka web yang presisi.",
+    "description": "Fokus pada performa arsitektur berskala tinggi, integrasi model AI cerdas, serta pengalaman antarmuka pengguna yang bersih dan intuitif.",
+    "viewProjects": "Lihat Project",
+    "contactMe": "Hubungi Saya",
+    "techHeader": "TEKNOLOGI & ARSITEKTUR"
   },
   "projects": {
     "title": "Koleksi Project Eksplorasi",
     "badge": "Portofolio Pilihan",
     "subtitle": "Karya pilihan yang dibangun dengan perhatian terhadap detail dan estetika",
     "githubRepo": "GitHub Repository",
-    "code": "Kode",
-    "preview": "Lihat Live"
-  },
-  "auth": {
-    "title": "Status Autentikasi & Database",
-    "userEmail": "Email Pengguna",
-    "role": "Peran",
-    "dbStatus": "Status DB",
-    "logout": "Keluar"
+    "comingSoonBadge": "Segera Hadir",
+    "comingSoonTitle": "Koleksi Project Sedang Disiapkan",
+    "comingSoonDesc": "Portofolio karya pilihan dan studi kasus arsitektur sistem terdistribusi sedang dalam tahap finalisasi dan akan segera dipublikasikan di sini.",
+    "githubMonitor": "Pantau Repository di GitHub"
   },
   "contact": {
     "title": "Siap Berkolaborasi Dalam Eksplorasi Berikutnya?",
-    "btn": "Hubungi Saya"
+    "desc": "Terbuka untuk diskusi arsitektur perangkat lunak, integrasi AI, konsultasi teknik, atau kesempatan proyek baru.",
+    "btn": "Hubungi Saya",
+    "copyEmail": "Salin Email",
+    "copied": "Email Tersalin!"
+  },
+  "auth": {
+    "title": "Status Autentikasi & Profil",
+    "userEmail": "Email Pengguna",
+    "role": "Peran",
+    "dbStatus": "Status Akun",
+    "logout": "Keluar"
+  },
+  "profile": {
+    "title": "Pusat Akun & Profil",
+    "backBtn": "Kembali ke Dashboard",
+    "authenticated": "Sesi Terautentikasi",
+    "guest": "Mode Tamu Publik",
+    "overviewTab": "Info Profil",
+    "editTab": "Edit Profil",
+    "settingsTab": "Pengaturan",
+    "helpTab": "Bantuan & FAQ",
+    "accountStatus": "Status Akun",
+    "memberSince": "Terdaftar Sejak",
+    "primaryEmail": "Email Utama",
+    "authProvider": "Metode Login",
+    "editNameLabel": "Nama Tampilan Profil",
+    "uploadPhotoLabel": "Upload Foto Dari Perangkat",
+    "uploadDesc": "Format: JPG, PNG, WEBP (Maks 5MB). Foto disimpan di Supabase Storage.",
+    "presetAvatarsLabel": "Atau Pilih Preset Avatar Lanskap",
+    "customUrlLabel": "Atau Masukkan URL Avatar Kustom",
+    "saveBtn": "Simpan Perubahan Profil",
+    "saving": "Menyimpan...",
+    "uploading": "Mengunggah Foto...",
+    "themeSetting": "Mode Tampilan Lanskap",
+    "themeDesc": "Pilih antara mode Siang Hari atau Malam Hari",
+    "sfxSetting": "Ambient Sound Effects (SFX)",
+    "sfxDesc": "Efek suara sintetis saat tombol diklik atau di-hover",
+    "langSetting": "Bahasa Antarmuka (Language)",
+    "langDesc": "Pilih Bahasa Indonesia atau English"
+  },
+  "command": {
+    "title": "Pencarian Cepat & Navigasi",
+    "placeholder": "Ketik perintah atau cari (misal: Project, Email, GitHub)...",
+    "noResults": "Tidak ada hasil pencarian."
   },
   "footer": {
     "rights": "Semua Hak Cipta Dilindungi."

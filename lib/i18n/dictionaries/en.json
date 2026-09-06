@@ -9,38 +9,71 @@
     "login": "Sign In"
   },
   "hero": {
+    "badge": "Full-Stack Architect",
     "greeting": "Welcome to Portfolio",
-    "role": "Full-Stack Architect & Personal Portfolio",
-    "description": "Building high-scalable web platforms, modern AI architecture solutions, and elegant UI experiences with cutting-edge tech stack.",
-    "exploreBtn": "Explore Projects",
-    "contactBtn": "Contact Me"
-  },
-  "stats": {
-    "title": "Milestones & Metric Overview",
-    "badge": "Professional Milestones",
-    "projects": "Completed Projects",
-    "commits": "Total Commits",
-    "articles": "Articles Published",
-    "experience": "Years Experience"
+    "role": "Full-Stack Architect & AI Systems Developer",
+    "subheadline": "Architecting distributed backend systems, modern AI platforms, and precision web interfaces.",
+    "description": "Focusing on high-scale architecture performance, intelligent AI model integration, and clean, intuitive user interfaces.",
+    "viewProjects": "View Projects",
+    "contactMe": "Contact Me",
+    "techHeader": "TECHNOLOGY & ARCHITECTURE"
   },
   "projects": {
     "title": "Exploration Project Collection",
     "badge": "Featured Portfolio",
     "subtitle": "Selected works crafted with attention to detail and aesthetic excellence",
     "githubRepo": "GitHub Repository",
-    "code": "Code",
-    "preview": "Live Preview"
-  },
-  "auth": {
-    "title": "Authentication & Database Status",
-    "userEmail": "User Email",
-    "role": "Role",
-    "dbStatus": "DB Status",
-    "logout": "Sign Out"
+    "comingSoonBadge": "Coming Soon",
+    "comingSoonTitle": "Project Collection Under Preparation",
+    "comingSoonDesc": "A curated showcase of selected projects and distributed system architecture case studies is being finalized and will be published shortly.",
+    "githubMonitor": "Monitor Repository on GitHub"
   },
   "contact": {
     "title": "Ready to Collaborate on the Next Exploration?",
-    "btn": "Contact Me"
+    "desc": "Open for software architecture discussions, AI integration, engineering consulting, or new project opportunities.",
+    "btn": "Contact Me",
+    "copyEmail": "Copy Email",
+    "copied": "Email Copied!"
+  },
+  "auth": {
+    "title": "Authentication & Profile Status",
+    "userEmail": "User Email",
+    "role": "Role",
+    "dbStatus": "Account Status",
+    "logout": "Sign Out"
+  },
+  "profile": {
+    "title": "Account & Profile Center",
+    "backBtn": "Back to Dashboard",
+    "authenticated": "Authenticated Session",
+    "guest": "Public Guest Mode",
+    "overviewTab": "Profile Info",
+    "editTab": "Edit Profile",
+    "settingsTab": "Settings",
+    "helpTab": "Help & FAQ",
+    "accountStatus": "Account Status",
+    "memberSince": "Member Since",
+    "primaryEmail": "Primary Email",
+    "authProvider": "Login Provider",
+    "editNameLabel": "Display Name",
+    "uploadPhotoLabel": "Upload Photo from Device",
+    "uploadDesc": "Format: JPG, PNG, WEBP (Max 5MB). Photo stored securely in Supabase Storage.",
+    "presetAvatarsLabel": "Or Choose Landscape Avatar Preset",
+    "customUrlLabel": "Or Enter Custom Avatar URL",
+    "saveBtn": "Save Profile Changes",
+    "saving": "Saving...",
+    "uploading": "Uploading Photo...",
+    "themeSetting": "Landscape Theme Mode",
+    "themeDesc": "Switch between Day Mode or Night Mode",
+    "sfxSetting": "Ambient Sound Effects (SFX)",
+    "sfxDesc": "Synthetic sound feedback on button clicks and hover",
+    "langSetting": "Interface Language",
+    "langDesc": "Choose Bahasa Indonesia or English"
+  },
+  "command": {
+    "title": "Quick Search & Navigation",
+    "placeholder": "Type a command or search (e.g. Projects, Email, GitHub)...",
+    "noResults": "No search results found."
   },
   "footer": {
     "rights": "All Rights Reserved."

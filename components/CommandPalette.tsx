@@ -55,43 +55,38 @@ export default function CommandPalette({
   const actions = [
     {
       id: "hero",
-      title: dict.nav.home || "Beranda (Hero)",
-      category: "Navigasi",
+      title: lang === "id" ? "Beranda (Hero)" : "Home (Hero)",
+      category: lang === "id" ? "Navigasi" : "Navigation",
       icon: Compass,
       href: "#hero",
     },
     {
-      id: "about",
-      title: dict.nav.about || "Tentang & Metrik",
-      category: "Navigasi",
-      icon: User,
-      href: "#about",
-    },
-    {
       id: "projects",
-      title: dict.nav.projects || "Koleksi Project",
-      category: "Navigasi",
+      title: lang === "id" ? "Koleksi Project" : "Project Showcase",
+      category: lang === "id" ? "Navigasi" : "Navigation",
       icon: FolderGit2,
       href: "#projects",
     },
     {
-      id: "articles",
-      title: dict.nav.articles || "Artikel & Catatan",
-      category: "Navigasi",
+      id: "contact",
+      title: lang === "id" ? "Hubungi Saya (Kontak)" : "Contact Me (Email)",
+      category: lang === "id" ? "Navigasi" : "Navigation",
       icon: BookOpen,
-      href: "#about",
+      href: "#contact",
     },
     {
       id: "profile",
-      title: "Halaman Profil User (/profile)",
-      category: "Halaman",
+      title: lang === "id" ? "Halaman Profil User (/profile)" : "User Profile Page (/profile)",
+      category: lang === "id" ? "Halaman" : "Pages",
       icon: User,
       href: "/profile",
     },
     {
       id: "theme",
-      title: `Ganti Tema Mode (${isNight ? "Siang Hari" : "Malam Hari"})`,
-      category: "Tampilan",
+      title: lang === "id" 
+        ? `Ganti Tema Mode (${isNight ? "Siang Hari" : "Malam Hari"})` 
+        : `Switch Theme Mode (${isNight ? "Day Mode" : "Night Mode"})`,
+      category: lang === "id" ? "Tampilan" : "Appearance",
       icon: isNight ? Sun : Moon,
       action: () => {
         onToggleTheme();
@@ -100,8 +95,10 @@ export default function CommandPalette({
     },
     {
       id: "lang",
-      title: `Ganti Bahasa (Sekarang: ${lang.toUpperCase()})`,
-      category: "Pengaturan",
+      title: lang === "id"
+        ? `Ganti Bahasa (Sekarang: Bahasa Indonesia)`
+        : `Switch Language (Current: English)`,
+      category: lang === "id" ? "Pengaturan" : "Settings",
       icon: Languages,
       action: () => {
         toggleLang();
@@ -141,7 +138,11 @@ export default function CommandPalette({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ketik perintah atau navigasi (misal: Project, Profile, Tema)..."
+            placeholder={
+              lang === "id"
+                ? "Ketik perintah atau navigasi (contoh: Project, Profil, Tema)..."
+                : "Type a command or navigate (e.g. Projects, Profile, Theme)..."
+            }
             className="w-full bg-transparent text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none"
           />
           <button
@@ -162,7 +163,7 @@ export default function CommandPalette({
                   key={item.id}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => soundFx.playHover()}
-                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-white/10 transition-colors text-left group"
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-white/10 transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-xl bg-white/10 text-amber-300 group-hover:scale-110 transition-transform">
@@ -178,14 +179,16 @@ export default function CommandPalette({
                     </div>
                   </div>
                   <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-white/10 text-slate-300 border border-white/10">
-                    ↵ Pilih
+                    ↵ {lang === "id" ? "Pilih" : "Select"}
                   </span>
                 </button>
               );
             })
           ) : (
             <div className="py-8 text-center text-slate-400 text-xs sm:text-sm">
-              Tidak ada hasil yang cocok dengan &quot;{query}&quot;
+              {lang === "id"
+                ? `Tidak ada hasil yang cocok dengan "${query}"`
+                : `No results matching "${query}"`}
             </div>
           )}
         </div>
@@ -194,13 +197,11 @@ export default function CommandPalette({
         <div className="px-4 py-2.5 bg-white/5 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
           <div className="flex items-center gap-2">
             <span className="px-1.5 py-0.5 rounded bg-white/10 font-mono text-slate-300">↑↓</span>
-            <span>Navigasi</span>
+            <span>{lang === "id" ? "Navigasi" : "Navigate"}</span>
             <span className="px-1.5 py-0.5 rounded bg-white/10 font-mono text-slate-300 ml-2">ESC</span>
-            <span>Tutup</span>
+            <span>{lang === "id" ? "Tutup" : "Close"}</span>
           </div>
           <div className="flex items-center gap-1 text-amber-300 font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>BRIMAS Quick Command</span>
           </div>
         </div>
       </div>
