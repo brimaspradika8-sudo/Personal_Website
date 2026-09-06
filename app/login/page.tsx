@@ -163,7 +163,6 @@ function LoginForm() {
   const togglePasswordVisibilityCustom = () => {
     setShowPassword((prev) => {
       const nextShow = !prev;
-      setPrivateFieldShowState(nextShow);
       if (!isAnyLoading && !error) {
         setSpeechText(nextShow ? "Eits, kita ngintip bareng ya! 🫣" : "Tenang, aku tutup mata kok! 🙈");
       }

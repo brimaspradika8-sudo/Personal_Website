@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { signOut } from "@/lib/actions/auth";
 import {
   Mountain,
@@ -28,6 +29,7 @@ import {
   Compass,
   Volume2,
   VolumeX,
+  User,
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -56,6 +58,7 @@ interface DashboardClientProps {
       full_name?: string;
       avatar_url?: string;
       name?: string;
+      picture?: string;
     };
   } | null;
   dbUser: {
@@ -191,15 +194,27 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
     user?.email?.split("@")[0] ||
     "Guest User";
   const navUserEmail = user?.email || "Belum Login (Guest)";
-  const rawAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url;
+  const rawAvatar =
+    dbUser?.avatar ||
+    user?.user_metadata?.avatar_url ||
+    user?.user_metadata?.picture;
+
   const [avatarImgError, setAvatarImgError] = useState(false);
 
   useEffect(() => {
     setAvatarImgError(false);
   }, [user?.id, dbUser?.id, rawAvatar]);
 
-  const initialLetter = navUserName ? navUserName.charAt(0).toUpperCase() : "U";
-  const showNavAvatarImg = Boolean(rawAvatar) && !avatarImgError;
+  const initialLetter = navUserName && navUserName !== "Guest User" ? navUserName.charAt(0).toUpperCase() : "G";
+
+  const isValidAvatarUrl =
+    Boolean(rawAvatar) &&
+    typeof rawAvatar === "string" &&
+    rawAvatar.trim() !== "" &&
+    rawAvatar !== "null" &&
+    rawAvatar !== "undefined";
+
+  const showNavAvatarImg = Boolean(user) && isValidAvatarUrl && !avatarImgError;
 
   const isNight = mode === "night";
 
@@ -222,6 +237,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             muted
             playsInline
             preload="metadata"
+            poster={isMobile ? "/animations/day-landscape-mobile.webp" : "/animations/day-landscape.webp"}
             className={`absolute inset-0 object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
@@ -246,6 +262,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             muted
             playsInline
             preload="metadata"
+            poster={isMobile ? "/animations/night-landscape-mobile.webp" : "/animations/night-landscape.webp"}
             className={`absolute inset-0 object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
@@ -324,18 +341,21 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
           {/* 3. Far Right Controls: Search, Switch Tema, Profile Avatar */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
             
-            {/* Search Button (Ctrl + K) */}
+            {/* Search Button (Fungsional Command Palette Ctrl+K) */}
             <button
               onClick={() => {
                 soundFx.playClick();
                 setCmdPaletteOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-stone-900/80 hover:bg-amber-950/40 text-amber-200 border border-amber-400/35 hover:border-amber-400/70 backdrop-blur-xl transition-all duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer hover:scale-[1.02]"
               aria-label="Search Command Palette (Ctrl+K)"
-              title="Search (Ctrl + K)"
+              title="Cari Konten / Perintah (Ctrl + K)"
             >
-              <Search className="w-4 h-4 text-amber-400" />
-              <span className="hidden sm:inline text-[11px] font-mono font-semibold text-slate-300 bg-white/10 px-1.5 py-0.5 rounded border border-white/10">
+              <Search className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline text-[10px] font-mono font-bold text-amber-300/90 tracking-wide">
+                SEARCH
+              </span>
+              <span className="hidden sm:inline text-[10px] font-mono font-semibold text-amber-200/80 bg-amber-500/20 px-1.5 py-0.5 rounded-lg border border-amber-400/30">
                 ⌘K
               </span>
             </button>
@@ -366,30 +386,41 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             </button>
 
             {/* Profile Avatar Button (Pojok Kanan - Always Rendered as link to /profile) */}
-            <a
+            <Link
               href="/profile"
               onClick={() => soundFx.playClick()}
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-amber-400 rounded-full transition-transform hover:scale-105 shrink-0"
-              title={`Profil Saya (${navUserName})`}
+              title={user ? `Profil Saya (${navUserName})` : "Login / Profil (Mode Tamu)"}
               aria-label="Profil Saya"
             >
-              <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] shrink-0 bg-stone-900 flex items-center justify-center font-extrabold text-amber-300">
-                {showNavAvatarImg ? (
-                  <Image
-                    src={rawAvatar!}
-                    alt={navUserName}
-                    fill
-                    className="object-cover"
-                    unoptimized={rawAvatar!.startsWith("http")}
-                    onError={() => setAvatarImgError(true)}
-                  />
+              <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.5)] shrink-0 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 flex items-center justify-center font-extrabold text-stone-950">
+                {user ? (
+                  <>
+                    {/* Fallback Solid Initial Circle (Always Present underneath Image) */}
+                    <span className="w-full h-full text-stone-950 flex items-center justify-center font-extrabold text-xs sm:text-sm uppercase shadow-inner">
+                      {initialLetter}
+                    </span>
+
+                    {/* Google / Provider Avatar Image Overlay */}
+                    {showNavAvatarImg && (
+                      <Image
+                        src={rawAvatar!}
+                        alt={navUserName}
+                        fill
+                        className="object-cover"
+                        unoptimized={rawAvatar!.startsWith("http")}
+                        onError={() => setAvatarImgError(true)}
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
+                  </>
                 ) : (
-                  <span className="w-full h-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 text-stone-950 flex items-center justify-center font-extrabold text-xs sm:text-sm uppercase shadow-inner">
-                    {initialLetter}
-                  </span>
+                  <div className="w-full h-full bg-stone-900/90 text-amber-300 flex items-center justify-center hover:bg-stone-800 transition-colors">
+                    <User className="w-4.5 h-4.5 text-amber-300" />
+                  </div>
                 )}
               </div>
-            </a>
+            </Link>
 
           </div>
         </div>
@@ -430,96 +461,135 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       <main className="relative z-10 pt-20 sm:pt-28 pb-16 sm:pb-20 space-y-12 sm:space-y-24 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
         
         {/* ========================================================================= */}
-        {/* 1. HERO SECTION (Landscape Full-Bleed Viewport Overlay)                  */}
+        {/* 1. HERO SECTION (Split Left-Right Bespoke Layout)                         */}
         {/* ========================================================================= */}
-        <section id="hero" className="flex flex-col justify-center items-center text-center space-y-4 sm:space-y-8 pt-20 pb-4 sm:pt-32 sm:pb-12 w-full max-w-full px-2 sm:px-4 box-border">
-          
-          {/* Circular Profile Avatar with Thick White/Gold Border & Subtle Glow */}
-          <div className="relative group shrink-0">
-            <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 blur-md opacity-80 group-hover:opacity-100 transition duration-500 animate-pulse" />
-            <div className="relative w-20 h-20 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white dark:border-amber-200/80 shadow-2xl">
-              <Image
-                src={ownerAvatar}
-                alt={ownerName}
-                fill
-                priority
-                className="object-cover"
-              />
-            </div>
-          </div>
-
-          {/* Large Name in Display Serif Font */}
-          <div className="space-y-2.5 sm:space-y-4 w-full max-w-5xl mx-auto px-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold bg-white/10 text-amber-300 border border-white/20 backdrop-blur-md shadow-inner max-w-full truncate">
-              <Compass className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span className="truncate">Personal Retreat & Portfolio</span>
-            </div>
+        <section id="hero" className="pt-12 sm:pt-20 pb-10 sm:pb-16 w-full max-w-7xl mx-auto px-2 sm:px-4 box-border">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-center">
             
-            <h1 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight sm:tracking-wider text-white drop-shadow-lg uppercase leading-tight md:whitespace-nowrap max-w-full">
-              {ownerName}
-            </h1>
-            
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-950/80 border border-amber-400/50 text-amber-300 text-xs sm:text-base font-bold backdrop-blur-md shadow-xl shadow-black/50 max-w-full">
-              <span className="truncate">Full-Stack Architect & Personal Portfolio</span>
+            {/* LEFT COLUMN: Text Content & Actions (md:col-span-7) */}
+            <div className="md:col-span-7 space-y-5 sm:space-y-6 text-left order-1">
+              
+              {/* 1. Small Gold Accent Badge (Sentence Case, No Sparkle Icon) */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-bold tracking-wide backdrop-blur-md shadow-lg shadow-black/40 animate-[fadeIn_0.4s_ease-out_forwards]">
+                <span>Full-Stack Architect</span>
+              </div>
+
+              {/* 2. Headline: Intro Title & Name with Unified Single Color */}
+              <div className="space-y-1 sm:space-y-2 animate-[fadeIn_0.5s_ease-out_100ms_forwards]">
+                <p className="text-sm sm:text-base font-mono font-semibold uppercase tracking-widest text-amber-300/90">
+                  Full-Stack Architect &amp; AI Systems Developer
+                </p>
+                <h1 className="font-serif text-3xl sm:text-5xl md:text-5xl lg:text-6xl font-extrabold tracking-wide uppercase leading-tight text-white drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)]">
+                  BRIMAS PRADIKA UTAMA
+                </h1>
+              </div>
+
+              {/* 3. Sub-headline */}
+              <h2 className="text-base sm:text-lg md:text-xl font-semibold text-amber-200/90 tracking-tight animate-[fadeIn_0.5s_ease-out_200ms_forwards]">
+                Merancang sistem backend terdistribusi, platform AI modern, dan antarmuka web yang presisi.
+              </h2>
+
+              {/* 4. Paragraf Deskripsi Singkat */}
+              <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-xl leading-relaxed font-sans animate-[fadeIn_0.5s_ease-out_200ms_forwards]">
+                Fokus pada performa arsitektur berskala tinggi, integrasi model AI cerdas, serta pengalaman antarmuka pengguna yang bersih dan intuitif.
+              </p>
+
+              {/* 5. Dua Tombol CTA & Social Links (Tanpa Arrow Icon di Tombol CTA) */}
+              <div className="flex flex-wrap items-center justify-start gap-3 sm:gap-4 pt-2 animate-[fadeIn_0.5s_ease-out_300ms_forwards]">
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-stone-950 font-extrabold text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center gap-2 transition-all duration-200 transform hover:scale-[1.03] hover:brightness-110 active:scale-95 cursor-pointer"
+                >
+                  <FolderGit2 className="w-4 h-4" />
+                  <span>Lihat Project</span>
+                </a>
+
+                <a
+                  href={`mailto:${ownerEmail}`}
+                  onClick={() => soundFx.playClick()}
+                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-amber-400/50 font-bold text-xs sm:text-sm backdrop-blur-md flex items-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 cursor-pointer"
+                >
+                  <Mail className="w-4 h-4 text-amber-300" />
+                  <span>Hubungi Saya</span>
+                </a>
+
+                {/* Social Icons */}
+                <div className="flex items-center gap-2 pl-1">
+                  <a
+                    href="https://github.com/brimaspradika8-sudo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 hover:scale-105"
+                    aria-label="GitHub"
+                    title="GitHub"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 hover:scale-105"
+                    aria-label="LinkedIn"
+                    title="LinkedIn"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
+              {/* 6. Technologies Stack Row */}
+              <div className="pt-4 border-t border-white/10 space-y-2 animate-[fadeIn_0.5s_ease-out_350ms_forwards]">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  TEKNOLOGI &amp; ARSITEKTUR
+                </p>
+                <div className="flex flex-wrap items-center justify-start gap-2">
+                  {["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Prisma", "TailwindCSS"].map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-3 py-1 rounded-xl bg-stone-900/80 border border-white/15 text-slate-200 text-xs font-mono font-medium backdrop-blur-md shadow-sm hover:border-amber-400/50 hover:text-amber-300 transition-colors"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
             </div>
-          </div>
 
-          {/* Tagline & Short Description inside Glassmorphism Card */}
-          <div className="w-full max-w-sm sm:max-w-xl mx-auto backdrop-blur-md bg-stone-950/40 border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-4 sm:space-y-6 box-border">
-            <p className="text-xs sm:text-base text-slate-200 leading-relaxed break-words">
-              Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka yang elegan dengan lanskap teknologi terkini.
-            </p>
+            {/* RIGHT COLUMN: Profile Picture + Dark Vignette Blending Frame (No Code Card) */}
+            <div className="md:col-span-5 relative flex justify-center md:justify-end items-center order-2 py-4 animate-[fadeIn_0.6s_ease-out_150ms_forwards]">
+              
+              {/* Soft Gold Radial Backdrop Glow (Static, No Infinite Pulse) */}
+              <div className="absolute w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-gradient-to-tr from-amber-500/20 via-yellow-500/15 to-amber-600/10 blur-3xl -z-10" />
 
-            {/* Social Media Link Buttons Row */}
-            <div className="flex items-center justify-center gap-3 pt-1">
-              <a
-                href="https://github.com/brimaspradika8-sudo"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                aria-label="GitHub"
-                title="GitHub"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                </svg>
-              </a>
+              {/* Profile Image Frame with Warm Dark Vignette & Gold Accent Border */}
+              <div className="relative group">
+                <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-3xl sm:rounded-[2.5rem] overflow-hidden border-2 sm:border-3 border-amber-300/70 shadow-[0_0_40px_rgba(245,158,11,0.2)] bg-stone-950">
+                  
+                  {/* Photo with Vignette & Tone Adjustment to Blend with Warm Dark Palette */}
+                  <Image
+                    src={ownerAvatar}
+                    alt={ownerName}
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 224px, (max-width: 768px) 288px, 320px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105 filter brightness-95 contrast-105"
+                  />
+                  
+                  {/* Dark Vignette Overlay Mask to Soften Flat Blue Backdrop into Warm Dark Stone Theme */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/40 mix-blend-multiply pointer-events-none" />
+                  <div className="absolute inset-0 bg-stone-950/20 pointer-events-none" />
+                </div>
+              </div>
 
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                aria-label="LinkedIn"
-                title="LinkedIn"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-                </svg>
-              </a>
-
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                aria-label="Twitter X"
-                title="Twitter / X"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </a>
-
-              <a
-                href={`mailto:${ownerEmail}`}
-                className="p-3 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                aria-label="Email"
-                title="Email"
-              >
-                <Mail className="w-4 h-4" />
-              </a>
             </div>
+
           </div>
         </section>
 

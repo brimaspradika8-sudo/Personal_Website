@@ -26,24 +26,17 @@ export default function MobileBottomNav() {
   };
 
   useEffect(() => {
-    if (pathname?.includes("/profile")) {
+    // Prefetch profile route for instant client navigation
+    router.prefetch("/profile");
+
+    if (pathname === "/profile" || pathname?.startsWith("/profile/")) {
       setActiveTab("profile");
-      return;
+    } else if (pathname === "/dashboard" || pathname === "/") {
+      setActiveTab("home");
+    } else {
+      setActiveTab("");
     }
-
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (hash === "about") setActiveTab("about");
-      else if (hash === "projects") setActiveTab("projects");
-      else if (hash === "articles") setActiveTab("articles");
-      else if (hash === "profile") setActiveTab("profile");
-      else setActiveTab("home");
-    };
-
-    handleHashChange();
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, [pathname]);
+  }, [pathname, router]);
 
   const handleNav = (tabId: string, href: string) => {
     soundFx.playClick();

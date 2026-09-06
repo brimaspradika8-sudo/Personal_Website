@@ -49,6 +49,7 @@ interface ProfileClientProps {
       full_name?: string;
       avatar_url?: string;
       name?: string;
+      picture?: string;
     };
   } | null;
   dbUser: {
@@ -72,11 +73,8 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
     "";
-  const userAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url;
-  const defaultAvatar =
-    userAvatar && !userAvatar.includes("dicebear")
-      ? userAvatar
-      : "/images/avatar.png";
+  const userAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  const defaultAvatar = userAvatar || "";
 
   const [name, setName] = useState(defaultName);
   const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
@@ -106,10 +104,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     user?.user_metadata?.name ||
     (user ? "User Brimas Retreat" : "Pengunjung Publik (Tamu)");
   
-  const initialLetter = userName ? userName.charAt(0).toUpperCase() : "U";
+  const initialLetter = user && userName ? userName.charAt(0).toUpperCase() : "G";
   
   const userEmail = user?.email || "Belum Login (Sesi Tamu)";
-  const avatarSrc = avatarUrl || "/images/avatar.png";
+  const avatarSrc = avatarUrl;
   const provider = user?.app_metadata?.provider || "Guest Access";
   const createdAt = user?.created_at
     ? new Date(user.created_at).toLocaleDateString(lang === "id" ? "id-ID" : "en-US", {
@@ -259,11 +257,16 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   className="object-cover"
                   unoptimized={avatarSrc.startsWith("http")}
                   onError={() => setHeaderImgError(true)}
+                  referrerPolicy="no-referrer"
                 />
-              ) : (
+              ) : user ? (
                 <span className="w-full h-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 text-stone-950 flex items-center justify-center font-extrabold text-xl sm:text-2xl uppercase shadow-inner">
                   {initialLetter}
                 </span>
+              ) : (
+                <div className="w-full h-full bg-stone-900 flex items-center justify-center text-amber-300">
+                  <UserIcon className="w-10 h-10 text-amber-300" />
+                </div>
               )}
             </div>
 
