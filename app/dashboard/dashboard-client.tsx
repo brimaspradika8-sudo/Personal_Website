@@ -259,54 +259,30 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       {/* FULL-BLEED LANDSCAPE BACKGROUND WITH SILKY SMOOTH GPU-ACCELERATED CROSSFADE */}
       {/* ========================================================================= */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none transform-gpu">
-        {/* Day Landscape Video */}
+        {/* Day Landscape Image */}
         {(!isNight || loadSecondaryBg) && (
-          <video
-            key={isMobile ? "day-mobile" : "day-desktop"}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            poster={isMobile ? "/animations/day-landscape-mobile.webp" : "/animations/day-landscape.webp"}
-            className={`absolute inset-0 object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
+          <Image
+            src={isMobile ? "/animations/day-landscape-mobile.webp" : "/animations/day-landscape.webp"}
+            alt="Day Nature Landscape"
+            fill
+            priority
+            className={`object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
-          >
-            <source
-              src={
-                isMobile
-                  ? "/animations/day-landscape-mobile.mp4"
-                  : "/animations/day-landscape.mp4"
-              }
-              type="video/mp4"
-            />
-          </video>
+          />
         )}
 
-        {/* Night Landscape Video */}
+        {/* Night Landscape Image */}
         {(isNight || loadSecondaryBg) && (
-          <video
-            key={isMobile ? "night-mobile" : "night-desktop"}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            poster={isMobile ? "/animations/night-landscape-mobile.webp" : "/animations/night-landscape.webp"}
-            className={`absolute inset-0 object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
+          <Image
+            src={isMobile ? "/animations/night-landscape-mobile.webp" : "/animations/night-landscape.webp"}
+            alt="Night Nature Landscape"
+            fill
+            priority
+            className={`object-cover w-full h-full transform-gpu will-change-opacity transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
-          >
-            <source
-              src={
-                isMobile
-                  ? "/animations/night-landscape-mobile.mp4"
-                  : "/animations/night-landscape.mp4"
-              }
-              type="video/mp4"
-            />
-          </video>
+          />
         )}
 
         {/* Ambient Overlay Gradients for Optimal Text & Card Legibility */}
