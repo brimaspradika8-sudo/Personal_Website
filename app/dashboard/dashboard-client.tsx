@@ -310,31 +310,31 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             </span>
           </a>
 
-          {/* 2. Desktop Navigation Links: Beranda, Project, Blog, About (Perfectly Centered) */}
+          {/* 2. Desktop Navigation Links: Beranda, Project, Blog, Tentang (Perfectly Centered) */}
           <nav className="hidden md:flex items-center justify-center gap-4 lg:gap-8 text-sm font-semibold absolute left-1/2 -translate-x-1/2">
             <a
               href="#hero"
-              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 min-h-[44px] flex items-center"
             >
-              Beranda
+              {dict.nav.home}
             </a>
             <a
               href="#projects"
-              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 min-h-[44px] flex items-center"
             >
-              Project
+              {dict.nav.projects}
             </a>
             <a
               href="#about"
-              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 min-h-[44px] flex items-center"
             >
-              Blog
+              {dict.nav.articles}
             </a>
             <a
               href="#about"
-              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="text-slate-200 hover:text-amber-300 hover:bg-white/10 px-4 py-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 min-h-[44px] flex items-center"
             >
-              About
+              {dict.nav.about}
             </a>
           </nav>
 
@@ -458,48 +458,71 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       )}
 
       {/* Main Content Overlaid on GIF Background */}
-      <main className="relative z-10 pt-20 sm:pt-28 pb-16 sm:pb-20 space-y-12 sm:space-y-24 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+      <main className="relative z-10 pt-20 sm:pt-28 pb-36 sm:pb-40 md:pb-24 space-y-12 sm:space-y-24 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
         
         {/* ========================================================================= */}
-        {/* 1. HERO SECTION (Split Left-Right Bespoke Layout)                         */}
+        {/* 1. HERO SECTION (Bespoke Mobile & Desktop Split Grid Layout)              */}
         {/* ========================================================================= */}
-        <section id="hero" className="pt-12 sm:pt-20 pb-10 sm:pb-16 w-full max-w-7xl mx-auto px-2 sm:px-4 box-border">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-center">
+        <section id="hero" className="pt-8 sm:pt-16 md:pt-20 pb-10 sm:pb-16 w-full max-w-7xl mx-auto px-2 sm:px-4 box-border">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center">
             
-            {/* LEFT COLUMN: Text Content & Actions (md:col-span-7) */}
-            <div className="md:col-span-7 space-y-5 sm:space-y-6 text-left order-1">
+            {/* LEFT COLUMN: Main Text Content & Actions (md:col-span-7) */}
+            <div className="md:col-span-7 space-y-4 sm:space-y-6 text-left order-1">
               
               {/* 1. Small Gold Accent Badge (Sentence Case, No Sparkle Icon) */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-bold tracking-wide backdrop-blur-md shadow-lg shadow-black/40 animate-[fadeIn_0.4s_ease-out_forwards]">
                 <span>Full-Stack Architect</span>
               </div>
 
-              {/* 2. Headline: Intro Title & Name with Unified Single Color */}
-              <div className="space-y-1 sm:space-y-2 animate-[fadeIn_0.5s_ease-out_100ms_forwards]">
-                <p className="text-sm sm:text-base font-mono font-semibold uppercase tracking-widest text-amber-300/90">
+              {/* 2. Mobile Profile Photo (Circle Shape, Shown ONLY on Mobile < 768px Right After Badge) */}
+              <div className="block md:hidden py-1 animate-[fadeIn_0.5s_ease-out_100ms_forwards]">
+                <div className="relative group w-32 h-32 sm:w-36 sm:h-36">
+                  {/* Soft Gold Radial Backdrop Glow */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/30 via-yellow-500/20 to-amber-600/10 blur-xl -z-10" />
+                  
+                  {/* Circle Photo Container */}
+                  <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-amber-300/80 shadow-[0_0_25px_rgba(245,158,11,0.3)] bg-stone-950">
+                    <Image
+                      src={ownerAvatar}
+                      alt={ownerName}
+                      fill
+                      priority
+                      sizes="144px"
+                      className="object-cover filter brightness-95 contrast-105"
+                    />
+                    {/* Dark Vignette Overlay Mask to Soften Blue Backdrop into Warm Dark Theme */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/40 mix-blend-multiply pointer-events-none" />
+                    <div className="absolute inset-0 bg-stone-950/20 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Headline: Intro Title & Name with Unified Single Color */}
+              <div className="space-y-1 sm:space-y-2 animate-[fadeIn_0.5s_ease-out_150ms_forwards]">
+                <p className="text-xs sm:text-sm md:text-base font-mono font-semibold uppercase tracking-widest text-amber-300/90">
                   Full-Stack Architect &amp; AI Systems Developer
                 </p>
-                <h1 className="font-serif text-3xl sm:text-5xl md:text-5xl lg:text-6xl font-extrabold tracking-wide uppercase leading-tight text-white drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)]">
+                <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wide uppercase leading-tight text-white drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)]">
                   BRIMAS PRADIKA UTAMA
                 </h1>
               </div>
 
-              {/* 3. Sub-headline */}
-              <h2 className="text-base sm:text-lg md:text-xl font-semibold text-amber-200/90 tracking-tight animate-[fadeIn_0.5s_ease-out_200ms_forwards]">
+              {/* 4. Sub-headline */}
+              <h2 className="text-sm sm:text-base md:text-xl font-semibold text-amber-200/90 tracking-tight animate-[fadeIn_0.5s_ease-out_200ms_forwards]">
                 Merancang sistem backend terdistribusi, platform AI modern, dan antarmuka web yang presisi.
               </h2>
 
-              {/* 4. Paragraf Deskripsi Singkat */}
-              <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-xl leading-relaxed font-sans animate-[fadeIn_0.5s_ease-out_200ms_forwards]">
+              {/* 5. Paragraf Deskripsi Singkat */}
+              <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-xl leading-relaxed font-sans animate-[fadeIn_0.5s_ease-out_250ms_forwards]">
                 Fokus pada performa arsitektur berskala tinggi, integrasi model AI cerdas, serta pengalaman antarmuka pengguna yang bersih dan intuitif.
               </p>
 
-              {/* 5. Dua Tombol CTA & Social Links (Tanpa Arrow Icon di Tombol CTA) */}
-              <div className="flex flex-wrap items-center justify-start gap-3 sm:gap-4 pt-2 animate-[fadeIn_0.5s_ease-out_300ms_forwards]">
+              {/* 6. Dua Tombol CTA & Social Links (Target Tap Area Min 44x44px untuk Accessibility) */}
+              <div className="flex flex-wrap items-center justify-start gap-3 sm:gap-4 pt-1 animate-[fadeIn_0.5s_ease-out_300ms_forwards]">
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-stone-950 font-extrabold text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center gap-2 transition-all duration-200 transform hover:scale-[1.03] hover:brightness-110 active:scale-95 cursor-pointer"
+                  className="min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-stone-950 font-extrabold text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 transition-all duration-200 transform hover:scale-[1.03] hover:brightness-110 active:scale-95 cursor-pointer"
                 >
                   <FolderGit2 className="w-4 h-4" />
                   <span>Lihat Project</span>
@@ -508,19 +531,19 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                 <a
                   href={`mailto:${ownerEmail}`}
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-amber-400/50 font-bold text-xs sm:text-sm backdrop-blur-md flex items-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 cursor-pointer"
+                  className="min-h-[44px] px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-amber-400/50 font-bold text-xs sm:text-sm backdrop-blur-md flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 cursor-pointer"
                 >
                   <Mail className="w-4 h-4 text-amber-300" />
                   <span>Hubungi Saya</span>
                 </a>
 
-                {/* Social Icons */}
-                <div className="flex items-center gap-2 pl-1">
+                {/* Social Icons (Min 44x44px Tap Target Size) */}
+                <div className="flex items-center gap-2.5">
                   <a
                     href="https://github.com/brimaspradika8-sudo"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 hover:scale-105"
+                    className="w-11 h-11 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-amber-400 hover:scale-105"
                     aria-label="GitHub"
                     title="GitHub"
                   >
@@ -532,7 +555,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                     href="https://linkedin.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 hover:scale-105"
+                    className="w-11 h-11 rounded-full bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/60 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-amber-400 hover:scale-105"
                     aria-label="LinkedIn"
                     title="LinkedIn"
                   >
@@ -543,16 +566,16 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                 </div>
               </div>
 
-              {/* 6. Technologies Stack Row */}
+              {/* 7. Technologies Stack Row (Horizontal Scrollable on Mobile) */}
               <div className="pt-4 border-t border-white/10 space-y-2 animate-[fadeIn_0.5s_ease-out_350ms_forwards]">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                   TEKNOLOGI &amp; ARSITEKTUR
                 </p>
-                <div className="flex flex-wrap items-center justify-start gap-2">
+                <div className="flex flex-nowrap md:flex-wrap items-center justify-start gap-2 overflow-x-auto no-scrollbar pb-1">
                   {["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Prisma", "TailwindCSS"].map((tech) => (
                     <span
                       key={tech}
-                      className="px-3 py-1 rounded-xl bg-stone-900/80 border border-white/15 text-slate-200 text-xs font-mono font-medium backdrop-blur-md shadow-sm hover:border-amber-400/50 hover:text-amber-300 transition-colors"
+                      className="shrink-0 px-3 py-1 rounded-xl bg-stone-900/80 border border-white/15 text-slate-200 text-xs font-mono font-medium backdrop-blur-md shadow-sm hover:border-amber-400/50 hover:text-amber-300 transition-colors"
                     >
                       {tech}
                     </span>
@@ -562,27 +585,26 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
             </div>
 
-            {/* RIGHT COLUMN: Profile Picture + Dark Vignette Blending Frame (No Code Card) */}
-            <div className="md:col-span-5 relative flex justify-center md:justify-end items-center order-2 py-4 animate-[fadeIn_0.6s_ease-out_150ms_forwards]">
+            {/* RIGHT COLUMN: Desktop Profile Picture (Circle Shape, Shown ONLY on Desktop md:flex) */}
+            <div className="hidden md:flex md:col-span-5 relative justify-end items-center order-2 py-4 animate-[fadeIn_0.6s_ease-out_150ms_forwards]">
               
-              {/* Soft Gold Radial Backdrop Glow (Static, No Infinite Pulse) */}
-              <div className="absolute w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-gradient-to-tr from-amber-500/20 via-yellow-500/15 to-amber-600/10 blur-3xl -z-10" />
+              {/* Soft Gold Radial Backdrop Glow */}
+              <div className="absolute w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-gradient-to-tr from-amber-500/20 via-yellow-500/15 to-amber-600/10 blur-3xl -z-10" />
 
-              {/* Profile Image Frame with Warm Dark Vignette & Gold Accent Border */}
+              {/* Circle Profile Image Frame with Warm Dark Vignette & Gold Accent Border */}
               <div className="relative group">
-                <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-3xl sm:rounded-[2.5rem] overflow-hidden border-2 sm:border-3 border-amber-300/70 shadow-[0_0_40px_rgba(245,158,11,0.2)] bg-stone-950">
+                <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-full overflow-hidden border-3 border-amber-300/70 shadow-[0_0_45px_rgba(245,158,11,0.25)] bg-stone-950">
                   
-                  {/* Photo with Vignette & Tone Adjustment to Blend with Warm Dark Palette */}
                   <Image
                     src={ownerAvatar}
                     alt={ownerName}
                     fill
                     priority
-                    sizes="(max-width: 640px) 224px, (max-width: 768px) 288px, 320px"
+                    sizes="(max-width: 768px) 288px, 320px"
                     className="object-cover transition-transform duration-500 group-hover:scale-105 filter brightness-95 contrast-105"
                   />
                   
-                  {/* Dark Vignette Overlay Mask to Soften Flat Blue Backdrop into Warm Dark Stone Theme */}
+                  {/* Dark Vignette Overlay Mask */}
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/40 mix-blend-multiply pointer-events-none" />
                   <div className="absolute inset-0 bg-stone-950/20 pointer-events-none" />
                 </div>

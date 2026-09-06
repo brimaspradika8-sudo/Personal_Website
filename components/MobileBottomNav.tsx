@@ -66,10 +66,10 @@ export default function MobileBottomNav() {
     <div
       className="md:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none transition-all duration-300"
       style={{
-        paddingBottom: "max(6px, env(safe-area-inset-bottom))",
+        paddingBottom: "max(12px, env(safe-area-inset-bottom))",
       }}
     >
-      <div className="relative w-full max-w-lg mx-auto pointer-events-auto">
+      <div className="relative w-full max-w-lg mx-auto pointer-events-auto px-2">
         
         {/* SVG Curved Notch Background Bar (Dynamic Full-Width Cutout Path) */}
         <div className="absolute inset-0 w-full h-[68px] -z-10 drop-shadow-2xl overflow-visible">
@@ -97,7 +97,7 @@ export default function MobileBottomNav() {
                 key={item.id}
                 type="button"
                 onClick={() => handleNav(item.id, item.href)}
-                className="relative flex flex-col items-center justify-center flex-1 h-full cursor-pointer focus:outline-none"
+                className="relative flex flex-col items-center justify-center flex-1 h-full min-h-[48px] min-w-[48px] cursor-pointer focus:outline-none"
               >
                 {isActive ? (
                   /* ACTIVE TAB: Floating Circle Icon Lifted UP out of the Bar */
