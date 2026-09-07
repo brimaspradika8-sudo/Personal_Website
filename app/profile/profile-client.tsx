@@ -280,24 +280,26 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
       </div>
 
-      {/* Main Container */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-        
-        {/* Navigation Bar Header */}
-        <div className="flex items-center justify-between gap-4 border-b border-[#2A2F26] pb-4">
+      {/* Header / Sticky Top Navbar with Back Button */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#1A211A]/90 border-b border-[#2A2F26]/70 backdrop-blur-md">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="px-4 py-2 rounded-lg bg-[#1A211A] hover:bg-[#212A20] border border-[#2A2F26] text-[#F1EFE9] text-xs sm:text-sm font-medium flex items-center gap-2 transition-colors"
+            className="px-4 py-2 rounded-lg bg-[#3B5D42] hover:bg-[#2F4A34] text-[#F1EFE9] text-xs sm:text-sm font-medium flex items-center gap-2 transition-colors cursor-pointer shadow-md"
           >
-            <ArrowLeft className="w-4 h-4 text-[#A8A79C]" />
+            <ArrowLeft className="w-4 h-4" />
             <span>{dict.profile?.backBtn || "Kembali ke Dashboard"}</span>
           </Link>
 
-          <span className="text-xs font-medium text-[#A8A79C]">
+          <span className="font-display text-sm font-bold text-[#F1EFE9]">
             {dict.profile?.title || "Pusat Akun & Profil"}
           </span>
         </div>
+      </header>
+
+      {/* Main Container */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 space-y-6">
 
         {/* Profile User Header Card */}
         <div className="bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 rounded-xl p-6 sm:p-8 space-y-6 shadow-xl">
