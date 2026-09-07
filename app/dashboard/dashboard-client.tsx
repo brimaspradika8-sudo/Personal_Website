@@ -299,38 +299,28 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               </div>
             </div>
 
-            {/* Right Overlapping Video Card Accent */}
-            <div className="absolute right-0 bottom-6 sm:bottom-12 z-20 hidden sm:flex flex-col items-end gap-2">
+            {/* Right Overlapping Simple Video Card Accent (Opsi B) */}
+            <div className="absolute right-0 bottom-6 sm:bottom-12 z-20 hidden sm:flex flex-col items-end">
               
-              <div className="bg-black/80 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-2xl space-y-2 w-52 sm:w-60 group">
-                <div className="relative w-full h-32 rounded-xl overflow-hidden bg-black">
-                  <Image
-                    src="/images/project1.png"
-                    alt="Sumatra Video"
-                    fill
-                    sizes="240px"
-                    className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                    <div className="w-9 h-9 rounded-full bg-[#F5B301] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <Play className="w-4 h-4 fill-current ml-0.5" />
-                    </div>
+              <div className={`rounded-2xl p-3 shadow-2xl space-y-2.5 w-48 sm:w-56 group border transition-colors ${
+                isNight ? "bg-[#1A211A] border-[#2A2F26] text-white" : "bg-white border-black/10 text-black"
+              }`}>
+                {/* Thumbnail: Warna solid/gradient gelap polos + tombol play kuning bulat */}
+                <div className="relative w-full h-28 rounded-xl overflow-hidden bg-gradient-to-br from-[#2F362B] via-[#1E241A] to-[#12160F] flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-300">
+                  <div className="w-9 h-9 rounded-full bg-[#F5B301] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                   </div>
-                  <div className="absolute bottom-2 left-2 text-left">
-                    <div className="font-display text-xs font-bold text-[#F5B301] tracking-widest uppercase">
-                      SUMATRA
-                    </div>
-                    <div className="text-[9px] text-white/80 uppercase font-mono">
-                      RECONNECTING WITH NATURE
-                    </div>
+                  {/* Judul SUMATRA di Kiri Bawah Thumbnail (Font Simple) */}
+                  <div className="absolute bottom-2 left-2 font-display text-[10px] font-bold text-white tracking-widest uppercase bg-black/60 px-1.5 py-0.5 rounded">
+                    SUMATRA
                   </div>
                 </div>
-              </div>
 
-              {/* Location Badge Under Video Card */}
-              <div className="flex items-center gap-1.5 text-[11px] text-white/90 font-mono drop-shadow">
-                <MapPin className="w-3.5 h-3.5 text-[#F5B301]" />
-                <span>Based in Indonesia</span>
+                {/* Label Based in Indonesia + Pin Icon DI DALAM PADDING CARD */}
+                <div className="flex items-center gap-1.5 text-[11px] font-mono opacity-85 pt-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#F5B301] shrink-0" />
+                  <span className="truncate">Based in Indonesia</span>
+                </div>
               </div>
 
             </div>
