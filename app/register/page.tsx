@@ -126,7 +126,7 @@ export default function RegisterPage() {
         >
           <source src="/animations/day-landscape.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#12160F]/85 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/50 via-transparent to-[#12160F]/30 pointer-events-none" />
       </div>
 
       {/* Outer Card Wrapper */}

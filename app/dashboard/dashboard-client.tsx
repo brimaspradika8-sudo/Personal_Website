@@ -227,8 +227,8 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
           </video>
         )}
 
-        {/* Unified Pine Dark Gradient Overlay (Mountain Illustration Visible Behind) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/75 via-[#12160F]/80 to-[#12160F]/90 transition-colors duration-1000" />
+        {/* Mountain Illustration Primary Background Overlay (Vivid & Clear, 15-30% opacity range) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/50 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
       </div>
 
       {/* Header / Navbar */}

@@ -77,6 +77,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [headerImgError, setHeaderImgError] = useState(false);
 
   const [sfxEnabled, setSfxEnabled] = useState(soundFx.getIsEnabled());
   const [mode, setMode] = useState<"day" | "night">(() => {
@@ -86,7 +87,23 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     return "day";
   });
 
-  const [headerImgError, setHeaderImgError] = useState(false);
+  // Synchronize avatar & name state whenever user / dbUser props change (single source of truth)
+  useEffect(() => {
+    const effectiveAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
+    setAvatarUrl(effectiveAvatar);
+
+    const effectiveName = dbUser?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || "";
+    if (effectiveName && (!name || name !== effectiveName)) {
+      setName(effectiveName);
+    }
+  }, [
+    dbUser?.avatar,
+    dbUser?.name,
+    user?.user_metadata?.avatar_url,
+    user?.user_metadata?.picture,
+    user?.user_metadata?.full_name,
+    user?.user_metadata?.name,
+  ]);
 
   useEffect(() => {
     setHeaderImgError(false);
@@ -246,7 +263,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/75 via-[#12160F]/80 to-[#12160F]/90 transition-colors duration-1000" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/50 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
       </div>
 
       {/* Main Container */}

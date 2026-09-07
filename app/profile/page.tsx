@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import ProfileClient from "./profile-client";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function ProfilePage() {
   const supabase = await createClient();
   const {
@@ -26,7 +29,7 @@ export default async function ProfilePage() {
     });
 
     const timeoutPromise = new Promise<null>((resolve) =>
-      setTimeout(() => resolve(null), 800)
+      setTimeout(() => resolve(null), 3000)
     );
 
     dbUser = await Promise.race([dbPromise, timeoutPromise]);
