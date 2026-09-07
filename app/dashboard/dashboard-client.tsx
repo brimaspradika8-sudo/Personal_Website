@@ -251,32 +251,32 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       }`}>
         
         {/* Giant Moving Backdrop Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") Behind Head */}
-        <div className="absolute top-2 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-2 space-y-[-2vw]">
+        <div className="absolute top-1 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
           {/* Line 1: Dynamic WELCOME Marquee */}
-          <div className="animate-welcome-marquee flex gap-12 whitespace-nowrap">
-            <h1 className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+          <div className="animate-welcome-marquee flex gap-4 whitespace-nowrap">
+            <h1 className={`font-display text-[18vw] sm:text-[20vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
-              {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull;
+              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[18vw] sm:text-[20vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
-              {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull;
+              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
             </h1>
           </div>
 
           {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
-          <div className="animate-welcome-marquee-reverse flex gap-12 whitespace-nowrap">
-            <h1 className={`font-display text-[12vw] sm:text-[13vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+          <div className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap">
+            <h1 className={`font-display text-[13vw] sm:text-[15vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
             }`}>
-              BRIMAS PRADIKA UTAMA &bull; BRIMAS PRADIKA UTAMA &bull;
+              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[12vw] sm:text-[13vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[13vw] sm:text-[15vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
             }`}>
-              BRIMAS PRADIKA UTAMA &bull; BRIMAS PRADIKA UTAMA &bull;
+              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
             </h1>
           </div>
         </div>
