@@ -31,3 +31,28 @@ input::-ms-clear {
   display: none !important;
 }
 
+@keyframes hairBounce {
+  0% {
+    transform: scale(1) rotate(0deg) translateY(0);
+  }
+  20% {
+    transform: scale(1.06) rotate(4deg) translateY(-10px);
+  }
+  40% {
+    transform: scale(0.96) rotate(-5deg) translateY(4px);
+  }
+  65% {
+    transform: scale(1.03) rotate(2deg) translateY(-3px);
+  }
+  85% {
+    transform: scale(0.99) rotate(-1deg) translateY(1px);
+  }
+  100% {
+    transform: scale(1) rotate(0deg) translateY(0);
+  }
+}
+
+.animate-hair-bounce {
+  animation: hairBounce 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
