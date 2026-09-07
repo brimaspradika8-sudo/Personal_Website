@@ -13,16 +13,16 @@ export default function MobileBottomNav() {
   const [activeTab, setActiveTab] = useState("home");
 
   const navItems = [
-    { id: "articles", label: dict.nav.articles || "Artikel", href: "#about", Icon: BookOpen },
-    { id: "projects", label: dict.nav.projects, href: "#projects", Icon: FolderGit2 },
-    { id: "home", label: dict.nav.home, href: "#hero", Icon: Compass },
-    { id: "about", label: dict.nav.about, href: "#about", Icon: User },
-    { id: "profile", label: dict.nav.profile || "Profile", href: "/profile", Icon: UserCheck },
+    { id: "home", label: "Beranda", href: "#hero", Icon: Compass },
+    { id: "about", label: "About", href: "#about", Icon: User },
+    { id: "projects", label: "Project", href: "#projects", Icon: FolderGit2 },
+    { id: "blog", label: "Blog", href: "#blog", Icon: BookOpen },
+    { id: "profile", label: "Profile", href: "/profile", Icon: UserCheck },
   ];
 
   const getTabIndex = (tab: string) => {
     const idx = navItems.findIndex((item) => item.id === tab);
-    return idx !== -1 ? idx : 2;
+    return idx !== -1 ? idx : 0;
   };
 
   useEffect(() => {
