@@ -239,41 +239,36 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         </div>
       </header>
 
-      {/* 2. HERO SECTION (~90vh FULL SECTION WITH ACCURATE SPECIFICATIONS) */}
+      {/* 2. HERO SECTION (~90vh FULL SECTION WITH VISUAL PHOTO GRADIENT BLOCK) */}
       <section id="hero" className={`relative min-h-[85vh] lg:min-h-[90vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
         isNight ? "bg-[#181D15]" : "bg-[#e8e8e6]"
       }`}>
         
-        {/* Teks Besar "WELCOME" (HANYA Di Bagian ATAS Hero, Warna Abu-abu Terang, Tanpa Watermark Tersebar) */}
-        <div className="absolute top-0 inset-x-0 flex justify-center pointer-events-none select-none overflow-hidden z-0 pt-2 sm:pt-4">
-          <h1 className={`font-display text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
-            isNight ? "text-[#232A20]" : "text-[#d8d8d5]"
+        {/* Teks Besar "WELCOME" di Pojok Kiri Atas (Warna Abu-abu Terang, Sebagian Tertutup Blok Foto) */}
+        <div className="absolute top-2 left-4 sm:left-8 pointer-events-none select-none overflow-hidden z-0">
+          <h1 className={`font-display text-[17vw] lg:text-[16vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            isNight ? "text-[#242C20]" : "text-[#d5d5d2]"
           }`}>
             WELCOME
           </h1>
         </div>
 
-        {/* Full-Bleed Photo Area Placeholder di Sisi Kanan-Tengah Hero (Tanpa Border, Tanpa Rounded Corner, Tanpa Frame/Shadow) */}
-        <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[55%] z-0 overflow-hidden">
-          {/* Grayscale Neutral Placeholder Container */}
-          <div className={`w-full h-full transition-colors ${
-            isNight ? "bg-[#1F271B]" : "bg-[#d0d0cd]"
-          }`}>
-            {/* Soft Left Fade Gradient Overlay untuk Menyatu Halus ke Background */}
-            <div className={`absolute inset-y-0 left-0 w-48 sm:w-64 bg-gradient-to-r pointer-events-none ${
-              isNight
-                ? "from-[#181D15] via-[#181D15]/80 to-transparent"
-                : "from-[#e8e8e6] via-[#e8e8e6]/80 to-transparent"
-            }`} />
-          </div>
+        {/* SATU Blok Visual Besar berbentuk Area Abu-abu Lebih Gelap (Gradient dari Abu-abu Muda ke Abu-abu Tua Kiri-ke-Kanan) di Sisi Kanan-Tengah Hero */}
+        <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[58%] z-0 overflow-hidden">
+          {/* Gradient Visual Photo Area Placeholder: tanpa border, tanpa rounded corner, tanpa shadow */}
+          <div className={`w-full h-full bg-gradient-to-r transition-colors ${
+            isNight
+              ? "from-[#181D15] via-[#242C20] to-[#2E382A]"
+              : "from-[#e8e8e6] via-[#babab6] to-[#8c8c88]"
+          }`} />
         </div>
 
         {/* Hero Main Content Layout Grid */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between py-8">
           
-          {/* Top Row: Kanan Atas Briefing Text */}
+          {/* Kanan Atas Briefing Text (di luar blok foto) */}
           <div className="flex justify-end pt-2">
-            <div className="max-w-xs text-right text-xs opacity-80 leading-relaxed space-y-1">
+            <div className="max-w-xs text-right text-xs opacity-85 leading-relaxed space-y-1">
               <p>I am a travel blogger based in Indonesia, specializing in backpacking, hiking, and photography.</p>
               <a href="#about" className="font-bold underline hover:text-[#F5B301] transition-colors">
                 Learn more here
@@ -281,9 +276,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             </div>
           </div>
 
-          {/* Center Row: Left Headline, Description & 2 Buttons (Sejajar Tengah Vertikal) */}
+          {/* Center Content Row: Konten Kiri (Sejajar Tengah Vertikal) & Kartu Video (Sejajar Tombol CTA) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto py-6">
             
+            {/* Konten Kiri */}
             <div className="lg:col-span-6 space-y-6 text-left">
               
               <div className="space-y-3">
@@ -297,14 +293,14 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 </p>
               </div>
 
-              {/* Dua Tombol Sejajar (Kuning Solid "READ MY BLOG" & Outline Hitam "WATCH MY VIDEOS") */}
+              {/* Dua Tombol Sejajar */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 
                 {/* Primary Solid Yellow Button */}
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-3 rounded-full bg-[#F5B301] hover:bg-[#E0A200] text-black font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2"
+                  className="px-6 py-3 rounded-full bg-[#F5B301] hover:bg-[#E0A200] text-black font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-md"
                 >
                   <span>READ MY BLOG</span>
                 </a>
@@ -326,35 +322,32 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
 
             </div>
 
-          </div>
-
-          {/* Bottom Row: Kartu Video Kanan Bawah (TERPISAH dari area foto, tidak overlap) */}
-          <div className="flex justify-start lg:justify-end pb-2">
-            <div className="space-y-2">
-              
-              <div className={`w-64 sm:w-72 rounded-xl p-3 shadow-md space-y-2 transition-colors ${
-                isNight ? "bg-[#1A211A] text-white" : "bg-white text-black"
+            {/* Kartu Video: Sejajar dengan Tombol CTA di Kiri (Bawah-Tengah Hero, Tidak Mepet Pojok Kanan Bawah) */}
+            <div className="lg:col-span-6 flex justify-start lg:justify-center items-center">
+              <div className={`w-full max-w-xs rounded-2xl p-4 shadow-xl space-y-3 transition-colors border ${
+                isNight ? "bg-[#1A211A] border-[#2A2F26] text-white" : "bg-white border-[#E2E2DF] text-black"
               }`}>
-                {/* Video Thumbnail Placeholder (Gradient / Play Icon) */}
-                <div className="relative w-full h-32 rounded-lg overflow-hidden bg-gradient-to-br from-[#2A2F26] to-[#12160F] flex items-center justify-center group cursor-pointer">
-                  {/* Play Button Bulat Kuning di Tengah */}
-                  <div className="w-10 h-10 rounded-full bg-[#F5B301] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                
+                {/* Thumbnail Video (Gradient Gelap dengan Play Button Bulat Kuning di Tengah) */}
+                <div className="relative w-full h-36 rounded-xl overflow-hidden bg-gradient-to-br from-[#2A2F26] to-[#12160F] flex items-center justify-center group cursor-pointer">
+                  <div className="w-11 h-11 rounded-full bg-[#F5B301] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Play className="w-4 h-4 fill-current ml-0.5" />
                   </div>
-                  {/* Judul Destinasi di Kiri Bawah Thumbnail */}
-                  <div className="absolute bottom-2 left-2 font-display text-xs font-bold text-white tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded">
+                  {/* Judul "SUMATRA" di Kiri Bawah Thumbnail */}
+                  <div className="absolute bottom-2.5 left-2.5 font-display text-xs font-bold text-white tracking-widest uppercase bg-black/70 px-2 py-0.5 rounded">
                     SUMATRA
                   </div>
                 </div>
-              </div>
 
-              {/* Label "Based in Indonesia" dengan Icon Pin di Bawah Card */}
-              <div className="flex items-center justify-end gap-1.5 text-xs font-mono opacity-80 pt-1">
-                <MapPin className="w-3.5 h-3.5 text-[#F5B301]" />
-                <span>Based in Indonesia</span>
-              </div>
+                {/* Label "Based in Indonesia" dengan Icon Pin DI DALAM Padding Card */}
+                <div className="flex items-center gap-2 text-xs font-mono opacity-85 pt-1">
+                  <MapPin className="w-4 h-4 text-[#F5B301] shrink-0" />
+                  <span className="truncate">Based in Indonesia</span>
+                </div>
 
+              </div>
             </div>
+
           </div>
 
         </div>
