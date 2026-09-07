@@ -149,7 +149,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   };
 
   const ownerName = "Brimas Pradika Utama";
-  const ownerAvatar = "/images/avatar.png";
+  const ownerAvatar = "/images/avatar.webp";
   const ownerEmail = "brimaspradika8@gmail.com";
 
   const navUserName =

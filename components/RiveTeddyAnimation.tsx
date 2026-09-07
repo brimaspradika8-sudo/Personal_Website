@@ -25,7 +25,7 @@ export default function RiveTeddyAnimation({
   const { RiveComponent, rive } = useRive(
     {
       src: "/animations/auth-teddy.riv",
-      stateMachines: STATE_MACHINE_NAME,
+      stateMachine: STATE_MACHINE_NAME,
       autoplay: true,
     },
     {
