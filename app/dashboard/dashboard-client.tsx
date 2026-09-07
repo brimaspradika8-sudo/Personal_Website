@@ -162,18 +162,21 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           </div>
 
           {/* Navigation Menu Items */}
-          <nav className="hidden lg:flex items-center gap-5 text-xs font-medium tracking-wide text-white/90">
-            {["Planning", "Destinations", "About", "Video", "Inspiration", "Resources", "Shop"].map((item) => (
+          <nav className="hidden lg:flex items-center gap-6 text-xs font-medium tracking-wide text-white/90">
+            {[
+              { label: "Beranda", href: "#hero" },
+              { label: "About", href: "#about" },
+              { label: "Project", href: "#projects" },
+              { label: "Blog", href: "#blog" },
+              { label: "Profile", href: "/profile" },
+            ].map((item) => (
               <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
+                key={item.label}
+                href={item.href}
                 onClick={() => soundFx.playClick()}
-                className={`transition-colors hover:text-[#F5B301] flex items-center gap-0.5 ${
-                  item === "Shop" ? "text-[#F5B301] font-bold" : ""
-                }`}
+                className="transition-colors hover:text-[#F5B301] flex items-center gap-0.5"
               >
-                <span>{item}</span>
-                {["Planning", "Destinations", "About"].includes(item) && <ChevronDown className="w-3 h-3 opacity-70" />}
+                <span>{item.label}</span>
               </a>
             ))}
           </nav>
