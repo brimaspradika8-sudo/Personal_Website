@@ -185,9 +185,9 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-[#F1EFE9] selection:bg-[#3B5D42] selection:text-[#F1EFE9]">
       
-      {/* Mountain Landscape Illustration Background Container (Fixed Full Bleed) */}
+      {/* Mountain Landscape Illustration Background Container (Color-Graded to Pine & Ember) */}
       <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.6] brightness-[0.7] contrast-[1.05] transition-all duration-1000"
         style={{
           backgroundImage: `url(${
             isNight
@@ -209,7 +209,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             playsInline
             preload="auto"
             poster={isMobile ? "/animations/day-landscape-mobile.webp" : "/animations/day-landscape.webp"}
-            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out ${
+            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.6] brightness-[0.7] contrast-[1.05] ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
           >
@@ -229,7 +229,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             playsInline
             preload="auto"
             poster={isMobile ? "/animations/night-landscape-mobile.webp" : "/animations/night-landscape.webp"}
-            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out ${
+            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.6] brightness-[0.7] contrast-[1.05] ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -240,8 +240,9 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
           </video>
         )}
 
-        {/* Mountain Illustration Primary Background Overlay (Vivid & Clear, 15-30% opacity range) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/50 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
+        {/* Option A: Multiply Blend Layer (Blends #12160F Pine Tones into Background) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/60 via-[#12160F]/40 to-[#12160F]/70 mix-blend-multiply pointer-events-none transition-colors duration-1000" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/40 pointer-events-none transition-colors duration-1000" />
       </div>
 
       {/* Header / Navbar */}
@@ -448,7 +449,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
               </div>
 
               {/* Technologies Stack Row */}
-              <div className="pt-4 border-t border-[#2A2F26] space-y-2">
+              <div className="pt-4 border-t border-[#2A2F26]/70 space-y-2">
                 <p className="text-xs font-medium text-[#A8A79C]">
                   {dict.hero.techHeader}
                 </p>
@@ -456,7 +457,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                   {["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Prisma", "TailwindCSS"].map((tech) => (
                     <span
                       key={tech}
-                      className="px-3 py-1 rounded-lg bg-[#1A211A] border border-[#2A2F26] text-[#F1EFE9] text-xs font-mono"
+                      className="px-3 py-1 rounded-lg bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 text-[#F1EFE9] text-xs font-mono"
                     >
                       {tech}
                     </span>
@@ -468,7 +469,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
             {/* Desktop Profile Picture */}
             <div className="hidden md:flex md:col-span-5 justify-end items-center">
-              <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border border-[#2A2F26] bg-[#1A211A]">
+              <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border border-[#2A2F26]/70 bg-[#1A211A]/80 backdrop-blur-md shadow-xl">
                 <Image
                   src={ownerAvatar}
                   alt={ownerName}
@@ -485,7 +486,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
         {/* 2. PROJECTS SECTION */}
         <section id="projects" className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2F26] pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2F26]/70 pb-4">
             <div>
               <h2 className="font-display text-2xl font-bold text-[#F1EFE9] tracking-tight flex items-center gap-2.5">
                 <Mountain className="w-5 h-5 text-[#3B5D42]" />
@@ -507,8 +508,8 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             </a>
           </div>
 
-          {/* Clean Coming Soon Card */}
-          <div className="bg-[#1A211A] border border-[#2A2F26] rounded-xl p-8 sm:p-10 space-y-4">
+          {/* Frosted Glassmorphism Coming Soon Card */}
+          <div className="bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 rounded-xl p-8 sm:p-10 space-y-4 shadow-xl">
             <h3 className="font-display text-xl sm:text-2xl font-bold text-[#F1EFE9]">
               {dict.projects.comingSoonTitle}
             </h3>
@@ -534,7 +535,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
         </section>
 
         {/* 3. CONTACT SECTION */}
-        <section id="contact" className="bg-[#1A211A] border border-[#2A2F26] p-8 sm:p-10 rounded-xl space-y-6">
+        <section id="contact" className="bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 p-8 sm:p-10 rounded-xl space-y-6 shadow-xl">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="space-y-2 max-w-xl">
               <h2 className="font-display text-xl sm:text-2xl font-bold text-[#F1EFE9]">

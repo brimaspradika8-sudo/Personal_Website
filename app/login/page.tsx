@@ -148,9 +148,9 @@ function LoginForm() {
   return (
     <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-center p-4 sm:p-6 font-sans text-[#F1EFE9]">
       
-      {/* Background Overlay */}
+      {/* Background Overlay (Color-Graded to Pine & Ember) */}
       <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.6] brightness-[0.7] contrast-[1.05]"
         style={{ backgroundImage: "url('/animations/day-landscape.webp')" }}
       >
         <video
@@ -160,15 +160,17 @@ function LoginForm() {
           playsInline
           preload="auto"
           poster="/animations/day-landscape.webp"
-          className="absolute inset-0 object-cover object-top w-full h-full"
+          className="absolute inset-0 object-cover object-top w-full h-full saturate-[0.6] brightness-[0.7] contrast-[1.05]"
         >
           <source src="/animations/day-landscape.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/50 via-transparent to-[#12160F]/30 pointer-events-none" />
+        {/* Option A: Multiply Blend Layer */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/60 via-[#12160F]/40 to-[#12160F]/70 mix-blend-multiply pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/40 pointer-events-none" />
       </div>
 
       {/* Main Card Wrapper */}
-      <div className="w-full max-w-3xl bg-[#1A211A] border border-[#2A2F26] rounded-xl overflow-hidden flex flex-col md:flex-row my-auto">
+      <div className="w-full max-w-3xl bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 rounded-xl overflow-hidden flex flex-col md:flex-row my-auto shadow-2xl">
         
         {/* Left Animation Panel */}
         <div className="w-full md:w-[45%] bg-[#12160F] p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-[#2A2F26] shrink-0 relative">

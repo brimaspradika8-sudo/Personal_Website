@@ -246,9 +246,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   return (
     <div className="relative min-h-[100dvh] w-full font-sans antialiased text-[#F1EFE9] pb-32 sm:pb-24">
       
-      {/* Mountain Landscape Illustration Background Container (Fixed Full Bleed) */}
+      {/* Mountain Landscape Illustration Background Container (Color-Graded to Pine & Ember) */}
       <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.6] brightness-[0.7] contrast-[1.05] transition-all duration-1000"
         style={{
           backgroundImage: `url(${
             mode === "night" ? "/animations/night-landscape.webp" : "/animations/day-landscape.webp"
@@ -263,14 +263,16 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           playsInline
           preload="auto"
           poster={mode === "night" ? "/animations/night-landscape.webp" : "/animations/day-landscape.webp"}
-          className="absolute inset-0 object-cover object-top w-full h-full"
+          className="absolute inset-0 object-cover object-top w-full h-full saturate-[0.6] brightness-[0.7] contrast-[1.05]"
         >
           <source
             src={mode === "night" ? "/animations/night-landscape.mp4" : "/animations/day-landscape.mp4"}
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/50 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
+        {/* Option A: Multiply Blend Layer */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/60 via-[#12160F]/40 to-[#12160F]/70 mix-blend-multiply pointer-events-none transition-colors duration-1000" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/40 pointer-events-none transition-colors duration-1000" />
       </div>
 
       {/* Main Container */}
@@ -293,7 +295,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         </div>
 
         {/* Profile User Header Card */}
-        <div className="bg-[#1A211A] border border-[#2A2F26] rounded-xl p-6 sm:p-8 space-y-6">
+        <div className="bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 rounded-xl p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 text-center sm:text-left">
             
             <input
@@ -407,7 +409,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         </div>
 
         {/* Tab Controller */}
-        <div className="p-1 rounded-xl bg-[#1A211A] border border-[#2A2F26] grid grid-cols-2 sm:grid-cols-4 gap-1">
+        <div className="p-1 rounded-xl bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 grid grid-cols-2 sm:grid-cols-4 gap-1 shadow-xl">
           {[
             { id: "info", label: dict.profile?.overviewTab || "Info Profil", icon: UserIcon },
             { id: "edit", label: dict.profile?.editTab || "Edit Profil", icon: user ? Edit3 : Lock },
@@ -437,7 +439,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         </div>
 
         {/* Tab Content Box */}
-        <div className="bg-[#1A211A] border border-[#2A2F26] rounded-xl p-6 sm:p-8">
+        <div className="bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 rounded-xl p-6 sm:p-8 shadow-xl">
           
           {/* TAB 1: OVERVIEW */}
           {activeTab === "info" && (
