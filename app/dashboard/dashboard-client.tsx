@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Search,
@@ -13,12 +12,7 @@ import {
   Volume2,
   VolumeX,
   User,
-  Compass,
   MapPin,
-  Globe2,
-  Camera,
-  BookOpen,
-  Video,
 } from "lucide-react";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -26,7 +20,6 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
 import CommandPalette from "@/components/CommandPalette";
 import ProjectModal, { ProjectData } from "@/components/ProjectModal";
-import InteractiveCharacter from "@/components/InteractiveCharacter";
 
 interface DashboardClientProps {
   user: {
@@ -113,8 +106,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
     });
   };
 
-  const ownerName = "BRIMAS.";
-  const ownerAvatar = "/images/avatar.webp";
+  const ownerName = "BRIMAS P.";
 
   const navUserName =
     dbUser?.name ||
@@ -128,12 +120,12 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
 
   return (
     <div className={`min-h-screen font-sans antialiased text-left selection:bg-[#F5B301] selection:text-black transition-colors duration-300 ${
-      isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#F7F7F5] text-[#1A1A1A]"
+      isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#f7f7f5] text-[#1A1A1A]"
     }`}>
       
       {/* 1. TOP NAVIGATION HEADER */}
       <header className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${
-        isNight ? "bg-[#12160F]/90 border-[#2A2F26]" : "bg-[#F7F7F5]/90 border-[#E2E2DF]"
+        isNight ? "bg-[#12160F]/90 border-[#2A2F26]" : "bg-[#f7f7f5]/90 border-[#E2E2DF]"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           
@@ -187,7 +179,6 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           {/* Right Action Icons */}
           <div className="flex items-center gap-3 shrink-0">
             
-            {/* Shopping Bag Icon */}
             <button
               type="button"
               onClick={() => showToast(lang === "id" ? "Shop dibuka" : "Shop Opened")}
@@ -248,135 +239,124 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         </div>
       </header>
 
-      {/* 2. HERO SECTION (BucketListly Travel Editorial Style) */}
-      <section id="hero" className={`relative pt-8 pb-16 overflow-hidden transition-colors duration-300 ${
-        isNight ? "bg-[#161B13]" : "bg-[#EAEAE7]"
+      {/* 2. HERO SECTION (~90vh FULL SECTION WITH ACCURATE SPECIFICATIONS) */}
+      <section id="hero" className={`relative min-h-[85vh] lg:min-h-[90vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
+        isNight ? "bg-[#181D15]" : "bg-[#e8e8e6]"
       }`}>
         
-        {/* Giant Translucent Backdrop Display Typography ("WELCOME") */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden opacity-[0.12] sm:opacity-[0.16] z-0">
-          <h1 className="font-display text-[22vw] font-black uppercase tracking-tighter text-current whitespace-nowrap leading-none">
+        {/* Teks Besar "WELCOME" (HANYA Di Bagian ATAS Hero, Warna Abu-abu Terang, Tanpa Watermark Tersebar) */}
+        <div className="absolute top-0 inset-x-0 flex justify-center pointer-events-none select-none overflow-hidden z-0 pt-2 sm:pt-4">
+          <h1 className={`font-display text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            isNight ? "text-[#232A20]" : "text-[#d8d8d5]"
+          }`}>
             WELCOME
           </h1>
         </div>
 
-        {/* Hero Grid Container */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4 sm:pt-8">
+        {/* Full-Bleed Photo Area Placeholder di Sisi Kanan-Tengah Hero (Tanpa Border, Tanpa Rounded Corner, Tanpa Frame/Shadow) */}
+        <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[55%] z-0 overflow-hidden">
+          {/* Grayscale Neutral Placeholder Container */}
+          <div className={`w-full h-full transition-colors ${
+            isNight ? "bg-[#1F271B]" : "bg-[#d0d0cd]"
+          }`}>
+            {/* Soft Left Fade Gradient Overlay untuk Menyatu Halus ke Background */}
+            <div className={`absolute inset-y-0 left-0 w-48 sm:w-64 bg-gradient-to-r pointer-events-none ${
+              isNight
+                ? "from-[#181D15] via-[#181D15]/80 to-transparent"
+                : "from-[#e8e8e6] via-[#e8e8e6]/80 to-transparent"
+            }`} />
+          </div>
+        </div>
+
+        {/* Hero Main Content Layout Grid */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between py-8">
           
-          {/* Left Column: Headline, Bio, & CTAs */}
-          <div className="lg:col-span-5 space-y-6 text-left order-2 lg:order-1">
-            
-            <div className="space-y-2">
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
-                I&apos;M {ownerName}
-              </h1>
-              <p className="text-sm sm:text-base opacity-80 leading-relaxed font-sans max-w-md pt-2">
-                I create travel guides, backpacking itineraries, and software architecture systems from around the world, as well as sharing photography resources and more.
-              </p>
-            </div>
-
-            {/* Two Action CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              
-              {/* Primary Solid Yellow Button */}
-              <a
-                href="#projects"
-                onClick={() => soundFx.playClick()}
-                className="px-6 py-3 rounded-full bg-[#F5B301] hover:bg-[#E0A200] text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:shadow-lg hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2"
-              >
-                <span>Read My Blog</span>
-              </a>
-
-              {/* Secondary Outline White/Dark Button */}
-              <a
-                href="#vlog"
-                onClick={() => soundFx.playClick()}
-                className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${
-                  isNight
-                    ? "border-white text-white hover:bg-white hover:text-black"
-                    : "border-black text-black hover:bg-black hover:text-white"
-                }`}
-              >
-                <span>Watch My Videos</span>
-              </a>
-
-            </div>
-
-          </div>
-
-          {/* Center Column: Grayscale Centerpiece Avatar with 3D Tilt & Hair Bounce */}
-          <div className="lg:col-span-4 flex justify-center items-center order-1 lg:order-2">
-            <InteractiveCharacter avatarSrc={ownerAvatar} name={ownerName} />
-          </div>
-
-          {/* Right Column: Floating Video Thumbnail Card & Location Badge */}
-          <div className="lg:col-span-3 space-y-4 order-3 flex flex-col items-start lg:items-end">
-            
-            {/* Top Supporting Bio Teaser */}
-            <div className="hidden lg:block text-right max-w-xs text-xs opacity-75 leading-relaxed space-y-1">
-              <p>I am a travel blogger based in Indonesia, specializing in backpacking, system architecture, and photography.</p>
+          {/* Top Row: Kanan Atas Briefing Text */}
+          <div className="flex justify-end pt-2">
+            <div className="max-w-xs text-right text-xs opacity-80 leading-relaxed space-y-1">
+              <p>I am a travel blogger based in Indonesia, specializing in backpacking, hiking, and photography.</p>
               <a href="#about" className="font-bold underline hover:text-[#F5B301] transition-colors">
                 Learn more here
               </a>
             </div>
+          </div>
 
-            {/* Floating Video Card */}
-            <div className={`w-full max-w-xs rounded-2xl border p-3 shadow-xl space-y-3 relative group overflow-hidden transition-transform duration-300 hover:scale-[1.02] ${
-              isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-white border-[#E2E2DF]"
-            }`}>
+          {/* Center Row: Left Headline, Description & 2 Buttons (Sejajar Tengah Vertikal) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto py-6">
+            
+            <div className="lg:col-span-6 space-y-6 text-left">
               
-              <div className="flex items-center justify-between text-[11px] font-mono text-[#A8A79C]">
-                <span className="uppercase tracking-wider">Latest Video</span>
-                <span className="flex items-center gap-1 text-[#F5B301] font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#F5B301] animate-ping" />
-                  4K
-                </span>
+              <div className="space-y-3">
+                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight leading-none text-current">
+                  I&apos;M {ownerName}
+                </h1>
+                <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md ${
+                  isNight ? "text-[#A8A79C]" : "text-[#4a4a4a]"
+                }`}>
+                  I create travel guides and backpacking itineraries from around the world, as well as sharing photography resources and more.
+                </p>
               </div>
 
-              {/* Video Thumbnail */}
-              <div className="relative w-full h-32 rounded-xl overflow-hidden bg-black group">
-                <Image
-                  src="/images/project1.png"
-                  alt="Sumatra Travel Video"
-                  fill
-                  sizes="260px"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <div className="w-10 h-10 rounded-full bg-[#F5B301] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <Play className="w-4 h-4 fill-current ml-0.5" />
-                  </div>
-                </div>
-                <div className="absolute bottom-2 left-2 font-display text-sm font-bold text-white tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded">
-                  SUMATRA
-                </div>
-              </div>
+              {/* Dua Tombol Sejajar (Kuning Solid "READ MY BLOG" & Outline Hitam "WATCH MY VIDEOS") */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                
+                {/* Primary Solid Yellow Button */}
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-6 py-3 rounded-full bg-[#F5B301] hover:bg-[#E0A200] text-black font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2"
+                >
+                  <span>READ MY BLOG</span>
+                </a>
 
-              {/* Location Badge */}
-              <div className="flex items-center justify-between pt-1 text-[11px]">
-                <div className="flex items-center gap-1.5 opacity-80 font-mono">
-                  <MapPin className="w-3.5 h-3.5 text-[#F5B301]" />
-                  <span>Based in Indonesia</span>
-                </div>
+                {/* Secondary Outline Button */}
+                <a
+                  href="#vlog"
+                  onClick={() => soundFx.playClick()}
+                  className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${
+                    isNight
+                      ? "border-white text-white hover:bg-white hover:text-black"
+                      : "border-black text-black hover:bg-black hover:text-white"
+                  }`}
+                >
+                  <span>WATCH MY VIDEOS</span>
+                </a>
+
               </div>
 
             </div>
 
           </div>
 
-        </div>
+          {/* Bottom Row: Kartu Video Kanan Bawah (TERPISAH dari area foto, tidak overlap) */}
+          <div className="flex justify-start lg:justify-end pb-2">
+            <div className="space-y-2">
+              
+              <div className={`w-64 sm:w-72 rounded-xl p-3 shadow-md space-y-2 transition-colors ${
+                isNight ? "bg-[#1A211A] text-white" : "bg-white text-black"
+              }`}>
+                {/* Video Thumbnail Placeholder (Gradient / Play Icon) */}
+                <div className="relative w-full h-32 rounded-lg overflow-hidden bg-gradient-to-br from-[#2A2F26] to-[#12160F] flex items-center justify-center group cursor-pointer">
+                  {/* Play Button Bulat Kuning di Tengah */}
+                  <div className="w-10 h-10 rounded-full bg-[#F5B301] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Play className="w-4 h-4 fill-current ml-0.5" />
+                  </div>
+                  {/* Judul Destinasi di Kiri Bawah Thumbnail */}
+                  <div className="absolute bottom-2 left-2 font-display text-xs font-bold text-white tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded">
+                    SUMATRA
+                  </div>
+                </div>
+              </div>
 
-        {/* Slanted Angle Slope Divider */}
-        <div className="relative w-full h-12 sm:h-16 overflow-hidden mt-12 z-10 pointer-events-none">
-          <svg
-            className={`absolute bottom-0 w-full h-full fill-current transition-colors duration-300 ${
-              isNight ? "text-[#12160F]" : "text-[#F7F7F5]"
-            }`}
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,0 L1200,80 L1200,120 L0,120 Z" />
-          </svg>
+              {/* Label "Based in Indonesia" dengan Icon Pin di Bawah Card */}
+              <div className="flex items-center justify-end gap-1.5 text-xs font-mono opacity-80 pt-1">
+                <MapPin className="w-3.5 h-3.5 text-[#F5B301]" />
+                <span>Based in Indonesia</span>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
       </section>
@@ -384,7 +364,6 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       {/* 3. SECTION "WHERE DO YOU WANT TO GO?" */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-8 text-center">
         
-        {/* Header with Decorative Horizontal Lines */}
         <div className="flex items-center justify-center gap-4">
           <div className="h-px bg-current opacity-20 flex-1 max-w-xs" />
           <h2 className="text-xs font-bold uppercase tracking-widest font-mono">
@@ -393,7 +372,6 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           <div className="h-px bg-current opacity-20 flex-1 max-w-xs" />
         </div>
 
-        {/* Country Outline Icons Row */}
         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 items-center justify-items-center">
           {[
             { label: "THAILAND", code: "TH" },
@@ -411,7 +389,6 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               onClick={() => soundFx.playClick()}
               className="flex flex-col items-center gap-2 group cursor-pointer p-2 transition-transform hover:scale-105"
             >
-              {/* Outline Country Map Silhouette Badge */}
               <div className={`w-12 h-12 rounded-xl border flex items-center justify-center text-xs font-mono font-bold transition-colors ${
                 isNight
                   ? "bg-[#1A211A] border-[#2A2F26] group-hover:border-[#F5B301] group-hover:text-[#F5B301]"
@@ -425,24 +402,18 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             </a>
           ))}
 
-          {/* Explore More Arrow */}
           <a
             href="#projects"
             onClick={() => soundFx.playClick()}
             className="flex flex-col items-center gap-2 group cursor-pointer p-2 transition-transform hover:scale-105"
           >
-            <div className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-colors ${
-              isNight
-                ? "bg-[#F5B301] border-[#F5B301] text-black"
-                : "bg-[#F5B301] border-[#F5B301] text-black"
-            }`}>
+            <div className="w-12 h-12 rounded-xl border bg-[#F5B301] border-[#F5B301] text-black flex items-center justify-center">
               <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
             </div>
             <span className="text-[10px] font-bold tracking-wider text-center group-hover:text-[#F5B301] transition-colors">
               EXPLORE MORE
             </span>
           </a>
-
         </div>
 
       </section>
@@ -451,16 +422,12 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 border-t border-b border-current/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* Left Column: Flat Silhouette World Map with Gold Pins */}
           <div className="lg:col-span-6 flex justify-center items-center">
             <div className="relative w-full max-w-lg aspect-[16/9] flex items-center justify-center p-4">
-              
-              {/* World Map SVG Illustration */}
               <svg
                 viewBox="0 0 1000 500"
                 className="w-full h-full text-[#F5B301] fill-current opacity-85 hover:opacity-100 transition-opacity"
               >
-                {/* Simplified Continents Silhouette Paths */}
                 <path d="M150 120 Q180 100 250 110 T300 200 T220 280 T140 200 Z" />
                 <path d="M220 300 Q260 290 310 330 T280 440 T210 380 Z" />
                 <path d="M450 100 Q520 80 580 120 T540 220 T460 180 Z" />
@@ -469,7 +436,6 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <path d="M800 320 Q860 300 910 350 T880 430 T810 390 Z" />
               </svg>
 
-              {/* Gold Location Pins */}
               {[
                 { x: "25%", y: "30%", title: "North America" },
                 { x: "48%", y: "25%", title: "Europe" },
@@ -487,13 +453,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                   </span>
                 </div>
               ))}
-
             </div>
           </div>
 
-          {/* Right Column: Title, Description, & CTA */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            
             <div className="space-y-3">
               <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none">
                 DISCOVER THE <span className="text-[#F5B301]">WORLD</span>
@@ -517,7 +480,6 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
-
           </div>
 
         </div>
