@@ -246,9 +246,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   return (
     <div className="relative min-h-[100dvh] w-full font-sans antialiased text-[#F1EFE9] pb-32 sm:pb-24">
       
-      {/* Mountain Landscape Illustration Background Container (Color-Graded to Pine & Ember) */}
+      {/* Mountain Landscape Illustration Background Container (Light-Balanced Pine & Ember) */}
       <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.6] brightness-[0.7] contrast-[1.05] transition-all duration-1000"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.85] brightness-[0.9] contrast-[1.05] transition-all duration-1000"
         style={{
           backgroundImage: `url(${
             mode === "night" ? "/animations/night-landscape.webp" : "/animations/day-landscape.webp"
@@ -263,16 +263,21 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           playsInline
           preload="auto"
           poster={mode === "night" ? "/animations/night-landscape.webp" : "/animations/day-landscape.webp"}
-          className="absolute inset-0 object-cover object-top w-full h-full saturate-[0.6] brightness-[0.7] contrast-[1.05]"
+          className="absolute inset-0 object-cover object-top w-full h-full saturate-[0.85] brightness-[0.9] contrast-[1.05]"
         >
           <source
             src={mode === "night" ? "/animations/night-landscape.mp4" : "/animations/day-landscape.mp4"}
             type="video/mp4"
           />
         </video>
-        {/* Option A: Multiply Blend Layer */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/60 via-[#12160F]/40 to-[#12160F]/70 mix-blend-multiply pointer-events-none transition-colors duration-1000" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/40 pointer-events-none transition-colors duration-1000" />
+        {/* 1. Directional Gradient Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(18,22,15,0.75)_0%,rgba(18,22,15,0.55)_35%,rgba(18,22,15,0.25)_65%,rgba(18,22,15,0.15)_100%)] mix-blend-multiply pointer-events-none transition-colors duration-1000" />
+        
+        {/* 2. Warm Ember Radial Glow Focal Point */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(166,83,45,0.18)_0%,transparent_45%)] mix-blend-soft-light pointer-events-none transition-colors duration-1000" />
+        
+        {/* 3. Subtle Top & Bottom Fade Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
       </div>
 
       {/* Main Container */}

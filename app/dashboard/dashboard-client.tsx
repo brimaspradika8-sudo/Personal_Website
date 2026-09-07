@@ -185,9 +185,9 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-[#F1EFE9] selection:bg-[#3B5D42] selection:text-[#F1EFE9]">
       
-      {/* Mountain Landscape Illustration Background Container (Color-Graded to Pine & Ember) */}
+      {/* Mountain Landscape Illustration Background Container (Light-Balanced Pine & Ember) */}
       <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.6] brightness-[0.7] contrast-[1.05] transition-all duration-1000"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.85] brightness-[0.9] contrast-[1.05] transition-all duration-1000"
         style={{
           backgroundImage: `url(${
             isNight
@@ -209,7 +209,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             playsInline
             preload="auto"
             poster={isMobile ? "/animations/day-landscape-mobile.webp" : "/animations/day-landscape.webp"}
-            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.6] brightness-[0.7] contrast-[1.05] ${
+            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.85] brightness-[0.9] contrast-[1.05] ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
           >
@@ -229,7 +229,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             playsInline
             preload="auto"
             poster={isMobile ? "/animations/night-landscape-mobile.webp" : "/animations/night-landscape.webp"}
-            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.6] brightness-[0.7] contrast-[1.05] ${
+            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.85] brightness-[0.9] contrast-[1.05] ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -240,9 +240,14 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
           </video>
         )}
 
-        {/* Option A: Multiply Blend Layer (Blends #12160F Pine Tones into Background) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/60 via-[#12160F]/40 to-[#12160F]/70 mix-blend-multiply pointer-events-none transition-colors duration-1000" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/40 pointer-events-none transition-colors duration-1000" />
+        {/* 1. Directional Gradient Overlay (Darker on text left, natural & clear on right) */}
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(18,22,15,0.75)_0%,rgba(18,22,15,0.55)_35%,rgba(18,22,15,0.25)_65%,rgba(18,22,15,0.15)_100%)] mix-blend-multiply pointer-events-none transition-colors duration-1000" />
+        
+        {/* 2. Warm Ember Radial Glow Focal Point (Soft warmth near top right sky) */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(166,83,45,0.18)_0%,transparent_45%)] mix-blend-soft-light pointer-events-none transition-colors duration-1000" />
+        
+        {/* 3. Subtle Top Header & Bottom Fade Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
       </div>
 
       {/* Header / Navbar */}
@@ -467,9 +472,9 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
             </div>
 
-            {/* Desktop Profile Picture */}
+            {/* Desktop Profile Picture with Vignette Framing */}
             <div className="hidden md:flex md:col-span-5 justify-end items-center">
-              <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border border-[#2A2F26]/70 bg-[#1A211A]/80 backdrop-blur-md shadow-xl">
+              <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border-2 border-[#3B5D42]/60 bg-[#1A211A]/80 backdrop-blur-md shadow-2xl group">
                 <Image
                   src={ownerAvatar}
                   alt={ownerName}
@@ -478,6 +483,8 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                   sizes="288px"
                   className="object-cover"
                 />
+                {/* Soft Inset Vignette Overlay to blend photo background seamlessly with website theme */}
+                <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_35px_10px_rgba(18,22,15,0.55)] pointer-events-none z-10 border border-[#2A2F26]/40" />
               </div>
             </div>
 

@@ -148,9 +148,9 @@ function LoginForm() {
   return (
     <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-center p-4 sm:p-6 font-sans text-[#F1EFE9]">
       
-      {/* Background Overlay (Color-Graded to Pine & Ember) */}
+      {/* Background Overlay (Light-Balanced Pine & Ember) */}
       <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.6] brightness-[0.7] contrast-[1.05]"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.85] brightness-[0.9] contrast-[1.05]"
         style={{ backgroundImage: "url('/animations/day-landscape.webp')" }}
       >
         <video
@@ -160,13 +160,14 @@ function LoginForm() {
           playsInline
           preload="auto"
           poster="/animations/day-landscape.webp"
-          className="absolute inset-0 object-cover object-top w-full h-full saturate-[0.6] brightness-[0.7] contrast-[1.05]"
+          className="absolute inset-0 object-cover object-top w-full h-full saturate-[0.85] brightness-[0.9] contrast-[1.05]"
         >
           <source src="/animations/day-landscape.mp4" type="video/mp4" />
         </video>
-        {/* Option A: Multiply Blend Layer */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/60 via-[#12160F]/40 to-[#12160F]/70 mix-blend-multiply pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/40 pointer-events-none" />
+        {/* Directional Gradient & Ember Glow Overlays */}
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(18,22,15,0.75)_0%,rgba(18,22,15,0.55)_35%,rgba(18,22,15,0.25)_65%,rgba(18,22,15,0.15)_100%)] mix-blend-multiply pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(166,83,45,0.18)_0%,transparent_45%)] mix-blend-soft-light pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/30 pointer-events-none" />
       </div>
 
       {/* Main Card Wrapper */}
