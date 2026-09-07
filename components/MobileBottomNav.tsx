@@ -60,66 +60,30 @@ export default function MobileBottomNav() {
   const svgPathD = `M 0,0 L ${leftEnd},0 C ${cx - 18},0 ${cx - 15},32 ${cx},32 C ${cx + 15},32 ${cx + 18},0 ${rightStart},0 L 400,0 L 400,68 L 0,68 Z`;
 
   return (
-    <div
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none transition-all duration-300"
-      style={{
-        paddingBottom: "max(12px, env(safe-area-inset-bottom))",
-      }}
-    >
-      <div className="relative w-full max-w-lg mx-auto pointer-events-auto px-2">
-        
-        {/* SVG Curved Notch Background Bar */}
-        <div className="absolute inset-0 w-full h-[68px] -z-10 overflow-visible">
-          <svg
-            className="w-full h-[68px]"
-            viewBox="0 0 400 68"
-            preserveAspectRatio="none"
-          >
-            <path
-              d={svgPathD}
-              className="fill-[#1A211A] stroke-[#2A2F26] transition-all duration-500 ease-[cubic-bezier(0.34,1.4,0.64,1)]"
-              strokeWidth="1.5"
-            />
-          </svg>
-        </div>
+    <div className="md:hidden fixed bottom-3 inset-x-3 z-50 pointer-events-auto">
+      <div className="max-w-md mx-auto bg-[#1A1A1A]/95 dark:bg-[#12160F]/95 backdrop-blur-xl border border-white/20 dark:border-[#2A2F26] rounded-full shadow-2xl px-2 py-1.5 flex items-center justify-around">
+        {navItems.map((item) => {
+          const isActive = activeTab === item.id;
+          const IconComponent = item.Icon;
 
-        {/* Tab Items Layout Row */}
-        <div className="relative flex items-center justify-between px-2 h-[64px]">
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
-            const IconComponent = item.Icon;
-
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => handleNav(item.id, item.href)}
-                className="relative flex flex-col items-center justify-center flex-1 h-full min-h-[48px] min-w-[48px] cursor-pointer focus:outline-none"
-              >
-                {isActive ? (
-                  /* ACTIVE TAB: Solid Pine/Ember Lifted Icon */
-                  <div className="relative flex flex-col items-center -top-3 transition-all duration-300">
-                    <div className="w-11 h-11 rounded-full bg-[#A6532D] text-[#F1EFE9] flex items-center justify-center ring-4 ring-[#12160F] border border-[#2A2F26]">
-                      <IconComponent className="w-5 h-5 text-[#F1EFE9]" />
-                    </div>
-                    <span className="text-[10px] font-medium text-[#F1EFE9] mt-0.5 tracking-tight">
-                      {item.label}
-                    </span>
-                  </div>
-                ) : (
-                  /* INACTIVE TAB */
-                  <div className="flex flex-col items-center justify-center gap-0.5 text-[#A8A79C] hover:text-[#F1EFE9] transition-colors duration-200">
-                    <IconComponent className="w-4 h-4 text-[#A8A79C]" />
-                    <span className="text-[10px] text-[#A8A79C] tracking-tight truncate max-w-[56px]">
-                      {item.label}
-                    </span>
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => handleNav(item.id, item.href)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-300 ${
+                isActive
+                  ? "bg-[#F5B301] text-black font-bold shadow-lg scale-105"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <IconComponent className={`w-4 h-4 ${isActive ? "text-black" : "text-white/70"}`} />
+              <span className="text-xs tracking-tight">
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

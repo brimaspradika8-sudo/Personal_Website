@@ -136,7 +136,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
   const isNight = mode === "night";
 
   return (
-    <div className={`min-h-screen font-sans antialiased text-left selection:bg-[#F5B301] selection:text-black transition-colors duration-300 ${
+    <div className={`min-h-screen font-sans antialiased text-left selection:bg-[#F5B301] selection:text-black transition-colors duration-300 pb-20 md:pb-0 ${
       isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#ffffff] text-[#1A1A1A]"
     }`}>
       
@@ -292,10 +292,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           </div>
 
           {/* Main Hero Center Container */}
-          <div className="relative w-full flex items-center justify-center min-h-[55vh] my-auto">
+          <div className="relative w-full flex flex-col sm:flex-row items-center justify-center min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
             
             {/* Centerpiece Grayscale Portrait Photo */}
-            <div className="relative z-10 w-72 h-96 sm:w-96 sm:h-[480px] md:w-[420px] md:h-[520px] max-w-full flex items-end justify-center pointer-events-none">
+            <div className="relative z-10 w-64 h-80 sm:w-96 sm:h-[480px] md:w-[420px] md:h-[520px] max-w-full flex items-end justify-center pointer-events-none">
               <Image
                 src={ownerAvatar}
                 alt={ownerName}
@@ -306,12 +306,12 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               />
             </div>
 
-            {/* Left Overlapping Headline & CTAs */}
-            <div className="absolute left-0 bottom-6 sm:bottom-12 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
+            {/* Desktop Headline & CTAs (Absolute Left) */}
+            <div className="hidden sm:block absolute left-0 bottom-6 sm:bottom-12 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
+              <h1 className="font-display text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
                 I&apos;M {ownerName}
               </h1>
-              <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-sans max-w-xs sm:max-w-sm">
+              <p className="text-sm text-white/90 leading-relaxed font-sans max-w-sm">
                 I create travel guides and backpacking itineraries from around the world, as well as sharing photography resources and more.
               </p>
 
@@ -335,7 +335,36 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
               </div>
             </div>
 
-            {/* Right Overlapping Simple Video Card Accent (Opsi B) */}
+            {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
+            <div className="sm:hidden w-full z-20 space-y-3 text-center text-white px-2 pt-2">
+              <h1 className="font-display text-3xl font-black uppercase tracking-tight leading-none">
+                I&apos;M {ownerName}
+              </h1>
+              <p className="text-xs text-white/90 leading-relaxed font-sans max-w-xs mx-auto">
+                I create travel guides and backpacking itineraries from around the world, as well as sharing photography resources and more.
+              </p>
+
+              {/* Two Mobile CTA Buttons */}
+              <div className="flex items-center justify-center gap-2 pt-1">
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-4 py-2 rounded-full bg-[#F5B301] text-black font-bold text-[11px] uppercase tracking-wider shadow-md"
+                >
+                  READ MY BLOG
+                </a>
+
+                <a
+                  href="#vlog"
+                  onClick={() => soundFx.playClick()}
+                  className="px-4 py-2 rounded-full border border-white text-white font-bold text-[11px] uppercase tracking-wider shadow-md"
+                >
+                  WATCH MY VIDEOS
+                </a>
+              </div>
+            </div>
+
+            {/* Right Overlapping Simple Video Card Accent (Opsi B - Desktop) */}
             <div className="absolute right-0 bottom-6 sm:bottom-12 z-20 hidden sm:flex flex-col items-end">
               
               <div className={`rounded-2xl p-3 shadow-2xl space-y-2.5 w-48 sm:w-56 group border transition-colors ${
