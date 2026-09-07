@@ -239,18 +239,33 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         isNight ? "bg-[#181D15]" : "bg-gradient-to-b from-[#a3a3a0] via-[#92928f] to-[#7f7f7c]"
       }`}>
         
-        {/* Giant Moving Backdrop Typography ("WELCOME") Behind Head */}
-        <div className="absolute top-2 inset-x-0 flex pointer-events-none select-none overflow-hidden z-0 pt-2">
+        {/* Giant Moving Backdrop Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") Behind Head */}
+        <div className="absolute top-2 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-2 space-y-[-2vw]">
+          {/* Line 1: WELCOME Marquee */}
           <div className="animate-welcome-marquee flex gap-12 whitespace-nowrap">
-            <h1 className={`font-display text-[20vw] sm:text-[22vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
               WELCOME &bull; BUCKETLISTLY &bull; WELCOME &bull; BUCKETLISTLY &bull;
             </h1>
-            <h1 className={`font-display text-[20vw] sm:text-[22vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
               WELCOME &bull; BUCKETLISTLY &bull; WELCOME &bull; BUCKETLISTLY &bull;
+            </h1>
+          </div>
+
+          {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
+          <div className="animate-welcome-marquee-reverse flex gap-12 whitespace-nowrap">
+            <h1 className={`font-display text-[12vw] sm:text-[13vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+              isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
+            }`}>
+              BRIMAS PRADIKA UTAMA &bull; BRIMAS PRADIKA UTAMA &bull;
+            </h1>
+            <h1 className={`font-display text-[12vw] sm:text-[13vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+              isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
+            }`}>
+              BRIMAS PRADIKA UTAMA &bull; BRIMAS PRADIKA UTAMA &bull;
             </h1>
           </div>
         </div>
