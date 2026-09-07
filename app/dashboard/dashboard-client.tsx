@@ -243,10 +243,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         isNight ? "bg-[#181D15]" : "bg-[#e8e8e6]"
       }`}>
         
-        {/* Teks Besar "WELCOME" di Pojok Kiri Atas */}
-        <div className="absolute top-2 left-4 sm:left-8 pointer-events-none select-none overflow-hidden z-0">
-          <h1 className={`font-display text-[17vw] lg:text-[16vw] font-black uppercase tracking-tighter leading-none transition-colors ${
-            isNight ? "text-[#242C20]" : "text-[#d5d5d2]"
+        {/* Teks Raksasa "WELCOME" yang membentang penuh di bagian atas hero */}
+        <div className="absolute top-0 inset-x-0 flex justify-start pl-4 sm:pl-8 pointer-events-none select-none overflow-hidden z-0 pt-1 sm:pt-2">
+          <h1 className={`font-display text-[15vw] sm:text-[16vw] md:text-[17vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap transition-colors ${
+            isNight ? "text-[#283224]" : "text-[#ceced0]"
           }`}>
             WELCOME
           </h1>
