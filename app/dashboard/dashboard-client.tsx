@@ -236,13 +236,20 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         isNight ? "bg-[#181D15]" : "bg-gradient-to-b from-[#a3a3a0] via-[#92928f] to-[#7f7f7c]"
       }`}>
         
-        {/* Giant Backdrop Typography ("WELCOME") Behind Head */}
-        <div className="absolute top-4 inset-x-0 flex justify-center pointer-events-none select-none overflow-hidden z-0 pt-2">
-          <h1 className={`font-display text-[22vw] sm:text-[23vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap transition-colors ${
-            isNight ? "text-[#242C20]" : "text-[#bcbcb9]/35"
-          }`}>
-            WELCOME
-          </h1>
+        {/* Giant Moving Backdrop Typography ("WELCOME") Behind Head */}
+        <div className="absolute top-2 inset-x-0 flex pointer-events-none select-none overflow-hidden z-0 pt-2">
+          <div className="animate-welcome-marquee flex gap-12 whitespace-nowrap">
+            <h1 className={`font-display text-[20vw] sm:text-[22vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+              isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
+            }`}>
+              WELCOME &bull; BUCKETLISTLY &bull; WELCOME &bull; BUCKETLISTLY &bull;
+            </h1>
+            <h1 className={`font-display text-[20vw] sm:text-[22vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+              isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
+            }`}>
+              WELCOME &bull; BUCKETLISTLY &bull; WELCOME &bull; BUCKETLISTLY &bull;
+            </h1>
+          </div>
         </div>
 
         {/* Hero Content Overlay Grid */}
