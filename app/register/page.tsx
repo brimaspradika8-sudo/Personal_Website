@@ -4,11 +4,12 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { ArrowLeft, ShieldCheck, Zap, Lock, Mail, User, Sparkles } from "lucide-react";
 import { signUpWithPassword, signInWithGoogle, signInWithGithub } from "@/lib/actions/auth";
 
 const RiveTeddyAnimation = dynamic(() => import("@/components/RiveTeddyAnimation"), {
   ssr: false,
-  loading: () => <div className="w-[280px] h-[280px] rounded-full bg-[#1A211A] animate-pulse" />,
+  loading: () => <div className="w-[280px] h-[280px] rounded-full bg-[#0A0D14] animate-pulse border border-[#DC2626]/30" />,
 });
 
 export default function RegisterPage() {
@@ -111,37 +112,41 @@ export default function RegisterPage() {
   const isAnyLoading = loading || googleLoading || githubLoading;
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-center p-4 sm:p-6 font-sans text-[#F1EFE9]">
+    <div className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 sm:p-6 font-sans text-white bg-[#0A0D14] selection:bg-[#DC2626] selection:text-white">
       
-      {/* Background Overlay (Light-Balanced Pine & Ember) */}
-      <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.85] brightness-[0.9] contrast-[1.05]"
-        style={{ backgroundImage: "url('/animations/day-landscape.webp')" }}
-      >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          poster="/animations/day-landscape.webp"
-          className="absolute inset-0 object-cover object-top w-full h-full saturate-[0.85] brightness-[0.9] contrast-[1.05]"
+      {/* Spider-Man Web HUD Ambient Background Overlay */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-25 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:24px_24px]" />
+
+      {/* Spider-Man Glowing Ambient Red/Blue Orbs */}
+      <div className="fixed top-10 left-10 w-96 h-96 bg-[#DC2626]/20 rounded-full filter blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-10 right-10 w-96 h-96 bg-[#2563EB]/20 rounded-full filter blur-[120px] pointer-events-none" />
+
+      {/* Top Back Navigation Bar */}
+      <div className="w-full max-w-3xl mb-4 relative z-10 flex items-center justify-between">
+        <Link
+          href="/dashboard"
+          className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-lg shadow-[#DC2626]/20 border border-white/20"
         >
-          <source src="/animations/day-landscape.mp4" type="video/mp4" />
-        </video>
-        {/* Directional Gradient & Ember Glow Overlays */}
-        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(18,22,15,0.75)_0%,rgba(18,22,15,0.55)_35%,rgba(18,22,15,0.25)_65%,rgba(18,22,15,0.15)_100%)] mix-blend-multiply pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(166,83,45,0.18)_0%,transparent_45%)] mix-blend-soft-light pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/30 pointer-events-none" />
+          <ArrowLeft className="w-4 h-4" />
+          <span>Kembali ke Beranda</span>
+        </Link>
+
+        <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white/80">
+          <Zap className="w-4 h-4 text-[#DC2626] animate-pulse" />
+          <span>SPIDER-MAN REGISTER PORTAL</span>
+        </div>
       </div>
 
-      {/* Outer Card Wrapper */}
-      <div className="w-full max-w-3xl bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 rounded-xl overflow-hidden flex flex-col md:flex-row my-auto shadow-2xl">
+      {/* Main Card Wrapper (Spider-Man Suit Theme) */}
+      <div className="relative z-10 w-full max-w-3xl bg-[#0F172A]/90 backdrop-blur-xl border border-[#DC2626]/40 rounded-2xl overflow-hidden flex flex-col md:flex-row my-auto shadow-[0_0_50px_rgba(220,38,38,0.25)]">
         
-        {/* Left Animation Section */}
-        <div className="w-full md:w-[45%] bg-[#12160F] p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-[#2A2F26] shrink-0 relative">
+        {/* Subtle Spider-Man Red/Gold Glow Top Accent */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DC2626] via-[#F5B301] to-[#2563EB]" />
+
+        {/* Left Animation Panel */}
+        <div className="w-full md:w-[45%] bg-[#0A0D14] p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-[#DC2626]/30 shrink-0 relative">
           
-          <div ref={teddyContainerRef} className="w-[280px] h-[280px] relative flex items-center justify-center z-10">
+          <div ref={teddyContainerRef} className="w-[260px] h-[260px] relative flex items-center justify-center z-10">
             <RiveTeddyAnimation
               nameText={nameText}
               emailText={emailText}
@@ -153,21 +158,27 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Right Form Section */}
+        {/* Right Form Panel */}
         <div className="w-full md:w-[55%] p-6 sm:p-8 flex flex-col justify-center">
           <div className="space-y-4 max-w-sm w-full mx-auto">
-            <h1 className="font-display text-2xl font-bold text-[#F1EFE9] text-center">
-              Daftar Akun Baru
-            </h1>
+            
+            <div className="text-center space-y-1">
+              <h1 className="font-display text-3xl font-black uppercase text-white tracking-tight">
+                DAFTAR <span className="text-[#DC2626]">AKUN</span>
+              </h1>
+              <p className="text-xs font-mono text-white/70">
+                Buat identitas akun Spider-Man baru
+              </p>
+            </div>
 
             {error && (
-              <div className="rounded-lg border border-[#7A3B32] bg-[#7A3B32]/10 p-3 text-xs text-[#F1EFE9]">
+              <div className="rounded-xl border border-red-500 bg-red-950/50 p-3 text-xs font-bold text-white shadow-lg">
                 <span>{error}</span>
               </div>
             )}
 
             {success && (
-              <div className="rounded-lg border border-[#3B5D42] bg-[#3B5D42]/20 p-3 text-xs text-[#F1EFE9]">
+              <div className="rounded-xl border border-[#DC2626] bg-[#DC2626]/20 p-3 text-xs font-bold text-white shadow-lg">
                 <span>Berhasil mendaftar! Mengarahkan ke halaman login...</span>
               </div>
             )}
@@ -175,39 +186,47 @@ export default function RegisterPage() {
             {/* Form Register */}
             <form action={handleSubmit} className="space-y-3.5">
               <div className="space-y-1">
-                <label htmlFor="name" className="block text-xs font-medium text-[#A8A79C]">
+                <label htmlFor="name" className="block text-xs font-bold font-mono text-white/80 uppercase">
                   Nama Lengkap
                 </label>
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  required
-                  value={nameText}
-                  onChange={handleNameChange}
-                  onFocus={handleNameFocus}
-                  className="w-full bg-[#12160F] border border-[#2A2F26] rounded-lg px-3.5 py-2 text-sm text-[#F1EFE9] focus:outline-none focus:border-[#3B5D42]"
-                />
+                <div className="relative flex items-center">
+                  <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    required
+                    value={nameText}
+                    onChange={handleNameChange}
+                    onFocus={handleNameFocus}
+                    placeholder="Nama Lengkap Anda"
+                    className="w-full bg-[#0A0D14] border border-[#DC2626]/30 rounded-xl px-3.5 py-2.5 pl-9 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626] transition-all"
+                  />
+                  <User className="w-4 h-4 text-[#DC2626] absolute left-3" />
+                </div>
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="email" className="block text-xs font-medium text-[#A8A79C]">
-                  Email
+                <label htmlFor="email" className="block text-xs font-bold font-mono text-white/80 uppercase">
+                  Email Address
                 </label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  required
-                  value={emailText}
-                  onChange={handleEmailChange}
-                  onFocus={handleEmailFocus}
-                  className="w-full bg-[#12160F] border border-[#2A2F26] rounded-lg px-3.5 py-2 text-sm text-[#F1EFE9] focus:outline-none focus:border-[#3B5D42]"
-                />
+                <div className="relative flex items-center">
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                    value={emailText}
+                    onChange={handleEmailChange}
+                    onFocus={handleEmailFocus}
+                    placeholder="nama@email.com"
+                    className="w-full bg-[#0A0D14] border border-[#DC2626]/30 rounded-xl px-3.5 py-2.5 pl-9 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626] transition-all"
+                  />
+                  <Mail className="w-4 h-4 text-[#DC2626] absolute left-3" />
+                </div>
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="password" className="block text-xs font-medium text-[#A8A79C]">
+                <label htmlFor="password" className="block text-xs font-bold font-mono text-white/80 uppercase">
                   Password
                 </label>
                 <div className="relative flex items-center">
@@ -220,15 +239,17 @@ export default function RegisterPage() {
                     onChange={handlePasswordChange}
                     onFocus={handlePasswordFocus}
                     onBlur={handlePasswordBlur}
-                    className="w-full bg-[#12160F] border border-[#2A2F26] rounded-lg px-3.5 py-2 pr-10 text-sm text-[#F1EFE9] focus:outline-none focus:border-[#3B5D42]"
+                    placeholder="Minimal 6 karakter"
+                    className="w-full bg-[#0A0D14] border border-[#DC2626]/30 rounded-xl px-3.5 py-2.5 pl-9 pr-10 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626] transition-all"
                   />
+                  <Lock className="w-4 h-4 text-[#DC2626] absolute left-3" />
                   <button
                     type="button"
                     ref={toggleBtnRef}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={togglePasswordVisibility}
                     tabIndex={-1}
-                    className="absolute right-2 text-[#A8A79C] hover:text-[#F1EFE9] p-1 cursor-pointer"
+                    className="absolute right-3 text-white/60 hover:text-white p-1 cursor-pointer"
                     aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                   >
                     {showPassword ? (
@@ -246,35 +267,35 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* 1 Ember CTA for Register */}
+              {/* Spider-Man Red CTA */}
               <div className="pt-2">
                 <button
                   type="submit"
                   disabled={isAnyLoading}
-                  className="w-full rounded-lg bg-[#A6532D] hover:bg-[#8A4425] py-2.5 px-4 text-sm font-medium text-[#F1EFE9] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] py-3 px-4 text-xs font-black uppercase tracking-wider text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#DC2626]/40 border border-white/20 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   {loading && (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#F1EFE9] border-t-transparent" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   )}
-                  <span>{loading ? "Memproses..." : "Daftar"}</span>
+                  <span>{loading ? "Memproses..." : "Daftar Akun"}</span>
                 </button>
               </div>
             </form>
 
             {/* Separator */}
-            <div className="flex items-center gap-3 text-xs text-[#A8A79C] pt-1">
-              <div className="h-px flex-1 bg-[#2A2F26]" />
-              <span className="font-medium text-[10px] text-[#A8A79C]">Atau</span>
-              <div className="h-px flex-1 bg-[#2A2F26]" />
+            <div className="flex items-center gap-3 text-xs text-white/50 pt-1">
+              <div className="h-px flex-1 bg-white/10" />
+              <span className="font-mono text-[10px] text-white/60 uppercase">Atau Gunakan</span>
+              <div className="h-px flex-1 bg-white/10" />
             </div>
 
-            {/* Social OAuth Register Buttons */}
+            {/* OAuth Register Buttons */}
             <div className="space-y-2">
               <button
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={isAnyLoading}
-                className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-[#2A2F26] bg-[#12160F] hover:bg-[#212A20] py-2 px-4 text-xs font-medium text-[#F1EFE9] transition-colors disabled:opacity-50 cursor-pointer"
+                className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-[#0A0D14] hover:bg-white/5 hover:border-[#DC2626]/50 py-2.5 px-4 text-xs font-bold text-white transition-all disabled:opacity-50 cursor-pointer shadow-md"
               >
                 <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                   <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z" />
@@ -282,29 +303,29 @@ export default function RegisterPage() {
                   <path fill="#FBBC05" d="M5.6 14.8c-.3-.8-.4-1.8-.4-2.8s.1-2 .4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z" />
                   <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z" />
                 </svg>
-                <span>Google</span>
+                <span>Google Account</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleGithubLogin}
                 disabled={isAnyLoading}
-                className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-[#2A2F26] bg-[#12160F] hover:bg-[#212A20] py-2 px-4 text-xs font-medium text-[#F1EFE9] transition-colors disabled:opacity-50 cursor-pointer"
+                className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-[#0A0D14] hover:bg-white/5 hover:border-[#DC2626]/50 py-2.5 px-4 text-xs font-bold text-white transition-all disabled:opacity-50 cursor-pointer shadow-md"
               >
-                <svg className="h-4 w-4 shrink-0 fill-current text-[#F1EFE9]" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 shrink-0 fill-current text-white" viewBox="0 0 24 24">
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
                 </svg>
-                <span>GitHub</span>
+                <span>GitHub Account</span>
               </button>
             </div>
 
             {/* Switch to Login */}
             <div className="pt-2 text-center">
-              <p className="text-xs text-[#A8A79C]">
+              <p className="text-xs text-white/70">
                 Sudah punya akun?{" "}
                 <Link
                   href="/login"
-                  className="font-medium text-[#F1EFE9] hover:underline"
+                  className="font-bold text-[#DC2626] hover:underline"
                 >
                   Masuk
                 </Link>

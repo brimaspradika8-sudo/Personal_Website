@@ -73,12 +73,12 @@ export default function MobileBottomNav() {
               onClick={() => handleNav(item.id, item.href)}
               className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-300 ${
                 isActive
-                  ? "bg-[#F5B301] text-black font-bold shadow-md"
+                  ? "bg-[#DC2626] text-white font-bold shadow-lg shadow-[#DC2626]/40"
                   : "text-white/70 hover:text-white"
               }`}
             >
-              <IconComponent className={`w-4 h-4 ${isActive ? "text-black" : "text-white/70"}`} />
-              <span className={`text-[10px] tracking-tight truncate max-w-[54px] ${isActive ? "text-black font-bold" : "text-white/70"}`}>
+              <IconComponent className={`w-4 h-4 ${isActive ? "text-white" : "text-white/70"}`} />
+              <span className={`text-[10px] tracking-tight truncate max-w-[54px] ${isActive ? "text-white font-bold" : "text-white/70"}`}>
                 {item.label}
               </span>
             </button>

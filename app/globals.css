@@ -103,3 +103,13 @@ input::-ms-clear {
   animation-play-state: paused;
 }
 
+/* Scoped Spider-Man Theme for Hero Photo Wrapper */
+.hero-photo-wrapper {
+  --spiderman-accent: #DC2626;
+  --spiderman-glow: #F5B301;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+
