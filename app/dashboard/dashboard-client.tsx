@@ -294,8 +294,8 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           {/* Main Hero Center Container */}
           <div className="relative w-full flex flex-col sm:flex-row items-center justify-center min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
             
-            {/* Centerpiece Grayscale Portrait Photo */}
-            <div className="relative z-10 w-64 h-80 sm:w-96 sm:h-[480px] md:w-[420px] md:h-[520px] max-w-full flex items-end justify-center pointer-events-none">
+            {/* Centerpiece Grayscale Portrait Photo (Dipping smoothly behind slanted slope) */}
+            <div className="relative z-10 w-64 h-80 sm:w-[420px] sm:h-[500px] md:w-[460px] md:h-[560px] max-w-full flex items-end justify-center pointer-events-none -mb-10 sm:-mb-20">
               <Image
                 src={ownerAvatar}
                 alt={ownerName}
@@ -394,8 +394,8 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
 
         </div>
 
-        {/* Slanted White Slope Divider */}
-        <div className="relative w-full h-16 sm:h-24 overflow-hidden z-20 pointer-events-none -mb-1">
+        {/* Slanted White Slope Divider (Rising UPWARDS to the right like Reference Image 2) */}
+        <div className="relative w-full h-16 sm:h-28 overflow-hidden z-20 pointer-events-none -mb-1">
           <svg
             className={`absolute bottom-0 w-full h-full fill-current transition-colors duration-300 ${
               isNight ? "text-[#12160F]" : "text-[#ffffff]"
@@ -403,7 +403,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
           >
-            <path d="M0,40 L1200,120 L0,120 Z" />
+            <path d="M0,120 L1200,20 L1200,120 Z" />
           </svg>
         </div>
 
