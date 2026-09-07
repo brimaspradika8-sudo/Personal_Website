@@ -17,6 +17,14 @@ import {
   User,
   Check,
   Copy,
+  Cpu,
+  Layers,
+  Globe,
+  Database,
+  Smartphone,
+  Play,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -359,30 +367,31 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 pt-24 pb-32 sm:pb-24 space-y-20 max-w-5xl w-full mx-auto px-4 sm:px-6">
+      <main className="relative z-10 pt-16 pb-32 sm:pb-24 space-y-16 max-w-6xl w-full mx-auto px-4 sm:px-6">
         
-        {/* 1. HERO SECTION */}
-        <section id="hero" className="pt-6 sm:pt-12 pb-6">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        {/* 1. EDITORIAL HERO SECTION (BucketListly Style) */}
+        <section id="hero" className="relative pt-4 sm:pt-8 pb-12 overflow-hidden">
+          
+          {/* Giant Backdrop Display Typography ("WELCOME I'M BRIMAS") */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden opacity-10 sm:opacity-[0.14] z-0">
+            <h1 className="font-display text-[13vw] sm:text-[14vw] font-black uppercase tracking-tighter text-[#F1EFE9] whitespace-nowrap leading-none">
+              WELCOME I&apos;M BRIMAS
+            </h1>
+          </div>
+
+          {/* Main Hero Content Grid */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4 sm:pt-10">
             
-            {/* Left Text Content */}
-            <div className="md:col-span-7 space-y-5 text-left">
+            {/* Left Column: Bio & Headline */}
+            <div className="lg:col-span-5 space-y-5 text-left order-2 lg:order-1">
               
-              {/* Mobile Profile Photo */}
-              <div className="block md:hidden py-1">
-                <div className="relative w-28 h-28 rounded-full overflow-hidden border border-[#2A2F26] bg-[#1A211A]">
-                  <Image
-                    src={ownerAvatar}
-                    alt={ownerName}
-                    fill
-                    priority
-                    sizes="112px"
-                    className="object-cover"
-                  />
-                </div>
+              {/* Badge Header */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3B5D42]/20 border border-[#3B5D42]/50 text-[#F1EFE9] text-xs font-mono">
+                <Sparkles className="w-3.5 h-3.5 text-[#A6532D]" />
+                <span>Full-Stack Architect & AI Developer</span>
               </div>
 
-              {/* Name & Role Headline */}
+              {/* Name & Typing Role Headline */}
               <div className="space-y-2">
                 <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F1EFE9] leading-tight min-h-[1.2em]">
                   <span>{typedText}</span>
@@ -392,23 +401,18 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                     }`}
                   />
                 </h1>
-                <p className="text-base sm:text-lg font-medium text-[#F1EFE9]">
-                  {dict.hero.role}
+                <p className="text-sm sm:text-base font-medium text-[#A8A79C] leading-relaxed">
+                  {dict.hero.description}
                 </p>
               </div>
 
-              {/* Description */}
-              <p className="text-sm sm:text-base text-[#A8A79C] max-w-xl leading-relaxed">
-                {dict.hero.description}
-              </p>
-
               {/* Action CTAs */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                {/* 1 Ember CTA for Section */}
+                {/* 1 Ember CTA for Hero */}
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-5 py-2.5 rounded-lg bg-[#A6532D] hover:bg-[#8A4425] text-[#F1EFE9] font-medium text-sm transition-colors cursor-pointer inline-flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-lg bg-[#A6532D] hover:bg-[#8A4425] text-[#F1EFE9] font-medium text-sm transition-all shadow-lg hover:shadow-xl cursor-pointer inline-flex items-center gap-2"
                 >
                   <FolderGit2 className="w-4 h-4" />
                   <span>{dict.hero.viewProjects}</span>
@@ -430,7 +434,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                     href="https://github.com/brimaspradika8-sudo"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-lg bg-[#1A211A] hover:bg-[#212A20] text-[#F1EFE9] border border-[#2A2F26] transition-colors flex items-center justify-center"
+                    className="w-9.5 h-9.5 rounded-lg bg-[#1A211A] hover:bg-[#212A20] text-[#F1EFE9] border border-[#2A2F26] transition-colors flex items-center justify-center"
                     aria-label="GitHub"
                     title="GitHub"
                   >
@@ -442,7 +446,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                     href="https://linkedin.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-lg bg-[#1A211A] hover:bg-[#212A20] text-[#F1EFE9] border border-[#2A2F26] transition-colors flex items-center justify-center"
+                    className="w-9.5 h-9.5 rounded-lg bg-[#1A211A] hover:bg-[#212A20] text-[#F1EFE9] border border-[#2A2F26] transition-colors flex items-center justify-center"
                     aria-label="LinkedIn"
                     title="LinkedIn"
                   >
@@ -453,16 +457,16 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
                 </div>
               </div>
 
-              {/* Technologies Stack Row */}
+              {/* Technologies Stack Chips */}
               <div className="pt-4 border-t border-[#2A2F26]/70 space-y-2">
                 <p className="text-xs font-medium text-[#A8A79C]">
                   {dict.hero.techHeader}
                 </p>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1.5">
                   {["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Prisma", "TailwindCSS"].map((tech) => (
                     <span
                       key={tech}
-                      className="px-3 py-1 rounded-lg bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 text-[#F1EFE9] text-xs font-mono"
+                      className="px-2.5 py-1 rounded-md bg-[#1A211A]/80 border border-[#2A2F26]/70 text-[#F1EFE9] text-xs font-mono"
                     >
                       {tech}
                     </span>
@@ -472,22 +476,127 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
             </div>
 
-            {/* Desktop Profile Picture with Vignette Framing */}
-            <div className="hidden md:flex md:col-span-5 justify-end items-center">
-              <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border-2 border-[#3B5D42]/60 bg-[#1A211A]/80 backdrop-blur-md shadow-2xl group">
+            {/* Center Column: Large Cutout Portrait Subject */}
+            <div className="lg:col-span-4 flex justify-center items-center order-1 lg:order-2">
+              <div className="relative w-64 h-80 sm:w-72 sm:h-[380px] rounded-2xl overflow-hidden border-2 border-[#3B5D42]/60 bg-[#1A211A]/80 backdrop-blur-md shadow-2xl group transition-transform duration-300 hover:scale-[1.02]">
                 <Image
                   src={ownerAvatar}
                   alt={ownerName}
                   fill
                   priority
-                  sizes="288px"
+                  sizes="(max-width: 768px) 256px, 288px"
                   className="object-cover"
                 />
-                {/* Soft Inset Vignette Overlay to blend photo background seamlessly with website theme */}
-                <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_35px_10px_rgba(18,22,15,0.55)] pointer-events-none z-10 border border-[#2A2F26]/40" />
+                {/* Vignette Overlay Frame */}
+                <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_40px_15px_rgba(18,22,15,0.6)] pointer-events-none z-10 border border-[#2A2F26]/40" />
               </div>
             </div>
 
+            {/* Right Column: Floating Featured Card Accent */}
+            <div className="lg:col-span-3 space-y-4 order-3">
+              <div className="bg-[#1A211A]/90 backdrop-blur-md border border-[#2A2F26]/80 rounded-xl p-4 shadow-xl space-y-3 relative group overflow-hidden">
+                
+                {/* Header Badge */}
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#A6532D] tracking-wide uppercase">
+                    <span className="w-2 h-2 rounded-full bg-[#A6532D] animate-ping" />
+                    System Demo
+                  </span>
+                  <span className="text-[10px] font-mono text-[#A8A79C]">v2.4 Live</span>
+                </div>
+
+                {/* Project Image Preview */}
+                <div className="relative w-full h-28 rounded-lg overflow-hidden border border-[#2A2F26] bg-[#12160F]">
+                  <Image
+                    src="/images/project1.png"
+                    alt="AI Agent System"
+                    fill
+                    sizes="200px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-[#A6532D] text-[#F1EFE9] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <Play className="w-4 h-4 fill-current ml-0.5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Title & Desc */}
+                <div className="space-y-1">
+                  <h3 className="text-xs font-bold text-[#F1EFE9]">
+                    AI Agent System Platform
+                  </h3>
+                  <p className="text-[11px] text-[#A8A79C] line-clamp-2 leading-tight">
+                    Platform agen kecerdasan buatan berbasis Next.js & Supabase untuk otomasi workflow.
+                  </p>
+                </div>
+
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="w-full py-1.5 px-3 rounded-lg bg-[#212A20] hover:bg-[#3B5D42] text-[#F1EFE9] text-xs font-medium border border-[#2A2F26] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <span>Lihat Demo</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Slanted Angle Divider (BucketListly Divider Style) */}
+          <div className="relative w-full h-12 sm:h-16 overflow-hidden mt-8 z-10 pointer-events-none">
+            <svg
+              className="absolute bottom-0 w-full h-full text-[#1A211A] fill-current"
+              viewBox="0 0 1200 120"
+              preserveAspectRatio="none"
+            >
+              <path d="M0,0 L1200,80 L1200,120 L0,120 Z" />
+            </svg>
+          </div>
+
+        </section>
+
+        {/* 2. WHAT DO YOU WANT TO EXPLORE? (Domain Selector Grid) */}
+        <section className="space-y-6 pt-2">
+          <div className="text-center space-y-1">
+            <p className="text-xs font-mono uppercase tracking-widest text-[#A6532D]">
+              Interactive Navigation
+            </p>
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#F1EFE9]">
+              WHERE DO YOU WANT TO EXPLORE?
+            </h2>
+          </div>
+
+          {/* Icon Grid Category Bar */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            {[
+              { label: "AI Systems", icon: Cpu, count: "03 Projects" },
+              { label: "Distributed Backend", icon: Layers, count: "05 Projects" },
+              { label: "Web Architecture", icon: Globe, count: "08 Projects" },
+              { label: "Database & Cloud", icon: Database, count: "04 Projects" },
+              { label: "Mobile Apps", icon: Smartphone, count: "02 Projects" },
+            ].map((domain) => {
+              const IconComp = domain.icon;
+              return (
+                <a
+                  key={domain.label}
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="bg-[#1A211A]/80 backdrop-blur-md border border-[#2A2F26]/70 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-2 hover:border-[#3B5D42] hover:bg-[#212A20] transition-all group cursor-pointer shadow-lg"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-[#12160F] border border-[#2A2F26] flex items-center justify-center text-[#A8A79C] group-hover:text-[#F1EFE9] group-hover:border-[#3B5D42] transition-colors">
+                    <IconComp className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-bold text-[#F1EFE9] group-hover:text-[#A6532D] transition-colors">
+                    {domain.label}
+                  </span>
+                  <span className="text-[10px] font-mono text-[#A8A79C]">
+                    {domain.count}
+                  </span>
+                </a>
+              );
+            })}
           </div>
         </section>
 
