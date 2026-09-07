@@ -294,15 +294,15 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           {/* Main Hero Center Container */}
           <div className="relative w-full flex flex-col sm:flex-row items-center justify-center min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
             
-            {/* Centerpiece Grayscale Portrait Photo (Dipping smoothly behind slanted slope) */}
-            <div className="relative z-10 w-64 h-80 sm:w-[420px] sm:h-[500px] md:w-[460px] md:h-[560px] max-w-full flex items-end justify-center pointer-events-none -mb-10 sm:-mb-20">
+            {/* Centerpiece Grayscale Portrait Photo (Interactive Color Reveal on Hover) */}
+            <div className="relative z-10 w-64 h-80 sm:w-[420px] sm:h-[500px] md:w-[460px] md:h-[560px] max-w-full flex items-end justify-center pointer-events-auto cursor-pointer group -mb-10 sm:-mb-20">
               <Image
                 src={ownerAvatar}
                 alt={ownerName}
                 fill
                 priority
                 sizes="(max-width: 768px) 360px, 450px"
-                className="object-contain object-bottom filter grayscale contrast-110 drop-shadow-2xl"
+                className="object-contain object-bottom filter grayscale contrast-110 drop-shadow-2xl group-hover:filter-none group-hover:scale-[1.03] group-hover:contrast-105 transition-all duration-700 ease-out"
               />
             </div>
 
