@@ -183,11 +183,11 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   const isNight = mode === "night";
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-[#F1EFE9] bg-[#12160F] selection:bg-[#3B5D42] selection:text-[#F1EFE9]">
+    <div className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-[#F1EFE9] selection:bg-[#3B5D42] selection:text-[#F1EFE9]">
       
       {/* Mountain Landscape Illustration Background Container (Fixed Full Bleed) */}
       <div
-        className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
         style={{
           backgroundImage: `url(${
             isNight

@@ -244,11 +244,11 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   };
 
   return (
-    <div className="relative min-h-[100dvh] w-full font-sans antialiased text-[#F1EFE9] bg-[#12160F] pb-32 sm:pb-24">
+    <div className="relative min-h-[100dvh] w-full font-sans antialiased text-[#F1EFE9] pb-32 sm:pb-24">
       
       {/* Mountain Landscape Illustration Background Container (Fixed Full Bleed) */}
       <div
-        className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
         style={{
           backgroundImage: `url(${
             mode === "night" ? "/animations/night-landscape.webp" : "/animations/day-landscape.webp"

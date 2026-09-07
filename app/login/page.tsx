@@ -146,11 +146,11 @@ function LoginForm() {
   };
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-center bg-[#12160F] p-4 sm:p-6 font-sans text-[#F1EFE9]">
+    <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-center p-4 sm:p-6 font-sans text-[#F1EFE9]">
       
       {/* Background Overlay */}
       <div
-        className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat"
+        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat"
         style={{ backgroundImage: "url('/animations/day-landscape.webp')" }}
       >
         <video
