@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Search,
@@ -105,7 +106,8 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
     });
   };
 
-  const ownerName = "BRIMAS";
+  const ownerName = "BRIMAS P.";
+  const ownerAvatar = "/images/avatar.png";
 
   const navUserName =
     dbUser?.name ||
@@ -238,13 +240,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         </div>
       </header>
 
-      {/* 2. HERO SECTION (~90vh FULL SECTION CLEANED) */}
+      {/* 2. HERO SECTION (~90vh WITH CENTERPIECE PORTRAIT PHOTO) */}
       <section id="hero" className={`relative min-h-[85vh] lg:min-h-[90vh] flex flex-col justify-center overflow-hidden transition-colors duration-300 ${
         isNight ? "bg-[#181D15]" : "bg-[#e8e8e6]"
       }`}>
         
-        {/* Teks Raksasa "WELCOME" yang membentang penuh di bagian atas hero */}
-        <div className="absolute top-0 inset-x-0 flex justify-start pl-4 sm:pl-8 pointer-events-none select-none overflow-hidden z-0 pt-1 sm:pt-2">
+        {/* Teks Raksasa "WELCOME" di Bagian Atas Hero */}
+        <div className="absolute top-0 inset-x-0 flex justify-center pointer-events-none select-none overflow-hidden z-0 pt-1 sm:pt-2">
           <h1 className={`font-display text-[15vw] sm:text-[16vw] md:text-[17vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap transition-colors ${
             isNight ? "text-[#283224]" : "text-[#ceced0]"
           }`}>
@@ -252,57 +254,75 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           </h1>
         </div>
 
-        {/* SATU Blok Visual Besar (Gradient Kiri-ke-Kanan) di Sisi Kanan-Tengah Hero */}
+        {/* Soft Background Gradient Layer */}
         <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[58%] z-0 overflow-hidden">
           <div className={`w-full h-full bg-gradient-to-r transition-colors ${
             isNight
               ? "from-[#181D15] via-[#242C20] to-[#2E382A]"
-              : "from-[#e8e8e6] via-[#babab6] to-[#8c8c88]"
+              : "from-[#e8e8e6] via-[#babab6] to-[#9e9e9a]"
           }`} />
         </div>
 
         {/* Hero Main Content Layout Grid */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center min-h-[70vh]">
           
-          {/* Konten Kiri (Headline, Deskripsi & Tombol CTA) */}
-          <div className="w-full lg:w-1/2 space-y-6 text-left py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full py-8">
             
-            <div className="space-y-3">
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight leading-none text-current">
-                I&apos;M {ownerName}
-              </h1>
-              <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md ${
-                isNight ? "text-[#A8A79C]" : "text-[#4a4a4a]"
-              }`}>
-                I create travel guides and backpacking itineraries from around the world, as well as sharing photography resources and more.
-              </p>
+            {/* Konten Kiri (Headline, Deskripsi & Tombol CTA) */}
+            <div className="lg:col-span-6 space-y-6 text-left order-2 lg:order-1">
+              
+              <div className="space-y-3">
+                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight leading-none text-current">
+                  I&apos;M {ownerName}
+                </h1>
+                <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md ${
+                  isNight ? "text-[#A8A79C]" : "text-[#4a4a4a]"
+                }`}>
+                  I create travel guides and backpacking itineraries from around the world, as well as sharing photography resources and more.
+                </p>
+              </div>
+
+              {/* Dua Tombol Sejajar */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                
+                {/* Primary Solid Yellow Button */}
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-6 py-3 rounded-full bg-[#F5B301] hover:bg-[#E0A200] text-black font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-md"
+                >
+                  <span>READ MY BLOG</span>
+                </a>
+
+                {/* Secondary Outline Button */}
+                <a
+                  href="#vlog"
+                  onClick={() => soundFx.playClick()}
+                  className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${
+                    isNight
+                      ? "border-white text-white hover:bg-white hover:text-black"
+                      : "border-black text-black hover:bg-black hover:text-white"
+                  }`}
+                >
+                  <span>WATCH MY VIDEOS</span>
+                </a>
+
+              </div>
+
             </div>
 
-            {/* Dua Tombol Sejajar */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              
-              {/* Primary Solid Yellow Button */}
-              <a
-                href="#projects"
-                onClick={() => soundFx.playClick()}
-                className="px-6 py-3 rounded-full bg-[#F5B301] hover:bg-[#E0A200] text-black font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-md"
-              >
-                <span>READ MY BLOG</span>
-              </a>
-
-              {/* Secondary Outline Button */}
-              <a
-                href="#vlog"
-                onClick={() => soundFx.playClick()}
-                className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${
-                  isNight
-                    ? "border-white text-white hover:bg-white hover:text-black"
-                    : "border-black text-black hover:bg-black hover:text-white"
-                }`}
-              >
-                <span>WATCH MY VIDEOS</span>
-              </a>
-
+            {/* Foto Centerpiece di Tengah (Dua Kolom Kanan / Center Layout) */}
+            <div className="lg:col-span-6 flex justify-center items-center order-1 lg:order-2">
+              <div className="relative w-64 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[420px] max-w-full group">
+                <Image
+                  src={ownerAvatar}
+                  alt={ownerName}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 280px, 340px"
+                  className="object-contain object-bottom drop-shadow-xl filter grayscale contrast-105 group-hover:grayscale-0 transition-all duration-500"
+                />
+              </div>
             </div>
 
           </div>
