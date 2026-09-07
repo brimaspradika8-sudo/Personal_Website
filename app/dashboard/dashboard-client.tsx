@@ -254,12 +254,12 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         <div className="absolute top-1 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
           {/* Line 1: Dynamic WELCOME Marquee */}
           <div className="animate-welcome-marquee flex gap-4 whitespace-nowrap">
-            <h1 className={`font-display text-[18vw] sm:text-[20vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
               {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[18vw] sm:text-[20vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
               {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
@@ -268,12 +268,12 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
 
           {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
           <div className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap">
-            <h1 className={`font-display text-[13vw] sm:text-[15vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
             }`}>
               BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[13vw] sm:text-[15vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
             }`}>
               BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
@@ -336,20 +336,20 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
             </div>
 
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
-            <div className="sm:hidden w-full z-20 space-y-3 text-center text-white px-2 pt-2">
-              <h1 className="font-display text-3xl font-black uppercase tracking-tight leading-none">
+            <div className="sm:hidden w-full z-20 space-y-3.5 text-center text-white px-2 pt-2">
+              <h1 className="font-display text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
                 I&apos;M {ownerName}
               </h1>
-              <p className="text-xs text-white/90 leading-relaxed font-sans max-w-xs mx-auto">
+              <p className="text-sm text-white/95 leading-relaxed font-sans max-w-xs mx-auto drop-shadow-sm font-medium">
                 I create travel guides and backpacking itineraries from around the world, as well as sharing photography resources and more.
               </p>
 
               {/* Two Mobile CTA Buttons */}
-              <div className="flex items-center justify-center gap-2 pt-1">
+              <div className="flex items-center justify-center gap-3 pt-1">
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-4 py-2 rounded-full bg-[#F5B301] text-black font-bold text-[11px] uppercase tracking-wider shadow-md"
+                  className="px-5 py-2.5 rounded-full bg-[#F5B301] text-black font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition-transform"
                 >
                   READ MY BLOG
                 </a>
@@ -357,7 +357,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <a
                   href="#vlog"
                   onClick={() => soundFx.playClick()}
-                  className="px-4 py-2 rounded-full border border-white text-white font-bold text-[11px] uppercase tracking-wider shadow-md"
+                  className="px-5 py-2.5 rounded-full border border-white text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-white hover:text-black transition-all"
                 >
                   WATCH MY VIDEOS
                 </a>
