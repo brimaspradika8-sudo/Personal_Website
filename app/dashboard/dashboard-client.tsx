@@ -185,7 +185,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-[#F1EFE9] bg-[#12160F] selection:bg-[#3B5D42] selection:text-[#F1EFE9]">
       
-      {/* Background Video Landscape with Pine Dark Overlay */}
+      {/* Background Video Landscape with Pine Dark Overlay (Mountain Illustration Visible) */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none transform-gpu">
         {(!isNight || loadSecondaryBg) && (
           <video
@@ -227,8 +227,8 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
           </video>
         )}
 
-        {/* Unified Pine Dark Background Overlay */}
-        <div className="absolute inset-0 bg-[#12160F]/85 backdrop-blur-[2px] transition-colors duration-1000" />
+        {/* Unified Pine Dark Gradient Overlay (Mountain Illustration Visible Behind) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/75 via-[#12160F]/80 to-[#12160F]/90 transition-colors duration-1000" />
       </div>
 
       {/* Header / Navbar */}
@@ -311,7 +311,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
               title={user ? `Profil (${navUserName})` : "Profil"}
               aria-label="Profil"
             >
-              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#2A2F26] bg-[#3B5D42] flex items-center justify-center font-bold text-[#F1EFE9] text-xs">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-[#3B5D42] bg-[#1A211A] flex items-center justify-center font-bold text-[#F1EFE9] text-xs">
                 {user ? (
                   <>
                     <span className="w-full h-full flex items-center justify-center">

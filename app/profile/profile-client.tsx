@@ -110,11 +110,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       })
     : "-";
 
-  // Real photos instead of cartoon avatars
-  const realAvatars = [
-    { name: "Foto Utama", url: "/images/avatar.png" },
-    { name: "Foto Alternatif", url: "/images/brimas-avatar.webp" },
-  ];
+
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -233,7 +229,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   return (
     <div className="relative min-h-[100dvh] w-full font-sans antialiased text-[#F1EFE9] bg-[#12160F] pb-32 sm:pb-24">
       
-      {/* Background Landscape Video with Pine Dark Overlay */}
+      {/* Background Landscape Video with Pine Dark Overlay (Mountain Illustration Visible) */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
         <video
           key={mode}
@@ -250,7 +246,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 bg-[#12160F]/85 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/75 via-[#12160F]/80 to-[#12160F]/90 transition-colors duration-1000" />
       </div>
 
       {/* Main Container */}
@@ -284,7 +280,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               onChange={handleFileSelect}
             />
 
-            {/* Avatar Photo Container */}
+            {/* Avatar Photo Container (Framed with 2px Pine Ring & Surface Background) */}
             <div className="relative group shrink-0">
               <button
                 type="button"
@@ -294,20 +290,20 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     fileInputRef.current?.click();
                   }
                 }}
-                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-[#2A2F26] bg-[#12160F] flex items-center justify-center font-bold text-[#F1EFE9] transition-opacity cursor-pointer"
+                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-[#3B5D42] bg-[#1A211A] shrink-0 flex items-center justify-center font-bold text-[#F1EFE9] transition-opacity cursor-pointer p-0.5"
               >
                 {avatarSrc && !headerImgError ? (
                   <Image
                     src={avatarSrc}
                     alt={userName}
                     fill
-                    className="object-cover"
+                    className="object-cover rounded-full"
                     unoptimized={avatarSrc.startsWith("http")}
                     onError={() => setHeaderImgError(true)}
                     referrerPolicy="no-referrer"
                   />
                 ) : user ? (
-                  <span className="w-full h-full bg-[#3B5D42] text-[#F1EFE9] flex items-center justify-center font-bold text-2xl uppercase">
+                  <span className="w-full h-full bg-[#3B5D42] text-[#F1EFE9] flex items-center justify-center font-bold text-2xl uppercase rounded-full">
                     {initialLetter}
                   </span>
                 ) : (
@@ -315,7 +311,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 )}
 
                 {user && (
-                  <div className="absolute inset-0 bg-[#12160F]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[#F1EFE9]">
+                  <div className="absolute inset-0 bg-[#12160F]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[#F1EFE9] rounded-full">
                     <Camera className="w-5 h-5 text-[#F1EFE9]" />
                   </div>
                 )}
@@ -530,34 +526,46 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     />
                   </div>
 
-                  {/* Real Photo Options */}
+                  {/* Option B: OAuth Photo or File Upload */}
                   <div className="space-y-2">
                     <label className="text-xs font-medium text-[#A8A79C] block">
-                      Pilihan Foto Profil
+                      Sumber Foto Profil
                     </label>
-                    <div className="flex items-center gap-3">
-                      {realAvatars.map((item, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => {
-                            soundFx.playClick();
-                            setAvatarUrl(item.url);
-                          }}
-                          className={`flex items-center gap-3 p-2 rounded-lg border transition-colors cursor-pointer ${
-                            avatarUrl === item.url
-                              ? "bg-[#212A20] border-[#3B5D42]"
-                              : "bg-[#12160F] border-[#2A2F26] hover:bg-[#212A20]"
-                          }`}
-                        >
-                          <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[#2A2F26]">
-                            <Image src={item.url} alt={item.name} fill className="object-cover" unoptimized />
-                          </div>
-                          <span className="text-xs font-medium text-[#F1EFE9] pr-2">
-                            {item.name}
-                          </span>
-                        </button>
-                      ))}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundFx.playClick();
+                          const oauthPic = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
+                          setAvatarUrl(oauthPic);
+                        }}
+                        className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-colors cursor-pointer ${
+                          avatarUrl === (user?.user_metadata?.avatar_url || user?.user_metadata?.picture)
+                            ? "bg-[#212A20] border-[#3B5D42]"
+                            : "bg-[#12160F] border-[#2A2F26] hover:bg-[#212A20]"
+                        }`}
+                      >
+                        <UserIcon className="w-4 h-4 text-[#3B5D42] shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-[#F1EFE9]">Gunakan Foto Akun OAuth</p>
+                          <p className="text-[10px] text-[#A8A79C]">Foto dari Google / GitHub</p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundFx.playClick();
+                          fileInputRef.current?.click();
+                        }}
+                        className="flex items-center gap-3 p-3 rounded-lg border bg-[#12160F] border-[#2A2F26] hover:bg-[#212A20] text-left transition-colors cursor-pointer"
+                      >
+                        <Camera className="w-4 h-4 text-[#A8A79C] shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-[#F1EFE9]">Upload Foto Sendiri</p>
+                          <p className="text-[10px] text-[#A8A79C]">Pilih file dari perangkat (Max 5MB)</p>
+                        </div>
+                      </button>
                     </div>
                   </div>
 
