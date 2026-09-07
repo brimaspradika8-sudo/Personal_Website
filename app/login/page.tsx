@@ -149,15 +149,18 @@ function LoginForm() {
     <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-center bg-[#12160F] p-4 sm:p-6 font-sans text-[#F1EFE9]">
       
       {/* Background Overlay */}
-      <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+      <div
+        className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat"
+        style={{ backgroundImage: "url('/animations/day-landscape.webp')" }}
+      >
         <video
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           poster="/animations/day-landscape.webp"
-          className="absolute inset-0 object-cover w-full h-full"
+          className="absolute inset-0 object-cover object-top w-full h-full"
         >
           <source src="/animations/day-landscape.mp4" type="video/mp4" />
         </video>

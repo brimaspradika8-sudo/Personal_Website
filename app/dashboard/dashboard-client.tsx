@@ -185,8 +185,21 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-[#F1EFE9] bg-[#12160F] selection:bg-[#3B5D42] selection:text-[#F1EFE9]">
       
-      {/* Background Video Landscape with Pine Dark Overlay (Mountain Illustration Visible) */}
-      <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none transform-gpu">
+      {/* Mountain Landscape Illustration Background Container (Fixed Full Bleed) */}
+      <div
+        className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
+        style={{
+          backgroundImage: `url(${
+            isNight
+              ? isMobile
+                ? "/animations/night-landscape-mobile.webp"
+                : "/animations/night-landscape.webp"
+              : isMobile
+              ? "/animations/day-landscape-mobile.webp"
+              : "/animations/day-landscape.webp"
+          })`,
+        }}
+      >
         {(!isNight || loadSecondaryBg) && (
           <video
             key={isMobile ? "day-mobile" : "day-desktop"}
@@ -194,9 +207,9 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
             poster={isMobile ? "/animations/day-landscape-mobile.webp" : "/animations/day-landscape.webp"}
-            className={`absolute inset-0 object-cover w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out ${
+            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-0" : "opacity-100"
             }`}
           >
@@ -214,9 +227,9 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
             poster={isMobile ? "/animations/night-landscape-mobile.webp" : "/animations/night-landscape.webp"}
-            className={`absolute inset-0 object-cover w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out ${
+            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out ${
               isNight ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -562,7 +575,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
       )}
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-[#2A2F26] bg-[#12160F] py-8 text-xs text-[#A8A79C]">
+      <footer className="relative z-10 border-t border-[#2A2F26] bg-[#1A211A]/80 backdrop-blur-md py-8 text-xs text-[#A8A79C]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>
             © {new Date().getFullYear()} {ownerName}. {dict.footer.rights}

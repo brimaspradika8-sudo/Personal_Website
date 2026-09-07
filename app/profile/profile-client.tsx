@@ -246,17 +246,24 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   return (
     <div className="relative min-h-[100dvh] w-full font-sans antialiased text-[#F1EFE9] bg-[#12160F] pb-32 sm:pb-24">
       
-      {/* Background Landscape Video with Pine Dark Overlay (Mountain Illustration Visible) */}
-      <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+      {/* Mountain Landscape Illustration Background Container (Fixed Full Bleed) */}
+      <div
+        className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat transition-all duration-1000"
+        style={{
+          backgroundImage: `url(${
+            mode === "night" ? "/animations/night-landscape.webp" : "/animations/day-landscape.webp"
+          })`,
+        }}
+      >
         <video
           key={mode}
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           poster={mode === "night" ? "/animations/night-landscape.webp" : "/animations/day-landscape.webp"}
-          className="absolute inset-0 object-cover w-full h-full"
+          className="absolute inset-0 object-cover object-top w-full h-full"
         >
           <source
             src={mode === "night" ? "/animations/night-landscape.mp4" : "/animations/day-landscape.mp4"}
