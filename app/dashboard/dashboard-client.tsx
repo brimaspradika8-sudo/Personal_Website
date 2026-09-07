@@ -25,6 +25,10 @@ import {
   Play,
   Sparkles,
   ArrowRight,
+  Terminal,
+  Code2,
+  Activity,
+  Server,
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -193,69 +197,11 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased text-[#F1EFE9] selection:bg-[#3B5D42] selection:text-[#F1EFE9]">
       
-      {/* Mountain Landscape Illustration Background Container (Light-Balanced Pine & Ember) */}
-      <div
-        className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-cover bg-top bg-fixed bg-no-repeat saturate-[0.85] brightness-[0.9] contrast-[1.05] transition-all duration-1000"
-        style={{
-          backgroundImage: `url(${
-            isNight
-              ? isMobile
-                ? "/animations/night-landscape-mobile.webp"
-                : "/animations/night-landscape.webp"
-              : isMobile
-              ? "/animations/day-landscape-mobile.webp"
-              : "/animations/day-landscape.webp"
-          })`,
-        }}
-      >
-        {(!isNight || loadSecondaryBg) && (
-          <video
-            key={isMobile ? "day-mobile" : "day-desktop"}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            poster={isMobile ? "/animations/day-landscape-mobile.webp" : "/animations/day-landscape.webp"}
-            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.85] brightness-[0.9] contrast-[1.05] ${
-              isNight ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            <source
-              src={isMobile ? "/animations/day-landscape-mobile.mp4" : "/animations/day-landscape.mp4"}
-              type="video/mp4"
-            />
-          </video>
-        )}
-
-        {(isNight || loadSecondaryBg) && (
-          <video
-            key={isMobile ? "night-mobile" : "night-desktop"}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            poster={isMobile ? "/animations/night-landscape-mobile.webp" : "/animations/night-landscape.webp"}
-            className={`absolute inset-0 object-cover object-top w-full h-full transform-gpu transition-opacity duration-1000 ease-in-out saturate-[0.85] brightness-[0.9] contrast-[1.05] ${
-              isNight ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <source
-              src={isMobile ? "/animations/night-landscape-mobile.mp4" : "/animations/night-landscape.mp4"}
-              type="video/mp4"
-            />
-          </video>
-        )}
-
-        {/* 1. Directional Gradient Overlay (Darker on text left, natural & clear on right) */}
-        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(18,22,15,0.75)_0%,rgba(18,22,15,0.55)_35%,rgba(18,22,15,0.25)_65%,rgba(18,22,15,0.15)_100%)] mix-blend-multiply pointer-events-none transition-colors duration-1000" />
-        
-        {/* 2. Warm Ember Radial Glow Focal Point (Soft warmth near top right sky) */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(166,83,45,0.18)_0%,transparent_45%)] mix-blend-soft-light pointer-events-none transition-colors duration-1000" />
-        
-        {/* 3. Subtle Top Header & Bottom Fade Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/30 pointer-events-none transition-colors duration-1000" />
+      {/* Clean Dark Pine Ambient Background (No Video Animation) */}
+      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-[#12160F]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(26,33,26,0.8)_0%,transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(166,83,45,0.08)_0%,transparent_40%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12160F]/40 via-transparent to-[#12160F]/60" />
       </div>
 
       {/* Header / Navbar */}
@@ -330,7 +276,7 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
               )}
             </button>
 
-            {/* Profile Avatar Link */}
+            {/* Profile Link (Minimalist Icon Badge) */}
             <Link
               href="/profile"
               onClick={() => soundFx.playClick()}
@@ -338,26 +284,13 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
               title={user ? `Profil (${navUserName})` : "Profil"}
               aria-label="Profil"
             >
-              <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-[#3B5D42] bg-[#1A211A] flex items-center justify-center font-bold text-[#F1EFE9] text-xs">
+              <div className="w-8 h-8 rounded-full border border-[#2A2F26] bg-[#1A211A] hover:border-[#3B5D42] transition-colors flex items-center justify-center font-bold text-[#F1EFE9] text-xs">
                 {user ? (
-                  <>
-                    <span className="w-full h-full flex items-center justify-center">
-                      {initialLetter}
-                    </span>
-                    {showNavAvatarImg && (
-                      <Image
-                        src={rawAvatar!}
-                        alt={navUserName}
-                        fill
-                        className="object-cover"
-                        unoptimized={rawAvatar!.startsWith("http")}
-                        onError={() => setAvatarImgError(true)}
-                        referrerPolicy="no-referrer"
-                      />
-                    )}
-                  </>
+                  <span className="w-full h-full flex items-center justify-center font-mono">
+                    {initialLetter}
+                  </span>
                 ) : (
-                  <User className="w-4 h-4 text-[#F1EFE9]" />
+                  <User className="w-4 h-4 text-[#A8A79C]" />
                 )}
               </div>
             </Link>
@@ -476,19 +409,59 @@ export default function DashboardClient({ user, dbUser, dbProjects = [] }: Dashb
 
             </div>
 
-            {/* Center Column: Large Cutout Portrait Subject */}
+            {/* Center Column: System Architecture & Terminal Card (No People Photos) */}
             <div className="lg:col-span-4 flex justify-center items-center order-1 lg:order-2">
-              <div className="relative w-64 h-80 sm:w-72 sm:h-[380px] rounded-2xl overflow-hidden border-2 border-[#3B5D42]/60 bg-[#1A211A]/80 backdrop-blur-md shadow-2xl group transition-transform duration-300 hover:scale-[1.02]">
-                <Image
-                  src={ownerAvatar}
-                  alt={ownerName}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 256px, 288px"
-                  className="object-cover"
-                />
-                {/* Vignette Overlay Frame */}
-                <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_40px_15px_rgba(18,22,15,0.6)] pointer-events-none z-10 border border-[#2A2F26]/40" />
+              <div className="w-full max-w-sm rounded-2xl border border-[#2A2F26] bg-[#1A211A]/90 backdrop-blur-md p-5 shadow-2xl space-y-4 font-mono text-xs">
+                
+                {/* Terminal Top Window Controls */}
+                <div className="flex items-center justify-between border-b border-[#2A2F26] pb-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-full bg-[#7A3B32]" />
+                    <span className="w-3 h-3 rounded-full bg-[#A8A79C]/30" />
+                    <span className="w-3 h-3 rounded-full bg-[#3B5D42]" />
+                  </div>
+                  <span className="text-[10px] text-[#A8A79C] flex items-center gap-1">
+                    <Terminal className="w-3 h-3 text-[#3B5D42]" />
+                    <span>system.config.ts</span>
+                  </span>
+                </div>
+
+                {/* Code Snippet Box */}
+                <div className="space-y-1.5 text-[11px] leading-relaxed font-mono">
+                  <p className="text-[#A8A79C]">
+                    <span className="text-[#A6532D]">const</span> <span className="text-[#F1EFE9]">architect</span> = {"{"}
+                  </p>
+                  <p className="pl-4 text-[#A8A79C]">
+                    name: <span className="text-[#3B5D42]">&quot;Brimas Pradika Utama&quot;</span>,
+                  </p>
+                  <p className="pl-4 text-[#A8A79C]">
+                    role: <span className="text-[#3B5D42]">&quot;Full-Stack & AI Systems&quot;</span>,
+                  </p>
+                  <p className="pl-4 text-[#A8A79C]">
+                    status: <span className="text-[#A6532D]">&quot;Building High Scale Systems&quot;</span>,
+                  </p>
+                  <p className="pl-4 text-[#A8A79C]">
+                    uptime: <span className="text-[#3B5D42]">&quot;99.99%&quot;</span>
+                  </p>
+                  <p className="text-[#A8A79C]">{"};"}</p>
+                </div>
+
+                {/* System Metrics Bar */}
+                <div className="pt-2 border-t border-[#2A2F26] grid grid-cols-3 gap-2 text-center text-[10px]">
+                  <div className="bg-[#12160F] p-2 rounded-lg border border-[#2A2F26]">
+                    <p className="text-[#A8A79C]">Latency</p>
+                    <p className="font-bold text-[#3B5D42]">&lt; 12ms</p>
+                  </div>
+                  <div className="bg-[#12160F] p-2 rounded-lg border border-[#2A2F26]">
+                    <p className="text-[#A8A79C]">Runtime</p>
+                    <p className="font-bold text-[#F1EFE9]">Edge/Node</p>
+                  </div>
+                  <div className="bg-[#12160F] p-2 rounded-lg border border-[#2A2F26]">
+                    <p className="text-[#A8A79C]">Status</p>
+                    <p className="font-bold text-[#A6532D]">Active</p>
+                  </div>
+                </div>
+
               </div>
             </div>
 
