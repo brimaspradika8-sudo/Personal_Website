@@ -121,6 +121,17 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
     user?.email?.split("@")[0] ||
     "Guest User";
 
+  const isLoggedIn = !!user;
+  const activeUserName =
+    dbUser?.name ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    (user?.email ? user.email.split("@")[0] : "");
+
+  const welcomeMarqueeText = isLoggedIn && activeUserName
+    ? `WELCOME ${activeUserName.toUpperCase()}`
+    : "WELCOME";
+
   const initialLetter = navUserName && navUserName !== "Guest User" ? navUserName.charAt(0).toUpperCase() : "G";
   const isNight = mode === "night";
 
@@ -241,17 +252,17 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         
         {/* Giant Moving Backdrop Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") Behind Head */}
         <div className="absolute top-2 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-2 space-y-[-2vw]">
-          {/* Line 1: WELCOME Marquee */}
+          {/* Line 1: Dynamic WELCOME Marquee */}
           <div className="animate-welcome-marquee flex gap-12 whitespace-nowrap">
             <h1 className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
-              WELCOME &bull; BUCKETLISTLY &bull; WELCOME &bull; BUCKETLISTLY &bull;
+              {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull;
             </h1>
             <h1 className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
-              WELCOME &bull; BUCKETLISTLY &bull; WELCOME &bull; BUCKETLISTLY &bull;
+              {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull;
             </h1>
           </div>
 
