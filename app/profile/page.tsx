@@ -26,7 +26,7 @@ export default async function ProfilePage() {
     });
 
     const timeoutPromise = new Promise<null>((resolve) =>
-      setTimeout(() => resolve(null), 2500)
+      setTimeout(() => resolve(null), 800)
     );
 
     dbUser = await Promise.race([dbPromise, timeoutPromise]);
@@ -34,4 +34,3 @@ export default async function ProfilePage() {
 
   return <ProfileClient user={user} dbUser={dbUser} />;
 }
-

@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #12160F;
+  --surface: #1A211A;
+  --surface-hover: #212A20;
+  --primary: #3B5D42;
+  --accent: #A6532D;
+  --accent-hover: #8A4425;
+  --text-primary: #F1EFE9;
+  --text-muted: #A8A79C;
+  --border: #2A2F26;
+  --danger-muted: #7A3B32;
+}
+
 @layer base {
-  html {
+  html, body {
     scroll-behavior: smooth;
+    background-color: var(--bg);
+    color: var(--text-primary);
   }
 }
 
@@ -15,3 +30,4 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none !important;
 }
+

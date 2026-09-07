@@ -9,7 +9,7 @@ import { signInWithGoogle, signInWithGithub, signInWithPassword } from "@/lib/ac
 
 const RiveTeddyAnimation = dynamic(() => import("@/components/RiveTeddyAnimation"), {
   ssr: false,
-  loading: () => <div className="w-[280px] h-[280px] rounded-full bg-amber-500/10 animate-pulse" />,
+  loading: () => <div className="w-[280px] h-[280px] rounded-full bg-[#1A211A] animate-pulse" />,
 });
 
 function LoginForm() {
@@ -27,6 +27,7 @@ function LoginForm() {
       setError(msg);
     }
   }, [urlError]);
+
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
@@ -37,7 +38,6 @@ function LoginForm() {
   const teddyContainerRef = useRef<HTMLDivElement>(null);
   const toggleBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Event Handlers for Email Input
   const handleEmailFocus = () => {
     setIsPasswordFocused(false);
   };
@@ -47,9 +47,6 @@ function LoginForm() {
     setIsPasswordFocused(false);
   };
 
-  const handleEmailBlur = () => {};
-
-  // Event Handlers for Password Input
   const handlePasswordFocus = () => {
     setIsPasswordFocused(true);
   };
@@ -65,12 +62,6 @@ function LoginForm() {
     setIsPasswordFocused(false);
   };
 
-  // Toggle Password Visibility (Eye icon button)
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
-
-  // Form Submission
   async function handleSubmit(formData: FormData) {
     setError(null);
     setLoading(true);
@@ -84,7 +75,6 @@ function LoginForm() {
     }
   }
 
-  // Google Login
   async function handleGoogleLogin() {
     setError(null);
     setGoogleLoading(true);
@@ -99,7 +89,6 @@ function LoginForm() {
     }
   }
 
-  // GitHub Login
   async function handleGithubLogin() {
     setError(null);
     setGithubLoading(true);
@@ -114,49 +103,35 @@ function LoginForm() {
     }
   }
 
-  // Speech bubble state message for Teddy
-  const [speechText, setSpeechText] = useState("Hai! Masukkan email & password ya! 👋");
-
+  const [speechText, setSpeechText] = useState("Hai! Masukkan email & password ya!");
   const isAnyLoading = loading || googleLoading || githubLoading;
 
-  // Sync speech bubble text with actions
   useEffect(() => {
     if (loading || googleLoading || githubLoading) {
-      setSpeechText("Sebentar ya, sedang diproses... ⏳");
+      setSpeechText("Sedang diproses...");
     } else if (error) {
-      setSpeechText("Waduh, email/password salah nih! 😅");
+      setSpeechText("Email atau password salah.");
     }
   }, [loading, googleLoading, githubLoading, error]);
 
   const handleEmailFocusCustom = () => {
     handleEmailFocus();
     if (!isAnyLoading && !error) {
-      setSpeechText("Aku perhatiin tulisan emailmu... 👀");
+      setSpeechText("Memasukkan email...");
     }
   };
 
   const handleEmailChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleEmailChange(e);
     if (!isAnyLoading && !error) {
-      if (e.target.value.length > 0) {
-        setSpeechText("Sedang ketik email... ✉️");
-      } else {
-        setSpeechText("Aku perhatiin tulisan emailmu... 👀");
-      }
+      setSpeechText(e.target.value.length > 0 ? "Mengetik email..." : "Memasukkan email...");
     }
   };
 
   const handlePasswordFocusCustom = () => {
     handlePasswordFocus();
     if (!isAnyLoading && !error) {
-      setSpeechText(showPassword ? "Eits, kita ngintip bareng ya! 🫣" : "Tenang, aku tutup mata kok! 🙈");
-    }
-  };
-
-  const handlePasswordChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handlePasswordChange();
-    if (!isAnyLoading && !error) {
-      setSpeechText(showPassword ? "Eits, kita ngintip bareng ya! 🫣" : "Tenang, aku tutup mata kok! 🙈");
+      setSpeechText(showPassword ? "Menampilkan password..." : "Karakter password tersembunyi.");
     }
   };
 
@@ -164,52 +139,46 @@ function LoginForm() {
     setShowPassword((prev) => {
       const nextShow = !prev;
       if (!isAnyLoading && !error) {
-        setSpeechText(nextShow ? "Eits, kita ngintip bareng ya! 🫣" : "Tenang, aku tutup mata kok! 🙈");
+        setSpeechText(nextShow ? "Menampilkan password..." : "Karakter password tersembunyi.");
       }
       return nextShow;
     });
   };
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-start md:justify-center bg-stone-900 px-4 py-4 sm:p-6 md:p-8 font-sans text-slate-900 overflow-y-auto">
-      {/* Full-Bleed Vivid Nature Landscape Background Layer */}
+    <div className="relative flex min-h-[100dvh] w-full flex-col md:flex-row items-center justify-center bg-[#12160F] p-4 sm:p-6 font-sans text-[#F1EFE9]">
+      
+      {/* Background Overlay */}
       <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
-        <Image
-          src="/animations/day-landscape.webp"
-          alt="Lush Nature Landscape Background"
-          fill
-          priority
-          className="object-cover w-full h-full opacity-85 filter brightness-105 contrast-105 scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-amber-950/20 to-stone-950/40 backdrop-blur-[1px]" />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster="/animations/day-landscape.webp"
+          className="absolute inset-0 object-cover w-full h-full"
+        >
+          <source src="/animations/day-landscape.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[#12160F]/85 backdrop-blur-[2px]" />
       </div>
 
-      {/* Outer Card Wrapper */}
-      <div className="w-full max-w-[420px] md:max-w-[800px] min-h-0 md:min-h-[480px] bg-white/95 md:bg-white rounded-3xl md:rounded-[24px] shadow-2xl overflow-visible md:overflow-hidden flex flex-col md:flex-row border border-amber-300/40 my-0 md:my-auto backdrop-blur-xl">
+      {/* Main Card Wrapper */}
+      <div className="w-full max-w-3xl bg-[#1A211A] border border-[#2A2F26] rounded-xl overflow-hidden flex flex-col md:flex-row my-auto">
         
-        {/* Panel Kiri / Top Animation Section: Vibrant Forest & Sunrise Gradient with Amber/Emerald Glow */}
-        <div className="w-full md:w-[45%] bg-gradient-to-br from-emerald-950 via-stone-900 to-amber-950 p-4 md:p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-amber-300/30 shrink-0 relative overflow-hidden rounded-t-3xl md:rounded-none">
-          {/* Ambient Nature Lighting & Glow FX */}
-          <div className="hidden md:block absolute w-60 h-60 rounded-full bg-amber-400/30 blur-3xl -top-10 -left-10 pointer-events-none animate-pulse" />
-          <div className="hidden md:block absolute w-60 h-60 rounded-full bg-emerald-400/25 blur-3xl -bottom-10 -right-10 pointer-events-none" />
-          <div className="hidden md:block absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.08)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-
-          {/* 3D Warm Nature Spotlight Beam from Top */}
-          <div className="absolute top-0 w-48 sm:w-64 h-72 bg-gradient-to-b from-amber-300/30 via-emerald-400/15 to-transparent clip-path-spotlight blur-md pointer-events-none z-0" />
-
-          {/* Dynamic Speech Bubble Floating Above Teddy */}
-          <div className="z-20 mb-1 md:mb-2 transition-all duration-300 transform hover:scale-105">
-            <div className="relative bg-white/95 backdrop-blur-md px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-[0_8px_25px_rgba(0,0,0,0.3)] border border-amber-200/80 flex items-center gap-2 max-w-[280px]">
-              <span className="text-xs sm:text-sm font-bold text-stone-900 tracking-tight text-center leading-tight">
-                {speechText}
-              </span>
-              {/* Speech Bubble Arrow Tail */}
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-x-[7px] border-x-transparent border-t-[8px] border-t-white/95 drop-shadow-xs" />
+        {/* Left Animation Panel */}
+        <div className="w-full md:w-[45%] bg-[#12160F] p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-[#2A2F26] shrink-0 relative">
+          
+          {/* Speech Bubble */}
+          <div className="z-20 mb-3">
+            <div className="relative bg-[#1A211A] border border-[#2A2F26] px-3.5 py-1.5 rounded-lg text-xs font-medium text-[#F1EFE9] text-center max-w-[240px]">
+              <span>{speechText}</span>
             </div>
           </div>
 
           {/* Rive Teddy Animation Container */}
-          <div ref={teddyContainerRef} className="w-[340px] h-[340px] md:w-[310px] md:h-[310px] relative flex items-center justify-center z-10 drop-shadow-2xl overflow-visible -mb-8 md:mb-0 md:-mt-4">
+          <div ref={teddyContainerRef} className="w-[280px] h-[280px] relative flex items-center justify-center z-10">
             <RiveTeddyAnimation
               emailText={emailText}
               isPasswordFocused={isPasswordFocused}
@@ -217,58 +186,42 @@ function LoginForm() {
               error={error}
               success={false}
             />
-
-            {/* Organic Golden Emerald Glass Pedestal Base beneath Teddy's Feet */}
-            <div className="absolute bottom-6 md:bottom-5 left-1/2 -translate-x-1/2 w-[220px] sm:w-[240px] md:w-[250px] h-[28px] md:h-[32px] rounded-[100%] bg-gradient-to-r from-amber-500/35 via-emerald-400/40 to-amber-500/35 border border-amber-300/50 shadow-[0_0_30px_rgba(245,158,11,0.5)] backdrop-blur-sm -z-10 flex items-center justify-center">
-              <div className="w-[85%] h-[70%] rounded-[100%] bg-amber-500/30 blur-xs border border-white/30 animate-pulse" />
-            </div>
-
-            {/* Floating Soft Shadow beneath Teddy */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[160px] md:w-[180px] h-[16px] rounded-[100%] bg-black/50 blur-md -z-20" />
           </div>
         </div>
 
-        {/* Panel Kanan / Bottom Card Section: Desktop compact md:w-[55%] md:p-8 lg:p-10 */}
-        <div className="w-full md:w-[55%] bg-white rounded-3xl md:rounded-none p-6 sm:p-8 md:p-8 lg:p-10 shadow-2xl md:shadow-none flex flex-col justify-between border border-slate-100/50 md:border-0 mt-0 z-0">
-          <div className="my-auto space-y-3.5 sm:space-y-4 md:space-y-5 max-w-[340px] w-full mx-auto">
-            {/* Header Title Centered */}
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#0B132B] text-center">
-              Login
+        {/* Right Form Panel */}
+        <div className="w-full md:w-[55%] p-6 sm:p-8 flex flex-col justify-center">
+          <div className="space-y-4 max-w-sm w-full mx-auto">
+            <h1 className="font-display text-2xl font-bold text-[#F1EFE9] text-center">
+              Masuk
             </h1>
 
             {error && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-2.5 text-xs sm:text-sm text-red-600 flex items-start gap-2">
-                <svg className="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div className="rounded-lg border border-[#7A3B32] bg-[#7A3B32]/10 p-3 text-xs text-[#F1EFE9]">
                 <span>{error}</span>
               </div>
             )}
 
-            {/* Form Login */}
-            <form action={handleSubmit} className="space-y-3.5 sm:space-y-4">
-              {/* Email Input */}
+            {/* Form */}
+            <form action={handleSubmit} className="space-y-3.5">
               <div className="space-y-1">
-                <label htmlFor="email" className="block text-xs sm:text-sm font-semibold text-slate-500">
+                <label htmlFor="email" className="block text-xs font-medium text-[#A8A79C]">
                   Email
                 </label>
                 <input
                   id="email"
                   type="email"
                   name="email"
-                  placeholder=""
                   required
                   value={emailText}
                   onChange={handleEmailChangeCustom}
                   onFocus={handleEmailFocusCustom}
-                  onBlur={handleEmailBlur}
-                  className="w-full border-b border-slate-300 bg-transparent py-1.5 text-sm sm:text-base text-slate-900 transition-colors focus:border-[#0B132B] focus:outline-none"
+                  className="w-full bg-[#12160F] border border-[#2A2F26] rounded-lg px-3.5 py-2 text-sm text-[#F1EFE9] focus:outline-none focus:border-[#3B5D42]"
                 />
               </div>
 
-              {/* Password Input */}
               <div className="space-y-1">
-                <label htmlFor="password" className="block text-xs sm:text-sm font-semibold text-slate-500">
+                <label htmlFor="password" className="block text-xs font-medium text-[#A8A79C]">
                   Password
                 </label>
                 <div className="relative flex items-center">
@@ -276,12 +229,11 @@ function LoginForm() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder=""
                     required
-                    onChange={handlePasswordChangeCustom}
+                    onChange={handlePasswordChange}
                     onFocus={handlePasswordFocusCustom}
                     onBlur={handlePasswordBlur}
-                    className="w-full border-b border-slate-300 bg-transparent py-1.5 pr-10 text-sm sm:text-base text-slate-900 transition-colors focus:border-[#0B132B] focus:outline-none [::-ms-reveal]:hidden"
+                    className="w-full bg-[#12160F] border border-[#2A2F26] rounded-lg px-3.5 py-2 pr-10 text-sm text-[#F1EFE9] focus:outline-none focus:border-[#3B5D42]"
                   />
                   <button
                     type="button"
@@ -289,107 +241,89 @@ function LoginForm() {
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={togglePasswordVisibilityCustom}
                     tabIndex={-1}
-                    className="absolute right-0 text-slate-400 hover:text-slate-600 focus:outline-none p-1.5"
+                    className="absolute right-2 text-[#A8A79C] hover:text-[#F1EFE9] p-1 cursor-pointer"
                     aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                   >
                     {showPassword ? (
-                      <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a10.03 10.03 0 013.122-.84m4.542.493a10.05 10.05 0 013.7 2.278M21 12a9.97 9.97 0 01-1.563 3.029m-5.858 5.908l-9.56-9.56" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3l18 18" />
                       </svg>
                     ) : (
-                      <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
                     )}
                   </button>
                 </div>
-                {/* Forgot password placed underneath the password input */}
-                <div className="flex justify-end pt-1">
-                  <Link
-                    href="/login"
-                    className="text-xs font-medium text-[#0B132B] hover:underline transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
               </div>
 
-              {/* Tombol Login Navy/Deep Blue */}
-              <div className="pt-1">
+              {/* 1 Ember CTA for Login */}
+              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={isAnyLoading}
-                  className="w-full rounded-2xl bg-[#0B132B] hover:bg-[#162244] active:bg-[#060D1E] py-2.5 sm:py-3 px-4 text-sm sm:text-base font-semibold text-white transition-all focus:outline-none focus:ring-2 focus:ring-[#0B132B]/40 shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full rounded-lg bg-[#A6532D] hover:bg-[#8A4425] py-2.5 px-4 text-sm font-medium text-[#F1EFE9] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {loading && (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#F1EFE9] border-t-transparent" />
                   )}
-                  <span>{loading ? "Logging in..." : "Login"}</span>
+                  <span>{loading ? "Memproses..." : "Masuk"}</span>
                 </button>
               </div>
             </form>
 
-            {/* Separator ATAU */}
-            <div className="flex items-center gap-3 text-xs text-slate-300">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span className="font-medium text-slate-400 uppercase tracking-wider text-[10px] sm:text-xs">ATAU</span>
-              <div className="h-px flex-1 bg-slate-200" />
+            {/* Separator */}
+            <div className="flex items-center gap-3 text-xs text-[#A8A79C] pt-1">
+              <div className="h-px flex-1 bg-[#2A2F26]" />
+              <span className="font-medium text-[10px] text-[#A8A79C]">Atau</span>
+              <div className="h-px flex-1 bg-[#2A2F26]" />
             </div>
 
-            {/* Social OAuth Login Buttons (Google & GitHub) */}
+            {/* OAuth Buttons */}
             <div className="space-y-2">
-              {/* Google OAuth Login Button */}
               <button
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={isAnyLoading}
-                className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-2 sm:py-2.5 px-4 text-xs sm:text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-xs disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-[#2A2F26] bg-[#12160F] hover:bg-[#212A20] py-2 px-4 text-xs font-medium text-[#F1EFE9] transition-colors disabled:opacity-50 cursor-pointer"
               >
-                {googleLoading ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-700 border-t-transparent" />
-                ) : (
-                  <svg className="h-4.5 w-4.5 shrink-0" viewBox="0 0 24 24">
-                    <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z" />
-                    <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z" />
-                    <path fill="#FBBC05" d="M5.6 14.8c-.3-.8-.4-1.8-.4-2.8s.1-2 .4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z" />
-                    <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z" />
-                  </svg>
-                )}
-                <span>{googleLoading ? "Mengarahkan..." : "Login dengan Google"}</span>
+                <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z" />
+                  <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z" />
+                  <path fill="#FBBC05" d="M5.6 14.8c-.3-.8-.4-1.8-.4-2.8s.1-2 .4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z" />
+                  <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z" />
+                </svg>
+                <span>Google</span>
               </button>
 
-              {/* GitHub OAuth Login Button */}
               <button
                 type="button"
                 onClick={handleGithubLogin}
                 disabled={isAnyLoading}
-                className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-2 sm:py-2.5 px-4 text-xs sm:text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-xs disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-[#2A2F26] bg-[#12160F] hover:bg-[#212A20] py-2 px-4 text-xs font-medium text-[#F1EFE9] transition-colors disabled:opacity-50 cursor-pointer"
               >
-                {githubLoading ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-700 border-t-transparent" />
-                ) : (
-                  <svg className="h-4.5 w-4.5 shrink-0 fill-current text-slate-900" viewBox="0 0 24 24">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                  </svg>
-                )}
-                <span>{githubLoading ? "Mengarahkan..." : "Login dengan GitHub"}</span>
+                <svg className="h-4 w-4 shrink-0 fill-current text-[#F1EFE9]" viewBox="0 0 24 24">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+                <span>GitHub</span>
               </button>
             </div>
 
-            {/* Register Link (Don't have an account? Sign up) */}
-            <div className="pt-1.5 text-center">
-              <p className="text-xs sm:text-sm text-slate-500">
-                Don't have an account?{" "}
+            {/* Switch to Register */}
+            <div className="pt-2 text-center">
+              <p className="text-xs text-[#A8A79C]">
+                Belum punya akun?{" "}
                 <Link
                   href="/register"
-                  className="font-semibold text-[#0B132B] hover:underline transition-colors"
+                  className="font-medium text-[#F1EFE9] hover:underline"
                 >
-                  Sign up
+                  Daftar
                 </Link>
               </p>
             </div>
+
           </div>
         </div>
 
@@ -400,9 +334,8 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0B132B]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#12160F]" />}>
       <LoginForm />
     </Suspense>
   );
 }
-

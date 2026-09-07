@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Compass, FolderGit2, BookOpen, User, Sparkles, Moon, Sun, Languages, X } from "lucide-react";
+import { Search, Compass, FolderGit2, BookOpen, User, Moon, Sun, Languages, X } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -18,7 +18,7 @@ export default function CommandPalette({
   onToggleTheme,
   isNight,
 }: CommandPaletteProps) {
-  const { lang, toggleLang, dict } = useLanguage();
+  const { lang, toggleLang } = useLanguage();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -37,7 +37,6 @@ export default function CommandPalette({
         if (isOpen) onClose();
         else {
           soundFx.playClick();
-          // open command palette
           const event = new CustomEvent("open-command-palette");
           window.dispatchEvent(event);
         }
@@ -123,16 +122,13 @@ export default function CommandPalette({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-stone-950/80 backdrop-blur-md animate-fadeIn">
-      <div
-        className="fixed inset-0 -z-10"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-[#12160F]/80 backdrop-blur-sm animate-fadeIn">
+      <div className="fixed inset-0 -z-10" onClick={onClose} />
       
-      <div className="w-full max-w-xl bg-stone-900/95 border border-amber-400/40 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-2xl text-white">
+      <div className="w-full max-w-xl bg-[#1A211A] border border-[#2A2F26] rounded-xl overflow-hidden text-[#F1EFE9]">
         {/* Search Input Bar */}
-        <div className="relative flex items-center px-4 py-3 border-b border-white/10">
-          <Search className="w-5 h-5 text-amber-400 shrink-0 mr-3" />
+        <div className="relative flex items-center px-4 py-3 border-b border-[#2A2F26]">
+          <Search className="w-4 h-4 text-[#A8A79C] shrink-0 mr-3" />
           <input
             ref={inputRef}
             type="text"
@@ -143,11 +139,11 @@ export default function CommandPalette({
                 ? "Ketik perintah atau navigasi (contoh: Project, Profil, Tema)..."
                 : "Type a command or navigate (e.g. Projects, Profile, Theme)..."
             }
-            className="w-full bg-transparent text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none"
+            className="w-full bg-transparent text-sm text-[#F1EFE9] placeholder-[#A8A79C] focus:outline-none"
           />
           <button
             onClick={onClose}
-            className="p-1 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 transition-colors ml-2"
+            className="p-1 rounded-lg bg-[#12160F] hover:bg-[#212A20] text-[#A8A79C] border border-[#2A2F26] transition-colors ml-2 cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -163,29 +159,29 @@ export default function CommandPalette({
                   key={item.id}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => soundFx.playHover()}
-                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl hover:bg-white/10 transition-colors text-left group cursor-pointer"
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg hover:bg-[#212A20] transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-white/10 text-amber-300 group-hover:scale-110 transition-transform">
+                    <div className="p-2 rounded-lg bg-[#12160F] text-[#3B5D42] border border-[#2A2F26]">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-xs sm:text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">
+                      <p className="text-xs sm:text-sm font-medium text-[#F1EFE9]">
                         {item.title}
                       </p>
-                      <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                      <span className="text-[10px] text-[#A8A79C]">
                         {item.category}
                       </span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-white/10 text-slate-300 border border-white/10">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#12160F] text-[#A8A79C] border border-[#2A2F26]">
                     ↵ {lang === "id" ? "Pilih" : "Select"}
                   </span>
                 </button>
               );
             })
           ) : (
-            <div className="py-8 text-center text-slate-400 text-xs sm:text-sm">
+            <div className="py-8 text-center text-[#A8A79C] text-xs sm:text-sm">
               {lang === "id"
                 ? `Tidak ada hasil yang cocok dengan "${query}"`
                 : `No results matching "${query}"`}
@@ -194,14 +190,12 @@ export default function CommandPalette({
         </div>
 
         {/* Footer info */}
-        <div className="px-4 py-2.5 bg-white/5 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="px-4 py-2.5 bg-[#12160F] border-t border-[#2A2F26] flex items-center justify-between text-[11px] text-[#A8A79C]">
           <div className="flex items-center gap-2">
-            <span className="px-1.5 py-0.5 rounded bg-white/10 font-mono text-slate-300">↑↓</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#1A211A] border border-[#2A2F26] font-mono">↑↓</span>
             <span>{lang === "id" ? "Navigasi" : "Navigate"}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white/10 font-mono text-slate-300 ml-2">ESC</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#1A211A] border border-[#2A2F26] font-mono ml-2">ESC</span>
             <span>{lang === "id" ? "Tutup" : "Close"}</span>
-          </div>
-          <div className="flex items-center gap-1 text-amber-300 font-semibold">
           </div>
         </div>
       </div>
