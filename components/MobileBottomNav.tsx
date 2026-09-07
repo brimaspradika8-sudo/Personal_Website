@@ -60,8 +60,8 @@ export default function MobileBottomNav() {
   const svgPathD = `M 0,0 L ${leftEnd},0 C ${cx - 18},0 ${cx - 15},32 ${cx},32 C ${cx + 15},32 ${cx + 18},0 ${rightStart},0 L 400,0 L 400,68 L 0,68 Z`;
 
   return (
-    <div className="md:hidden fixed bottom-3 inset-x-3 z-50 pointer-events-auto">
-      <div className="max-w-md mx-auto bg-[#1A1A1A]/95 dark:bg-[#12160F]/95 backdrop-blur-xl border border-white/20 dark:border-[#2A2F26] rounded-full shadow-2xl px-2 py-1.5 flex items-center justify-around">
+    <div className="md:hidden fixed bottom-3 inset-x-2 z-50 pointer-events-auto">
+      <div className="max-w-md mx-auto bg-[#1A1A1A]/95 dark:bg-[#12160F]/95 backdrop-blur-xl border border-white/20 dark:border-[#2A2F26] rounded-full shadow-2xl px-1.5 py-1.5 flex items-center justify-between">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           const IconComponent = item.Icon;
@@ -71,14 +71,14 @@ export default function MobileBottomNav() {
               key={item.id}
               type="button"
               onClick={() => handleNav(item.id, item.href)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-300 ${
+              className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-300 ${
                 isActive
-                  ? "bg-[#F5B301] text-black font-bold shadow-lg scale-105"
+                  ? "bg-[#F5B301] text-black font-bold shadow-md"
                   : "text-white/70 hover:text-white"
               }`}
             >
               <IconComponent className={`w-4 h-4 ${isActive ? "text-black" : "text-white/70"}`} />
-              <span className="text-xs tracking-tight">
+              <span className={`text-[10px] tracking-tight truncate max-w-[54px] ${isActive ? "text-black font-bold" : "text-white/70"}`}>
                 {item.label}
               </span>
             </button>

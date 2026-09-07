@@ -282,10 +282,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         </div>
 
         {/* Hero Content Overlay Grid */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 pb-12">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-2 sm:pt-6 pb-6 sm:pb-12">
           
-          {/* Top Right Bio Teaser */}
-          <div className="flex justify-end pt-2">
+          {/* Top Right Bio Teaser (Desktop Only) */}
+          <div className="hidden sm:flex justify-end pt-2">
             <div className="max-w-xs text-right text-xs text-white/90 leading-relaxed space-y-1 drop-shadow">
               <p>I am a travel blogger based in Indonesia, specializing in backpacking, hiking, and photography. <a href="#about" className="font-bold underline hover:text-[#F5B301] transition-colors">Learn more here.</a></p>
             </div>
