@@ -68,7 +68,6 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
   const isAuthenticated = !!user;
 
-  // Real user data when logged in vs Guest placeholder when unauthenticated
   const userName = isAuthenticated
     ? dbUser?.name ||
       user?.user_metadata?.full_name ||
@@ -95,9 +94,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const [sfxEnabled, setSfxEnabled] = useState(soundFx.getIsEnabled());
   const [mode, setMode] = useState<"day" | "night">(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem("landscape_mode") as "day" | "night") || "night";
+      return (localStorage.getItem("landscape_mode") as "day" | "night") || "day";
     }
-    return "night";
+    return "day";
   });
 
   useEffect(() => {
@@ -221,47 +220,47 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     if (newState) soundFx.playClick();
   };
 
+  const tabs = [
+    { id: "info", label: "Overview", icon: UserIcon },
+    { id: "edit", label: "Edit Profil", icon: isAuthenticated ? Edit3 : Lock },
+    { id: "settings", label: "Pengaturan", icon: Settings },
+    { id: "help", label: "Bantuan", icon: HelpCircle },
+  ];
+
   return (
-    <div className="relative min-h-[100dvh] w-full font-sans antialiased text-white pb-32 sm:pb-24 bg-[#0A0D14] selection:bg-[#DC2626] selection:text-white">
+    <div className="relative min-h-[100dvh] w-full font-sans antialiased bg-[#F8F9FA] text-[#0E0E10] pb-32 sm:pb-12 selection:bg-[#E62429] selection:text-white">
       
-      {/* Spider-Man Web HUD Ambient Background Overlay */}
-      <div className="fixed inset-0 z-0 pointer-events-none opacity-20 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:24px_24px]" />
-
-      {/* Spider-Man Glowing Ambient Red/Blue Orbs */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-[#DC2626]/15 rounded-full filter blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-[#2563EB]/15 rounded-full filter blur-[120px] pointer-events-none" />
-
-      {/* Header / Sticky Top Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0D14]/90 border-b border-[#DC2626]/30 backdrop-blur-md">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      {/* Header Container - Spiderman Dark Navy */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0B1D3A] text-white shadow-md">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition-all hover:scale-105 cursor-pointer shadow-lg shadow-[#DC2626]/20 border border-white/20"
+            className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-semibold flex items-center gap-2 transition-all hover:scale-105 cursor-pointer backdrop-blur-md"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Kembali ke Beranda</span>
+            <span className="hidden sm:inline">Kembali ke Beranda</span>
+            <span className="inline sm:hidden">Kembali</span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-[#DC2626] animate-pulse" />
-            <span className="font-display text-sm font-black uppercase tracking-wider text-white">
-              PROFILE <span className="text-[#DC2626]">HUB</span>
+            <Zap className="w-5 h-5 text-[#E62429]" />
+            <span className="font-bold text-lg tracking-wide">
+              PROFILE <span className="text-[#E62429]">HUB</span>
             </span>
           </div>
         </div>
       </header>
 
-      {/* Main Container */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 space-y-6 relative z-10">
-
-        {/* Profile Spider-Man Banner Card */}
-        <div className="relative bg-[#0F172A]/90 backdrop-blur-xl border border-[#DC2626]/40 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl overflow-hidden group">
-          
-          {/* Subtle Spider-Man Red Glow Line Top Accent */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DC2626] via-[#F5B301] to-[#2563EB]" />
-
-          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 text-center sm:text-left">
+      {/* Main Layout */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12 relative z-10 flex flex-col lg:flex-row gap-8">
+        
+        {/* Left Column: Profile Card (Sticky on Desktop) */}
+        <aside className="w-full lg:w-1/3 shrink-0">
+          <div className="lg:sticky lg:top-24 bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col items-center sm:items-start text-center sm:text-left transition-all relative overflow-hidden">
+            
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#E62429] to-[#3A6FF5]" />
             
             {isAuthenticated && (
               <input
@@ -273,8 +272,8 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               />
             )}
 
-            {/* Avatar Container: Real Photo if Authenticated, Generic Placeholder if Guest */}
-            <div className="relative group shrink-0">
+            {/* Avatar */}
+            <div className="relative group shrink-0 mb-6 mx-auto sm:mx-0">
               {isAuthenticated ? (
                 <button
                   type="button"
@@ -282,8 +281,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     soundFx.playClick();
                     fileInputRef.current?.click();
                   }}
-                  className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-[#DC2626] bg-[#0A0D14] shrink-0 flex items-center justify-center font-bold text-white transition-transform cursor-pointer p-1 shadow-xl shadow-[#DC2626]/20 hover:scale-105"
-                  title="Klik untuk mengganti foto profil"
+                  className="relative w-32 h-32 rounded-full overflow-hidden border-[4px] border-white shadow-xl bg-gray-50 flex items-center justify-center transition-transform hover:scale-105 cursor-pointer ring-2 ring-[#E62429]/20"
                 >
                   {avatarSrc ? (
                     <Image
@@ -294,320 +292,356 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       unoptimized
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-[#DC2626] flex items-center justify-center text-3xl font-black text-white">
+                    <div className="w-full h-full rounded-full bg-[#1A2C55] flex items-center justify-center text-4xl font-bold text-white">
                       {initialLetter}
                     </div>
                   )}
 
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white rounded-full">
-                    <Camera className="w-6 h-6 text-[#DC2626]" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white rounded-full">
+                    <Camera className="w-6 h-6" />
                   </div>
                 </button>
               ) : (
-                /* GUEST AVATAR: Generic Silhouette Icon */
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-white/20 bg-[#1A212A] shrink-0 flex items-center justify-center text-white/50 shadow-xl">
-                  <UserIcon className="w-14 h-14 text-white/40" />
+                <div className="relative w-32 h-32 rounded-full overflow-hidden border-[4px] border-white shadow-xl bg-gray-100 flex items-center justify-center text-gray-400">
+                  <UserIcon className="w-14 h-14" />
                 </div>
               )}
             </div>
 
-            {/* User Identity Info */}
-            <div className="space-y-2 flex-1">
-              {/* Badges: Only render user badges if Authenticated */}
-              {isAuthenticated ? (
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <span className="px-3 py-0.5 rounded-full bg-[#DC2626]/20 border border-[#DC2626] text-[#EF4444] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <Flame className="w-3.5 h-3.5 text-[#DC2626]" />
-                    <span>MEMBER</span>
-                  </span>
-                  <span className="px-3 py-0.5 rounded-full bg-[#2563EB]/20 border border-[#2563EB] text-[#60A5FA] text-xs font-mono font-bold uppercase tracking-wider">
-                    TERAUTENTIKASI
-                  </span>
-                </div>
-              ) : (
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <span className="px-3 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-xs font-mono font-bold uppercase tracking-wider">
-                    GUEST SESSION
-                  </span>
-                </div>
-              )}
-
-              <h1 className="font-display text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
+            {/* User Info */}
+            <div className="w-full">
+              <h1 className="text-2xl font-bold text-[#0E0E10] tracking-tight mb-1">
                 {userName}
               </h1>
-
-              <p className="text-xs sm:text-sm font-mono text-white/70 flex items-center justify-center sm:justify-start gap-2">
-                <Mail className="w-4 h-4 text-[#DC2626]" />
-                <span>{isAuthenticated ? userEmail : "Silakan masuk untuk melihat profil Anda"}</span>
+              <p className="text-sm text-gray-500 flex items-center justify-center sm:justify-start gap-1.5 mb-4">
+                <Mail className="w-3.5 h-3.5" />
+                <span className="truncate">{isAuthenticated ? userEmail : "Belum Login"}</span>
               </p>
-            </div>
 
-            {/* Sign Out / Sign In Action Button */}
-            <div className="shrink-0">
-              {isAuthenticated ? (
-                <form action={signOut}>
-                  <button
-                    type="submit"
-                    onClick={() => soundFx.playClick()}
-                    className="px-5 py-2.5 rounded-xl border border-[#DC2626] text-[#EF4444] hover:bg-[#DC2626] hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
-                  </button>
-                </form>
-              ) : (
-                <Link
-                  href="/login"
-                  onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm transition-all hover:scale-105 flex items-center gap-2 cursor-pointer shadow-lg shadow-[#DC2626]/30 border border-white/20 animate-pulse"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>Sign In / Login</span>
-                </Link>
-              )}
-            </div>
-
-          </div>
-        </div>
-
-        {/* Tab Controller */}
-        <div className="p-1 rounded-xl bg-[#0F172A]/90 border border-[#DC2626]/30 grid grid-cols-2 sm:grid-cols-4 gap-1 shadow-xl">
-          {[
-            { id: "info", label: "Overview", icon: UserIcon },
-            { id: "edit", label: "Edit Profil", icon: isAuthenticated ? Edit3 : Lock },
-            { id: "settings", label: "Pengaturan", icon: Settings },
-            { id: "help", label: "Bantuan", icon: HelpCircle },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  soundFx.playClick();
-                  setActiveTab(tab.id as any);
-                }}
-                className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30"
-                    : "text-white/70 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tab Content Box */}
-        <div className="bg-[#0F172A]/90 border border-[#DC2626]/30 rounded-2xl p-6 sm:p-8 shadow-xl">
-          
-          {/* TAB 1: OVERVIEW */}
-          {activeTab === "info" && (
-            <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4 flex items-center justify-between">
-                <div>
-                  <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#DC2626]" />
-                    <span>STATUS AKUN &amp; IDENTITAS</span>
-                  </h3>
-                  <p className="text-xs text-white/70 mt-1">
-                    Ringkasan status sesi dan autentikasi Anda.
-                  </p>
-                </div>
+              {/* Badges */}
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-8">
+                {isAuthenticated ? (
+                  <>
+                    <span className="inline-flex items-center justify-center px-3 py-1 rounded-full border border-[#E62429]/30 bg-[#E62429]/10 text-[#E62429] text-[11px] font-semibold tracking-wide uppercase gap-1">
+                      <Flame className="w-3 h-3" />
+                      Member
+                    </span>
+                    <span className="inline-flex items-center justify-center px-3 py-1 rounded-full border border-[#3A6FF5]/30 bg-[#3A6FF5]/10 text-[#3A6FF5] text-[11px] font-semibold tracking-wide uppercase gap-1">
+                      <ShieldCheck className="w-3 h-3" />
+                      Terautentikasi
+                    </span>
+                  </>
+                ) : (
+                  <span className="inline-flex px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-500 text-[11px] font-semibold tracking-wide uppercase">
+                    Guest Session
+                  </span>
+                )}
               </div>
 
-              {isAuthenticated ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-[#0A0D14] border border-[#DC2626]/30 space-y-1">
-                    <span className="text-xs text-[#DC2626] font-mono font-bold uppercase flex items-center gap-2">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>STATUS SESI</span>
-                    </span>
-                    <p className="text-sm font-bold text-white">Terautentikasi (Aktif)</p>
-                  </div>
+              {/* Actions */}
+              <div className="flex flex-col gap-3 w-full">
+                {isAuthenticated ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        soundFx.playClick();
+                        setActiveTab("edit");
+                      }}
+                      className="w-full py-2.5 rounded-full bg-[#E62429] hover:bg-[#c91d22] text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      <span>Edit Profil</span>
+                    </button>
+                    <form action={signOut} className="w-full">
+                      <button
+                        type="submit"
+                        onClick={() => soundFx.playClick()}
+                        className="w-full py-2.5 rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => soundFx.playClick()}
+                    className="w-full py-2.5 rounded-full bg-[#E62429] hover:bg-[#c91d22] text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span>Sign In</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+            
+          </div>
+        </aside>
 
-                  <div className="p-4 rounded-xl bg-[#0A0D14] border border-[#2563EB]/30 space-y-1">
-                    <span className="text-xs text-[#60A5FA] font-mono font-bold uppercase flex items-center gap-2">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>TERDAFTAR SEJAK</span>
-                    </span>
-                    <p className="text-sm font-bold text-white">{createdAt}</p>
-                  </div>
+        {/* Right Column: Tab Content */}
+        <div className="w-full lg:w-2/3 flex flex-col">
+          
+          {/* Horizontal Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mb-6 p-1 bg-white rounded-2xl shadow-sm border border-gray-100">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    soundFx.playClick();
+                    setActiveTab(tab.id as any);
+                  }}
+                  className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+                    isActive
+                      ? "bg-[#E62429]/10 text-[#E62429]"
+                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
-                  <div className="p-4 rounded-xl bg-[#0A0D14] border border-[#DC2626]/30 space-y-1 sm:col-span-2">
-                    <span className="text-xs text-[#DC2626] font-mono font-bold uppercase flex items-center gap-2">
-                      <Mail className="w-3.5 h-3.5" />
-                      <span>EMAIL TERHUBUNG</span>
-                    </span>
-                    <p className="text-sm font-mono text-white">{userEmail}</p>
-                  </div>
+          {/* Active Tab Panel */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 flex-1">
+            
+            {/* TAB 1: OVERVIEW */}
+            {activeTab === "info" && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#0E0E10] mb-2 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-[#3A6FF5]" />
+                    Status Akun & Identitas
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Ringkasan aktivitas dan informasi dasar akun Anda.
+                  </p>
                 </div>
-              ) : (
-                <div className="p-8 rounded-xl border border-white/10 bg-[#0A0D14] text-center space-y-4">
-                  <UserIcon className="w-12 h-12 text-white/30 mx-auto" />
-                  <div className="space-y-1 max-w-md mx-auto">
-                    <h4 className="font-display text-base font-bold text-white">Anda Belum Login</h4>
-                    <p className="text-xs text-white/70 leading-relaxed">
+
+                {isAuthenticated ? (
+                  <div className="space-y-3 mt-6">
+                    {/* Item 1 */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#E62429]/10 flex items-center justify-center text-[#E62429]">
+                          <ShieldCheck className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700">Status Sesi</span>
+                      </div>
+                      <div className="mt-2 sm:mt-0 text-sm font-bold text-[#E62429] ml-13 sm:ml-0">
+                        Terautentikasi (Aktif)
+                      </div>
+                    </div>
+
+                    {/* Item 2 */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#3A6FF5]/10 flex items-center justify-center text-[#3A6FF5]">
+                          <Calendar className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700">Terdaftar Sejak</span>
+                      </div>
+                      <div className="mt-2 sm:mt-0 text-sm font-medium text-gray-900 ml-13 sm:ml-0">
+                        {createdAt}
+                      </div>
+                    </div>
+
+                    {/* Item 3 */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#0B1D3A]/10 flex items-center justify-center text-[#0B1D3A]">
+                          <Mail className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700">Email Terhubung</span>
+                      </div>
+                      <div className="mt-2 sm:mt-0 text-sm font-medium text-gray-900 ml-13 sm:ml-0">
+                        {userEmail}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-12 flex flex-col items-center justify-center text-center">
+                    <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 mb-4">
+                      <UserIcon className="w-8 h-8" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-2">Anda Belum Login</h4>
+                    <p className="text-sm text-gray-500 max-w-sm mb-6">
                       Silakan masuk untuk mengakses fitur lengkap profil Anda, mengedit foto profil kustom, dan mengelola identitas Anda.
                     </p>
-                  </div>
-                  <Link
-                    href="/login"
-                    onClick={() => soundFx.playClick()}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all shadow-lg shadow-[#DC2626]/30 border border-white/20"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    <span>Masuk ke Akun Sekarang</span>
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 2: EDIT PROFILE */}
-          {activeTab === "edit" && (
-            <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
-                  <Edit3 className="w-4 h-4 text-[#DC2626]" />
-                  <span>EDIT PROFIL &amp; FOTO</span>
-                </h3>
-                <p className="text-xs text-white/70 mt-1">
-                  Perbarui nama tampilan dan unggah foto kustom.
-                </p>
-              </div>
-
-              {!isAuthenticated ? (
-                <div className="p-8 rounded-xl border border-[#DC2626]/30 bg-[#0A0D14] text-center space-y-4">
-                  <Lock className="w-8 h-8 text-[#DC2626] mx-auto" />
-                  <div className="space-y-1 max-w-sm mx-auto">
-                    <h3 className="font-display text-base font-bold text-white">
-                      Fitur Edit Profil Terkunci
-                    </h3>
-                    <p className="text-xs text-white/70">
-                      Silakan login terlebih dahulu untuk memperbarui nama dan foto profil kustom.
-                    </p>
-                  </div>
-                  <Link
-                    href="/login"
-                    onClick={() => soundFx.playClick()}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all shadow-lg"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    <span>Login Sekarang</span>
-                  </Link>
-                </div>
-              ) : (
-                <form onSubmit={handleSaveProfile} className="space-y-5">
-                  {message && (
-                    <div
-                      className={`p-3.5 rounded-xl text-xs font-bold flex items-center gap-2.5 border ${
-                        message.type === "success"
-                          ? "bg-[#DC2626]/20 border-[#DC2626] text-white"
-                          : "bg-red-900/40 border-red-500 text-white"
-                      }`}
+                    <Link
+                      href="/login"
+                      onClick={() => soundFx.playClick()}
+                      className="px-6 py-2.5 rounded-full bg-[#E62429] hover:bg-[#c91d22] text-white text-sm font-semibold transition-colors shadow-sm flex items-center gap-2"
                     >
-                      {message.type === "success" ? (
-                        <Check className="w-4 h-4 text-[#DC2626]" />
-                      ) : (
-                        <AlertCircle className="w-4 h-4 text-red-400" />
-                      )}
-                      <span>{message.text}</span>
-                    </div>
-                  )}
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-white/70 block">
-                      Nama Tampilan Profil
-                    </label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Masukkan nama Anda..."
-                      required
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#0A0D14] border border-white/20 text-sm text-white focus:outline-none focus:border-[#DC2626]"
-                    />
+                      <LogIn className="w-4 h-4" />
+                      <span>Masuk ke Akun Sekarang</span>
+                    </Link>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={saving || uploading}
-                    className="w-full py-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#DC2626]/30 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>
-                      {uploading
-                        ? "Mengunggah Foto..."
-                        : saving
-                        ? "Menyimpan..."
-                        : "Simpan Perubahan Profil"}
-                    </span>
-                  </button>
-                </form>
-              )}
-            </div>
-          )}
-
-          {/* TAB 3: SETTINGS */}
-          {activeTab === "settings" && (
-            <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-[#DC2626]" />
-                  <span>PENGATURAN TEMA &amp; SUARA</span>
-                </h3>
+                )}
               </div>
+            )}
 
-              <div className="space-y-3">
-                <div className="p-4 rounded-xl bg-[#0A0D14] border border-white/10 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    {sfxEnabled ? <Volume2 className="w-4 h-4 text-[#DC2626]" /> : <VolumeX className="w-4 h-4 text-white/40" />}
-                    <div>
-                      <p className="text-sm font-bold text-white">Efek Suara (SFX)</p>
-                      <p className="text-xs text-white/60">Umpan balik suara interaktif</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleToggleSfxLocal}
-                    className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-xs font-bold text-white transition-all cursor-pointer shadow-md"
-                  >
-                    <span>{sfxEnabled ? "Aktif" : "Mati"}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: HELP */}
-          {activeTab === "help" && (
-            <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-[#DC2626]" />
-                  <span>PUSAT BANTUAN &amp; FAQ</span>
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                <div className="p-4 rounded-xl bg-[#0A0D14] border border-white/10 space-y-1">
-                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
-                    <MessageSquare className="w-3.5 h-3.5 text-[#DC2626]" />
-                    <span>Bagaimana cara kerja Spider-Man Unmasking effect?</span>
-                  </h4>
-                  <p className="text-xs text-white/70 leading-relaxed pl-5">
-                    Klik foto profil di Hero Section atau tombol UNMASK di pojok kanan atas foto untuk memicu animasi terkelupasnya topeng Spider-Man dari atas ke bawah.
+            {/* TAB 2: EDIT PROFILE */}
+            {activeTab === "edit" && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#0E0E10] mb-2 flex items-center gap-2">
+                    <Edit3 className="w-5 h-5 text-[#E62429]" />
+                    Edit Profil
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Perbarui nama tampilan dan preferensi profil Anda.
                   </p>
                 </div>
+
+                {!isAuthenticated ? (
+                  <div className="py-12 flex flex-col items-center justify-center text-center">
+                    <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center text-red-300 mb-4">
+                      <Lock className="w-8 h-8" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-2">Fitur Terkunci</h4>
+                    <p className="text-sm text-gray-500 max-w-sm mb-6">
+                      Silakan login terlebih dahulu untuk memperbarui nama dan foto profil kustom.
+                    </p>
+                    <Link
+                      href="/login"
+                      onClick={() => soundFx.playClick()}
+                      className="px-6 py-2.5 rounded-full bg-[#E62429] hover:bg-[#c91d22] text-white text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span>Login Sekarang</span>
+                    </Link>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSaveProfile} className="space-y-5 mt-6">
+                    {message && (
+                      <div
+                        className={`p-4 rounded-xl text-sm font-medium flex items-center gap-3 ${
+                          message.type === "success"
+                            ? "bg-green-50 text-green-700 border border-green-200"
+                            : "bg-red-50 text-red-700 border border-red-200"
+                        }`}
+                      >
+                        {message.type === "success" ? (
+                          <Check className="w-5 h-5 shrink-0" />
+                        ) : (
+                          <AlertCircle className="w-5 h-5 shrink-0" />
+                        )}
+                        <span>{message.text}</span>
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-700 block">
+                        Nama Tampilan
+                      </label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Masukkan nama Anda..."
+                        required
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#E62429]/20 focus:border-[#E62429] transition-all"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={saving || uploading}
+                      className="w-full sm:w-auto px-8 py-3 rounded-full bg-[#0B1D3A] hover:bg-[#1A2C55] text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2 mt-4 shadow-sm"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>
+                        {uploading
+                          ? "Mengunggah..."
+                          : saving
+                          ? "Menyimpan..."
+                          : "Simpan Perubahan"}
+                      </span>
+                    </button>
+                  </form>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
+            {/* TAB 3: SETTINGS */}
+            {activeTab === "settings" && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#0E0E10] mb-2 flex items-center gap-2">
+                    <Settings className="w-5 h-5 text-gray-700" />
+                    Pengaturan
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Sesuaikan pengalaman pengguna Anda.
+                  </p>
+                </div>
+
+                <div className="mt-6 space-y-4">
+                  <div className="flex items-center justify-between p-5 rounded-2xl bg-gray-50 border border-gray-100">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-600 shadow-sm">
+                        {sfxEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Efek Suara (SFX)</p>
+                        <p className="text-xs text-gray-500">Aktifkan umpan balik suara</p>
+                      </div>
+                    </div>
+                    
+                    {/* Toggle Button */}
+                    <button
+                      onClick={handleToggleSfxLocal}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                        sfxEnabled ? 'bg-[#3A6FF5]' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          sfxEnabled ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: HELP */}
+            {activeTab === "help" && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#0E0E10] mb-2 flex items-center gap-2">
+                    <HelpCircle className="w-5 h-5 text-[#E62429]" />
+                    Pusat Bantuan
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Pertanyaan yang sering diajukan.
+                  </p>
+                </div>
+
+                <div className="mt-6 space-y-4">
+                  <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100">
+                    <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                      <MessageSquare className="w-4 h-4 text-[#3A6FF5]" />
+                      Bagaimana cara mengubah foto profil?
+                    </h4>
+                    <p className="text-sm text-gray-600 ml-6 leading-relaxed">
+                      Klik pada area foto profil Anda di sebelah kiri (dengan ikon kamera saat di-hover), pilih file gambar, dan sistem akan mengunggahnya secara otomatis.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+          </div>
         </div>
-
-      </div>
+      </main>
 
       <MobileBottomNav />
     </div>
