@@ -9,9 +9,9 @@
     "login": "Sign In"
   },
   "hero": {
-    "badge": "Full-Stack Architect",
+    "badge": "AI Systems Developer",
     "greeting": "Welcome to Portfolio",
-    "role": "Full-Stack Architect & AI Systems Developer",
+    "role": "AI Systems Developer",
     "subheadline": "Architecting distributed backend systems, modern AI platforms, and precision web interfaces.",
     "description": "Focusing on high-scale architecture performance, intelligent AI model integration, and clean, intuitive user interfaces.",
     "viewProjects": "View Projects",

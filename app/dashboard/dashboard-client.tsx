@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Code,
   Layers,
+  Database,
 } from "lucide-react";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -30,6 +31,7 @@ import ExperienceTimeline from "@/components/ExperienceTimeline";
 import Lanyard from "@/components/Lanyard";
 import UnmaskRevealPhoto from "@/components/UnmaskRevealPhoto";
 import ScrollReveal from "@/components/ScrollReveal";
+import SupabaseUserFetchWidget from "@/components/SupabaseUserFetchWidget";
 
 interface DashboardClientProps {
   user: {
@@ -67,7 +69,7 @@ interface DashboardClientProps {
   }>;
 }
 
-export default function DashboardClient({ user, dbUser }: DashboardClientProps) {
+export default function DashboardClient({ user, dbUser, dbProjects }: DashboardClientProps) {
   const { lang, toggleLang } = useLanguage();
   const [mode, setMode] = useState<"day" | "night">("day");
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
@@ -204,6 +206,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <span>{item.label}</span>
               </a>
             ))}
+            <div
+              className="text-emerald-400 font-mono text-[11px] font-bold flex items-center gap-1.5 bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-500/30 shadow-sm"
+              title="Supabase Database Live Integrated"
+            >
+              <Database className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span>SUPABASE LIVE</span>
+            </div>
           </nav>
 
           {/* Right Action Icons & Profile Avatar */}
@@ -331,7 +340,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 I&apos;M {ownerName}
               </h1>
               <p className="text-sm text-white/90 leading-relaxed font-sans max-w-sm">
-                Fullstack Web Developer &amp; Software Explorer. Saya membangun aplikasi web modern, scalable, dan peranti lunak performa tinggi dari database hingga UI.
+                AI Systems Developer &amp; Software Explorer. Saya membangun aplikasi berbasis kecerdasan buatan, sistem pintar, dan peranti lunak performa tinggi.
               </p>
 
               {/* Two CTA Buttons */}
@@ -360,7 +369,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 I&apos;M {ownerName}
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-xs mx-auto drop-shadow-sm font-medium">
-                Fullstack Web Developer &amp; Software Explorer. Saya membangun aplikasi web modern, scalable, dan peranti lunak performa tinggi.
+                AI Systems Developer &amp; Software Explorer. Saya membangun aplikasi berbasis kecerdasan buatan, sistem pintar, dan peranti lunak performa tinggi.
               </p>
 
               {/* Two Mobile CTA Buttons */}
@@ -428,12 +437,12 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                   BRIMAS <span className="text-[#DC2626]">PRADIKA UTAMA</span>
                 </h2>
                 <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#DC2626]">
-                  Fullstack Web Developer &bull; SMK Bhakti Mulia Pare
+                  AI Systems Developer &bull; SMK Bhakti Mulia Pare
                 </p>
                 <p className="text-sm sm:text-base opacity-90 leading-relaxed font-sans max-w-xl">
                   {lang === "id"
-                    ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi web end-to-end secara profesional. Berfokus pada Fullstack Development dengan PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, dan Docker. Bagi saya, coding bukan sekadar menulis sintaks, tapi bagaimana membangun sistem yang rapi, scalable, dan maintainable."
-                    : "Student at SMK Bhakti Mulia Pare actively building end-to-end web applications. Specialized in Fullstack Development with PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, and Docker. Focused on writing clean, scalable, and maintainable systems."}
+                    ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi berbasis kecerdasan buatan & sistem AI secara profesional. Berfokus pada AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, dan Cloud Systems. Bagi saya, coding bukan sekadar menulis sintaks, tapi bagaimana membangun sistem pintar yang rapi, scalable, dan maintainable."
+                    : "Student at SMK Bhakti Mulia Pare actively building AI-powered applications & intelligent systems. Specialized in AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, and Cloud Systems. Focused on writing clean, scalable, and maintainable intelligent systems."}
                 </p>
               </div>
 
@@ -456,7 +465,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                     <Code className="w-4 h-4" />
                     <span className="text-xs font-mono font-bold uppercase">ROLE</span>
                   </div>
-                  <p className="text-xs font-bold truncate">Fullstack Developer</p>
+                  <p className="text-xs font-bold truncate">AI Systems Developer</p>
                 </div>
 
                 <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
@@ -500,6 +509,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         </section>
       </ScrollReveal>
 
+      {/* 4.5 SUPABASE USER DATA FETCHING DEMO WIDGET */}
+      <ScrollReveal direction="up" delayMs={50}>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          <SupabaseUserFetchWidget isNight={isNight} user={user} dbUser={dbUser} />
+        </section>
+      </ScrollReveal>
+
       {/* 5. TECH STACK & CLI MATRIX SECTION */}
       <ScrollReveal direction="up" delayMs={50}>
         <TechStackMatrix isNight={isNight} lang={lang} />
@@ -510,6 +526,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         <ProjectShowcase
           isNight={isNight}
           lang={lang}
+          fetchedProjects={dbProjects}
           onSelectProject={(proj) => setSelectedProject(proj)}
         />
       </ScrollReveal>

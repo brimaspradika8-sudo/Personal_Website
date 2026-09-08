@@ -19,17 +19,17 @@ const cinzel = Cinzel({
 export const metadata: Metadata = {
   metadataBase: new URL("https://brimas.vercel.app"),
   title: {
-    default: "Brimas Pradika Utama — Full-Stack Architect & Personal Portfolio",
+    default: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
     template: "%s | Brimas Pradika Utama",
   },
-  description: "Portfolio & Personal Retreat of Brimas Pradika Utama — Full-Stack Architect, AI Systems Developer.",
-  keywords: ["Brimas Pradika Utama", "Full-Stack Developer", "Next.js", "React", "TypeScript", "Supabase", "Prisma"],
+  description: "Portfolio & Personal Retreat of Brimas Pradika Utama — AI Systems Developer.",
+  keywords: ["Brimas Pradika Utama", "AI Systems Developer", "Next.js", "React", "TypeScript", "Supabase", "Prisma"],
   authors: [{ name: "Brimas Pradika Utama" }],
   creator: "Brimas Pradika Utama",
   manifest: "/manifest.json",
   openGraph: {
-    title: "Brimas Pradika Utama — Full-Stack Architect & Personal Portfolio",
-    description: "Personal Portfolio & Dashboard — Full-Stack Architect & AI Systems Developer.",
+    title: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
+    description: "Personal Portfolio & Dashboard — AI Systems Developer.",
     url: "https://brimas.vercel.app",
     siteName: "Brimas Portfolio",
     images: [
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Brimas Pradika Utama — Full-Stack Architect & Personal Portfolio",
-    description: "Personal Portfolio & Dashboard — Full-Stack Architect & AI Systems Developer.",
+    title: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
+    description: "Personal Portfolio & Dashboard — AI Systems Developer.",
     images: ["/api/og"],
   },
   robots: {
@@ -65,7 +65,7 @@ export default function RootLayout({
     "@type": "Person",
     name: "Brimas Pradika Utama",
     url: "https://brimas.vercel.app",
-    jobTitle: "Full-Stack Architect",
+    jobTitle: "AI Systems Developer",
     sameAs: [
       "https://github.com/brimaspradika8-sudo",
       "https://linkedin.com",

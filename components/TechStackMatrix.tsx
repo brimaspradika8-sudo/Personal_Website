@@ -167,8 +167,8 @@ export default function TechStackMatrix({ isNight, lang }: TechStackMatrixProps)
             </h2>
             <p className="text-xs sm:text-sm opacity-80 max-w-xl font-sans">
               {lang === "id"
-                ? "Eksplorasi stack teknologi fullstack web development yang saya gunakan sehari-hari. Klik setiap kartu untuk melihat snippet kode."
-                : "Explore the fullstack web development technologies I build with daily. Click any card to inspect code snippets."}
+                ? "Eksplorasi stack teknologi AI & software development yang saya gunakan sehari-hari. Klik setiap kartu untuk melihat snippet kode."
+                : "Explore the AI & software development technologies I build with daily. Click any card to inspect code snippets."}
             </p>
           </div>
 

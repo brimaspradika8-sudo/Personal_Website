@@ -17,11 +17,11 @@ const timelineData: TimelineItem[] = [
   {
     id: "time-1",
     year: "2024 - PRESENT",
-    title: "Student & Fullstack Web Developer",
+    title: "Student & AI Systems Developer",
     organization: "SMK Bhakti Mulia Pare",
-    description: "Aktif mengeksplorasi dan membangun aplikasi web komprehensif dari backend logic, RESTful API, hingga antarmuka pengguna (UI) yang responsif dan interaktif.",
+    description: "Aktif mengeksplorasi dan membangun aplikasi berbasis kecerdasan buatan, LLM integrations, RESTful API, hingga antarmuka pengguna (UI) yang responsif dan interaktif.",
     icon: GraduationCap,
-    highlights: ["PHP & Laravel 11", "React & Next.js App Router", "MySQL & PostgreSQL", "Docker Containerization"],
+    highlights: ["AI Systems & LLM Integration", "PHP & Laravel 11", "React & Next.js App Router", "Python & Supabase"],
   },
   {
     id: "time-2",
@@ -64,8 +64,8 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
           </h2>
           <p className="text-xs sm:text-sm opacity-80 max-w-xl font-sans">
             {lang === "id"
-              ? "Langkah perjalanan dan milestone pengembangan diri saya sebagai siswa Fullstack Developer di SMK Bhakti Mulia Pare."
-              : "My learning journey and development milestones as a Fullstack Developer student at SMK Bhakti Mulia Pare."}
+              ? "Langkah perjalanan dan milestone pengembangan diri saya sebagai siswa AI Systems Developer di SMK Bhakti Mulia Pare."
+              : "My learning journey and development milestones as an AI Systems Developer student at SMK Bhakti Mulia Pare."}
           </p>
         </div>
 

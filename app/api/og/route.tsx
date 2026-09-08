@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title") || "Brimas Pradika Utama";
-    const subtitle = searchParams.get("subtitle") || "Full-Stack Architect & High-Scalable Web Systems";
+    const subtitle = searchParams.get("subtitle") || "AI Systems Developer";
     const badge = searchParams.get("badge") || "🌲 BRIMAS PERSONAL RETREAT & PORTFOLIO";
     const tagline = searchParams.get("tagline") || "Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka bergaya lanskap alam.";
 
