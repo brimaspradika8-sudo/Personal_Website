@@ -103,90 +103,112 @@ async function getSiteUrl(): Promise<string> {
 
 // --- Login dengan Google (OAuth) ---
 export async function signInWithGoogle() {
-  const { isConfigured } = getSupabaseEnv();
-  if (!isConfigured) {
-    return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+  try {
+    const { isConfigured } = getSupabaseEnv();
+    if (!isConfigured) {
+      return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+    }
+
+    const supabase = await createClient();
+    const siteUrl = await getSiteUrl();
+    const redirectUrl = `${siteUrl}/auth/callback`;
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: redirectUrl,
+      },
+    });
+
+    if (error) {
+      return { error: formatAuthError(error.message) };
+    }
+
+    if (data.url) {
+      return { url: data.url };
+    }
+
+    return { error: "Gagal mendapatkan URL autentikasi Google." };
+  } catch (err: any) {
+    console.error("Error during signInWithGoogle:", err);
+    return { error: formatAuthError(err?.message || "Gagal melakukan autentikasi Google.") };
   }
-
-  const supabase = await createClient();
-  const siteUrl = await getSiteUrl();
-  const redirectUrl = `${siteUrl}/auth/callback`;
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: redirectUrl,
-    },
-  });
-
-  if (error) {
-    return { error: formatAuthError(error.message) };
-  }
-
-  if (data.url) {
-    return { url: data.url };
-  }
-
-  return { error: "Gagal mendapatkan URL authentikasi Google." };
 }
 
 // --- Login dengan GitHub (OAuth) ---
 export async function signInWithGithub() {
-  const { isConfigured } = getSupabaseEnv();
-  if (!isConfigured) {
-    return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+  try {
+    const { isConfigured } = getSupabaseEnv();
+    if (!isConfigured) {
+      return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+    }
+
+    const supabase = await createClient();
+    const siteUrl = await getSiteUrl();
+    const redirectUrl = `${siteUrl}/auth/callback`;
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        redirectTo: redirectUrl,
+      },
+    });
+
+    if (error) {
+      return { error: formatAuthError(error.message) };
+    }
+
+    if (data.url) {
+      return { url: data.url };
+    }
+
+    return { error: "Gagal mendapatkan URL autentikasi GitHub." };
+  } catch (err: any) {
+    console.error("Error during signInWithGithub:", err);
+    return { error: formatAuthError(err?.message || "Gagal melakukan autentikasi GitHub.") };
   }
-
-  const supabase = await createClient();
-  const siteUrl = await getSiteUrl();
-  const redirectUrl = `${siteUrl}/auth/callback`;
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "github",
-    options: {
-      redirectTo: redirectUrl,
-    },
-  });
-
-  if (error) {
-    return { error: formatAuthError(error.message) };
-  }
-
-  if (data.url) {
-    return { url: data.url };
-  }
-
-  return { error: "Gagal mendapatkan URL authentikasi GitHub." };
 }
 
 // --- Login manual (email + password) ---
 export async function signInWithPassword(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-  const { isConfigured } = getSupabaseEnv();
-  if (!isConfigured) {
-    return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
-  }
+    if (!email || !password) {
+      return { error: "Email dan password wajib diisi." };
+    }
 
-  const supabase = await createClient();
+    const { isConfigured } = getSupabaseEnv();
+    if (!isConfigured) {
+      return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+    }
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    const supabase = await createClient();
 
-  if (error) {
-    return { error: formatAuthError(error.message) };
-  }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  // Pastikan user juga ada di tabel User sendiri
-  if (data.user?.email) {
-    await syncUserToDatabase(
-      data.user.email,
-      data.user.user_metadata?.full_name,
-      data.user.user_metadata?.avatar_url
-    );
+    if (error) {
+      return { error: formatAuthError(error.message) };
+    }
+
+    // Pastikan user juga ada di tabel User sendiri
+    if (data.user?.email) {
+      await syncUserToDatabase(
+        data.user.email,
+        data.user.user_metadata?.full_name,
+        data.user.user_metadata?.avatar_url
+      );
+    }
+  } catch (err: any) {
+    if (err?.digest?.startsWith("NEXT_REDIRECT") || err?.message?.includes("NEXT_REDIRECT")) {
+      throw err;
+    }
+    console.error("Error during signInWithPassword:", err);
+    return { error: formatAuthError(err?.message || "Gagal melakukan proses masuk.") };
   }
 
   redirect("/dashboard");

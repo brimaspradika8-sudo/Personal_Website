@@ -13,7 +13,7 @@ function CardPhoto() {
     const loader = new THREE.TextureLoader();
 
     loader.load(
-      '/images/avatar.png',
+      '/images/avatar.webp',
       (tex) => {
         if (isMounted) {
           tex.colorSpace = THREE.SRGBColorSpace;
@@ -23,14 +23,14 @@ function CardPhoto() {
       },
       undefined,
       () => {
-        // Fallback to avatar.webp if png load fails
+        // Fallback to avatar.png if webp load fails
         loader.load(
-          '/images/avatar.webp',
-          (texWebp) => {
+          '/images/avatar.png',
+          (texPng) => {
             if (isMounted) {
-              texWebp.colorSpace = THREE.SRGBColorSpace;
-              texWebp.needsUpdate = true;
-              setTexture(texWebp);
+              texPng.colorSpace = THREE.SRGBColorSpace;
+              texPng.needsUpdate = true;
+              setTexture(texPng);
             }
           },
           undefined,

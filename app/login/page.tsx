@@ -66,12 +66,20 @@ function LoginForm() {
     setError(null);
     setLoading(true);
 
-    const result = await signInWithPassword(formData);
-    setLoading(false);
-
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await signInWithPassword(formData);
+      if (result?.error) {
+        setError(result.error);
+        setIsPasswordFocused(false);
+      }
+    } catch (err: any) {
+      if (err?.digest?.startsWith("NEXT_REDIRECT") || err?.message?.includes("NEXT_REDIRECT")) {
+        return;
+      }
+      setError(err?.message || "Terjadi kesalahan saat masuk.");
       setIsPasswordFocused(false);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -79,13 +87,20 @@ function LoginForm() {
     setError(null);
     setGoogleLoading(true);
 
-    const result = await signInWithGoogle();
-    if (result?.error) {
-      setError(result.error);
-      setGoogleLoading(false);
+    try {
+      const result = await signInWithGoogle();
+      if (result?.error) {
+        setError(result.error);
+        setIsPasswordFocused(false);
+      } else if (result?.url) {
+        window.location.href = result.url;
+        return;
+      }
+    } catch (err: any) {
+      setError(err?.message || "Gagal menghubungkan ke Google.");
       setIsPasswordFocused(false);
-    } else if (result?.url) {
-      window.location.href = result.url;
+    } finally {
+      setGoogleLoading(false);
     }
   }
 
@@ -93,13 +108,20 @@ function LoginForm() {
     setError(null);
     setGithubLoading(true);
 
-    const result = await signInWithGithub();
-    if (result?.error) {
-      setError(result.error);
-      setGithubLoading(false);
+    try {
+      const result = await signInWithGithub();
+      if (result?.error) {
+        setError(result.error);
+        setIsPasswordFocused(false);
+      } else if (result?.url) {
+        window.location.href = result.url;
+        return;
+      }
+    } catch (err: any) {
+      setError(err?.message || "Gagal menghubungkan ke GitHub.");
       setIsPasswordFocused(false);
-    } else if (result?.url) {
-      window.location.href = result.url;
+    } finally {
+      setGithubLoading(false);
     }
   }
 
@@ -220,7 +242,15 @@ function LoginForm() {
             )}
 
             {/* Form */}
-            <form action={handleSubmit} className="space-y-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                handleSubmit(formData);
+              }}
+              action={handleSubmit}
+              className="space-y-4"
+            >
               <div className="space-y-1.5">
                 <label htmlFor="email" className="block text-xs font-bold font-mono text-white/80 uppercase">
                   Email Address

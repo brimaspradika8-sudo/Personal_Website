@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
+import ScrollReveal from "@/components/ScrollReveal";
 
 interface TechItem {
   id: string;
@@ -203,41 +204,42 @@ export default function TechStackMatrix({ isNight, lang }: TechStackMatrixProps)
           
           {/* Left Grid: Tech Cards (7 Cols) */}
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {filteredSkills.map((tech) => {
+            {filteredSkills.map((tech, idx) => {
               const isSelected = selectedTech.id === tech.id;
               return (
-                <button
-                  key={tech.id}
-                  type="button"
-                  onClick={() => {
-                    soundFx.playClick();
-                    setSelectedTech(tech);
-                  }}
-                  className={`p-4 rounded-xl border text-left transition-all duration-300 relative group overflow-hidden cursor-pointer ${
-                    isSelected
-                      ? "border-[#DC2626] shadow-lg shadow-[#DC2626]/20 bg-[#DC2626]/10"
-                      : isNight
-                      ? "bg-[#1A211A] border-[#2A2F26] hover:border-[#DC2626]/50"
-                      : "bg-[#F8F8F6] border-[#E5E5E2] hover:border-[#DC2626]/50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-[#DC2626] text-white flex items-center justify-center font-bold text-sm shadow-sm">
-                        {tech.name.charAt(0)}
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-sm leading-snug">{tech.name}</h3>
-                        <span className="text-[10px] font-mono opacity-70 uppercase tracking-wider">
-                          {tech.category} &bull; {tech.level}
-                        </span>
+                <ScrollReveal key={tech.id} direction="up" delayMs={idx * 80}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playClick();
+                      setSelectedTech(tech);
+                    }}
+                    className={`p-4 rounded-xl border text-left transition-all duration-300 relative group overflow-hidden cursor-pointer w-full ${
+                      isSelected
+                        ? "border-[#DC2626] shadow-lg shadow-[#DC2626]/20 bg-[#DC2626]/10"
+                        : isNight
+                        ? "bg-[#1A211A] border-[#2A2F26] hover:border-[#DC2626]/50"
+                        : "bg-[#F8F8F6] border-[#E5E5E2] hover:border-[#DC2626]/50"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-[#DC2626] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                          {tech.name.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-sm leading-snug">{tech.name}</h3>
+                          <span className="text-[10px] font-mono opacity-70 uppercase tracking-wider">
+                            {tech.category} &bull; {tech.level}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <p className="text-xs opacity-80 leading-relaxed font-sans line-clamp-2">
-                    {tech.description}
-                  </p>
-                </button>
+                    <p className="text-xs opacity-80 leading-relaxed font-sans line-clamp-2">
+                      {tech.description}
+                    </p>
+                  </button>
+                </ScrollReveal>
               );
             })}
           </div>

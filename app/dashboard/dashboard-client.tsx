@@ -29,6 +29,7 @@ import ProjectShowcase from "@/components/ProjectShowcase";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
 import Lanyard from "@/components/Lanyard";
 import UnmaskRevealPhoto from "@/components/UnmaskRevealPhoto";
+import ScrollReveal from "@/components/ScrollReveal";
 
 interface DashboardClientProps {
   user: {
@@ -116,7 +117,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
   };
 
   const ownerName = "BRIMAS PRADIKA UTAMA";
-  const ownerAvatar = "/images/avatar.png";
+  const ownerAvatar = "/images/avatar.webp";
 
   const navUserName =
     dbUser?.name ||
@@ -124,6 +125,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
     user?.user_metadata?.name ||
     user?.email?.split("@")[0] ||
     "Guest User";
+
+  const displayName = navUserName;
+  const userAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
+  const avatarSrc = userAvatar;
 
   const isLoggedIn = !!user;
   const activeUserName =
@@ -136,11 +141,17 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
     ? `WELCOME ${activeUserName.toUpperCase()}`
     : "WELCOME";
 
-  const initialLetter = navUserName && navUserName !== "Guest User" ? navUserName.charAt(0).toUpperCase() : "G";
+  const initialLetter = displayName ? displayName.charAt(0).toUpperCase() : "G";
   const isNight = mode === "night";
 
+  const handleToggleSfx = () => {
+    const next = soundFx.toggleMute();
+    setSfxEnabled(next);
+    showToast(next ? (lang === "id" ? "Suara Aktif" : "Sound Enabled") : (lang === "id" ? "Suara Senyap" : "Sound Muted"));
+  };
+
   return (
-    <div className={`min-h-screen font-sans antialiased text-left selection:bg-[#F5B301] selection:text-black transition-colors duration-300 pb-20 md:pb-0 ${
+    <div className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
       isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#ffffff] text-[#1A1A1A]"
     }`}>
       
@@ -150,13 +161,13 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           
-          {/* Logo (Icon Bulat Kuning + Personal Brand Name) */}
+          {/* Logo (Icon Bulat Merah Spider-Man + Personal Brand Name) */}
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
             className="flex items-center gap-2 shrink-0 group"
           >
-            <div className="w-6 h-6 rounded-full bg-[#F5B301] flex items-center justify-center text-black font-bold text-xs shadow-md group-hover:scale-105 transition-transform">
+            <div className="w-6 h-6 rounded-full bg-[#DC2626] flex items-center justify-center text-white font-bold text-xs shadow-md shadow-[#DC2626]/40 group-hover:scale-105 transition-transform">
               B
             </div>
             <span className="font-bold tracking-tight text-sm font-sans">
@@ -188,7 +199,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 key={item.label}
                 href={item.href}
                 onClick={() => soundFx.playClick()}
-                className="transition-colors hover:text-[#F5B301] flex items-center gap-0.5"
+                className="transition-colors hover:text-[#DC2626] flex items-center gap-0.5"
               >
                 <span>{item.label}</span>
               </a>
@@ -199,49 +210,57 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           <div className="flex items-center gap-2.5 shrink-0 text-white/80">
             {/* Language & Sound Toggles */}
             <button
-              type="button"
               onClick={() => {
                 soundFx.playClick();
                 toggleLang();
               }}
-              className="px-2 py-0.5 rounded border border-white/30 text-[10px] font-mono hover:bg-white/10 transition-colors"
+              className="p-1.5 rounded-full hover:bg-white/10 text-xs font-bold transition-all cursor-pointer border border-white/20 px-2"
+              title="Ganti Bahasa / Switch Language"
             >
-              {lang.toUpperCase()}
+              <span>{lang.toUpperCase()}</span>
             </button>
 
             <button
-              type="button"
-              onClick={() => {
-                const next = soundFx.toggleMute();
-                setSfxEnabled(next);
-                showToast(next ? (lang === "id" ? "Suara Aktif" : "Sound Enabled") : (lang === "id" ? "Suara Senyap" : "Sound Muted"));
-              }}
-              className="p-1 rounded hover:bg-white/10 transition-colors"
-              title={sfxEnabled ? "Mute Sound" : "Enable Sound"}
+              onClick={handleToggleSfx}
+              className="p-1.5 rounded-full hover:bg-white/10 transition-all cursor-pointer"
+              title={sfxEnabled ? "Mute Sound FX" : "Unmute Sound FX"}
             >
-              {sfxEnabled ? <Volume2 className="w-3.5 h-3.5 text-[#DC2626]" /> : <VolumeX className="w-3.5 h-3.5" />}
+              {sfxEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 opacity-50" />}
             </button>
 
-            <button
-              type="button"
-              onClick={handleToggleMode}
-              aria-label="Toggle Mode"
-              className="p-1 rounded hover:bg-white/10 transition-colors"
-              title="Toggle Day/Night Mode"
-            >
-              {isNight ? <Moon className="w-3.5 h-3.5 text-[#DC2626]" /> : <Sun className="w-3.5 h-3.5 text-[#DC2626]" />}
-            </button>
-
-            {/* Profile Avatar Button (Replaces Profile Text Link) */}
-            <Link
-              href="/profile"
-              onClick={() => soundFx.playClick()}
-              title="Profile Page"
-              className="flex items-center justify-center w-7 h-7 rounded-full bg-[#DC2626] text-white font-bold text-xs shadow-md hover:scale-110 active:scale-95 transition-transform ml-1 border border-white/20"
-            >
-              {user ? initialLetter : <User className="w-3.5 h-3.5 text-white" />}
-            </Link>
-
+            {/* Profile Avatar / Login Action Button */}
+            {user ? (
+              <Link
+                href="/profile"
+                onClick={() => soundFx.playClick()}
+                className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-md shadow-[#DC2626]/30"
+                title="Buka Profil Saya"
+              >
+                {avatarSrc ? (
+                  <Image
+                    src={avatarSrc}
+                    alt={displayName}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <span>{initialLetter}</span>
+                )}
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => {
+                  try {
+                    soundFx.playClick();
+                  } catch {}
+                }}
+                className="px-3.5 py-1.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all hover:scale-105 shadow-md shadow-[#DC2626]/30 border border-white/20 relative z-10 cursor-pointer inline-flex items-center justify-center"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
 
         </div>
@@ -255,7 +274,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
         {/* Giant Moving Backdrop Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") Behind Head */}
         <div className="absolute top-1 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
           {/* Line 1: Dynamic WELCOME Marquee */}
-          <div className="animate-welcome-marquee flex gap-4 whitespace-nowrap">
+          <div
+            className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
+            style={{ animation: "welcomeMarquee 25s linear infinite" }}
+          >
             <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
             }`}>
@@ -269,7 +291,10 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           </div>
 
           {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
-          <div className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap">
+          <div
+            className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap will-change-transform"
+            style={{ animation: "welcomeMarqueeReverse 30s linear infinite" }}
+          >
             <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
               isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
             }`}>
@@ -290,11 +315,11 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
           {/* Main Hero Center Container */}
           <div className="relative w-full flex flex-col sm:flex-row items-center justify-center min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
             
-            {/* Centerpiece Spider-Man Unmask Reveal Portrait Photo (z-20) */}
-            <div className="hero-photo-wrapper relative z-20 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full overflow-hidden rounded-2xl shadow-2xl border border-white/20 flex items-center justify-center pointer-events-auto">
+            {/* Centerpiece Portrait Photo (z-20) */}
+            <div className="hero-photo-wrapper relative z-20 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full overflow-hidden flex items-center justify-center pointer-events-auto">
               <UnmaskRevealPhoto
                 maskedSrc="/images/image-masked.png"
-                realSrc="/images/avatar.png"
+                realSrc="/images/avatar.webp"
                 alt={ownerName}
                 className="w-full h-full"
               />
@@ -314,7 +339,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-full bg-[#F5B301] hover:bg-[#d99e00] text-black font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-[#F5B301]/30 border border-black/10"
+                  className="px-6 py-2.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-[#DC2626]/40 border border-white/20"
                 >
                   <span>EXPLORE PROJECTS</span>
                 </a>
@@ -343,7 +368,7 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-5 py-2.5 rounded-full bg-[#F5B301] hover:bg-[#d99e00] text-black font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition-transform"
+                  className="px-5 py-2.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/40 hover:scale-105 transition-transform border border-white/20"
                 >
                   PROJECTS
                 </a>
@@ -380,111 +405,119 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
 
 
       {/* 4. SECTION "ABOUT ME" WITH 3D LANYARD CARD */}
-      <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* Left Column: Interactive 3D Physics Lanyard Photo Card */}
-          <div className="lg:col-span-5 flex justify-center items-center">
-            <div className="relative w-full max-w-md h-[520px] sm:h-[580px] flex items-center justify-center overflow-visible">
-              <Lanyard />
+      <ScrollReveal direction="up" delayMs={50}>
+        <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* Left Column: Interactive 3D Physics Lanyard Photo Card */}
+            <div className="lg:col-span-5 flex justify-center items-center">
+              <div className="relative w-full max-w-md h-[520px] sm:h-[580px] flex items-center justify-center overflow-visible">
+                <Lanyard />
+              </div>
             </div>
+
+            {/* Right Column: About Me Bio & Details */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
+                <User className="w-3.5 h-3.5" />
+                <span>ABOUT ME</span>
+              </div>
+
+              <div className="space-y-3">
+                <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none">
+                  BRIMAS <span className="text-[#DC2626]">PRADIKA UTAMA</span>
+                </h2>
+                <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#DC2626]">
+                  Fullstack Web Developer &bull; SMK Bhakti Mulia Pare
+                </p>
+                <p className="text-sm sm:text-base opacity-90 leading-relaxed font-sans max-w-xl">
+                  {lang === "id"
+                    ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi web end-to-end secara profesional. Berfokus pada Fullstack Development dengan PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, dan Docker. Bagi saya, coding bukan sekadar menulis sintaks, tapi bagaimana membangun sistem yang rapi, scalable, dan maintainable."
+                    : "Student at SMK Bhakti Mulia Pare actively building end-to-end web applications. Specialized in Fullstack Development with PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, and Docker. Focused on writing clean, scalable, and maintainable systems."}
+                </p>
+              </div>
+
+              {/* Feature Badges Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
+                  isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                }`}>
+                  <div className="flex items-center gap-1.5 text-[#DC2626]">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-xs font-mono font-bold uppercase">SCHOOL</span>
+                  </div>
+                  <p className="text-xs font-bold truncate">SMK Bhakti Mulia Pare</p>
+                </div>
+
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
+                  isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                }`}>
+                  <div className="flex items-center gap-1.5 text-[#DC2626]">
+                    <Code className="w-4 h-4" />
+                    <span className="text-xs font-mono font-bold uppercase">ROLE</span>
+                  </div>
+                  <p className="text-xs font-bold truncate">Fullstack Developer</p>
+                </div>
+
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
+                  isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                }`}>
+                  <div className="flex items-center gap-1.5 text-[#DC2626]">
+                    <Layers className="w-4 h-4" />
+                    <span className="text-xs font-mono font-bold uppercase">STACK</span>
+                  </div>
+                  <p className="text-xs font-bold truncate">Laravel &bull; Next.js</p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-3">
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-6 py-3 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-[#DC2626]/30 border border-white/20"
+                >
+                  <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+
+                <Link
+                  href="/profile"
+                  onClick={() => soundFx.playClick()}
+                  className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${
+                    isNight
+                      ? "border-white/40 text-white hover:border-[#DC2626] hover:text-[#DC2626]"
+                      : "border-black/40 text-black hover:border-[#DC2626] hover:text-[#DC2626]"
+                  }`}
+                >
+                  <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
+                </Link>
+              </div>
+
+            </div>
+
           </div>
-
-          {/* Right Column: About Me Bio & Details */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
-              <User className="w-3.5 h-3.5" />
-              <span>ABOUT ME</span>
-            </div>
-
-            <div className="space-y-3">
-              <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none">
-                BRIMAS <span className="text-[#DC2626]">PRADIKA UTAMA</span>
-              </h2>
-              <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#DC2626]">
-                Fullstack Web Developer &bull; SMK Bhakti Mulia Pare
-              </p>
-              <p className="text-sm sm:text-base opacity-90 leading-relaxed font-sans max-w-xl">
-                {lang === "id"
-                  ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi web end-to-end secara profesional. Berfokus pada Fullstack Development dengan PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, dan Docker. Bagi saya, coding bukan sekadar menulis sintaks, tapi bagaimana membangun sistem yang rapi, scalable, dan maintainable."
-                  : "Student at SMK Bhakti Mulia Pare actively building end-to-end web applications. Specialized in Fullstack Development with PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, and Docker. Focused on writing clean, scalable, and maintainable systems."}
-              </p>
-            </div>
-
-            {/* Feature Badges Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-              <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
-                isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-              }`}>
-                <div className="flex items-center gap-1.5 text-[#DC2626]">
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-xs font-mono font-bold uppercase">SCHOOL</span>
-                </div>
-                <p className="text-xs font-bold truncate">SMK Bhakti Mulia Pare</p>
-              </div>
-
-              <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
-                isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-              }`}>
-                <div className="flex items-center gap-1.5 text-[#DC2626]">
-                  <Code className="w-4 h-4" />
-                  <span className="text-xs font-mono font-bold uppercase">ROLE</span>
-                </div>
-                <p className="text-xs font-bold truncate">Fullstack Developer</p>
-              </div>
-
-              <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
-                isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-              }`}>
-                <div className="flex items-center gap-1.5 text-[#DC2626]">
-                  <Layers className="w-4 h-4" />
-                  <span className="text-xs font-mono font-bold uppercase">STACK</span>
-                </div>
-                <p className="text-xs font-bold truncate">Laravel &bull; Next.js</p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-3">
-              <a
-                href="#projects"
-                onClick={() => soundFx.playClick()}
-                className="px-6 py-3 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-[#DC2626]/30 border border-white/20"
-              >
-                <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"}</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-
-              <Link
-                href="/profile"
-                onClick={() => soundFx.playClick()}
-                className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${
-                  isNight
-                    ? "border-white/40 text-white hover:border-[#DC2626] hover:text-[#DC2626]"
-                    : "border-black/40 text-black hover:border-[#DC2626] hover:text-[#DC2626]"
-                }`}
-              >
-                <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
-              </Link>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
+        </section>
+      </ScrollReveal>
 
       {/* 5. TECH STACK & CLI MATRIX SECTION */}
-      <TechStackMatrix isNight={isNight} lang={lang} />
+      <ScrollReveal direction="up" delayMs={50}>
+        <TechStackMatrix isNight={isNight} lang={lang} />
+      </ScrollReveal>
 
       {/* 6. PORTFOLIO PROJECTS SHOWCASE SECTION */}
-      <ProjectShowcase
-        isNight={isNight}
-        lang={lang}
-        onSelectProject={(proj) => setSelectedProject(proj)}
-      />
+      <ScrollReveal direction="up" delayMs={50}>
+        <ProjectShowcase
+          isNight={isNight}
+          lang={lang}
+          onSelectProject={(proj) => setSelectedProject(proj)}
+        />
+      </ScrollReveal>
 
       {/* 7. EXPERIENCE & JOURNEY TIMELINE SECTION */}
-      <ExperienceTimeline isNight={isNight} lang={lang} />
+      <ScrollReveal direction="up" delayMs={50}>
+        <ExperienceTimeline isNight={isNight} lang={lang} />
+      </ScrollReveal>
 
       {/* Toast Notification */}
       {toastMsg && (
@@ -494,18 +527,20 @@ export default function DashboardClient({ user, dbUser }: DashboardClientProps) 
       )}
 
       {/* Footer */}
-      <footer className="py-8 text-xs opacity-75 text-left border-t border-current/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} Brimas Pradika Utama. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <a href="#hero" className="hover:text-[#DC2626] transition-colors">Beranda</a>
-            <a href="#about" className="hover:text-[#DC2626] transition-colors">About</a>
-            <a href="#skills" className="hover:text-[#DC2626] transition-colors">Skills</a>
-            <a href="#projects" className="hover:text-[#DC2626] transition-colors">Projects</a>
-            <a href="#experience" className="hover:text-[#DC2626] transition-colors">Journey</a>
+      <ScrollReveal direction="fade" delayMs={50}>
+        <footer className="py-8 text-xs opacity-75 text-left border-t border-current/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© {new Date().getFullYear()} Brimas Pradika Utama. All rights reserved.</p>
+            <div className="flex items-center gap-4">
+              <a href="#hero" className="hover:text-[#DC2626] transition-colors">Beranda</a>
+              <a href="#about" className="hover:text-[#DC2626] transition-colors">About</a>
+              <a href="#skills" className="hover:text-[#DC2626] transition-colors">Skills</a>
+              <a href="#projects" className="hover:text-[#DC2626] transition-colors">Projects</a>
+              <a href="#experience" className="hover:text-[#DC2626] transition-colors">Journey</a>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </ScrollReveal>
 
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />

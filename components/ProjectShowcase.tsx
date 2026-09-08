@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FolderGit2, ExternalLink, Code2, Eye, Sparkles } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { ProjectData } from "@/components/ProjectModal";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const showcaseProjects: ProjectData[] = [
   {
@@ -67,103 +68,104 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject }: Proj
 
         {/* 3D Glassmorphism Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {showcaseProjects.map((project) => (
-            <div
-              key={project.id}
-              className={`rounded-2xl border overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between group cursor-pointer ${
-                isNight
-                  ? "bg-[#1A211A]/90 border-[#2A2F26] hover:border-[#DC2626] hover:shadow-xl hover:shadow-[#DC2626]/20"
-                  : "bg-[#ffffff] border-[#E5E5E2] hover:border-[#DC2626] hover:shadow-xl"
-              }`}
-            >
-              {/* Thumbnail Container */}
-              <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-black/40">
-                <Image
-                  src={project.thumbnail || "/images/project1.png"}
-                  alt={project.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          {showcaseProjects.map((project, idx) => (
+            <ScrollReveal key={project.id} direction="up" delayMs={idx * 120}>
+              <div
+                className={`rounded-2xl border overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between group cursor-pointer ${
+                  isNight
+                    ? "bg-[#1A211A]/90 border-[#2A2F26] hover:border-[#DC2626] hover:shadow-xl hover:shadow-[#DC2626]/20"
+                    : "bg-[#ffffff] border-[#E5E5E2] hover:border-[#DC2626] hover:shadow-xl"
+                }`}
+              >
+                {/* Thumbnail Container */}
+                <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-black/40">
+                  <Image
+                    src={project.thumbnail || "/images/project1.png"}
+                    alt={project.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                {/* Overlay Action Badge */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    soundFx.playClick();
-                    onSelectProject(project);
-                  }}
-                  className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-[#DC2626] text-white font-bold text-xs flex items-center gap-1.5 shadow-lg hover:scale-105 transition-transform"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>{lang === "id" ? "Detail Case Study" : "Case Study"}</span>
-                </button>
-              </div>
-
-              {/* Card Body */}
-              <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <h3 className="font-display text-lg font-bold leading-snug group-hover:text-[#DC2626] transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs opacity-80 leading-relaxed font-sans line-clamp-3">
-                    {project.description}
-                  </p>
+                  {/* Overlay Action Badge */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playClick();
+                      onSelectProject(project);
+                    }}
+                    className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-[#DC2626] text-white font-bold text-xs flex items-center gap-1.5 shadow-lg hover:scale-105 transition-transform"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>{lang === "id" ? "Detail Case Study" : "Case Study"}</span>
+                  </button>
                 </div>
 
-                {/* Tech Stack Badges */}
-                <div className="space-y-3 pt-2">
-                  <div className="flex flex-wrap gap-1.5">
-                    {project.techStack?.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-current/5 border border-current/10 opacity-90"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+                {/* Card Body */}
+                <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <h3 className="font-display text-lg font-bold leading-snug group-hover:text-[#DC2626] transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs opacity-80 leading-relaxed font-sans line-clamp-3">
+                      {project.description}
+                    </p>
                   </div>
 
-                  {/* Card Bottom Links */}
-                  <div className="pt-3 border-t border-current/10 flex items-center justify-between gap-2 text-xs font-medium">
-                    {project.repository_url && (
-                      <a
-                        href={project.repository_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          soundFx.playClick();
-                        }}
-                        className="hover:text-[#DC2626] transition-colors flex items-center gap-1 opacity-80 hover:opacity-100"
-                      >
-                        <Code2 className="w-3.5 h-3.5" />
-                        <span>Source Code</span>
-                      </a>
-                    )}
+                  {/* Tech Stack Badges */}
+                  <div className="space-y-3 pt-2">
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.techStack?.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-current/5 border border-current/10 opacity-90"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
 
-                    {project.demo_url && (
-                      <a
-                        href={project.demo_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          soundFx.playClick();
-                        }}
-                        className="text-[#DC2626] font-bold hover:underline flex items-center gap-1"
-                      >
-                        <span>Live Demo</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
-                    )}
+                    {/* Card Bottom Links */}
+                    <div className="pt-3 border-t border-current/10 flex items-center justify-between gap-2 text-xs font-medium">
+                      {project.repository_url && (
+                        <a
+                          href={project.repository_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            soundFx.playClick();
+                          }}
+                          className="hover:text-[#DC2626] transition-colors flex items-center gap-1 opacity-80 hover:opacity-100"
+                        >
+                          <Code2 className="w-3.5 h-3.5" />
+                          <span>Source Code</span>
+                        </a>
+                      )}
+
+                      {project.demo_url && (
+                        <a
+                          href={project.demo_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            soundFx.playClick();
+                          }}
+                          className="text-[#DC2626] font-bold hover:underline flex items-center gap-1"
+                        >
+                          <span>Live Demo</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </div>
                   </div>
+
                 </div>
 
               </div>
-
-            </div>
+            </ScrollReveal>
           ))}
         </div>
 

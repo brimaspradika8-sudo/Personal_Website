@@ -69,15 +69,20 @@ export default function RegisterPage() {
     setSuccess(false);
     setLoading(true);
 
-    const result = await signUpWithPassword(formData);
-    setLoading(false);
-
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await signUpWithPassword(formData);
+      if (result?.error) {
+        setError(result.error);
+        setIsPasswordFocused(false);
+      } else {
+        setSuccess(true);
+        setTimeout(() => router.push("/login"), 1500);
+      }
+    } catch (err: any) {
+      setError(err?.message || "Terjadi kesalahan saat mendaftar.");
       setIsPasswordFocused(false);
-    } else {
-      setSuccess(true);
-      setTimeout(() => router.push("/login"), 1500);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -85,13 +90,20 @@ export default function RegisterPage() {
     setError(null);
     setGoogleLoading(true);
 
-    const result = await signInWithGoogle();
-    if (result?.error) {
-      setError(result.error);
-      setGoogleLoading(false);
+    try {
+      const result = await signInWithGoogle();
+      if (result?.error) {
+        setError(result.error);
+        setIsPasswordFocused(false);
+      } else if (result?.url) {
+        window.location.href = result.url;
+        return;
+      }
+    } catch (err: any) {
+      setError(err?.message || "Gagal menghubungkan ke Google.");
       setIsPasswordFocused(false);
-    } else if (result?.url) {
-      window.location.href = result.url;
+    } finally {
+      setGoogleLoading(false);
     }
   }
 
@@ -99,13 +111,20 @@ export default function RegisterPage() {
     setError(null);
     setGithubLoading(true);
 
-    const result = await signInWithGithub();
-    if (result?.error) {
-      setError(result.error);
-      setGithubLoading(false);
+    try {
+      const result = await signInWithGithub();
+      if (result?.error) {
+        setError(result.error);
+        setIsPasswordFocused(false);
+      } else if (result?.url) {
+        window.location.href = result.url;
+        return;
+      }
+    } catch (err: any) {
+      setError(err?.message || "Gagal menghubungkan ke GitHub.");
       setIsPasswordFocused(false);
-    } else if (result?.url) {
-      window.location.href = result.url;
+    } finally {
+      setGithubLoading(false);
     }
   }
 
@@ -184,7 +203,15 @@ export default function RegisterPage() {
             )}
 
             {/* Form Register */}
-            <form action={handleSubmit} className="space-y-3.5">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                handleSubmit(formData);
+              }}
+              action={handleSubmit}
+              className="space-y-3.5"
+            >
               <div className="space-y-1">
                 <label htmlFor="name" className="block text-xs font-bold font-mono text-white/80 uppercase">
                   Nama Lengkap
