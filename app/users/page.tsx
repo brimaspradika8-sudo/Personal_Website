@@ -2,13 +2,13 @@ import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { ArrowLeft, User, Mail, Calendar } from "lucide-react";
 
-// Supabase client pakai anon key — ambil data publik tanpa login
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
 export default async function UsersPage() {
+  // createClient di dalam fungsi — aman untuk build
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
   // Fetch data dari tabel "User" di Supabase
   const { data: users, error } = await supabase
     .from("User")
