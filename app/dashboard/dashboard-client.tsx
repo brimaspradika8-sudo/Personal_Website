@@ -206,14 +206,6 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                 <span>{item.label}</span>
               </a>
             ))}
-
-            <div
-              className="text-emerald-400 font-mono text-[11px] font-bold flex items-center gap-1.5 bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-500/30 shadow-sm"
-              title="Supabase Database Live Integrated"
-            >
-              <Database className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-              <span>SUPABASE LIVE</span>
-            </div>
           </nav>
 
           {/* Right Action Icons & Profile Avatar */}
