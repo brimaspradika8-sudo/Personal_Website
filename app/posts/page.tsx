@@ -1,13 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Calendar, FileText } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
 
 export default async function PostsPage() {
-  // createClient dipanggil di dalam fungsi — aman untuk build
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = await createClient();
 
   // Fetch data dari tabel "Article" di Supabase
   const { data: posts, error } = await supabase
