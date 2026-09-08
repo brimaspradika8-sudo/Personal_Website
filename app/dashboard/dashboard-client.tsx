@@ -31,7 +31,7 @@ import ExperienceTimeline from "@/components/ExperienceTimeline";
 import Lanyard from "@/components/Lanyard";
 import UnmaskRevealPhoto from "@/components/UnmaskRevealPhoto";
 import ScrollReveal from "@/components/ScrollReveal";
-import SupabaseUserFetchWidget from "@/components/SupabaseUserFetchWidget";
+
 
 interface DashboardClientProps {
   user: {
@@ -195,7 +195,7 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
               { label: "Beranda", href: "#hero" },
               { label: "About", href: "#about" },
               { label: "Project", href: "#projects" },
-              { label: "Blog", href: "#blog" },
+              { label: "Artikel", href: "/posts" },
             ].map((item) => (
               <a
                 key={item.label}
@@ -206,6 +206,7 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                 <span>{item.label}</span>
               </a>
             ))}
+
             <div
               className="text-emerald-400 font-mono text-[11px] font-bold flex items-center gap-1.5 bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-500/30 shadow-sm"
               title="Supabase Database Live Integrated"
@@ -509,12 +510,7 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
         </section>
       </ScrollReveal>
 
-      {/* 4.5 SUPABASE USER DATA FETCHING DEMO WIDGET */}
-      <ScrollReveal direction="up" delayMs={50}>
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-          <SupabaseUserFetchWidget isNight={isNight} user={user} dbUser={dbUser} />
-        </section>
-      </ScrollReveal>
+
 
       {/* 5. TECH STACK & CLI MATRIX SECTION */}
       <ScrollReveal direction="up" delayMs={50}>
