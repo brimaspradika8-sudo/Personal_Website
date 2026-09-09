@@ -4,6 +4,7 @@ import { getSupabaseEnv } from "./client";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+
   const { supabaseUrl, supabaseAnonKey } = getSupabaseEnv();
 
   try {
@@ -15,11 +16,14 @@ export async function updateSession(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
+
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) =>
               request.cookies.set(name, value)
             );
+
             supabaseResponse = NextResponse.next({ request });
+
             cookiesToSet.forEach(({ name, value, options }) =>
               supabaseResponse.cookies.set(name, value, options)
             );
@@ -28,12 +32,27 @@ export async function updateSession(request: NextRequest) {
       }
     );
 
-    // Refresh session automatically
-    await supabase.auth.getUser();
+    // Cek user yang sedang login
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    // Semua user login boleh masuk ke dashboard (akan dibedakan role nya nanti di dashboard)
+    if (
+      request.nextUrl.pathname.startsWith("/dashboard") &&
+      !user
+    ) {
+      return NextResponse.redirect(
+        new URL("/login", request.url)
+      );
+    }
+
   } catch (err) {
-    console.error("Middleware Supabase Session Error:", err);
+    console.error(
+      "Middleware Supabase Session Error:",
+      err
+    );
   }
 
   return supabaseResponse;
 }
-

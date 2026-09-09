@@ -1,97 +1,74 @@
-import Link from "next/link";
-import { ArrowLeft, BookOpen, Calendar, FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-
-export const dynamic = "force-dynamic";
+import Link from "next/link";
 
 export default async function PostsPage() {
-  const supabase = await createClient();
+    const supabase = await createClient();
+    const { data: posts, error } = await supabase
+        .from("Article")
+        .select("id, title, slug, thumbnail, created_at")
+        .order("created_at", { ascending: false });
 
-  // Fetch data dari tabel "Article" di Supabase
-  const { data: posts, error } = await supabase
-    .from("Article")
-    .select("id, title, slug, thumbnail, created_at")
-    .order("created_at", { ascending: false });
+    if (error) {
+        console.error("Error fetching posts:", error);
+    }
 
-  return (
-    <main className="min-h-screen bg-[#0A0D14] text-white p-6 font-sans">
-      <div className="max-w-4xl mx-auto space-y-6">
-
-        {/* Back */}
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 text-xs font-mono text-white/60 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Kembali
-        </Link>
-
-        {/* Title */}
-        <div>
-          <h1 className="text-3xl font-black uppercase tracking-tight">
-            Daftar <span className="text-[#DC2626]">Artikel</span>
-          </h1>
-          <p className="text-xs text-white/50 mt-1 font-mono">
-            Data diambil dari tabel <code className="text-[#DC2626]">Article</code> di Supabase
-          </p>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="p-4 rounded-xl border border-red-500/50 bg-red-950/30 text-red-300 text-sm font-mono space-y-2">
-            <p className="font-bold">Error: {error.message}</p>
-            <p className="text-xs text-red-400">Aktifkan RLS policy di Supabase SQL Editor:</p>
-            <pre className="bg-black/40 p-2 rounded text-emerald-300 text-xs whitespace-pre-wrap">{`ALTER TABLE public."Article" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow read" ON public."Article" FOR SELECT TO anon USING (true);`}</pre>
-          </div>
-        )}
-
-        {/* Kosong */}
-        {!error && posts?.length === 0 && (
-          <div className="p-8 rounded-xl border border-white/10 text-center space-y-2">
-            <FileText className="w-8 h-8 text-white/30 mx-auto" />
-            <p className="text-white/40 text-sm font-mono">Belum ada artikel.</p>
-          </div>
-        )}
-
-        {/* Daftar Artikel */}
-        {!error && posts && posts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {posts.map((post) => (
-              <div
-                key={post.id}
-                className="p-4 rounded-xl border border-white/10 bg-[#0F172A] hover:border-[#DC2626]/40 transition-all space-y-3"
-              >
-                {/* Thumbnail */}
-                {post.thumbnail ? (
-                  <img
-                    src={post.thumbnail}
-                    alt={post.title}
-                    className="w-full h-36 object-cover rounded-lg"
-                  />
-                ) : (
-                  <div className="w-full h-36 rounded-lg bg-white/5 flex items-center justify-center">
-                    <BookOpen className="w-8 h-8 text-white/20" />
-                  </div>
-                )}
-
-                {/* Title */}
-                <p className="font-bold text-sm leading-snug">{post.title}</p>
-
-                {/* Meta */}
-                <div className="flex items-center justify-between text-xs text-white/40 font-mono">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>{new Date(post.created_at).toLocaleDateString("id-ID")}</span>
-                  </div>
-                  <span className="text-[#DC2626]">/{post.slug}</span>
+    return (
+        <main className="min-h-screen bg-white">
+            <div className="max-w-5xl mx-auto px-6 py-16 md:py-24">
+                <div className="mb-16">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">
+                        Daftar Artikel
+                    </h1>
+                    <p className="text-lg text-zinc-600 max-w-2xl">
+                        Kumpulan tulisan, insight, dan pemikiran terbaru yang kami bagikan.
+                    </p>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
 
-      </div>
-    </main>
-  );
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                    {posts?.map((post) => (
+                        <Link 
+                            href={`/posts/${post.slug}`} 
+                            key={post.id} 
+                            className="group flex flex-col"
+                        >
+                            {post.thumbnail ? (
+                                <div className="aspect-video w-full overflow-hidden rounded-2xl bg-zinc-100 mb-5 border border-zinc-200/80">
+                                    <img
+                                        src={post.thumbnail}
+                                        alt={post.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="aspect-video w-full rounded-2xl bg-zinc-50 mb-5 border border-zinc-200/80 flex items-center justify-center transition-colors group-hover:bg-zinc-100">
+                                    <svg className="w-8 h-8 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                            )}
+                            
+                            <div className="flex flex-col flex-grow">
+                                <h2 className="text-xl font-semibold text-zinc-900 mb-2 leading-snug group-hover:text-blue-600 transition-colors">
+                                    {post.title}
+                                </h2>
+                                <time className="text-sm font-medium text-zinc-500 mt-auto pt-4 flex items-center">
+                                    {new Date(post.created_at).toLocaleDateString("id-ID", {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </time>
+                            </div>
+                        </Link>
+                    ))}
+
+                    {(!posts || posts.length === 0) && (
+                        <div className="col-span-full py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
+                            <p className="text-zinc-500">Belum ada artikel yang dipublikasikan.</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </main>
+    );
 }

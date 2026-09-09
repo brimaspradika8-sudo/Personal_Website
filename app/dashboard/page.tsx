@@ -1,33 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import DashboardClient from "./dashboard-client";
+import AdminDashboard from "./admin-dashboard";
+import UserDashboard from "./user-dashboard";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  // 1. Fetch current Supabase user session (Server Component Fetch)
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 2. Fetch Projects directly from Supabase Table ("Project")
-  let supabaseProjects: any[] = [];
-  try {
-    const { data, error } = await supabase
-      .from("Project")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      supabaseProjects = data;
-    }
-  } catch (err) {
-    console.warn("Supabase fetch failed, fallback to Prisma:", err);
-  }
-
-  // 3. Fallback / Sync user info from Prisma DB
+  // Fetch db user
   let dbUser = null;
   if (user) {
     try {
@@ -39,23 +24,37 @@ export default async function DashboardPage() {
     }
   }
 
-  let dbProjects: any[] = [];
-  try {
-    dbProjects = await prisma.project.findMany({
-      orderBy: { created_at: "desc" },
-    });
-  } catch {
-    dbProjects = [];
+  const userEmail = (user?.email || dbUser?.email || "").toLowerCase().trim();
+  const isAdmin = userEmail === "brimaspradika8@gmail.com";
+
+  if (!isAdmin) {
+    return <UserDashboard user={user} dbUser={dbUser} />;
   }
 
-  // Prefer projects fetched directly from Supabase
-  const finalProjects = supabaseProjects.length > 0 ? supabaseProjects : dbProjects;
+  // Fetch Dashboard Stats ONLY for admin
+  const projectsCount = await prisma.project.count().catch(() => 0);
+  const articlesCount = await prisma.article.count().catch(() => 0);
+  const usersCount = await prisma.user.count().catch(() => 0);
+  const commentsCount = await prisma.comment.count().catch(() => 0);
+
+  // Fetch Recent Items ONLY for admin
+  const recentProjects = await prisma.project.findMany({
+    take: 5,
+    orderBy: { created_at: "desc" },
+  }).catch(() => []);
+
+  const recentArticles = await prisma.article.findMany({
+    take: 5,
+    orderBy: { created_at: "desc" },
+  }).catch(() => []);
 
   return (
-    <DashboardClient
+    <AdminDashboard 
       user={user}
       dbUser={dbUser}
-      dbProjects={finalProjects}
+      stats={{ projectsCount, articlesCount, usersCount, commentsCount }}
+      recentProjects={recentProjects}
+      recentArticles={recentArticles}
     />
   );
 }
