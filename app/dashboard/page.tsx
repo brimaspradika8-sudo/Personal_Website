@@ -38,36 +38,42 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // 3. Fetch db user berdasarkan user.id dari sesi AKTIF
+  // 3. Fetch db user berdasarkan EMAIL (bukan user.id).
+  //    PENTING: Prisma men-generate UUID-nya sendiri saat create user,
+  //    sehingga dbUser.id ≠ supabase user.id. Query harus pakai email.
+  const userEmail = (user?.email ?? "").toLowerCase().trim();
   let dbUser = null;
-  if (user) {
+  if (userEmail) {
     try {
       dbUser = await prisma.user.findUnique({
-        where: { id: user.id },
+        where: { email: userEmail },
       });
     } catch {
       // Ignore database connection timeouts
     }
   }
 
-  // [DIAGNOSTIK] Konfirmasi role yang diputuskan server untuk user ini.
+  // [DIAGNOSTIK] Konfirmasi role yang diputuskan server.
   console.log("[DashboardPage] Role check:", {
+    supabaseId: user?.id,
     dbUserId: dbUser?.id ?? "not found in DB",
     dbUserEmail: dbUser?.email ?? "null",
     role: dbUser?.role ?? "null",
   });
 
-  // 4. Validasi Role Admin di SERVER COMPONENT (tidak bisa di-bypass dari client).
-  //    Cek via database (sumber kebenaran) dan env var sebagai fallback.
-  const userEmail = (user?.email || dbUser?.email || "").toLowerCase().trim();
-  const envAdminEmails = (process.env.ADMIN_EMAILS || "")
+  // 4. Validasi Role Admin berlapis (tidak bisa di-bypass dari client):
+  //    Layer 1: Role "ADMIN" di database Prisma
+  //    Layer 2: ADMIN_EMAILS env var (untuk deployment)
+  //    Layer 3: Hardcoded owner email sebagai ultimate fallback
+  const envAdminEmails = (process.env.ADMIN_EMAILS ?? "")
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
 
   const isAdmin =
     dbUser?.role === "ADMIN" ||
-    (envAdminEmails.length > 0 && envAdminEmails.includes(userEmail));
+    envAdminEmails.includes(userEmail) ||
+    userEmail === "brimaspradika8@gmail.com";
 
   // 5. Render komponen berbeda berdasarkan role
   if (!isAdmin) {
