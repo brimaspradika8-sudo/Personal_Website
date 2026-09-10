@@ -160,10 +160,14 @@ export default function TechStackMatrix({ isNight, lang }: TechStackMatrixProps)
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>TECH MATRIX</span>
+              <span>{lang === "id" ? "MATRIKS TEKNOLOGI" : "TECH MATRIX"}</span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight">
-              TECHNICAL <span className="text-[#DC2626]">STACK &amp; CLI</span>
+              {lang === "id" ? (
+                <>STAK <span className="text-[#DC2626]">TEKNOLOGI &amp; CLI</span></>
+              ) : (
+                <>TECHNICAL <span className="text-[#DC2626]">STACK &amp; CLI</span></>
+              )}
             </h2>
             <p className="text-xs sm:text-sm opacity-80 max-w-xl font-sans">
               {lang === "id"

@@ -57,10 +57,14 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
             <Briefcase className="w-3.5 h-3.5" />
-            <span>JOURNEY &amp; MILESTONES</span>
+            <span>{lang === "id" ? "PERJALANAN & MILESTONE" : "JOURNEY & MILESTONES"}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight">
-            EXPERIENCE &amp; <span className="text-[#DC2626]">LEARNING TIMELINE</span>
+            {lang === "id" ? (
+              <>PENGALAMAN &amp; <span className="text-[#DC2626]">REKAM JEJAK</span></>
+            ) : (
+              <>EXPERIENCE &amp; <span className="text-[#DC2626]">LEARNING TIMELINE</span></>
+            )}
           </h2>
           <p className="text-xs sm:text-sm opacity-80 max-w-xl font-sans">
             {lang === "id"

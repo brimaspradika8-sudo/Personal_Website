@@ -69,22 +69,22 @@ function PhotoFallback() {
 
 function LanyardPhysics() {
   // 6 Verlet nodes (0: Top Mount, 1..4: Rope, 5: Top Clip of Card)
-  // Compact, well-proportioned rope layout
+  // Compact, shortened rope layout
   const nodes = useRef([
     { pos: new THREE.Vector3(0, 2.2, 0), oldPos: new THREE.Vector3(0, 2.2, 0) },
-    { pos: new THREE.Vector3(0, 1.6, 0), oldPos: new THREE.Vector3(0, 1.6, 0) },
-    { pos: new THREE.Vector3(0, 1.0, 0), oldPos: new THREE.Vector3(0, 1.0, 0) },
-    { pos: new THREE.Vector3(0, 0.4, 0), oldPos: new THREE.Vector3(0, 0.4, 0) },
-    { pos: new THREE.Vector3(0, -0.2, 0), oldPos: new THREE.Vector3(0, -0.2, 0) },
-    { pos: new THREE.Vector3(0, -0.7, 0), oldPos: new THREE.Vector3(0, -0.7, 0) },
+    { pos: new THREE.Vector3(0, 1.7, 0), oldPos: new THREE.Vector3(0, 1.7, 0) },
+    { pos: new THREE.Vector3(0, 1.2, 0), oldPos: new THREE.Vector3(0, 1.2, 0) },
+    { pos: new THREE.Vector3(0, 0.7, 0), oldPos: new THREE.Vector3(0, 0.7, 0) },
+    { pos: new THREE.Vector3(0, 0.2, 0), oldPos: new THREE.Vector3(0, 0.2, 0) },
+    { pos: new THREE.Vector3(0, -0.3, 0), oldPos: new THREE.Vector3(0, -0.3, 0) },
   ]);
 
-  // Segment lengths (total rope length 5 * 0.55 = 2.75 for tight, elegant proportion)
-  const segmentLengths = [0.55, 0.55, 0.55, 0.55, 0.55];
+  // Shortened segment lengths (5 * 0.42 = 2.10 total rope length)
+  const segmentLengths = [0.42, 0.42, 0.42, 0.42, 0.42];
 
   const cardGroupRef = useRef<THREE.Group>(null);
   const isDragging = useRef(false);
-  const dragTarget = useRef(new THREE.Vector3(0, -0.7, 0));
+  const dragTarget = useRef(new THREE.Vector3(0, -0.3, 0));
   const cardRotation = useRef(new THREE.Euler(0, 0, 0));
   const [hovered, setHovered] = useState(false);
 
@@ -403,7 +403,7 @@ export default function Lanyard() {
   return (
     <div className="w-full h-[520px] sm:h-[580px] relative flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none overflow-visible">
       <Canvas
-        camera={{ position: [0, -0.75, 8.5], fov: 42 }}
+        camera={{ position: [0, -0.4, 8.2], fov: 42 }}
         gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;

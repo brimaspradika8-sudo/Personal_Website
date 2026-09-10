@@ -18,6 +18,8 @@ function formatAuthError(errorMsg: string): string {
 
 import { revalidatePath } from "next/cache";
 
+import { checkIsAdmin } from "./article";
+
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---
 // Sesuaikan nama field (name, email, dst) dengan schema.prisma kamu.
 export async function syncUserToDatabase(
@@ -26,18 +28,20 @@ export async function syncUserToDatabase(
   avatar?: string | null
 ) {
   try {
+    const isAdmin = await checkIsAdmin(email);
     const existingUser = await prisma.user.findUnique({
       where: { email },
-      select: { id: true, name: true, avatar: true },
+      select: { id: true, name: true, avatar: true, role: true },
     });
 
     if (!existingUser) {
-      // First-time signup / first login with Google: save Google avatar ONCE as default in DB
+      // First-time signup / first login: save default in DB with ADMIN or USER role
       return await prisma.user.create({
         data: {
           email,
           name: name ?? email.split("@")[0],
           avatar: avatar ?? null,
+          role: isAdmin ? "ADMIN" : "USER",
         },
       });
     }

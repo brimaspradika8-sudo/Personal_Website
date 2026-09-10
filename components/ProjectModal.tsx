@@ -5,6 +5,8 @@ import Image from "next/image";
 import { X, ExternalLink, Code2, CheckCircle2 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+
 export interface ProjectData {
   id: string;
   title: string;
@@ -22,6 +24,7 @@ interface ProjectModalProps {
 }
 
 export default function ProjectModal({ project, onClose }: ProjectModalProps) {
+  const { lang } = useLanguage();
   if (!project) return null;
 
   const defaultTechStack = ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "Supabase"];
@@ -62,12 +65,12 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
               {project.title}
             </h2>
             <p className="text-xs text-[#A8A79C] mt-1">
-              Eksplorasi Project & Arsitektur Perangkat Lunak
+              {lang === "id" ? "Eksplorasi Proyek & Arsitektur Perangkat Lunak" : "Software Architecture & Project Case Study"}
             </p>
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-xs font-medium text-[#A8A79C]">Deskripsi Project</h3>
+            <h3 className="text-xs font-medium text-[#A8A79C]">{lang === "id" ? "Deskripsi Proyek" : "Project Overview"}</h3>
             <p className="text-sm text-[#F1EFE9] leading-relaxed break-words">
               {project.description}
             </p>
@@ -75,7 +78,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
 
           {/* Tech Stack List */}
           <div className="space-y-2">
-            <h3 className="text-xs font-medium text-[#A8A79C]">Teknologi Digunakan</h3>
+            <h3 className="text-xs font-medium text-[#A8A79C]">{lang === "id" ? "Teknologi Digunakan" : "Technologies Used"}</h3>
             <div className="flex flex-wrap gap-2">
               {techList.map((tech) => (
                 <span
@@ -100,7 +103,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#12160F] hover:bg-[#212A20] text-[#F1EFE9] font-medium text-xs sm:text-sm border border-[#2A2F26] flex items-center justify-center gap-2 transition-colors"
               >
                 <Code2 className="w-4 h-4 text-[#A8A79C]" />
-                <span>Lihat Repository Code</span>
+                <span>{lang === "id" ? "Lihat Source Code" : "View Source Code"}</span>
               </a>
             ) : (
               <div />
@@ -114,7 +117,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 onClick={() => soundFx.playClick()}
                 className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#A6532D] hover:bg-[#8A4425] text-[#F1EFE9] font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
-                <span>Buka Live Demo</span>
+                <span>{lang === "id" ? "Buka Live Demo" : "Open Live Demo"}</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
             )}

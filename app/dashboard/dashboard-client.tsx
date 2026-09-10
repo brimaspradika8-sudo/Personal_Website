@@ -20,6 +20,7 @@ import {
   Database,
 } from "lucide-react";
 
+import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
@@ -55,6 +56,7 @@ interface DashboardClientProps {
     email: string;
     name: string | null;
     avatar: string | null;
+    role?: string | null;
     created_at: Date | string;
   } | null;
   dbProjects?: Array<{
@@ -67,9 +69,11 @@ interface DashboardClientProps {
     repository_url: string | null;
     created_at: Date | string;
   }>;
+  /** Ditentukan di Server Component berdasarkan role dari database — tidak bisa di-bypass dari client */
+  isAdmin?: boolean;
 }
 
-export default function DashboardClient({ user, dbUser, dbProjects }: DashboardClientProps) {
+export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = false }: DashboardClientProps) {
   const { lang, toggleLang } = useLanguage();
   const [mode, setMode] = useState<"day" | "night">("day");
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
@@ -87,6 +91,7 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
   useEffect(() => {
     setSfxEnabled(soundFx.getIsEnabled());
     const handleOpen = () => setCmdPaletteOpen(true);
+
     window.addEventListener("open-command-palette", handleOpen);
 
     const savedMode = localStorage.getItem("landscape_mode");
@@ -118,19 +123,16 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
     });
   };
 
-  const ownerName = "BRIMAS PRADIKA UTAMA";
-  const ownerAvatar = "/images/avatar.webp";
-
-  const navUserName =
+  // PENTING: displayName & avatarSrc SELALU diambil dari data user yang sedang login.
+  // Tidak ada hardcode nama/avatar di sini — semua dinamis berdasarkan sesi aktif.
+  const displayName =
     dbUser?.name ||
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
     user?.email?.split("@")[0] ||
     "Guest User";
 
-  const displayName = navUserName;
-  const userAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
-  const avatarSrc = userAvatar;
+  const avatarSrc = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
 
   const isLoggedIn = !!user;
   const activeUserName =
@@ -146,6 +148,15 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
   const initialLetter = displayName ? displayName.charAt(0).toUpperCase() : "G";
   const isNight = mode === "night";
 
+  const [heroMousePos, setHeroMousePos] = useState({ x: 50, y: 50 });
+
+  const handleMouseMoveHero = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+    setHeroMousePos({ x, y });
+  };
+
   const handleToggleSfx = () => {
     const next = soundFx.toggleMute();
     setSfxEnabled(next);
@@ -153,10 +164,18 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
   };
 
   return (
-    <div className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
-      isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#ffffff] text-[#1A1A1A]"
-    }`}>
-      
+    <motion.div
+      initial={{ opacity: 0, y: 24, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1],
+        delay: 0.15,
+      }}
+      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
+        isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#ffffff] text-[#1A1A1A]"
+      }`}
+    >
       {/* 1. TOP NAVIGATION HEADER (MATCHING BUCKETLISTLY STYLE) */}
       <header className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${
         isNight ? "bg-[#12160F]/90 border-[#2A2F26]" : "bg-[#8a8a88]/90 border-[#7a7a78] text-white"
@@ -177,25 +196,15 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
             </span>
           </Link>
 
-          {/* Search Bar Center */}
-          <div className="hidden md:flex items-center flex-1 max-w-xs relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search projects..."
-              className="w-full py-1 pl-7 pr-3 text-xs rounded-full bg-white/20 border border-white/30 text-white placeholder-white/70 focus:bg-white/30 transition-all outline-none"
-            />
-            <Search className="w-3.5 h-3.5 absolute left-2.5 text-white/80" />
-          </div>
+
 
           {/* Navigation Menu Items */}
           <nav className="hidden lg:flex items-center gap-6 text-xs font-medium tracking-wide text-white/90">
             {[
-              { label: "Beranda", href: "#hero" },
-              { label: "About", href: "#about" },
-              { label: "Project", href: "#projects" },
-              { label: "Artikel", href: "/posts" },
+              { label: lang === "id" ? "Beranda" : "Home", href: "#hero" },
+              { label: lang === "id" ? "Tentang" : "About", href: "#about" },
+              { label: lang === "id" ? "Proyek"  : "Projects", href: "#projects" },
+              { label: lang === "id" ? "Artikel" : "Blog", href: "/posts" },
             ].map((item) => (
               <a
                 key={item.label}
@@ -210,6 +219,23 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
 
           {/* Right Action Icons & Profile Avatar */}
           <div className="flex items-center gap-2.5 shrink-0 text-white/80">
+            
+            {/* Ctrl + K Command Palette Visual Hint Badge Button */}
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                setCmdPaletteOpen(true);
+              }}
+              className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 hover:bg-[#DC2626]/80 text-xs text-white/90 border border-white/20 transition-all cursor-pointer shadow-sm hover:scale-105"
+              title="Buka Command Palette (Ctrl + K)"
+            >
+              <Search className="w-3.5 h-3.5 text-white/80" />
+              <span className="hidden md:inline text-[11px] font-medium opacity-90">{lang === "id" ? "Cari..." : "Search..."}</span>
+              <kbd className="font-mono text-[10px] bg-black/40 px-1.5 py-0.5 rounded text-white/90 border border-white/20 shadow-inner">
+                Ctrl K
+              </kbd>
+            </button>
+
             {/* Language & Sound Toggles */}
             <button
               onClick={() => {
@@ -236,7 +262,7 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                 href="/profile"
                 onClick={() => soundFx.playClick()}
                 className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-md shadow-[#DC2626]/30"
-                title="Buka Profil Saya"
+                title={lang === "id" ? "Buka Profil Saya" : "Open My Profile"}
               >
                 {avatarSrc ? (
                   <Image
@@ -260,7 +286,7 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                 }}
                 className="px-3.5 py-1.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all hover:scale-105 shadow-md shadow-[#DC2626]/30 border border-white/20 relative z-10 cursor-pointer inline-flex items-center justify-center"
               >
-                Sign In
+                {lang === "id" ? "Masuk Akun" : "Sign In"}
               </Link>
             )}
           </div>
@@ -268,13 +294,17 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
         </div>
       </header>
 
-      {/* 2. HERO SECTION (100% MATCHING BUCKETLISTLY EDITORIAL STYLE) */}
-      <section id="hero" className={`relative min-h-[85vh] lg:min-h-[92vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
-        isNight ? "bg-[#181D15]" : "bg-gradient-to-b from-[#a3a3a0] via-[#92928f] to-[#7f7f7c]"
-      }`}>
+      {/* 2. HERO SECTION */}
+      <section
+        id="hero"
+        onMouseMove={handleMouseMoveHero}
+        className={`relative min-h-[85vh] lg:min-h-[92vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 pt-12 sm:pt-16 md:pt-20 ${
+          isNight ? "bg-[#181D15]" : "bg-gradient-to-b from-[#a3a3a0] via-[#92928f] to-[#7f7f7c]"
+        }`}
+      >
         
         {/* Giant Moving Backdrop Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") Behind Head */}
-        <div className="absolute top-1 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
+        <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
           {/* Line 1: Dynamic WELCOME Marquee */}
           <div
             className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
@@ -311,29 +341,40 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
         </div>
 
         {/* Hero Content Overlay Grid (z-20 so buttons & photo float ON TOP of wave) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-2 sm:pt-6 pb-6 sm:pb-12">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 sm:pt-10 pb-12 sm:pb-16">
           
 
           {/* Main Hero Center Container */}
           <div className="relative w-full flex flex-col sm:flex-row items-center justify-center min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
             
-            {/* Centerpiece Portrait Photo (z-20) */}
-            <div className="hero-photo-wrapper relative z-20 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full overflow-hidden flex items-center justify-center pointer-events-auto">
+            {/* Centerpiece Portrait Photo (z-20) seamlessly blending with background */}
+            <div className="hero-photo-wrapper relative z-20 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto">
+              
+              {/* Feature 1.1: Organic Parallax Backlight Halo Glow */}
+              <div
+                className="absolute -inset-6 sm:-inset-10 rounded-full pointer-events-none transition-all duration-500 opacity-60 filter blur-3xl -z-10"
+                style={{
+                  background: `radial-gradient(circle at ${heroMousePos.x}% ${heroMousePos.y}%, rgba(220, 38, 38, 0.45), rgba(37, 99, 235, 0.25), transparent 70%)`
+                }}
+              />
+
               <UnmaskRevealPhoto
                 maskedSrc="/images/image-masked.png"
-                realSrc="/images/avatar.webp"
-                alt={ownerName}
-                className="w-full h-full"
+                realSrc={avatarSrc || "/images/avatar.webp"}
+                alt={displayName}
+                className="w-full h-full filter brightness-[1.08] contrast-[1.12]"
               />
             </div>
 
             {/* Desktop Headline & CTAs (Absolute Left) */}
             <div className="hidden sm:block absolute left-0 bottom-6 sm:bottom-12 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
               <h1 className="font-display text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
-                I&apos;M {ownerName}
+                {lang === "id" ? `SAYA ${displayName.toUpperCase()}` : `I'M ${displayName.toUpperCase()}`}
               </h1>
-              <p className="text-sm text-white/90 leading-relaxed font-sans max-w-sm">
-                AI Systems Developer &amp; Software Explorer. Saya membangun aplikasi berbasis kecerdasan buatan, sistem pintar, dan peranti lunak performa tinggi.
+              <p className="text-sm text-white/95 leading-relaxed font-sans max-w-sm font-medium">
+                {lang === "id"
+                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
+                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
               </p>
 
               {/* Two CTA Buttons */}
@@ -343,26 +384,28 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                   onClick={() => soundFx.playClick()}
                   className="px-6 py-2.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-[#DC2626]/40 border border-white/20"
                 >
-                  <span>EXPLORE PROJECTS</span>
+                  <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
                 </a>
 
                 <a
                   href="#about"
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-full border border-white text-white font-bold text-xs uppercase tracking-wider transition-all hover:bg-white hover:text-black cursor-pointer inline-flex items-center gap-2 shadow-lg"
+                  className="px-6 py-2.5 rounded-full border-[1.5px] border-white text-white font-bold text-xs uppercase tracking-wider transition-all duration-200 hover:bg-white hover:text-[#1A1A1A] cursor-pointer inline-flex items-center gap-2 shadow-lg hover:scale-[1.03]"
                 >
-                  <span>ABOUT ME</span>
+                  <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
                 </a>
               </div>
             </div>
 
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
-            <div className="sm:hidden w-full z-20 space-y-3.5 text-center text-white px-2 pt-2">
+            <div className="sm:hidden w-full z-20 space-y-3.5 text-center text-white px-2 pt-2 pb-4">
               <h1 className="font-display text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
-                I&apos;M {ownerName}
+                {lang === "id" ? `SAYA ${displayName.toUpperCase()}` : `I'M ${displayName.toUpperCase()}`}
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-xs mx-auto drop-shadow-sm font-medium">
-                AI Systems Developer &amp; Software Explorer. Saya membangun aplikasi berbasis kecerdasan buatan, sistem pintar, dan peranti lunak performa tinggi.
+                {lang === "id"
+                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen interaktif, serta solusi digital performa tinggi."
+                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
               </p>
 
               {/* Two Mobile CTA Buttons */}
@@ -372,15 +415,15 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                   onClick={() => soundFx.playClick()}
                   className="px-5 py-2.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/40 hover:scale-105 transition-transform border border-white/20"
                 >
-                  PROJECTS
+                  {lang === "id" ? "PROYEK" : "PROJECTS"}
                 </a>
 
                 <a
                   href="#about"
                   onClick={() => soundFx.playClick()}
-                  className="px-5 py-2.5 rounded-full border border-white text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-white hover:text-black transition-all"
+                  className="px-5 py-2.5 rounded-full border-[1.5px] border-white text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-white hover:text-[#1A1A1A] transition-all duration-200"
                 >
-                  ABOUT ME
+                  {lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}
                 </a>
               </div>
             </div>
@@ -389,16 +432,16 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
 
         </div>
 
-        {/* Smooth Organic SVG Wave Divider (Absolute Bottom z-10 underneath content) */}
+        {/* Ultra-Smooth Organic SVG Wave Divider */}
         <div className="absolute -bottom-[1px] left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
           <svg
-            className={`w-full h-16 sm:h-24 md:h-28 block fill-current transition-colors duration-300 ${
+            className={`w-full h-12 sm:h-20 md:h-24 block fill-current transition-colors duration-300 ${
               isNight ? "text-[#12160F]" : "text-[#ffffff]"
             }`}
             viewBox="0 0 1440 120"
             preserveAspectRatio="none"
           >
-            <path d="M0,40 C360,110 720,20 1080,90 1260,120 1440,40 1440,40 L1440,120 L0,120 Z" />
+            <path d="M0,64 C480,112 960,16 1440,64 L1440,120 L0,120 Z" />
           </svg>
         </div>
 
@@ -406,40 +449,49 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
 
 
 
-      {/* 4. SECTION "ABOUT ME" WITH 3D LANYARD CARD */}
-      <ScrollReveal direction="up" delayMs={50}>
-        <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left Column: Interactive 3D Physics Lanyard Photo Card */}
-            <div className="lg:col-span-5 flex justify-center items-center">
+      {/* 4. SECTION "ABOUT ME" WITH STAGGERED SCROLL ANIMATIONS */}
+      <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          {/* Left Column: Interactive 3D Physics Lanyard Photo Card */}
+          <div className="lg:col-span-5 flex justify-center items-center">
+            <ScrollReveal direction="right" delayMs={100} durationMs={800} className="w-full flex justify-center">
               <div className="relative w-full max-w-md h-[520px] sm:h-[580px] flex items-center justify-center overflow-visible">
                 <Lanyard />
               </div>
-            </div>
+            </ScrollReveal>
+          </div>
 
-            {/* Right Column: About Me Bio & Details */}
-            <div className="lg:col-span-7 space-y-6 text-left">
+          {/* Right Column: About Me Bio & Details */}
+          <div className="lg:col-span-7 space-y-6 text-left">
+            <ScrollReveal direction="up" delayMs={200} durationMs={700}>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
                 <User className="w-3.5 h-3.5" />
                 <span>ABOUT ME</span>
               </div>
+            </ScrollReveal>
 
+            <ScrollReveal direction="up" delayMs={250} durationMs={700}>
               <div className="space-y-3">
                 <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none">
-                  BRIMAS <span className="text-[#DC2626]">PRADIKA UTAMA</span>
+                  {displayName.toUpperCase()}
                 </h2>
                 <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#DC2626]">
-                  AI Systems Developer &bull; SMK Bhakti Mulia Pare
-                </p>
-                <p className="text-sm sm:text-base opacity-90 leading-relaxed font-sans max-w-xl">
-                  {lang === "id"
-                    ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi berbasis kecerdasan buatan & sistem AI secara profesional. Berfokus pada AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, dan Cloud Systems. Bagi saya, coding bukan sekadar menulis sintaks, tapi bagaimana membangun sistem pintar yang rapi, scalable, dan maintainable."
-                    : "Student at SMK Bhakti Mulia Pare actively building AI-powered applications & intelligent systems. Specialized in AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, and Cloud Systems. Focused on writing clean, scalable, and maintainable intelligent systems."}
+                  {isAdmin ? "AI Systems Developer • SMK Bhakti Mulia Pare" : (user?.email ?? "")}
                 </p>
               </div>
+            </ScrollReveal>
 
-              {/* Feature Badges Grid */}
+            <ScrollReveal direction="up" delayMs={350} durationMs={700}>
+              <p className="text-sm sm:text-base opacity-90 leading-relaxed font-sans max-w-xl">
+                {lang === "id"
+                  ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi berbasis kecerdasan buatan & sistem AI secara profesional. Berfokus pada AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, dan Cloud Systems. Bagi saya, coding bukan sekadar menulis sintaks, tapi bagaimana membangun sistem pintar yang rapi, scalable, dan maintainable."
+                  : "Student at SMK Bhakti Mulia Pare actively building AI-powered applications & intelligent systems. Specialized in AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, and Cloud Systems. Focused on writing clean, scalable, and maintainable intelligent systems."}
+              </p>
+            </ScrollReveal>
+
+            {/* Feature Badges Grid */}
+            <ScrollReveal direction="zoom" delayMs={450} durationMs={700}>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
                 <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
                   isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
@@ -471,8 +523,10 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                   <p className="text-xs font-bold truncate">Laravel &bull; Next.js</p>
                 </div>
               </div>
+            </ScrollReveal>
 
-              {/* Action Buttons */}
+            {/* Action Buttons */}
+            <ScrollReveal direction="up" delayMs={550} durationMs={700}>
               <div className="flex flex-wrap items-center gap-3 pt-3">
                 <a
                   href="#projects"
@@ -495,12 +549,11 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
                   <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
                 </Link>
               </div>
-
-            </div>
-
+            </ScrollReveal>
           </div>
-        </section>
-      </ScrollReveal>
+
+        </div>
+      </section>
 
 
 
@@ -564,6 +617,6 @@ export default function DashboardClient({ user, dbUser, dbProjects }: DashboardC
         onClose={() => setSelectedProject(null)}
       />
 
-    </div>
+    </motion.div>
   );
 }

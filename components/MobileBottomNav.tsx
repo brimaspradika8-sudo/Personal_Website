@@ -7,17 +7,17 @@ import { useRouter, usePathname } from "next/navigation";
 import { soundFx } from "@/lib/audio/sound";
 
 export default function MobileBottomNav() {
-  const { dict } = useLanguage();
+  const { lang, dict } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("home");
 
   const navItems = [
-    { id: "home", label: "Beranda", href: "#hero", Icon: Compass },
-    { id: "about", label: "About", href: "#about", Icon: User },
-    { id: "projects", label: "Project", href: "#projects", Icon: FolderGit2 },
-    { id: "blog", label: "Blog", href: "#blog", Icon: BookOpen },
-    { id: "profile", label: "Profile", href: "/profile", Icon: UserCheck },
+    { id: "home", label: lang === "id" ? "Beranda" : "Home", href: "#hero", Icon: Compass },
+    { id: "about", label: lang === "id" ? "Tentang" : "About", href: "#about", Icon: User },
+    { id: "projects", label: lang === "id" ? "Proyek" : "Projects", href: "#projects", Icon: FolderGit2 },
+    { id: "blog", label: lang === "id" ? "Artikel" : "Blog", href: "/posts", Icon: BookOpen },
+    { id: "profile", label: lang === "id" ? "Profil" : "Profile", href: "/profile", Icon: UserCheck },
   ];
 
   const getTabIndex = (tab: string) => {
@@ -71,12 +71,16 @@ export default function MobileBottomNav() {
               key={item.id}
               type="button"
               onClick={() => handleNav(item.id, item.href)}
-              className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-300 ${
+              className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-300 relative ${
                 isActive
                   ? "bg-[#DC2626] text-white font-bold shadow-lg shadow-[#DC2626]/40"
                   : "text-white/70 hover:text-white"
               }`}
             >
+              {/* Feature 3.1: Glowing White Active Indicator Dot */}
+              {isActive && (
+                <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,1)] animate-pulse mb-0.5" />
+              )}
               <IconComponent className={`w-4 h-4 ${isActive ? "text-white" : "text-white/70"}`} />
               <span className={`text-[10px] tracking-tight truncate max-w-[54px] ${isActive ? "text-white font-bold" : "text-white/70"}`}>
                 {item.label}

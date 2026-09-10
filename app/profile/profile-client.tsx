@@ -93,12 +93,36 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const [sfxEnabled, setSfxEnabled] = useState(soundFx.getIsEnabled());
-  const [mode, setMode] = useState<"day" | "night">(() => {
+  const [mode, setMode] = useState<"day" | "night">("day");
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem("landscape_mode") as "day" | "night") || "night";
+      const savedMode = localStorage.getItem("landscape_mode") as "day" | "night";
+      if (savedMode === "night") {
+        setMode("night");
+        document.documentElement.classList.add("dark");
+      } else {
+        setMode("day");
+        document.documentElement.classList.remove("dark");
+      }
     }
-    return "night";
-  });
+  }, []);
+
+  const handleToggleMode = () => {
+    const nextMode = mode === "day" ? "night" : "day";
+    setMode(nextMode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("landscape_mode", nextMode);
+      if (nextMode === "night") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    }
+    soundFx.playClick();
+  };
+
+  const isNight = mode === "night";
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -222,17 +246,21 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   };
 
   return (
-    <div className="relative min-h-[100dvh] w-full font-sans antialiased text-white pb-32 sm:pb-24 bg-[#0A0D14] selection:bg-[#DC2626] selection:text-white">
+    <div className={`relative min-h-[100dvh] w-full font-sans antialiased pb-32 sm:pb-24 selection:bg-[#DC2626] selection:text-white transition-colors duration-300 ${
+      isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#F8F9FA] text-[#1A1A1A]"
+    }`}>
       
-      {/* Spider-Man Web HUD Ambient Background Overlay */}
-      <div className="fixed inset-0 z-0 pointer-events-none opacity-20 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:24px_24px]" />
+      {/* Subtle Spider-Man Ambient Background Overlay */}
+      <div className={`fixed inset-0 z-0 pointer-events-none opacity-15 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:24px_24px]`} />
 
-      {/* Spider-Man Glowing Ambient Red/Blue Orbs */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-[#DC2626]/15 rounded-full filter blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-[#2563EB]/15 rounded-full filter blur-[120px] pointer-events-none" />
+      {/* Spider-Man Glowing Ambient Orbs */}
+      <div className="fixed top-0 left-1/4 w-96 h-96 bg-[#DC2626]/10 rounded-full filter blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-[#2563EB]/10 rounded-full filter blur-[120px] pointer-events-none" />
 
       {/* Header / Sticky Top Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0D14]/90 border-b border-[#DC2626]/30 backdrop-blur-md">
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-colors duration-300 border-b ${
+        isNight ? "bg-[#12160F]/90 border-[#2A2F26] text-white" : "bg-white/90 border-slate-200 text-slate-900 shadow-sm"
+      }`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <Link
             href="/dashboard"
@@ -240,14 +268,28 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition-all hover:scale-105 cursor-pointer shadow-lg shadow-[#DC2626]/20 border border-white/20"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Kembali ke Beranda</span>
+            <span>{lang === "id" ? "Kembali ke Beranda" : "Back to Home"}</span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-[#DC2626] animate-pulse" />
-            <span className="font-display text-sm font-black uppercase tracking-wider text-white">
-              PROFILE <span className="text-[#DC2626]">HUB</span>
-            </span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleToggleMode}
+              className={`p-2 rounded-full border transition-all cursor-pointer ${
+                isNight
+                  ? "bg-white/10 border-white/20 text-yellow-400 hover:bg-white/20"
+                  : "bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200"
+              }`}
+              title={isNight ? "Ganti ke Mode Terang (Light)" : "Ganti ke Mode Malam (Dark)"}
+            >
+              {isNight ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            <div className="flex items-center gap-1.5">
+              <Zap className="w-4 h-4 text-[#DC2626] animate-pulse" />
+              <span className="font-display text-sm font-black uppercase tracking-wider">
+                PROFILE <span className="text-[#DC2626]">HUB</span>
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -256,7 +298,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 space-y-6 relative z-10">
 
         {/* Profile Spider-Man Banner Card */}
-        <div className="relative bg-[#0F172A]/90 backdrop-blur-xl border border-[#DC2626]/40 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl overflow-hidden group">
+        <div className={`relative backdrop-blur-xl border rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl overflow-hidden group transition-colors duration-300 ${
+          isNight ? "bg-[#1A211A]/90 border-[#2A2F26]" : "bg-white border-slate-200 text-slate-900 shadow-md"
+        }`}>
           
           {/* Subtle Spider-Man Red Glow Line Top Accent */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DC2626] via-[#F5B301] to-[#2563EB]" />
@@ -282,7 +326,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     soundFx.playClick();
                     fileInputRef.current?.click();
                   }}
-                  className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-[#DC2626] bg-[#0A0D14] shrink-0 flex items-center justify-center font-bold text-white transition-transform cursor-pointer p-1 shadow-xl shadow-[#DC2626]/20 hover:scale-105"
+                  className={`relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-[#DC2626] shrink-0 flex items-center justify-center font-bold transition-transform cursor-pointer p-1 shadow-xl shadow-[#DC2626]/20 hover:scale-105 ${
+                    isNight ? "bg-[#0A0D14] text-white" : "bg-slate-100 text-slate-900"
+                  }`}
                   title="Klik untuk mengganti foto profil"
                 >
                   {avatarSrc ? (
@@ -305,8 +351,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 </button>
               ) : (
                 /* GUEST AVATAR: Generic Silhouette Icon */
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-white/20 bg-[#1A212A] shrink-0 flex items-center justify-center text-white/50 shadow-xl">
-                  <UserIcon className="w-14 h-14 text-white/40" />
+                <div className={`relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 shrink-0 flex items-center justify-center shadow-xl ${
+                  isNight ? "border-white/20 bg-[#1A212A] text-white/50" : "border-slate-300 bg-slate-100 text-slate-400"
+                }`}>
+                  <UserIcon className="w-14 h-14" />
                 </div>
               )}
             </div>
@@ -316,27 +364,31 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               {/* Badges: Only render user badges if Authenticated */}
               {isAuthenticated ? (
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <span className="px-3 py-0.5 rounded-full bg-[#DC2626]/20 border border-[#DC2626] text-[#EF4444] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="px-3 py-0.5 rounded-full bg-[#DC2626]/15 border border-[#DC2626] text-[#DC2626] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <Flame className="w-3.5 h-3.5 text-[#DC2626]" />
                     <span>MEMBER</span>
                   </span>
-                  <span className="px-3 py-0.5 rounded-full bg-[#2563EB]/20 border border-[#2563EB] text-[#60A5FA] text-xs font-mono font-bold uppercase tracking-wider">
+                  <span className="px-3 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#2563EB] text-[#2563EB] dark:text-[#60A5FA] text-xs font-mono font-bold uppercase tracking-wider">
                     TERAUTENTIKASI
                   </span>
                 </div>
               ) : (
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <span className="px-3 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-xs font-mono font-bold uppercase tracking-wider">
+                  <span className={`px-3 py-0.5 rounded-full border text-xs font-mono font-bold uppercase tracking-wider ${
+                    isNight ? "bg-white/10 border-white/20 text-white/70" : "bg-slate-100 border-slate-300 text-slate-600"
+                  }`}>
                     GUEST SESSION
                   </span>
                 </div>
               )}
 
-              <h1 className="font-display text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
+              <h1 className="font-display text-3xl sm:text-4xl font-black tracking-tight uppercase">
                 {userName}
               </h1>
 
-              <p className="text-xs sm:text-sm font-mono text-white/70 flex items-center justify-center sm:justify-start gap-2">
+              <p className={`text-xs sm:text-sm font-mono flex items-center justify-center sm:justify-start gap-2 ${
+                isNight ? "text-white/70" : "text-slate-600"
+              }`}>
                 <Mail className="w-4 h-4 text-[#DC2626]" />
                 <span>{isAuthenticated ? userEmail : "Silakan masuk untuk melihat profil Anda"}</span>
               </p>
@@ -349,7 +401,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   <button
                     type="submit"
                     onClick={() => soundFx.playClick()}
-                    className="px-5 py-2.5 rounded-xl border border-[#DC2626] text-[#EF4444] hover:bg-[#DC2626] hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg"
+                    className="px-5 py-2.5 rounded-xl border border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626] hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Sign Out</span>
@@ -359,7 +411,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 <Link
                   href="/login"
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm transition-all hover:scale-105 flex items-center gap-2 cursor-pointer shadow-lg shadow-[#DC2626]/30 border border-white/20 animate-pulse"
+                  className="px-6 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm transition-all hover:scale-105 flex items-center gap-2 cursor-pointer shadow-lg shadow-[#DC2626]/30 border border-white/20"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>Sign In / Login</span>
@@ -371,7 +423,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         </div>
 
         {/* Tab Controller */}
-        <div className="p-1 rounded-xl bg-[#0F172A]/90 border border-[#DC2626]/30 grid grid-cols-2 sm:grid-cols-4 gap-1 shadow-xl">
+        <div className={`p-1 rounded-xl border grid grid-cols-2 sm:grid-cols-4 gap-1 shadow-md transition-colors duration-300 ${
+          isNight ? "bg-[#1A211A]/90 border-[#2A2F26]" : "bg-white border-slate-200"
+        }`}>
           {[
             { id: "info", label: "Overview", icon: UserIcon },
             { id: "edit", label: "Edit Profil", icon: isAuthenticated ? Edit3 : Lock },
@@ -390,7 +444,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                   isActive
                     ? "bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30"
-                    : "text-white/70 hover:text-white hover:bg-white/5"
+                    : isNight
+                    ? "text-white/70 hover:text-white hover:bg-white/5"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -401,18 +457,20 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         </div>
 
         {/* Tab Content Box */}
-        <div className="bg-[#0F172A]/90 border border-[#DC2626]/30 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div className={`border rounded-2xl p-6 sm:p-8 shadow-md transition-colors duration-300 ${
+          isNight ? "bg-[#1A211A]/90 border-[#2A2F26]" : "bg-white border-slate-200 text-slate-900"
+        }`}>
           
           {/* TAB 1: OVERVIEW */}
           {activeTab === "info" && (
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4 flex items-center justify-between">
+              <div className={`border-b pb-4 flex items-center justify-between ${isNight ? "border-white/10" : "border-slate-200"}`}>
                 <div>
-                  <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+                  <h3 className="font-display text-lg font-bold flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[#DC2626]" />
                     <span>STATUS AKUN &amp; IDENTITAS</span>
                   </h3>
-                  <p className="text-xs text-white/70 mt-1">
+                  <p className={`text-xs mt-1 ${isNight ? "text-white/70" : "text-slate-500"}`}>
                     Ringkasan status sesi dan autentikasi Anda.
                   </p>
                 </div>
@@ -420,36 +478,36 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
               {isAuthenticated ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-[#0A0D14] border border-[#DC2626]/30 space-y-1">
+                  <div className={`p-4 rounded-xl border space-y-1 ${isNight ? "bg-[#12160F] border-[#DC2626]/30" : "bg-slate-50 border-slate-200"}`}>
                     <span className="text-xs text-[#DC2626] font-mono font-bold uppercase flex items-center gap-2">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>STATUS SESI</span>
                     </span>
-                    <p className="text-sm font-bold text-white">Terautentikasi (Aktif)</p>
+                    <p className="text-sm font-bold">Terautentikasi (Aktif)</p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-[#0A0D14] border border-[#2563EB]/30 space-y-1">
-                    <span className="text-xs text-[#60A5FA] font-mono font-bold uppercase flex items-center gap-2">
+                  <div className={`p-4 rounded-xl border space-y-1 ${isNight ? "bg-[#12160F] border-[#2563EB]/30" : "bg-slate-50 border-slate-200"}`}>
+                    <span className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-mono font-bold uppercase flex items-center gap-2">
                       <Calendar className="w-3.5 h-3.5" />
                       <span>TERDAFTAR SEJAK</span>
                     </span>
-                    <p className="text-sm font-bold text-white">{createdAt}</p>
+                    <p className="text-sm font-bold">{createdAt}</p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-[#0A0D14] border border-[#DC2626]/30 space-y-1 sm:col-span-2">
+                  <div className={`p-4 rounded-xl border space-y-1 sm:col-span-2 ${isNight ? "bg-[#12160F] border-[#DC2626]/30" : "bg-slate-50 border-slate-200"}`}>
                     <span className="text-xs text-[#DC2626] font-mono font-bold uppercase flex items-center gap-2">
                       <Mail className="w-3.5 h-3.5" />
                       <span>EMAIL TERHUBUNG</span>
                     </span>
-                    <p className="text-sm font-mono text-white">{userEmail}</p>
+                    <p className="text-sm font-mono">{userEmail}</p>
                   </div>
                 </div>
               ) : (
-                <div className="p-8 rounded-xl border border-white/10 bg-[#0A0D14] text-center space-y-4">
-                  <UserIcon className="w-12 h-12 text-white/30 mx-auto" />
+                <div className={`p-8 rounded-xl border text-center space-y-4 ${isNight ? "border-white/10 bg-[#12160F]" : "border-slate-200 bg-slate-50"}`}>
+                  <UserIcon className="w-12 h-12 text-slate-400 mx-auto" />
                   <div className="space-y-1 max-w-md mx-auto">
-                    <h4 className="font-display text-base font-bold text-white">Anda Belum Login</h4>
-                    <p className="text-xs text-white/70 leading-relaxed">
+                    <h4 className="font-display text-base font-bold">Anda Belum Login</h4>
+                    <p className={`text-xs leading-relaxed ${isNight ? "text-white/70" : "text-slate-500"}`}>
                       Silakan masuk untuk mengakses fitur lengkap profil Anda, mengedit foto profil kustom, dan mengelola identitas Anda.
                     </p>
                   </div>
@@ -469,24 +527,24 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           {/* TAB 2: EDIT PROFILE */}
           {activeTab === "edit" && (
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+              <div className={`border-b pb-4 ${isNight ? "border-white/10" : "border-slate-200"}`}>
+                <h3 className="font-display text-lg font-bold flex items-center gap-2">
                   <Edit3 className="w-4 h-4 text-[#DC2626]" />
                   <span>EDIT PROFIL &amp; FOTO</span>
                 </h3>
-                <p className="text-xs text-white/70 mt-1">
+                <p className={`text-xs mt-1 ${isNight ? "text-white/70" : "text-slate-500"}`}>
                   Perbarui nama tampilan dan unggah foto kustom.
                 </p>
               </div>
 
               {!isAuthenticated ? (
-                <div className="p-8 rounded-xl border border-[#DC2626]/30 bg-[#0A0D14] text-center space-y-4">
+                <div className={`p-8 rounded-xl border text-center space-y-4 ${isNight ? "border-[#DC2626]/30 bg-[#12160F]" : "border-slate-200 bg-slate-50"}`}>
                   <Lock className="w-8 h-8 text-[#DC2626] mx-auto" />
                   <div className="space-y-1 max-w-sm mx-auto">
-                    <h3 className="font-display text-base font-bold text-white">
+                    <h3 className="font-display text-base font-bold">
                       Fitur Edit Profil Terkunci
                     </h3>
-                    <p className="text-xs text-white/70">
+                    <p className={`text-xs ${isNight ? "text-white/70" : "text-slate-500"}`}>
                       Silakan login terlebih dahulu untuk memperbarui nama dan foto profil kustom.
                     </p>
                   </div>
@@ -505,21 +563,21 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <div
                       className={`p-3.5 rounded-xl text-xs font-bold flex items-center gap-2.5 border ${
                         message.type === "success"
-                          ? "bg-[#DC2626]/20 border-[#DC2626] text-white"
-                          : "bg-red-900/40 border-red-500 text-white"
+                          ? "bg-[#DC2626]/10 border-[#DC2626] text-[#DC2626]"
+                          : "bg-red-500/10 border-red-500 text-red-500"
                       }`}
                     >
                       {message.type === "success" ? (
                         <Check className="w-4 h-4 text-[#DC2626]" />
                       ) : (
-                        <AlertCircle className="w-4 h-4 text-red-400" />
+                        <AlertCircle className="w-4 h-4 text-red-500" />
                       )}
                       <span>{message.text}</span>
                     </div>
                   )}
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-white/70 block">
+                    <label className={`text-xs font-bold block ${isNight ? "text-white/70" : "text-slate-700"}`}>
                       Nama Tampilan Profil
                     </label>
                     <input
@@ -528,7 +586,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Masukkan nama Anda..."
                       required
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#0A0D14] border border-white/20 text-sm text-white focus:outline-none focus:border-[#DC2626]"
+                      className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:border-[#DC2626] ${
+                        isNight ? "bg-[#12160F] border-white/20 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      }`}
                     />
                   </div>
 
@@ -554,20 +614,40 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           {/* TAB 3: SETTINGS */}
           {activeTab === "settings" && (
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+              <div className={`border-b pb-4 ${isNight ? "border-white/10" : "border-slate-200"}`}>
+                <h3 className="font-display text-lg font-bold flex items-center gap-2">
                   <Settings className="w-4 h-4 text-[#DC2626]" />
                   <span>PENGATURAN TEMA &amp; SUARA</span>
                 </h3>
               </div>
 
               <div className="space-y-3">
-                <div className="p-4 rounded-xl bg-[#0A0D14] border border-white/10 flex items-center justify-between gap-4">
+                {/* Theme Mode Option */}
+                <div className={`p-4 rounded-xl border flex items-center justify-between gap-4 ${isNight ? "bg-[#12160F] border-white/10" : "bg-slate-50 border-slate-200"}`}>
                   <div className="flex items-center gap-3">
-                    {sfxEnabled ? <Volume2 className="w-4 h-4 text-[#DC2626]" /> : <VolumeX className="w-4 h-4 text-white/40" />}
+                    {isNight ? <Moon className="w-4 h-4 text-yellow-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
                     <div>
-                      <p className="text-sm font-bold text-white">Efek Suara (SFX)</p>
-                      <p className="text-xs text-white/60">Umpan balik suara interaktif</p>
+                      <p className="text-sm font-bold">Tema Aplikasi (Day / Night)</p>
+                      <p className={`text-xs ${isNight ? "text-white/60" : "text-slate-500"}`}>
+                        {isNight ? "Mode Malam Hari (Aktif)" : "Mode Siang Hari (Aktif)"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleToggleMode}
+                    className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-xs font-bold text-white transition-all cursor-pointer shadow-md"
+                  >
+                    <span>{isNight ? "Ganti ke Mode Terang" : "Ganti ke Mode Malam"}</span>
+                  </button>
+                </div>
+
+                {/* Sound FX Option */}
+                <div className={`p-4 rounded-xl border flex items-center justify-between gap-4 ${isNight ? "bg-[#12160F] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                  <div className="flex items-center gap-3">
+                    {sfxEnabled ? <Volume2 className="w-4 h-4 text-[#DC2626]" /> : <VolumeX className="w-4 h-4 opacity-40" />}
+                    <div>
+                      <p className="text-sm font-bold">Efek Suara (SFX)</p>
+                      <p className={`text-xs ${isNight ? "text-white/60" : "text-slate-500"}`}>Umpan balik suara interaktif</p>
                     </div>
                   </div>
                   <button
@@ -584,20 +664,20 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           {/* TAB 4: HELP */}
           {activeTab === "help" && (
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+              <div className={`border-b pb-4 ${isNight ? "border-white/10" : "border-slate-200"}`}>
+                <h3 className="font-display text-lg font-bold flex items-center gap-2">
                   <HelpCircle className="w-4 h-4 text-[#DC2626]" />
                   <span>PUSAT BANTUAN &amp; FAQ</span>
                 </h3>
               </div>
 
               <div className="space-y-3">
-                <div className="p-4 rounded-xl bg-[#0A0D14] border border-white/10 space-y-1">
-                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                <div className={`p-4 rounded-xl border space-y-1 ${isNight ? "bg-[#12160F] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                  <h4 className="text-xs font-bold flex items-center gap-2">
                     <MessageSquare className="w-3.5 h-3.5 text-[#DC2626]" />
                     <span>Bagaimana cara kerja Spider-Man Unmasking effect?</span>
                   </h4>
-                  <p className="text-xs text-white/70 leading-relaxed pl-5">
+                  <p className={`text-xs leading-relaxed pl-5 ${isNight ? "text-white/70" : "text-slate-600"}`}>
                     Klik foto profil di Hero Section atau tombol UNMASK di pojok kanan atas foto untuk memicu animasi terkelupasnya topeng Spider-Man dari atas ke bawah.
                   </p>
                 </div>
