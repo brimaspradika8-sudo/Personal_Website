@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     }
   }
 
-  // 3. Cek role admin untuk menentukan apakah tombol Admin Hub ditampilkan
+  // 3. Cek role admin untuk menentukan apakah tombol Admin Panel ditampilkan
   const envAdminEmails = (process.env.ADMIN_EMAILS ?? "")
     .split(",")
     .map((e) => e.trim().toLowerCase())

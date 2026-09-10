@@ -106,7 +106,7 @@ export default function AdminDashboard({
               B
             </div>
             <span className={`font-bold tracking-tight text-sm font-sans ${isNight ? "text-white" : "text-black"}`}>
-              Brimas <span className="opacity-70 font-normal">Hub</span>
+              Brimas <span className="opacity-70 font-normal">Admin</span>
             </span>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 opacity-70 hover:opacity-100">

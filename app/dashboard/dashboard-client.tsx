@@ -267,7 +267,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                     title="Kembali ke Admin Control Panel"
                   >
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Admin Hub</span>
+                    <span className="hidden sm:inline">Admin Panel</span>
                   </Link>
                 )}
                 <Link
