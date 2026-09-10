@@ -20,9 +20,11 @@ import {
   Menu,
   X,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  LogOut,
 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
+import { signOut } from "@/lib/actions/auth";
 
 interface DashboardStats {
   projectsCount: number;
@@ -80,11 +82,11 @@ export default function AdminDashboard({
   const initial = displayName.charAt(0).toUpperCase();
 
   const NAV_ITEMS = [
-    { label: "Overview", icon: LayoutDashboard, href: "/dashboard", active: true },
-    { label: "Projects", icon: FolderKanban, href: "/dashboard/projects" },
-    { label: "Articles", icon: FileText, href: "/dashboard/articles" },
-    { label: "Users", icon: Users, href: "/dashboard/users" },
-    { label: "Comments", icon: MessageSquare, href: "/dashboard/comments" },
+    { label: "Overview", icon: LayoutDashboard, href: "/admin", active: true },
+    { label: "Projects", icon: FolderKanban, href: "/admin/projects" },
+    { label: "Articles", icon: FileText, href: "/admin/articles" },
+    { label: "Users", icon: Users, href: "/admin/users" },
+    { label: "Comments", icon: MessageSquare, href: "/admin/comments" },
   ];
 
   return (
@@ -133,8 +135,8 @@ export default function AdminDashboard({
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-inherit">
-          <div className={`p-4 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-white/5" : "bg-black/5"}`}>
+        <div className="p-4 border-t border-inherit space-y-2">
+          <div className={`p-3 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-white/5" : "bg-black/5"}`}>
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-9 h-9 rounded-full bg-[#DC2626] flex shrink-0 items-center justify-center text-white font-bold text-sm shadow-md overflow-hidden relative">
                 {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
@@ -145,6 +147,18 @@ export default function AdminDashboard({
               </div>
             </div>
           </div>
+
+          <button
+            onClick={async () => {
+              soundFx.playClick();
+              await signOut();
+            }}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white text-xs font-bold transition-all border border-red-500/20 cursor-pointer"
+            title="Keluar dari Akun Admin"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Keluar (Logout)</span>
+          </button>
         </div>
       </aside>
 
@@ -172,7 +186,7 @@ export default function AdminDashboard({
             </div>
 
             <Link
-              href="/dashboard?view=portfolio"
+              href="/dashboard"
               onClick={() => soundFx.playClick()}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] text-xs font-bold hover:bg-[#DC2626] hover:text-white transition-all shadow-sm"
               title="Lihat Tampilan Portfolio / Site"

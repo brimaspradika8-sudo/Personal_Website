@@ -31,7 +31,6 @@ import TechStackMatrix from "@/components/TechStackMatrix";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
 import Lanyard from "@/components/Lanyard";
-import UnmaskRevealPhoto from "@/components/UnmaskRevealPhoto";
 import ScrollReveal from "@/components/ScrollReveal";
 
 
@@ -262,7 +261,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               <div className="flex items-center gap-2">
                 {isAdmin && (
                   <Link
-                    href="/dashboard?view=admin"
+                    href="/admin"
                     onClick={() => soundFx.playClick()}
                     className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DC2626] text-white text-xs font-bold hover:bg-[#B91C1C] transition-all shadow-md shadow-[#DC2626]/30 hover:scale-105"
                     title="Kembali ke Admin Control Panel"
@@ -372,18 +371,24 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 }}
               />
 
-              <UnmaskRevealPhoto
-                maskedSrc="/images/image-masked.png"
-                realSrc={avatarSrc || "/images/avatar.webp"}
-                alt={displayName}
-                className="w-full h-full filter brightness-[1.08] contrast-[1.12]"
-              />
+              {/* Hero Portrait Photo (No Card Frame / Border / Box) */}
+              <div className="relative w-full h-full overflow-hidden pointer-events-none">
+                <Image
+                  src={avatarSrc || "/images/avatar.png"}
+                  alt="Brimas Pradika Utama"
+                  fill
+                  priority
+                  unoptimized
+                  sizes="(max-width: 768px) 380px, 460px"
+                  className="object-cover object-center w-full h-full pointer-events-none filter brightness-[1.05] contrast-[1.08]"
+                />
+              </div>
             </div>
 
             {/* Desktop Headline & CTAs (Absolute Left) */}
             <div className="hidden sm:block absolute left-0 bottom-6 sm:bottom-12 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
               <h1 className="font-display text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
-                {lang === "id" ? `SAYA ${displayName.toUpperCase()}` : `I'M ${displayName.toUpperCase()}`}
+                {lang === "id" ? "SAYA BRIMAS PRADIKA UTAMA" : "I'M BRIMAS PRADIKA UTAMA"}
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-sm font-medium">
                 {lang === "id"
@@ -414,7 +419,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
             <div className="sm:hidden w-full z-20 space-y-3.5 text-center text-white px-2 pt-2 pb-4">
               <h1 className="font-display text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
-                {lang === "id" ? `SAYA ${displayName.toUpperCase()}` : `I'M ${displayName.toUpperCase()}`}
+                {lang === "id" ? "SAYA BRIMAS PRADIKA UTAMA" : "I'M BRIMAS PRADIKA UTAMA"}
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-xs mx-auto drop-shadow-sm font-medium">
                 {lang === "id"

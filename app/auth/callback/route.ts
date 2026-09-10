@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { syncUserToDatabase } from "@/lib/actions/auth";
+import { checkIsAdmin } from "@/lib/actions/article";
 import { getSupabaseEnv } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
@@ -69,7 +70,17 @@ export async function GET(request: Request) {
         console.warn("OAuth callback user sync failed:", err);
       }
 
-      return response;
+      // Check role to decide final redirect destination
+      const isAdmin = await checkIsAdmin(data.user.email);
+      const targetPath = isAdmin ? "/admin" : (next && next !== "/dashboard" ? next : "/dashboard");
+
+      const finalResponse = NextResponse.redirect(`${origin}${targetPath}`);
+      // Copy cookies to final response
+      response.cookies.getAll().forEach((c) => {
+        finalResponse.cookies.set(c.name, c.value, c);
+      });
+
+      return finalResponse;
     }
   }
 

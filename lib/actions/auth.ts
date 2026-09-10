@@ -7,11 +7,25 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
 function formatAuthError(errorMsg: string): string {
+  const lower = errorMsg.toLowerCase();
   if (
-    errorMsg.toLowerCase().includes("invalid api key") ||
-    errorMsg.toLowerCase().includes("invalid_api_key")
+    lower.includes("invalid api key") ||
+    lower.includes("invalid_api_key")
   ) {
     return "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) tidak valid atau belum di-set di Dashboard Vercel.";
+  }
+  if (
+    lower.includes("invalid login credentials") ||
+    lower.includes("invalid_credentials") ||
+    lower.includes("wrong password")
+  ) {
+    return "Email atau password yang Anda masukkan salah. Silakan periksa kembali.";
+  }
+  if (lower.includes("email not confirmed")) {
+    return "Email Anda belum dikonfirmasi. Silakan periksa inbox email Anda.";
+  }
+  if (lower.includes("user not found")) {
+    return "Akun dengan email ini tidak ditemukan.";
   }
   return errorMsg;
 }
@@ -62,8 +76,8 @@ export async function syncUserToDatabase(
     }
 
     return existingUser;
-  } catch (error) {
-    console.warn("Failed or timed out syncing user to database:", error);
+  } catch (err) {
+    console.error("Failed to sync user to database:", err);
     return null;
   }
 }
@@ -175,9 +189,10 @@ export async function signInWithGithub() {
 
 // --- Login manual (email + password) ---
 export async function signInWithPassword(formData: FormData) {
+  let targetPath = "/dashboard";
   try {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const email = (formData.get("email") as string || "").trim();
+    const password = (formData.get("password") as string || "").trim();
 
     if (!email || !password) {
       return { error: "Email dan password wajib diisi." };
@@ -206,6 +221,9 @@ export async function signInWithPassword(formData: FormData) {
         data.user.user_metadata?.full_name,
         data.user.user_metadata?.avatar_url
       );
+
+      const isAdmin = await checkIsAdmin(data.user.email);
+      targetPath = isAdmin ? "/admin" : "/dashboard";
     }
   } catch (err: any) {
     if (err?.digest?.startsWith("NEXT_REDIRECT") || err?.message?.includes("NEXT_REDIRECT")) {
@@ -215,7 +233,7 @@ export async function signInWithPassword(formData: FormData) {
     return { error: formatAuthError(err?.message || "Gagal melakukan proses masuk.") };
   }
 
-  redirect("/dashboard");
+  redirect(targetPath);
 }
 
 // --- Register manual (nama, email, password) ---
