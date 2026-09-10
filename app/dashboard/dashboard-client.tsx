@@ -356,7 +356,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               {/* Hero Portrait Photo (No Card Frame / Border / Box) */}
               <div className="relative w-full h-full overflow-hidden pointer-events-none">
                 <Image
-                  src={avatarSrc || "/images/avatar.webp "}
+                  src="/images/avatar.webp"
                   alt="Brimas Pradika Utama"
                   fill
                   priority
