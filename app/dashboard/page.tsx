@@ -34,8 +34,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     authError: authError?.message ?? "none",
   });
 
-  // 2. Jika tidak ada sesi aktif, redirect ke login.
-  if (!user) {
+  // 2. Jika visitor tidak login dan mencoba mengakses view admin, redirect ke login.
+  if (!user && requestedView === "admin") {
     redirect("/login");
   }
 
