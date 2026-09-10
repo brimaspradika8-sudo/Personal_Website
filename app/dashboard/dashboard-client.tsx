@@ -475,10 +475,10 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             <ScrollReveal direction="up" delayMs={250} durationMs={700}>
               <div className="space-y-3">
                 <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none">
-                  {displayName.toUpperCase()}
+                  BRIMAS PRADIKA UTAMA
                 </h2>
                 <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#DC2626]">
-                  {isAdmin ? "AI Systems Developer • SMK Bhakti Mulia Pare" : (user?.email ?? "")}
+                  AI Systems Developer • SMK Bhakti Mulia Pare
                 </p>
               </div>
             </ScrollReveal>
