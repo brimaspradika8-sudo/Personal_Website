@@ -252,17 +252,6 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Profile Avatar / Login Action Button */}
             {user ? (
               <div className="flex items-center gap-2">
-                {isAdmin && (
-                  <Link
-                    href="/admin"
-                    onClick={() => soundFx.playClick()}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DC2626] text-white text-xs font-bold hover:bg-[#B91C1C] transition-all shadow-md shadow-[#DC2626]/30 hover:scale-105"
-                    title="Kembali ke Admin Control Panel"
-                  >
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Admin Panel</span>
-                  </Link>
-                )}
                 <Link
                   href="/profile"
                   onClick={() => soundFx.playClick()}
@@ -278,7 +267,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                       unoptimized
                     />
                   ) : (
-                    <span>{initialLetter}</span>
+                    <span>{(displayName || "U").charAt(0).toUpperCase()}</span>
                   )}
                 </Link>
               </div>
@@ -367,7 +356,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               {/* Hero Portrait Photo (No Card Frame / Border / Box) */}
               <div className="relative w-full h-full overflow-hidden pointer-events-none">
                 <Image
-                  src={avatarSrc || "/images/avatar.webp"}
+                  src={avatarSrc || "/images/avatar.webp "}
                   alt="Brimas Pradika Utama"
                   fill
                   priority
