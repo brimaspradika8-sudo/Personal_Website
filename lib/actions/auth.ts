@@ -135,6 +135,9 @@ export async function signInWithGoogle() {
       provider: "google",
       options: {
         redirectTo: redirectUrl,
+        queryParams: {
+          prompt: "select_account",
+        },
       },
     });
 
@@ -275,6 +278,7 @@ export async function signUpWithPassword(formData: FormData) {
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  revalidatePath("/", "layout");
   redirect("/login");
 }
 

@@ -248,14 +248,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               <span>{lang.toUpperCase()}</span>
             </button>
 
-            <button
-              onClick={handleToggleSfx}
-              className="p-1.5 rounded-full hover:bg-white/10 transition-all cursor-pointer"
-              title={sfxEnabled ? "Mute Sound FX" : "Unmute Sound FX"}
-            >
-              {sfxEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 opacity-50" />}
-            </button>
-
+    
             {/* Profile Avatar / Login Action Button */}
             {user ? (
               <div className="flex items-center gap-2">
@@ -374,7 +367,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               {/* Hero Portrait Photo (No Card Frame / Border / Box) */}
               <div className="relative w-full h-full overflow-hidden pointer-events-none">
                 <Image
-                  src={avatarSrc || "/images/avatar.png"}
+                  src={avatarSrc || "/images/avatar.webp"}
                   alt="Brimas Pradika Utama"
                   fill
                   priority
