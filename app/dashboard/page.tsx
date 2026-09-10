@@ -2,7 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
-import DashboardClient from "./dashboard-client";
+import AdminDashboard from "./admin-dashboard";
+import UserDashboard from "./user-dashboard";
 
 // Paksa Next.js untuk TIDAK PERNAH men-cache halaman ini secara statis.
 // Tanpa ini, Next.js bisa menyimpan HTML hasil render user pertama (admin)
@@ -37,65 +38,66 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // 3. Ambil data user dari database Prisma berdasarkan user.id dari sesi AKTIF.
-  //    Selalu query by user.id (bukan email dari props/state), agar benar-benar
-  //    data milik akun yang sedang login sekarang.
+  // 3. Fetch db user berdasarkan user.id dari sesi AKTIF
   let dbUser = null;
-  try {
-    dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
-    });
-  } catch {
-    // Ignore database connection timeouts — dashboard tetap render dengan data Supabase
+  if (user) {
+    try {
+      dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+      });
+    } catch {
+      // Ignore database connection timeouts
+    }
   }
-
-  // 4. Validasi Role Admin di SERVER COMPONENT (tidak bisa di-bypass dari client).
-  //    Hanya user dengan role "ADMIN" di DATABASE yang boleh melihat full dashboard.
-  //    Jika bukan admin, mereka tetap dapat masuk dashboard tapi dengan akses terbatas
-  //    (DashboardClient sudah handle ini via props isAdmin).
-  const isAdmin = dbUser?.role === "ADMIN";
 
   // [DIAGNOSTIK] Konfirmasi role yang diputuskan server untuk user ini.
   console.log("[DashboardPage] Role check:", {
     dbUserId: dbUser?.id ?? "not found in DB",
     dbUserEmail: dbUser?.email ?? "null",
     role: dbUser?.role ?? "null",
-    isAdmin,
   });
 
-  // 5. Fetch Projects — hanya setelah identitas & role tervalidasi.
-  let supabaseProjects: any[] = [];
-  try {
-    const { data, error } = await supabase
-      .from("Project")
-      .select("*")
-      .order("created_at", { ascending: false });
+  // 4. Validasi Role Admin di SERVER COMPONENT (tidak bisa di-bypass dari client).
+  //    Cek via database (sumber kebenaran) dan env var sebagai fallback.
+  const userEmail = (user?.email || dbUser?.email || "").toLowerCase().trim();
+  const envAdminEmails = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
 
-    if (!error && data) {
-      supabaseProjects = data;
-    }
-  } catch (err) {
-    console.warn("Supabase Project fetch failed, fallback to Prisma:", err);
+  const isAdmin =
+    dbUser?.role === "ADMIN" ||
+    (envAdminEmails.length > 0 && envAdminEmails.includes(userEmail));
+
+  // 5. Render komponen berbeda berdasarkan role
+  if (!isAdmin) {
+    return <UserDashboard user={user} dbUser={dbUser} />;
   }
 
-  let dbProjects: any[] = [];
-  try {
-    dbProjects = await prisma.project.findMany({
-      orderBy: { created_at: "desc" },
-    });
-  } catch {
-    dbProjects = [];
-  }
+  // 6. Fetch Dashboard Stats ONLY for admin
+  const projectsCount = await prisma.project.count().catch(() => 0);
+  const articlesCount = await prisma.article.count().catch(() => 0);
+  const usersCount = await prisma.user.count().catch(() => 0);
+  const commentsCount = await prisma.comment.count().catch(() => 0);
 
-  // Prefer data langsung dari Supabase jika tersedia
-  const finalProjects = supabaseProjects.length > 0 ? supabaseProjects : dbProjects;
+  // Fetch Recent Items ONLY for admin
+  const recentProjects = await prisma.project.findMany({
+    take: 5,
+    orderBy: { created_at: "desc" },
+  }).catch(() => []);
+
+  const recentArticles = await prisma.article.findMany({
+    take: 5,
+    orderBy: { created_at: "desc" },
+  }).catch(() => []);
 
   return (
-    <DashboardClient
+    <AdminDashboard
       user={user}
       dbUser={dbUser}
-      dbProjects={finalProjects}
-      isAdmin={isAdmin}
+      stats={{ projectsCount, articlesCount, usersCount, commentsCount }}
+      recentProjects={recentProjects}
+      recentArticles={recentArticles}
     />
   );
 }

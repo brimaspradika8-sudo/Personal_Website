@@ -4,6 +4,7 @@ import { getSupabaseEnv } from "./client";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+
   const { supabaseUrl, supabaseAnonKey } = getSupabaseEnv();
 
   try {
@@ -15,13 +16,16 @@ export async function updateSession(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
+
           setAll(cookiesToSet) {
             // PENTING: Tulis cookies ke request DAN ke response agar sesi
             // selalu ter-refresh dan tidak pernah membaca token lama.
             cookiesToSet.forEach(({ name, value }) =>
               request.cookies.set(name, value)
             );
+
             supabaseResponse = NextResponse.next({ request });
+
             cookiesToSet.forEach(({ name, value, options }) =>
               supabaseResponse.cookies.set(name, value, options)
             );
@@ -50,9 +54,11 @@ export async function updateSession(request: NextRequest) {
       return redirectResponse;
     }
   } catch (err) {
-    console.error("Middleware Supabase Session Error:", err);
+    console.error(
+      "Middleware Supabase Session Error:",
+      err
+    );
   }
 
   return supabaseResponse;
 }
-
