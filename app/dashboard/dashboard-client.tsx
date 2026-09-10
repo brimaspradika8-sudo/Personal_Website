@@ -18,6 +18,7 @@ import {
   Code,
   Layers,
   Database,
+  ShieldCheck,
 } from "lucide-react";
 
 import { motion } from "framer-motion";
@@ -258,24 +259,37 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
 
             {/* Profile Avatar / Login Action Button */}
             {user ? (
-              <Link
-                href="/profile"
-                onClick={() => soundFx.playClick()}
-                className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-md shadow-[#DC2626]/30"
-                title={lang === "id" ? "Buka Profil Saya" : "Open My Profile"}
-              >
-                {avatarSrc ? (
-                  <Image
-                    src={avatarSrc}
-                    alt={displayName}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <span>{initialLetter}</span>
+              <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <Link
+                    href="/dashboard?view=admin"
+                    onClick={() => soundFx.playClick()}
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DC2626] text-white text-xs font-bold hover:bg-[#B91C1C] transition-all shadow-md shadow-[#DC2626]/30 hover:scale-105"
+                    title="Kembali ke Admin Control Panel"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Admin Hub</span>
+                  </Link>
                 )}
-              </Link>
+                <Link
+                  href="/profile"
+                  onClick={() => soundFx.playClick()}
+                  className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-md shadow-[#DC2626]/30"
+                  title={lang === "id" ? "Buka Profil Saya" : "Open My Profile"}
+                >
+                  {avatarSrc ? (
+                    <Image
+                      src={avatarSrc}
+                      alt={displayName}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <span>{initialLetter}</span>
+                  )}
+                </Link>
+              </div>
             ) : (
               <Link
                 href="/login"

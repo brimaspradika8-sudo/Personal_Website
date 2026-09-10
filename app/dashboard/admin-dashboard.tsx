@@ -19,7 +19,8 @@ import {
   Moon,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 
@@ -169,6 +170,16 @@ export default function AdminDashboard({
               <Search className="w-4 h-4 opacity-50 mr-2" />
               <input type="text" placeholder="Search..." className="bg-transparent text-xs outline-none w-32 placeholder:opacity-50" />
             </div>
+
+            <Link
+              href="/dashboard?view=portfolio"
+              onClick={() => soundFx.playClick()}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] text-xs font-bold hover:bg-[#DC2626] hover:text-white transition-all shadow-sm"
+              title="Lihat Tampilan Portfolio / Site"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Tampilan Site</span>
+            </Link>
 
             <button onClick={toggleTheme} className={`p-2 rounded-full transition-all ${isNight ? "hover:bg-white/10 text-white/80" : "hover:bg-black/10 text-black/80"}`}>
               {isNight ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
