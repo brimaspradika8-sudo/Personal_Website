@@ -172,16 +172,14 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
         ease: [0.16, 1, 0.3, 1],
         delay: 0.15,
       }}
-      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
-        isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#ffffff] text-[#1A1A1A]"
-      }`}
+      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#ffffff] text-[#1A1A1A]"
+        }`}
     >
       {/* 1. TOP NAVIGATION HEADER (MATCHING BUCKETLISTLY STYLE) */}
-      <header className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${
-        isNight ? "bg-[#12160F]/90 border-[#2A2F26]" : "bg-[#8a8a88]/90 border-[#7a7a78] text-white"
-      }`}>
+      <header className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${isNight ? "bg-[#12160F]/90 border-[#2A2F26]" : "bg-[#8a8a88]/90 border-[#7a7a78] text-white"
+        }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-          
+
           {/* Logo (Icon Bulat Merah Spider-Man + Personal Brand Name) */}
           <Link
             href="/dashboard"
@@ -203,7 +201,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {[
               { label: lang === "id" ? "Beranda" : "Home", href: "#hero" },
               { label: lang === "id" ? "Tentang" : "About", href: "#about" },
-              { label: lang === "id" ? "Proyek"  : "Projects", href: "#projects" },
+              { label: lang === "id" ? "Proyek" : "Projects", href: "#projects" },
               { label: lang === "id" ? "Artikel" : "Blog", href: "/posts" },
             ].map((item) => (
               <a
@@ -219,7 +217,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
 
           {/* Right Action Icons & Profile Avatar */}
           <div className="flex items-center gap-2.5 shrink-0 text-white/80">
-            
+
             {/* Ctrl + K Command Palette Visual Hint Badge Button */}
             <button
               onClick={() => {
@@ -248,7 +246,20 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               <span>{lang.toUpperCase()}</span>
             </button>
 
-    
+            {/* Admin Hub Link (Hanya untuk Admin) */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => soundFx.playClick()}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all cursor-pointer shadow-md shadow-[#DC2626]/30 border border-white/20 hover:scale-105"
+                title="Admin Hub"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Admin Hub</span>
+              </Link>
+            )}
+
+
             {/* Profile Avatar / Login Action Button */}
             {user ? (
               <div className="flex items-center gap-2">
@@ -277,7 +288,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 onClick={() => {
                   try {
                     soundFx.playClick();
-                  } catch {}
+                  } catch { }
                 }}
                 className="px-3.5 py-1.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all hover:scale-105 shadow-md shadow-[#DC2626]/30 border border-white/20 relative z-10 cursor-pointer inline-flex items-center justify-center"
               >
@@ -293,11 +304,10 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
       <section
         id="hero"
         onMouseMove={handleMouseMoveHero}
-        className={`relative min-h-[85vh] lg:min-h-[92vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 pt-12 sm:pt-16 md:pt-20 ${
-          isNight ? "bg-[#181D15]" : "bg-gradient-to-b from-[#a3a3a0] via-[#92928f] to-[#7f7f7c]"
-        }`}
+        className={`relative min-h-[85vh] lg:min-h-[92vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 pt-12 sm:pt-16 md:pt-20 ${isNight ? "bg-[#181D15]" : "bg-gradient-to-b from-[#a3a3a0] via-[#92928f] to-[#7f7f7c]"
+          }`}
       >
-        
+
         {/* Giant Moving Backdrop Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") Behind Head */}
         <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
           {/* Line 1: Dynamic WELCOME Marquee */}
@@ -305,14 +315,12 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
             style={{ animation: "welcomeMarquee 25s linear infinite" }}
           >
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${
-              isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
-            }`}>
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
+              }`}>
               {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${
-              isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
-            }`}>
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
+              }`}>
               {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
             </h1>
           </div>
@@ -322,14 +330,12 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap will-change-transform"
             style={{ animation: "welcomeMarqueeReverse 30s linear infinite" }}
           >
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
-              isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
-            }`}>
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
+              }`}>
               BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
-              isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
-            }`}>
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
+              }`}>
               BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
             </h1>
           </div>
@@ -337,14 +343,14 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
 
         {/* Hero Content Overlay Grid (z-20 so buttons & photo float ON TOP of wave) */}
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 sm:pt-10 pb-12 sm:pb-16">
-          
+
 
           {/* Main Hero Center Container */}
-          <div className="relative w-full flex flex-col sm:flex-row items-center justify-center min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
-            
+          <div className="relative w-full flex flex-col sm:flex-row items-center justify-between min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
+
             {/* Centerpiece Portrait Photo (z-20) seamlessly blending with background */}
-            <div className="hero-photo-wrapper relative z-20 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto">
-              
+            <div className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto">
+
               {/* Feature 1.1: Organic Parallax Backlight Halo Glow */}
               <div
                 className="absolute -inset-6 sm:-inset-10 rounded-full pointer-events-none transition-all duration-500 opacity-60 filter blur-3xl -z-10"
@@ -356,7 +362,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               {/* Hero Portrait Photo (No Card Frame / Border / Box) */}
               <div className="relative w-full h-full overflow-hidden pointer-events-none">
                 <Image
-                  src="/images/avatar.png"
+                  src="/images/avatar.webp"
                   alt="Brimas Pradika Utama"
                   fill
                   priority
@@ -367,8 +373,8 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               </div>
             </div>
 
-            {/* Desktop Headline & CTAs (Absolute Left) */}
-            <div className="hidden sm:block absolute left-0 bottom-6 sm:bottom-12 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
+            {/* Desktop Headline & CTAs */}
+            <div className="hidden sm:flex flex-col order-1 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
               <h1 className="font-display text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
                 {lang === "id" ? "SAYA BRIMAS PRADIKA UTAMA" : "I'M BRIMAS PRADIKA UTAMA"}
               </h1>
@@ -436,9 +442,8 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
         {/* Ultra-Smooth Organic SVG Wave Divider */}
         <div className="absolute -bottom-[1px] left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
           <svg
-            className={`w-full h-12 sm:h-20 md:h-24 block fill-current transition-colors duration-300 ${
-              isNight ? "text-[#12160F]" : "text-[#ffffff]"
-            }`}
+            className={`w-full h-12 sm:h-20 md:h-24 block fill-current transition-colors duration-300 ${isNight ? "text-[#12160F]" : "text-[#ffffff]"
+              }`}
             viewBox="0 0 1440 120"
             preserveAspectRatio="none"
           >
@@ -453,7 +458,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
       {/* 4. SECTION "ABOUT ME" WITH STAGGERED SCROLL ANIMATIONS */}
       <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
+
           {/* Left Column: Interactive 3D Physics Lanyard Photo Card */}
           <div className="lg:col-span-5 flex justify-center items-center">
             <ScrollReveal direction="right" delayMs={100} durationMs={800} className="w-full flex justify-center">
@@ -494,9 +499,8 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Feature Badges Grid */}
             <ScrollReveal direction="zoom" delayMs={450} durationMs={700}>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
-                  isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-                }`}>
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                  }`}>
                   <div className="flex items-center gap-1.5 text-[#DC2626]">
                     <MapPin className="w-4 h-4" />
                     <span className="text-xs font-mono font-bold uppercase">SCHOOL</span>
@@ -504,9 +508,8 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   <p className="text-xs font-bold truncate">SMK Bhakti Mulia Pare</p>
                 </div>
 
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
-                  isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-                }`}>
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                  }`}>
                   <div className="flex items-center gap-1.5 text-[#DC2626]">
                     <Code className="w-4 h-4" />
                     <span className="text-xs font-mono font-bold uppercase">ROLE</span>
@@ -514,9 +517,8 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   <p className="text-xs font-bold truncate">AI Systems Developer</p>
                 </div>
 
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${
-                  isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-                }`}>
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                  }`}>
                   <div className="flex items-center gap-1.5 text-[#DC2626]">
                     <Layers className="w-4 h-4" />
                     <span className="text-xs font-mono font-bold uppercase">STACK</span>
@@ -541,11 +543,10 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 <Link
                   href="/profile"
                   onClick={() => soundFx.playClick()}
-                  className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${
-                    isNight
+                  className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${isNight
                       ? "border-white/40 text-white hover:border-[#DC2626] hover:text-[#DC2626]"
                       : "border-black/40 text-black hover:border-[#DC2626] hover:text-[#DC2626]"
-                  }`}
+                    }`}
                 >
                   <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
                 </Link>

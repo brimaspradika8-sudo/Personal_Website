@@ -75,9 +75,17 @@ export async function GET(request: Request) {
       const targetPath = isAdmin ? "/admin" : (next && next !== "/dashboard" ? next : "/dashboard");
 
       const finalResponse = NextResponse.redirect(`${origin}${targetPath}`);
-      // Copy cookies to final response
+      // Copy cookies to final response with clean options object
       response.cookies.getAll().forEach((c) => {
-        finalResponse.cookies.set(c.name, c.value, c);
+        finalResponse.cookies.set(c.name, c.value, {
+          path: c.path ?? "/",
+          domain: c.domain,
+          sameSite: c.sameSite as any,
+          secure: c.secure,
+          httpOnly: c.httpOnly,
+          maxAge: c.maxAge,
+          expires: c.expires,
+        });
       });
 
       return finalResponse;

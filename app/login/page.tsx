@@ -21,8 +21,11 @@ function LoginForm() {
   useEffect(() => {
     if (urlError) {
       let msg = decodeURIComponent(urlError);
-      if (msg.toLowerCase().includes("invalid api key") || msg.toLowerCase().includes("invalid_api_key")) {
+      const lower = msg.toLowerCase();
+      if (lower.includes("invalid api key") || lower.includes("invalid_api_key")) {
         msg = "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) tidak valid atau belum di-set.";
+      } else if (lower.includes("auth_callback_failed") || lower.includes("invalid_grant") || lower.includes("code verifier")) {
+        msg = "Gagal melakukan autentikasi dengan akun OAuth. Silakan coba masuk kembali.";
       }
       setError(msg);
     }
@@ -132,7 +135,7 @@ function LoginForm() {
     if (loading || googleLoading || githubLoading) {
       setSpeechText("Memverifikasi kredensial...");
     } else if (error) {
-      setSpeechText("Email atau password tidak sesuai.");
+      setSpeechText("Terjadi kendala saat masuk akun.");
     }
   }, [loading, googleLoading, githubLoading, error]);
 
