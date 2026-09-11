@@ -32,6 +32,7 @@ import TechStackMatrix from "@/components/TechStackMatrix";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
 import GuestbookSection from "@/components/GuestbookSection";
+import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 
 const Lanyard = dynamic(() => import("@/components/Lanyard"), {
@@ -784,18 +785,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
 
       {/* Footer */}
       <ScrollReveal direction="fade" delayMs={50}>
-        <footer className="py-8 text-xs opacity-75 text-left border-t border-current/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© {new Date().getFullYear()} Brimas Pradika Utama. All rights reserved.</p>
-            <div className="flex items-center gap-4">
-              <a href="#hero" className="hover:text-[#DC2626] transition-colors">Beranda</a>
-              <a href="#about" className="hover:text-[#DC2626] transition-colors">About</a>
-              <a href="#skills" className="hover:text-[#DC2626] transition-colors">Skills</a>
-              <a href="#projects" className="hover:text-[#DC2626] transition-colors">Projects</a>
-              <a href="#experience" className="hover:text-[#DC2626] transition-colors">Journey</a>
-            </div>
-          </div>
-        </footer>
+        <Footer isNight={isNight} />
       </ScrollReveal>
 
       {/* Mobile Bottom Navigation */}
