@@ -127,8 +127,8 @@ function CardFrontPhoto() {
   );
 }
 
-// Dynamic Strap Ribbon Mesh
-function BandRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
+// Realistic 2-Strand V-Neck Lanyard Strap Mesh
+function DoubleStrapRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
   const strapTexture = useMemo(() => {
     if (typeof window === 'undefined') return null;
     const canvas = document.createElement('canvas');
@@ -140,12 +140,12 @@ function BandRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
       ctx.fillRect(0, 0, 128, 512);
 
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 24px system-ui, -apple-system, sans-serif';
+      ctx.font = '900 22px system-ui, -apple-system, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       ctx.save();
-      ctx.translate(64, 140);
+      ctx.translate(64, 150);
       ctx.rotate(-Math.PI / 2);
       ctx.fillText('BRIMAS PRADIKA', 0, 0);
       ctx.restore();
@@ -163,8 +163,41 @@ function BandRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
     return tex;
   }, []);
 
-  const numSamples = 24;
-  const ribbonGeo = useMemo(() => {
+  const numSamples = 20;
+
+  const leftCurve = useMemo(
+    () =>
+      new THREE.CatmullRomCurve3(
+        [
+          new THREE.Vector3(-0.08, 2.3, -0.01),
+          new THREE.Vector3(-0.25, 1.4, 0.08),
+          new THREE.Vector3(-0.12, 0.6, 0.04),
+          new THREE.Vector3(0, 0.88, 0),
+        ],
+        false,
+        'catmullrom',
+        0.5
+      ),
+    []
+  );
+
+  const rightCurve = useMemo(
+    () =>
+      new THREE.CatmullRomCurve3(
+        [
+          new THREE.Vector3(0.08, 2.3, -0.01),
+          new THREE.Vector3(0.25, 1.4, 0.08),
+          new THREE.Vector3(0.12, 0.6, 0.04),
+          new THREE.Vector3(0, 0.88, 0),
+        ],
+        false,
+        'catmullrom',
+        0.5
+      ),
+    []
+  );
+
+  const createRibbonGeo = () => {
     const geo = new THREE.BufferGeometry();
     const positions = new Float32Array(numSamples * 2 * 3);
     const uvs = new Float32Array(numSamples * 2 * 2);
@@ -188,81 +221,83 @@ function BandRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
     for (let i = 0; i < numSamples; i++) {
       const v = i / (numSamples - 1);
       uvs[i * 4] = 0;
-      uvs[i * 4 + 1] = v * 2;
+      uvs[i * 4 + 1] = v;
       uvs[i * 4 + 2] = 1;
-      uvs[i * 4 + 3] = v * 2;
+      uvs[i * 4 + 3] = v;
     }
 
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
     geo.setIndex(new THREE.BufferAttribute(indices, 1));
     return geo;
-  }, []);
+  };
 
-  const curve = useMemo(
-    () =>
-      new THREE.CatmullRomCurve3(
-        [
-          new THREE.Vector3(0, 2.3, 0),
-          new THREE.Vector3(0, 1.4, 0.1),
-          new THREE.Vector3(0, 0.5, 0.15),
-          new THREE.Vector3(0, -0.4, 0),
-        ],
-        false,
-        'catmullrom',
-        0.5
-      ),
-    []
-  );
+  const leftGeo = useMemo(createRibbonGeo, []);
+  const rightGeo = useMemo(createRibbonGeo, []);
 
   useFrame(() => {
-    curve.points[0].set(0, 2.3, 0);
-    curve.points[1].set(cardPos.x * 0.4, 1.4, Math.abs(cardPos.x) * 0.2 + 0.1);
-    curve.points[2].set(cardPos.x * 0.7, 0.5 + cardPos.y * 0.3, Math.abs(cardPos.x) * 0.3 + 0.15);
-    curve.points[3].set(cardPos.x, cardPos.y + 1.45, cardPos.z + 0.05);
+    const attachX = cardPos.x;
+    const attachY = cardPos.y + 1.48;
+    const attachZ = cardPos.z;
 
-    const curvePoints = curve.getPoints(numSamples - 1);
-    const positionsAttr = ribbonGeo.attributes.position;
-    const posArray = positionsAttr.array as Float32Array;
-    const strapWidth = 0.13;
-    const camDir = new THREE.Vector3(0, 0, 1);
+    // Update Left Ribbon Curve
+    leftCurve.points[0].set(-0.08, 2.3, -0.01);
+    leftCurve.points[1].set(-0.25 + attachX * 0.4, 1.4 + (attachY - 0.88) * 0.4, 0.08);
+    leftCurve.points[2].set(-0.12 + attachX * 0.7, 0.6 + (attachY - 0.88) * 0.7, 0.04);
+    leftCurve.points[3].set(attachX, attachY, attachZ);
 
-    for (let i = 0; i < curvePoints.length; i++) {
-      const p = curvePoints[i];
-      let tangent = new THREE.Vector3();
-      if (i < curvePoints.length - 1) {
-        tangent.subVectors(curvePoints[i + 1], p).normalize();
-      } else {
-        tangent.subVectors(p, curvePoints[i - 1]).normalize();
+    // Update Right Ribbon Curve
+    rightCurve.points[0].set(0.08, 2.3, -0.01);
+    rightCurve.points[1].set(0.25 + attachX * 0.4, 1.4 + (attachY - 0.88) * 0.4, 0.08);
+    rightCurve.points[2].set(0.12 + attachX * 0.7, 0.6 + (attachY - 0.88) * 0.7, 0.04);
+    rightCurve.points[3].set(attachX, attachY, attachZ);
+
+    const updateRibbonPositions = (curve: THREE.CatmullRomCurve3, geo: THREE.BufferGeometry) => {
+      const pts = curve.getPoints(numSamples - 1);
+      const posAttr = geo.attributes.position;
+      const posArray = posAttr.array as Float32Array;
+      const width = 0.12;
+
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i];
+        const halfW = width / 2;
+        posArray[i * 6] = p.x - halfW;
+        posArray[i * 6 + 1] = p.y;
+        posArray[i * 6 + 2] = p.z;
+
+        posArray[i * 6 + 3] = p.x + halfW;
+        posArray[i * 6 + 4] = p.y;
+        posArray[i * 6 + 5] = p.z;
       }
+      posAttr.needsUpdate = true;
+      geo.computeVertexNormals();
+    };
 
-      const normal = new THREE.Vector3().crossVectors(tangent, camDir).normalize();
-      if (normal.lengthSq() < 0.001) normal.set(1, 0, 0);
-
-      const halfW = strapWidth / 2;
-      posArray[i * 6] = p.x + normal.x * halfW;
-      posArray[i * 6 + 1] = p.y + normal.y * halfW;
-      posArray[i * 6 + 2] = p.z + normal.z * halfW;
-
-      posArray[i * 6 + 3] = p.x - normal.x * halfW;
-      posArray[i * 6 + 4] = p.y - normal.y * halfW;
-      posArray[i * 6 + 5] = p.z - normal.z * halfW;
-    }
-
-    positionsAttr.needsUpdate = true;
-    ribbonGeo.computeVertexNormals();
+    updateRibbonPositions(leftCurve, leftGeo);
+    updateRibbonPositions(rightCurve, rightGeo);
   });
 
   return (
-    <mesh geometry={ribbonGeo}>
-      <meshStandardMaterial
-        map={strapTexture || undefined}
-        color="#DC2626"
-        roughness={0.35}
-        metalness={0.15}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+    <group>
+      <mesh geometry={leftGeo}>
+        <meshStandardMaterial
+          map={strapTexture || undefined}
+          color="#DC2626"
+          roughness={0.3}
+          metalness={0.1}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      <mesh geometry={rightGeo}>
+        <meshStandardMaterial
+          map={strapTexture || undefined}
+          color="#B91C1C"
+          roughness={0.3}
+          metalness={0.1}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
   );
 }
 
@@ -272,7 +307,6 @@ function LanyardCard3D() {
   const [hovered, setHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Motion dynamics state
   const targetPos = useRef(new THREE.Vector3(0, -0.6, 0));
   const currentPos = useRef(new THREE.Vector3(0, -0.6, 0));
   const velocityPos = useRef(new THREE.Vector3(0, 0, 0));
@@ -295,7 +329,6 @@ function LanyardCard3D() {
         -state.pointer.x * 0.35
       );
     } else {
-      // Natural sway resting dynamics
       const t = state.clock.getElapsedTime();
       const swayX = Math.sin(t * 1.5) * 0.08;
       const swayY = Math.cos(t * 1.2) * 0.04 - 0.6;
@@ -307,7 +340,6 @@ function LanyardCard3D() {
       );
     }
 
-    // Spring physics integration
     const stiffness = isDragging ? 25 : 12;
     const damping = isDragging ? 0.75 : 0.82;
 
@@ -333,7 +365,7 @@ function LanyardCard3D() {
 
   return (
     <>
-      <BandRibbon cardPos={currentPos.current} />
+      <DoubleStrapRibbon cardPos={currentPos.current} />
 
       {/* Anchor Ring at Ceiling */}
       <group position={[0, 2.3, 0]}>
@@ -372,7 +404,7 @@ function LanyardCard3D() {
         }}
       >
         {/* Carabiner Clip Top Joint */}
-        <group position={[0, 1.45, 0.02]}>
+        <group position={[0, 1.48, 0.02]}>
           <mesh position={[0, 0.06, 0]} rotation={[Math.PI / 2, 0, 0]}>
             <torusGeometry args={[0.08, 0.02, 16, 32]} />
             <meshStandardMaterial color="#222222" metalness={0.85} roughness={0.2} />
