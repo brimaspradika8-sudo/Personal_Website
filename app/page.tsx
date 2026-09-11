@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import IntroSplash from "@/components/IntroSplash";
+import IntroLoader from "@/components/IntroLoader";
 
 export default function HomePage() {
   const router = useRouter();
@@ -23,18 +23,15 @@ export default function HomePage() {
 
   if (checkingSession) {
     return (
-      <div className="fixed inset-0 bg-[#FAFAFA] flex items-center justify-center text-slate-900" />
+      <div className="fixed inset-0 bg-black flex items-center justify-center text-white" />
     );
   }
 
   return (
-    <main className="fixed inset-0 w-screen h-screen bg-[#FAFAFA] overflow-hidden">
-      <IntroSplash
-        ownerName="BRIMAS PRADIKA UTAMA"
+    <main className="fixed inset-0 w-screen h-screen bg-black overflow-hidden">
+      <IntroLoader
+        animationSrc="/animations/maploadingscreen.riv"
         onComplete={() => {
-          try {
-            sessionStorage.setItem("hasSeenRiveIntro", "true");
-          } catch {}
           window.location.href = "/dashboard";
         }}
       />
