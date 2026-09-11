@@ -180,10 +180,6 @@ export default function AdminDashboard({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <div className={`hidden sm:flex items-center px-3.5 py-1.5 rounded-full border transition-colors ${isNight ? "bg-white/5 border-white/10 text-white" : "bg-black/5 border-black/10 text-black"}`}>
-              <Search className="w-4 h-4 opacity-50 mr-2" />
-              <input type="text" placeholder="Search..." className="bg-transparent text-xs outline-none w-32 placeholder:opacity-50" />
-            </div>
 
             <Link
               href="/dashboard"

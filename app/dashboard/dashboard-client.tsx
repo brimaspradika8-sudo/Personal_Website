@@ -227,26 +227,6 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
           {/* Right Action Icons & Profile Avatar */}
           <div className="flex items-center gap-3 shrink-0">
 
-            {/* Ctrl + K Command Palette Visual Hint Badge Button */}
-            <button
-              onClick={() => {
-                soundFx.playClick();
-                setCmdPaletteOpen(true);
-              }}
-              className={`hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer shadow-sm hover:scale-105 border ${
-                isNight
-                  ? "bg-white/5 hover:bg-[#DC2626]/80 text-white/90 border-white/10"
-                  : "bg-black/5 hover:bg-[#DC2626] hover:text-white text-slate-800 border-black/10"
-              }`}
-              title="Buka Command Palette (Ctrl + K)"
-            >
-              <Search className="w-3.5 h-3.5 opacity-80" />
-              <span className="hidden md:inline text-[11px] font-medium opacity-90">{lang === "id" ? "Cari..." : "Search..."}</span>
-              <kbd className="font-mono text-[10px] bg-black/30 px-1.5 py-0.5 rounded text-white/90 border border-white/20 shadow-inner">
-                Ctrl K
-              </kbd>
-            </button>
-
             {/* Language & Sound Toggles */}
             <button
               onClick={() => {
