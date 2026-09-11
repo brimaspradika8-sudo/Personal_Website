@@ -367,8 +367,14 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 }}
               />
 
-              {/* Hero Portrait Photo (No Card Frame / Border / Box) */}
-              <div className="relative w-full h-full overflow-hidden pointer-events-none">
+              {/* Hero Portrait Photo (Seamless Radial Edge Feather Masking) */}
+              <div
+                className="relative w-full h-full overflow-hidden pointer-events-none"
+                style={{
+                  maskImage: "radial-gradient(ellipse 75% 82% at center, black 55%, transparent 98%)",
+                  WebkitMaskImage: "radial-gradient(ellipse 75% 82% at center, black 55%, transparent 98%)",
+                }}
+              >
                 <Image
                   src="/images/avatar.webp"
                   alt="Brimas Pradika Utama"
@@ -384,7 +390,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Desktop Headline & CTAs */}
             <div className="hidden sm:flex flex-col order-1 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
               <h1 className="font-display text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
-                {lang === "id" ? "SAYA BRIMAS PRADIKA UTAMA" : "I'M BRIMAS PRADIKA UTAMA"}
+                BRIMAS PRADIKA<br />UTAMA
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-sm font-medium">
                 {lang === "id"
@@ -415,7 +421,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
             <div className="sm:hidden w-full z-20 space-y-3.5 text-center text-white px-2 pt-2 pb-4">
               <h1 className="font-display text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
-                {lang === "id" ? "SAYA BRIMAS PRADIKA UTAMA" : "I'M BRIMAS PRADIKA UTAMA"}
+                BRIMAS PRADIKA<br />UTAMA
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-xs mx-auto drop-shadow-sm font-medium">
                 {lang === "id"
