@@ -538,6 +538,48 @@ export async function deleteArticle(articleId: string) {
   }
 }
 
+// 4b. Admin-only: Update / Edit Artikel
+export async function updateArticle(
+  articleId: string,
+  data: {
+    title: string;
+    slug: string;
+    content: string;
+    thumbnail?: string;
+  }
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user || !(await checkIsAdmin(user.email))) {
+    return { error: "Akses ditolak. Hanya Admin yang dapat mengedit artikel." };
+  }
+
+  try {
+    const slugFormatted = data.slug
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, "")
+      .replace(/\s+/g, "-");
+
+    const updatedArt = await prisma.article.update({
+      where: { id: articleId },
+      data: {
+        title: data.title.trim(),
+        slug: slugFormatted,
+        content: data.content.trim(),
+        thumbnail: data.thumbnail?.trim() || null,
+      },
+    });
+
+    revalidatePath("/posts");
+    revalidatePath(`/posts/${slugFormatted}`);
+    return { success: true, article: updatedArt };
+  } catch (err: any) {
+    return { error: err?.message || "Gagal memperbarui artikel." };
+  }
+}
+
 // 5. Tambah / Toggle Reaksi (LIKE / DISLIKE)
 export async function toggleArticleReaction(
   articleId: string,

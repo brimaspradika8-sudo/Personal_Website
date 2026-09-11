@@ -89,10 +89,7 @@ export default function AdminDashboard({
 
   const NAV_ITEMS = [
     { label: "Overview", icon: LayoutDashboard, href: "/admin", active: true },
-    { label: "Projects", icon: FolderKanban, href: "/admin/projects" },
-    { label: "Articles", icon: FileText, href: "/admin/articles" },
-    { label: "Users", icon: Users, href: "/admin/users" },
-    { label: "Comments", icon: MessageSquare, href: "/admin/comments" },
+    { label: "Artikel (CRUD)", icon: FileText, href: "/admin/articles", active: false },
   ];
 
   return (
@@ -133,12 +130,6 @@ export default function AdminDashboard({
               <span className="text-xs font-semibold uppercase tracking-wider">{item.label}</span>
             </Link>
           ))}
-          
-          <div className="mt-8 text-[10px] font-bold uppercase tracking-widest text-[#DC2626] mb-4 px-2">Pengaturan</div>
-          <Link href="/dashboard/settings" className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black"}`}>
-            <Settings className="w-4 h-4" />
-            <span className="text-xs font-semibold uppercase tracking-wider">Settings</span>
-          </Link>
         </nav>
 
         <div className="p-4 border-t border-inherit space-y-2">
@@ -257,10 +248,14 @@ export default function AdminDashboard({
                   <span>Reset Intro Rive</span>
                 </button>
 
-                <button className="px-4 py-2 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 shadow-lg shadow-[#DC2626]/30 flex items-center gap-2 border border-white/20 cursor-pointer">
+                <Link
+                  href="/admin/articles"
+                  onClick={() => soundFx.playClick()}
+                  className="px-4 py-2 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 shadow-lg shadow-[#DC2626]/30 flex items-center gap-2 border border-white/20 cursor-pointer"
+                >
                   <Plus className="w-4 h-4" />
-                  <span>New Project</span>
-                </button>
+                  <span>Kelola Artikel</span>
+                </Link>
               </div>
             </div>
 
@@ -284,28 +279,6 @@ export default function AdminDashboard({
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Rive Data Change Interactive Analytics Card */}
-            <div className={`p-6 rounded-2xl border transition-all ${isNight ? "bg-white/5 border-white/10 hover:border-white/20" : "bg-white border-[#e0e0e0] shadow-sm hover:shadow-md"}`}>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626] animate-ping" />
-                    <h3 className={`font-bold font-display uppercase tracking-tight text-sm ${isNight ? "text-white" : "text-black"}`}>
-                      Interactive Data Change Analytics
-                    </h3>
-                  </div>
-                  <p className="text-xs opacity-60 font-mono mt-0.5">
-                    Klik widget animasi di bawah untuk memicu efek animasi perubahan data (24596-46145-data-change-on-click.riv)
-                  </p>
-                </div>
-                <Sparkles className="w-4 h-4 text-[#DC2626]" />
-              </div>
-
-              <div className={`w-full h-56 rounded-xl border flex items-center justify-center relative overflow-hidden ${isNight ? "bg-black/40 border-white/10" : "bg-slate-50 border-slate-200"}`}>
-                <RiveDataChangeAnimation />
-              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 line-clamp-2">
