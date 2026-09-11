@@ -390,7 +390,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Desktop Headline & CTAs */}
             <div className="hidden sm:flex flex-col order-1 z-20 space-y-4 max-w-md text-left text-white drop-shadow-md">
               <h1 className="font-display text-5xl md:text-6xl font-black uppercase tracking-tight leading-none">
-                BRIMAS PRADIKA<br />UTAMA
+                {lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}<br />UTAMA
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-sm font-medium">
                 {lang === "id"
@@ -421,7 +421,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
             <div className="sm:hidden w-full z-20 space-y-3.5 text-center text-white px-2 pt-2 pb-4">
               <h1 className="font-display text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
-                BRIMAS PRADIKA<br />UTAMA
+                {lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}<br />UTAMA
               </h1>
               <p className="text-sm text-white/95 leading-relaxed font-sans max-w-xs mx-auto drop-shadow-sm font-medium">
                 {lang === "id"
