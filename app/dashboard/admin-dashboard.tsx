@@ -55,16 +55,16 @@ export default function AdminDashboard({
   recentArticles,
 }: AdminDashboardProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isNight, setIsNight] = useState(true);
+  const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("dashboard_theme");
-    if (saved === "day") {
-      setIsNight(false);
-      document.documentElement.classList.remove("dark");
-    } else {
+    if (saved === "night") {
       setIsNight(true);
       document.documentElement.classList.add("dark");
+    } else {
+      setIsNight(false);
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 

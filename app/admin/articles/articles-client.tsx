@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -37,7 +37,18 @@ export default function AdminArticlesClient({
 }: AdminArticlesClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isNight, setIsNight] = useState(true);
+  const [isNight, setIsNight] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("dashboard_theme");
+    if (saved === "night") {
+      setIsNight(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setIsNight(false);
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +65,17 @@ export default function AdminArticlesClient({
 
   const toggleTheme = () => {
     soundFx.playClick();
-    setIsNight((prev) => !prev);
+    setIsNight((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("dashboard_theme", "night");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("dashboard_theme", "day");
+      }
+      return next;
+    });
   };
 
   const handleOpenCreateModal = () => {
