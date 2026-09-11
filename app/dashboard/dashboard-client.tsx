@@ -105,28 +105,6 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
   const [searchQuery, setSearchQuery] = useState("");
   const [greetingIndex, setGreetingIndex] = useState(0);
 
-  // Typewriter animation state for "I'M BRIMAS PRADIKA"
-  const fullHeadline = lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA";
-  const [typedText, setTypedText] = useState("");
-  const [isTypingDone, setIsTypingDone] = useState(false);
-
-  useEffect(() => {
-    setTypedText("");
-    setIsTypingDone(false);
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < fullHeadline.length) {
-        setTypedText(fullHeadline.slice(0, i + 1));
-        i++;
-      } else {
-        setIsTypingDone(true);
-        clearInterval(interval);
-      }
-    }, 60);
-
-    return () => clearInterval(interval);
-  }, [fullHeadline]);
-
   const showToast = (msg: string) => {
     soundFx.playClick();
     setToastMsg(msg);
@@ -392,9 +370,13 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
           {/* Main Hero Center Container */}
           <div className="relative w-full flex flex-col sm:flex-row items-center justify-between min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
 
-            {/* Centerpiece Portrait Photo (z-20) seamlessly blending with background */}
-            <div className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto">
-
+            {/* Centerpiece Portrait Photo (z-20) with smooth fade-in slide up animation from bottom */}
+            <motion.div
+              initial={{ opacity: 0, y: 65 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+              className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto"
+            >
               {/* Hero Portrait Photo (Seamless Radial Edge Feather Masking) */}
               <div
                 className="relative w-full h-full overflow-hidden pointer-events-none"
@@ -413,7 +395,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   className="object-cover object-center w-full h-full pointer-events-none filter brightness-[1.05] contrast-[1.08]"
                 />
               </div>
-            </div>
+            </motion.div>
 
             {/* Desktop Headline & CTAs */}
             <div className="hidden sm:flex flex-col order-1 z-20 space-y-5 max-w-2xl text-left drop-shadow-md">
@@ -434,66 +416,39 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   </AnimatePresence>
                 </span>
 
-                {/* Typewriter Line: "I'M BRIMAS PRADIKA" */}
-                <span className="whitespace-nowrap inline-flex items-center">
-                  <span>{typedText}</span>
-                  {!isTypingDone && (
-                    <span className="inline-block w-2.5 h-[0.8em] bg-[#DC2626] ml-1.5 animate-pulse align-middle" />
-                  )}
-                </span>
+                <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
                 <br />
-
-                {/* Reveal from Bottom Line: "UTAMA" */}
-                {isTypingDone && (
-                  <motion.span
-                    initial={{ opacity: 0, y: 32 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="inline-block text-[#DC2626]"
-                  >
-                    UTAMA
-                  </motion.span>
-                )}
+                <span className="text-[#DC2626]">UTAMA</span>
               </h1>
 
-              {/* Description & CTAs reveal from bottom after typing finishes */}
-              {isTypingDone && (
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                  className="space-y-5"
+              <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
+                {lang === "id"
+                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
+                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
+              </p>
+
+              {/* Two CTA Buttons */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-1">
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-7 py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
                 >
-                  <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
-                    {lang === "id"
-                      ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
-                      : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
-                  </p>
+                  <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
+                </a>
 
-                  {/* Two CTA Buttons */}
-                  <div className="flex flex-wrap items-center gap-3.5 pt-1">
-                    <a
-                      href="#projects"
-                      onClick={() => soundFx.playClick()}
-                      className="px-7 py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
-                    >
-                      <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
-                    </a>
-
-                    <a
-                      href="#about"
-                      onClick={() => soundFx.playClick()}
-                      className={`px-7 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
-                        isNight
-                          ? "border-white/25 text-white hover:bg-white hover:text-black hover:border-white"
-                          : "border-black/30 text-black hover:bg-black hover:text-white hover:border-black"
-                      }`}
-                    >
-                      <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
-                    </a>
-                  </div>
-                </motion.div>
-              )}
+                <a
+                  href="#about"
+                  onClick={() => soundFx.playClick()}
+                  className={`px-7 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
+                    isNight
+                      ? "border-white/25 text-white hover:bg-white hover:text-black hover:border-white"
+                      : "border-black/30 text-black hover:bg-black hover:text-white hover:border-black"
+                  }`}
+                >
+                  <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
+                </a>
+              </div>
             </div>
 
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
@@ -515,66 +470,39 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   </AnimatePresence>
                 </span>
 
-                {/* Typewriter Line (Mobile) */}
-                <span className="whitespace-nowrap inline-flex items-center justify-center">
-                  <span>{typedText}</span>
-                  {!isTypingDone && (
-                    <span className="inline-block w-2 h-[0.8em] bg-[#DC2626] ml-1 animate-pulse align-middle" />
-                  )}
-                </span>
+                <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
                 <br />
-
-                {/* Reveal from Bottom Line: "UTAMA" (Mobile) */}
-                {isTypingDone && (
-                  <motion.span
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="inline-block text-[#DC2626]"
-                  >
-                    UTAMA
-                  </motion.span>
-                )}
+                <span className="text-[#DC2626]">UTAMA</span>
               </h1>
 
-              {/* Description & CTAs reveal from bottom (Mobile) */}
-              {isTypingDone && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                  className="space-y-4 w-full flex flex-col items-center"
+              <p className={`text-sm leading-relaxed font-sans max-w-xs mx-auto font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
+                {lang === "id"
+                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen interaktif, serta solusi digital performa tinggi."
+                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
+              </p>
+
+              {/* Two Mobile CTA Buttons */}
+              <div className="flex items-center justify-center gap-3 pt-1">
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/30 hover:scale-105 transition-transform border border-white/20"
                 >
-                  <p className={`text-sm leading-relaxed font-sans max-w-xs mx-auto font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
-                    {lang === "id"
-                      ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen interaktif, serta solusi digital performa tinggi."
-                      : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
-                  </p>
+                  {lang === "id" ? "PROYEK" : "PROJECTS"}
+                </a>
 
-                  {/* Two Mobile CTA Buttons */}
-                  <div className="flex items-center justify-center gap-3 pt-1">
-                    <a
-                      href="#projects"
-                      onClick={() => soundFx.playClick()}
-                      className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/30 hover:scale-105 transition-transform border border-white/20"
-                    >
-                      {lang === "id" ? "PROYEK" : "PROJECTS"}
-                    </a>
-
-                    <a
-                      href="#about"
-                      onClick={() => soundFx.playClick()}
-                      className={`px-6 py-2.5 rounded-full border text-xs font-bold uppercase tracking-wider shadow-md transition-all duration-200 ${
-                        isNight
-                          ? "border-white/30 text-white hover:bg-white hover:text-black"
-                          : "border-black/30 text-black hover:bg-black hover:text-white"
-                      }`}
-                    >
-                      {lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}
-                    </a>
-                  </div>
-                </motion.div>
-              )}
+                <a
+                  href="#about"
+                  onClick={() => soundFx.playClick()}
+                  className={`px-6 py-2.5 rounded-full border text-xs font-bold uppercase tracking-wider shadow-md transition-all duration-200 ${
+                    isNight
+                      ? "border-white/30 text-white hover:bg-white hover:text-black"
+                      : "border-black/30 text-black hover:bg-black hover:text-white"
+                  }`}
+                >
+                  {lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}
+                </a>
+              </div>
             </div>
 
           </div>
