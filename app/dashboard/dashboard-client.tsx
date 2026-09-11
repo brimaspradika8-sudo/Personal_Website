@@ -135,7 +135,22 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
   // Brand identity statis pemilik situs (Brimas Pradika Utama)
   const displayName = "Brimas Pradika Utama";
   const avatarSrc = "/images/avatar.webp";
-  const welcomeMarqueeText = "WELCOME BRIMAS PRADIKA UTAMA";
+
+  // Teks marquee sapaan dinamis (Line 1 marquee Hero)
+  const isLoggedIn = !!user;
+  const activeUserName = (
+    dbUser?.name ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    (user?.email ? user.email.split("@")[0] : "")
+  ).toUpperCase();
+
+  const greetingPrefix = lang === "en" ? "HELLO," : "HALO,";
+  const defaultGuestName = lang === "en" ? "VISITOR" : "PENGUNJUNG";
+
+  const welcomeMarqueeText = isLoggedIn && activeUserName
+    ? `${greetingPrefix} ${activeUserName}`
+    : `${greetingPrefix} ${defaultGuestName}`;
 
   const initialLetter = displayName ? displayName.charAt(0).toUpperCase() : "G";
   const isNight = mode === "night";
