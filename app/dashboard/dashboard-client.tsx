@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
@@ -30,8 +31,11 @@ import ProjectModal, { ProjectData } from "@/components/ProjectModal";
 import TechStackMatrix from "@/components/TechStackMatrix";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
-import Lanyard from "@/components/Lanyard";
 import ScrollReveal from "@/components/ScrollReveal";
+
+const Lanyard = dynamic(() => import("@/components/Lanyard"), {
+  ssr: false,
+});
 
 
 interface DashboardClientProps {

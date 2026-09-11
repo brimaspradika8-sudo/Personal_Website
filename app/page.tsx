@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import IntroLoader from "@/components/IntroLoader";
+import dynamic from "next/dynamic";
+
+const IntroLoader = dynamic(() => import("@/components/IntroLoader"), {
+  ssr: false,
+});
 
 export default function HomePage() {
   const router = useRouter();
