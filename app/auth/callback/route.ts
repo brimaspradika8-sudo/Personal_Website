@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { syncUserToDatabase } from "@/lib/actions/auth";
 import { checkIsAdmin } from "@/lib/actions/article";
 import { getSupabaseEnv } from "@/lib/supabase/client";
@@ -73,6 +74,11 @@ export async function GET(request: Request) {
       // Check role to decide final redirect destination
       const isAdmin = await checkIsAdmin(data.user.email);
       const targetPath = isAdmin ? "/admin" : (next && next !== "/dashboard" ? next : "/dashboard");
+
+      // Invalidate Next.js cache so fresh user session and avatar display immediately
+      revalidatePath("/dashboard");
+      revalidatePath("/profile");
+      revalidatePath("/", "layout");
 
       const finalResponse = NextResponse.redirect(`${origin}${targetPath}`);
       // Copy cookies to final response with clean options object

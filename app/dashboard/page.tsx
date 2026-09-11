@@ -4,6 +4,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import DashboardClient from "./dashboard-client";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function DashboardPage() {
   noStore();

@@ -236,6 +236,9 @@ export async function signInWithPassword(formData: FormData) {
     return { error: formatAuthError(err?.message || "Gagal melakukan proses masuk.") };
   }
 
+  revalidatePath("/dashboard");
+  revalidatePath("/profile");
+  revalidatePath("/", "layout");
   redirect(targetPath);
 }
 

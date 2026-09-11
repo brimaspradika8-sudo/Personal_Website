@@ -123,6 +123,15 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
     });
   };
 
+  // Avatar & Nama user aktif yang sedang login (identik dengan halaman /profile)
+  const userAvatarSrc = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
+  const userDisplayName =
+    dbUser?.name ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split("@")[0] ||
+    "User";
+
   // Brand identity statis pemilik situs (Brimas Pradika Utama)
   const displayName = "Brimas Pradika Utama";
   const avatarSrc = "/images/avatar.webp";
@@ -248,20 +257,21 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               <div className="flex items-center gap-2">
                 <Link
                   href="/profile"
+                  prefetch={false}
                   onClick={() => soundFx.playClick()}
                   className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-md shadow-[#DC2626]/30"
                   title={lang === "id" ? "Buka Profil Saya" : "Open My Profile"}
                 >
-                  {avatarSrc ? (
+                  {userAvatarSrc ? (
                     <Image
-                      src={avatarSrc}
-                      alt={displayName}
+                      src={userAvatarSrc}
+                      alt={userDisplayName}
                       fill
                       className="object-cover"
                       unoptimized
                     />
                   ) : (
-                    <span>{(displayName || "U").charAt(0).toUpperCase()}</span>
+                    <span>{(userDisplayName || "U").charAt(0).toUpperCase()}</span>
                   )}
                 </Link>
               </div>
