@@ -264,6 +264,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <Link
             href="/dashboard"
+            prefetch={false}
             onClick={() => soundFx.playClick()}
             className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition-all hover:scale-105 cursor-pointer shadow-lg shadow-[#DC2626]/20 border border-white/20"
           >
@@ -302,8 +303,8 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           isNight ? "bg-[#1A211A]/90 border-[#2A2F26]" : "bg-white border-slate-200 text-slate-900 shadow-md"
         }`}>
           
-          {/* Subtle Spider-Man Red Glow Line Top Accent */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DC2626] via-[#F5B301] to-[#2563EB]" />
+          {/* Brand Red Accent Line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DC2626] via-[#EF4444] to-[#B91C1C]" />
 
           <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 text-center sm:text-left">
             
