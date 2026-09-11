@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -25,6 +26,11 @@ import {
 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
+
+const RiveDataChangeAnimation = dynamic(
+  () => import("@/components/RiveDataChangeAnimation"),
+  { ssr: false }
+);
 
 interface DashboardStats {
   projectsCount: number;
@@ -191,8 +197,26 @@ export default function AdminDashboard({
               <span>Tampilan Site</span>
             </Link>
 
-            <button onClick={toggleTheme} className={`p-2 rounded-full transition-all ${isNight ? "hover:bg-white/10 text-white/80" : "hover:bg-black/10 text-black/80"}`}>
-              {isNight ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <button
+              onClick={toggleTheme}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold font-mono transition-all cursor-pointer shadow-sm ${
+                isNight
+                  ? "bg-white/10 border-white/15 text-white hover:bg-white/20"
+                  : "bg-black/5 border-black/10 text-slate-900 hover:bg-black/10"
+              }`}
+              title={isNight ? "Beralih ke Tema Terang (Light Mode)" : "Beralih ke Tema Gelap (Dark Mode)"}
+            >
+              {isNight ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="hidden sm:inline">MODE TERANG</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-slate-700" />
+                  <span className="hidden sm:inline">MODE GELAP</span>
+                </>
+              )}
             </button>
             
             <button className={`p-2 rounded-full transition-all relative ${isNight ? "hover:bg-white/10 text-white/80" : "hover:bg-black/10 text-black/80"}`}>
@@ -260,6 +284,28 @@ export default function AdminDashboard({
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Rive Data Change Interactive Analytics Card */}
+            <div className={`p-6 rounded-2xl border transition-all ${isNight ? "bg-white/5 border-white/10 hover:border-white/20" : "bg-white border-[#e0e0e0] shadow-sm hover:shadow-md"}`}>
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626] animate-ping" />
+                    <h3 className={`font-bold font-display uppercase tracking-tight text-sm ${isNight ? "text-white" : "text-black"}`}>
+                      Interactive Data Change Analytics
+                    </h3>
+                  </div>
+                  <p className="text-xs opacity-60 font-mono mt-0.5">
+                    Klik widget animasi di bawah untuk memicu efek animasi perubahan data (24596-46145-data-change-on-click.riv)
+                  </p>
+                </div>
+                <Sparkles className="w-4 h-4 text-[#DC2626]" />
+              </div>
+
+              <div className={`w-full h-56 rounded-xl border flex items-center justify-center relative overflow-hidden ${isNight ? "bg-black/40 border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                <RiveDataChangeAnimation />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 line-clamp-2">

@@ -278,7 +278,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
           {/* Right Action Icons & Profile Avatar */}
           <div className="flex items-center gap-3 shrink-0">
 
-            {/* Language & Sound Toggles */}
+            {/* Language & Theme Switcher Toggles */}
             <button
               onClick={() => {
                 soundFx.playClick();
@@ -290,6 +290,32 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               title="Ganti Bahasa / Switch Language"
             >
               <span>{lang.toUpperCase()}</span>
+            </button>
+
+            {/* Theme Switcher Button */}
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                handleToggleMode();
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold font-mono transition-all cursor-pointer border shadow-sm ${
+                isNight
+                  ? "border-white/15 bg-white/10 hover:bg-white/20 text-white"
+                  : "border-black/15 bg-black/5 hover:bg-black/10 text-slate-900"
+              }`}
+              title={isNight ? "Beralih ke Tema Terang (Light Mode)" : "Beralih ke Tema Gelap (Dark Mode)"}
+            >
+              {isNight ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">DAY</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-slate-700" />
+                  <span className="hidden sm:inline">NIGHT</span>
+                </>
+              )}
             </button>
 
             {/* Admin Hub Link (Hanya untuk Admin) */}
