@@ -105,6 +105,28 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
   const [searchQuery, setSearchQuery] = useState("");
   const [greetingIndex, setGreetingIndex] = useState(0);
 
+  // Typewriter animation state for "I'M BRIMAS PRADIKA"
+  const fullHeadline = lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA";
+  const [typedText, setTypedText] = useState("");
+  const [isTypingDone, setIsTypingDone] = useState(false);
+
+  useEffect(() => {
+    setTypedText("");
+    setIsTypingDone(false);
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < fullHeadline.length) {
+        setTypedText(fullHeadline.slice(0, i + 1));
+        i++;
+      } else {
+        setIsTypingDone(true);
+        clearInterval(interval);
+      }
+    }, 60);
+
+    return () => clearInterval(interval);
+  }, [fullHeadline]);
+
   const showToast = (msg: string) => {
     soundFx.playClick();
     setToastMsg(msg);
@@ -372,9 +394,9 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
 
             {/* Centerpiece Portrait Photo (z-20) with smooth fade-in slide up animation from bottom */}
             <motion.div
-              initial={{ opacity: 0, y: 65 }}
+              initial={{ opacity: 0, y: 75 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto"
             >
               {/* Hero Portrait Photo (Seamless Radial Edge Feather Masking) */}
@@ -416,7 +438,73 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   </AnimatePresence>
                 </span>
 
-                <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
+                {/* Typewriter Line: "I'M BRIMAS PRADIKA" */}
+                <span className="whitespace-nowrap inline-flex items-center">
+                  <span>{typedText}</span>
+                  {!isTypingDone && (
+                    <span className="inline-block w-2.5 h-[0.8em] bg-[#DC2626] ml-1.5 animate-pulse align-middle" />
+                  )}
+                </span>
+                <br />
+                <span className="text-[#DC2626]">UTAMA</span>
+              </h1>
+
+              <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
+                {lang === "id"
+                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
+                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
+              </p>
+
+              {/* Two CTA Buttons */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-1">
+                <a
+                  href="#projects"
+                  onClick={() => soundFx.playClick()}
+                  className="px-7 py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
+                >
+                  <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
+                </a>
+
+                <a
+                  href="#about"
+                  onClick={() => soundFx.playClick()}
+                  className={`px-7 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
+                    isNight
+                      ? "border-white/25 text-white hover:bg-white hover:text-black hover:border-white"
+                      : "border-black/30 text-black hover:bg-black hover:text-white hover:border-black"
+                  }`}
+                >
+                  <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
+            <div className="sm:hidden w-full z-20 space-y-4 text-center px-2 pt-2 pb-4 flex flex-col items-center">
+              <h1 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
+                {/* Giant Multilingual Greeting Animated Line (Mobile) */}
+                <span className="block text-[#DC2626] h-[1.1em] overflow-hidden mb-1">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={GREETINGS[greetingIndex]}
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -18 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="inline-block"
+                    >
+                      {GREETINGS[greetingIndex]}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
+
+                {/* Typewriter Line (Mobile) */}
+                <span className="whitespace-nowrap inline-flex items-center justify-center">
+                  <span>{typedText}</span>
+                  {!isTypingDone && (
+                    <span className="inline-block w-2 h-[0.8em] bg-[#DC2626] ml-1 animate-pulse align-middle" />
+                  )}
+                </span>
                 <br />
                 <span className="text-[#DC2626]">UTAMA</span>
               </h1>
