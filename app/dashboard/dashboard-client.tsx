@@ -186,10 +186,13 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
       className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${isNight ? "bg-[#0A0A0B] text-[#FAF9F6]" : "bg-[#FAF9F6] text-[#1A1A1A]"
         }`}
     >
-      {/* 1. TOP NAVIGATION HEADER (GLASSMORPHIC FLOATING BAR) */}
-      <header className={`sticky top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 ${isNight ? "bg-[#0A0A0B]/80 border-white/10 shadow-2xl" : "bg-white/80 border-slate-200/80 text-slate-900 shadow-sm"
+      {/* 1. TOP NAVIGATION HEADER (FLOATING CAPSULE NAVBAR) */}
+      <header className="sticky top-4 z-50 max-w-5xl mx-auto px-4 sm:px-6 w-full pointer-events-auto">
+        <div className={`h-14 px-5 sm:px-6 rounded-full border backdrop-blur-xl flex items-center justify-between gap-4 transition-all duration-300 ${
+          isNight
+            ? "bg-black/40 border-white/15 shadow-2xl shadow-black/60 text-white"
+            : "bg-white/60 border-slate-300/80 shadow-lg text-slate-900"
         }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
 
           {/* Logo (Icon Bulat Merah Spider-Man + Personal Brand Name) */}
           <Link
@@ -302,45 +305,6 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
         className={`relative min-h-[88vh] lg:min-h-[94vh] flex flex-col justify-between overflow-hidden transition-colors duration-500 pt-12 sm:pt-16 md:pt-20 ${isNight ? "bg-[#0D0D0E]" : "bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#FAF9F6]"
           }`}
       >
-
-        {/* Ambient Radial Mesh Background Glows */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-radial from-[#DC2626]/20 via-[#4F46E5]/10 to-transparent blur-3xl rounded-full opacity-70" />
-        </div>
-
-        {/* Giant Moving Backdrop Typography Watermark */}
-        <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
-          {/* Line 1: Dynamic WELCOME Marquee */}
-          <div
-            className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
-            style={{ animation: "welcomeMarquee 28s linear infinite" }}
-          >
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.03]" : "text-black/[0.04]"
-              }`}>
-              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.03]" : "text-black/[0.04]"
-              }`}>
-              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-          </div>
-
-          {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
-          <div
-            className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap will-change-transform"
-            style={{ animation: "welcomeMarqueeReverse 34s linear infinite" }}
-          >
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.02]" : "text-black/[0.03]"
-              }`}>
-              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.02]" : "text-black/[0.03]"
-              }`}>
-              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-          </div>
-        </div>
-
         {/* Hero Content Overlay Grid */}
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 sm:pt-10 pb-12 sm:pb-16">
 
@@ -349,14 +313,6 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
 
             {/* Centerpiece Portrait Photo (z-20) seamlessly blending with background */}
             <div className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto">
-
-              {/* Parallax Backlight Halo Glow */}
-              <div
-                className="absolute -inset-6 sm:-inset-10 rounded-full pointer-events-none transition-all duration-500 opacity-75 filter blur-3xl -z-10"
-                style={{
-                  background: `radial-gradient(circle at ${heroMousePos.x}% ${heroMousePos.y}%, rgba(220, 38, 38, 0.5), rgba(79, 70, 229, 0.3), transparent 70%)`
-                }}
-              />
 
               {/* Hero Portrait Photo (Seamless Radial Edge Feather Masking) */}
               <div
