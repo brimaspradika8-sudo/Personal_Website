@@ -305,6 +305,39 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
         className={`relative min-h-[88vh] lg:min-h-[94vh] flex flex-col justify-between overflow-hidden transition-colors duration-500 pt-12 sm:pt-16 md:pt-20 ${isNight ? "bg-[#0D0D0E]" : "bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#FAF9F6]"
           }`}
       >
+        {/* Giant Moving Backdrop Typography Watermark */}
+        <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
+          {/* Line 1: Dynamic WELCOME Marquee */}
+          <div
+            className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
+            style={{ animation: "welcomeMarquee 28s linear infinite" }}
+          >
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.05]" : "text-black/[0.06]"
+              }`}>
+              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
+            </h1>
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.05]" : "text-black/[0.06]"
+              }`}>
+              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
+            </h1>
+          </div>
+
+          {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
+          <div
+            className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap will-change-transform"
+            style={{ animation: "welcomeMarqueeReverse 34s linear infinite" }}
+          >
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.04]" : "text-black/[0.05]"
+              }`}>
+              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
+            </h1>
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.04]" : "text-black/[0.05]"
+              }`}>
+              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
+            </h1>
+          </div>
+        </div>
+
         {/* Hero Content Overlay Grid */}
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 sm:pt-10 pb-12 sm:pb-16">
 
