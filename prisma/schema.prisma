@@ -39,6 +39,7 @@ model Article {
   slug       String     @unique
   content    String
   thumbnail  String?
+  views      Int        @default(0)
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
   reactions  Reaction[]

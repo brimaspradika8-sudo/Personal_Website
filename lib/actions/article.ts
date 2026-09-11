@@ -12,6 +12,7 @@ export interface ArticleItem {
   thumbnail: string | null;
   category?: string;
   readTime?: string;
+  views?: number;
   created_at: string;
   updated_at?: string;
   likeCount: number;
@@ -809,4 +810,58 @@ export async function seedSampleArticlesIfEmpty() {
     console.warn("Seeding articles failed or skipped:", err);
   }
   return { seeded: false };
+}
+
+// 9. Admin-only: Ambil Semua Komentar untuk Moderasi
+export async function getAllAdminComments() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user || !(await checkIsAdmin(user.email))) {
+    return [];
+  }
+
+  try {
+    const comments = await prisma.comment.findMany({
+      orderBy: { created_at: "desc" },
+      include: {
+        user: { select: { name: true, avatar: true, email: true } },
+        article: { select: { title: true, slug: true } },
+      },
+    });
+
+    return comments.map((c) => ({
+      id: c.id,
+      content: c.content,
+      created_at: c.created_at.toISOString(),
+      user: {
+        name: c.user?.name || "User",
+        avatar: c.user?.avatar || null,
+        email: c.user?.email || "",
+      },
+      article: {
+        title: c.article?.title || "Artikel",
+        slug: c.article?.slug || "",
+      },
+    }));
+  } catch (err) {
+    console.error("Error fetching admin comments:", err);
+    return [];
+  }
+}
+
+// 10. Catat Pembaca (Increment Article Views)
+export async function incrementArticleViews(slug: string) {
+  try {
+    const art = await prisma.article.findUnique({ where: { slug } });
+    if (art) {
+      // @ts-ignore
+      await prisma.article.update({
+        where: { id: art.id },
+        data: { views: { increment: 1 } },
+      });
+    }
+  } catch (err) {
+    // Skip if views column is pending migration
+  }
 }
