@@ -88,8 +88,8 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
                 {/* Content Card */}
                 <div className={`p-6 rounded-2xl border transition-all duration-300 ${
                   isNight
-                    ? "bg-[#1A211A] border-[#2A2F26] group-hover:border-[#DC2626]"
-                    : "bg-[#F8F8F6] border-[#E5E5E2] group-hover:border-[#DC2626]"
+                    ? "bg-[#141416] border-white/10 group-hover:border-[#DC2626] group-hover:shadow-xl"
+                    : "bg-white border-slate-200 group-hover:border-[#DC2626] group-hover:shadow-lg"
                 }`}>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                     <div>

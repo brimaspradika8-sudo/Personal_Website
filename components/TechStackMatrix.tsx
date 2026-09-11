@@ -222,13 +222,13 @@ export default function TechStackMatrix({ isNight, lang }: TechStackMatrixProps)
                       isSelected
                         ? "border-[#DC2626] shadow-lg shadow-[#DC2626]/20 bg-[#DC2626]/10"
                         : isNight
-                        ? "bg-[#1A211A] border-[#2A2F26] hover:border-[#DC2626]/50"
-                        : "bg-[#F8F8F6] border-[#E5E5E2] hover:border-[#DC2626]/50"
+                        ? "bg-[#141416] border-white/10 hover:border-[#DC2626]/50"
+                        : "bg-white border-slate-200 hover:border-[#DC2626]/50"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-[#DC2626] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#B91C1C] to-[#DC2626] text-white flex items-center justify-center font-bold text-sm shadow-sm border border-white/20">
                           {tech.name.charAt(0)}
                         </div>
                         <div>
@@ -251,7 +251,7 @@ export default function TechStackMatrix({ isNight, lang }: TechStackMatrixProps)
           {/* Right Column: Interactive Code Terminal Box (5 Cols) */}
           <div className="lg:col-span-5 w-full">
             <div className={`rounded-xl border overflow-hidden shadow-2xl transition-all ${
-              isNight ? "bg-[#0D110C] border-[#2A2F26]" : "bg-[#1E1E1E] border-black/80 text-white"
+              isNight ? "bg-[#0A0A0B] border-white/10" : "bg-[#1E1E1E] border-black/80 text-white"
             }`}>
               
               {/* Terminal Top Window Controls */}

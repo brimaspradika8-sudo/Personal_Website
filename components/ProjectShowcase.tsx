@@ -217,10 +217,10 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
             {displayProjects.map((project, idx) => (
             <ScrollReveal key={project.id} direction="up" delayMs={idx * 120}>
               <div
-                className={`rounded-2xl border overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between group cursor-pointer ${
+                className={`rounded-2xl border overflow-hidden transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between group cursor-pointer ${
                   isNight
-                    ? "bg-[#1A211A]/90 border-[#2A2F26] hover:border-[#DC2626] hover:shadow-xl hover:shadow-[#DC2626]/20"
-                    : "bg-[#ffffff] border-[#E5E5E2] hover:border-[#DC2626] hover:shadow-xl"
+                    ? "bg-[#141416]/90 border-white/10 backdrop-blur-md hover:border-[#DC2626] hover:shadow-2xl hover:shadow-[#DC2626]/20"
+                    : "bg-white border-slate-200/90 hover:border-[#DC2626] hover:shadow-2xl"
                 }`}
               >
                 {/* Thumbnail Container */}

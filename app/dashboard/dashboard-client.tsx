@@ -179,32 +179,30 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
         ease: [0.16, 1, 0.3, 1],
         delay: 0.15,
       }}
-      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#ffffff] text-[#1A1A1A]"
+      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${isNight ? "bg-[#0A0A0B] text-[#FAF9F6]" : "bg-[#FAF9F6] text-[#1A1A1A]"
         }`}
     >
-      {/* 1. TOP NAVIGATION HEADER (MATCHING BUCKETLISTLY STYLE) */}
-      <header className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${isNight ? "bg-[#12160F]/90 border-[#2A2F26]" : "bg-[#8a8a88]/90 border-[#7a7a78] text-white"
+      {/* 1. TOP NAVIGATION HEADER (GLASSMORPHIC FLOATING BAR) */}
+      <header className={`sticky top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 ${isNight ? "bg-[#0A0A0B]/80 border-white/10 shadow-2xl" : "bg-white/80 border-slate-200/80 text-slate-900 shadow-sm"
         }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
 
           {/* Logo (Icon Bulat Merah Spider-Man + Personal Brand Name) */}
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="flex items-center gap-2 shrink-0 group"
+            className="flex items-center gap-2.5 shrink-0 group"
           >
-            <div className="w-6 h-6 rounded-full bg-[#DC2626] flex items-center justify-center text-white font-bold text-xs shadow-md shadow-[#DC2626]/40 group-hover:scale-105 transition-transform">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#B91C1C] to-[#DC2626] flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-[#DC2626]/40 group-hover:scale-105 transition-transform border border-white/20">
               B
             </div>
             <span className="font-bold tracking-tight text-sm font-sans">
-              Brimas <span className="font-normal opacity-80">Pradika</span>
+              Brimas <span className="font-normal opacity-70">Pradika</span>
             </span>
           </Link>
 
-
-
           {/* Navigation Menu Items */}
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-medium tracking-wide text-white/90">
+          <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold tracking-wider uppercase opacity-90">
             {[
               { label: lang === "id" ? "Beranda" : "Home", href: "#hero" },
               { label: lang === "id" ? "Tentang" : "About", href: "#about" },
@@ -223,7 +221,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
           </nav>
 
           {/* Right Action Icons & Profile Avatar */}
-          <div className="flex items-center gap-2.5 shrink-0 text-white/80">
+          <div className="flex items-center gap-3 shrink-0">
 
             {/* Ctrl + K Command Palette Visual Hint Badge Button */}
             <button
@@ -231,12 +229,16 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 soundFx.playClick();
                 setCmdPaletteOpen(true);
               }}
-              className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 hover:bg-[#DC2626]/80 text-xs text-white/90 border border-white/20 transition-all cursor-pointer shadow-sm hover:scale-105"
+              className={`hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer shadow-sm hover:scale-105 border ${
+                isNight
+                  ? "bg-white/5 hover:bg-[#DC2626]/80 text-white/90 border-white/10"
+                  : "bg-black/5 hover:bg-[#DC2626] hover:text-white text-slate-800 border-black/10"
+              }`}
               title="Buka Command Palette (Ctrl + K)"
             >
-              <Search className="w-3.5 h-3.5 text-white/80" />
+              <Search className="w-3.5 h-3.5 opacity-80" />
               <span className="hidden md:inline text-[11px] font-medium opacity-90">{lang === "id" ? "Cari..." : "Search..."}</span>
-              <kbd className="font-mono text-[10px] bg-black/40 px-1.5 py-0.5 rounded text-white/90 border border-white/20 shadow-inner">
+              <kbd className="font-mono text-[10px] bg-black/30 px-1.5 py-0.5 rounded text-white/90 border border-white/20 shadow-inner">
                 Ctrl K
               </kbd>
             </button>
@@ -247,7 +249,9 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 soundFx.playClick();
                 toggleLang();
               }}
-              className="p-1.5 rounded-full hover:bg-white/10 text-xs font-bold transition-all cursor-pointer border border-white/20 px-2"
+              className={`p-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border px-2.5 ${
+                isNight ? "border-white/10 hover:bg-white/10" : "border-black/10 hover:bg-black/5"
+              }`}
               title="Ganti Bahasa / Switch Language"
             >
               <span>{lang.toUpperCase()}</span>
@@ -258,14 +262,13 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               <Link
                 href="/admin"
                 onClick={() => soundFx.playClick()}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all cursor-pointer shadow-md shadow-[#DC2626]/30 border border-white/20 hover:scale-105"
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-[#DC2626]/30 border border-white/20 hover:scale-105"
                 title="Admin Hub"
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>Admin Hub</span>
               </Link>
             )}
-
 
             {/* Profile Avatar / Login Action Button */}
             {user ? (
@@ -274,7 +277,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   href="/profile"
                   prefetch={false}
                   onClick={() => soundFx.playClick()}
-                  className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-md shadow-[#DC2626]/30"
+                  className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30"
                   title={lang === "id" ? "Buka Profil Saya" : "Open My Profile"}
                 >
                   {userAvatarSrc ? (
@@ -298,7 +301,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                     soundFx.playClick();
                   } catch { }
                 }}
-                className="px-3.5 py-1.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-all hover:scale-105 shadow-md shadow-[#DC2626]/30 border border-white/20 relative z-10 cursor-pointer inline-flex items-center justify-center"
+                className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold transition-all hover:scale-105 shadow-md shadow-[#DC2626]/30 border border-white/20 relative z-10 cursor-pointer inline-flex items-center justify-center"
               >
                 {lang === "id" ? "Masuk Akun" : "Sign In"}
               </Link>
@@ -312,22 +315,27 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
       <section
         id="hero"
         onMouseMove={handleMouseMoveHero}
-        className={`relative min-h-[85vh] lg:min-h-[92vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 pt-12 sm:pt-16 md:pt-20 ${isNight ? "bg-[#181D15]" : "bg-gradient-to-b from-[#a3a3a0] via-[#92928f] to-[#7f7f7c]"
+        className={`relative min-h-[88vh] lg:min-h-[94vh] flex flex-col justify-between overflow-hidden transition-colors duration-500 pt-12 sm:pt-16 md:pt-20 ${isNight ? "bg-[#0D0D0E]" : "bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#FAF9F6]"
           }`}
       >
 
-        {/* Giant Moving Backdrop Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") Behind Head */}
+        {/* Ambient Radial Mesh Background Glows */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-radial from-[#DC2626]/20 via-[#4F46E5]/10 to-transparent blur-3xl rounded-full opacity-70" />
+        </div>
+
+        {/* Giant Moving Backdrop Typography Watermark */}
         <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
           {/* Line 1: Dynamic WELCOME Marquee */}
           <div
             className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
-            style={{ animation: "welcomeMarquee 25s linear infinite" }}
+            style={{ animation: "welcomeMarquee 28s linear infinite" }}
           >
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.03]" : "text-black/[0.04]"
               }`}>
               {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#242C20]" : "text-[#bcbcb9]/40"
+            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.03]" : "text-black/[0.04]"
               }`}>
               {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
             </h1>
@@ -336,22 +344,21 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
           {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
           <div
             className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap will-change-transform"
-            style={{ animation: "welcomeMarqueeReverse 30s linear infinite" }}
+            style={{ animation: "welcomeMarqueeReverse 34s linear infinite" }}
           >
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.02]" : "text-black/[0.03]"
               }`}>
               BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
             </h1>
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-[#20271C]" : "text-[#bcbcb9]/30"
+            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.02]" : "text-black/[0.03]"
               }`}>
               BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
             </h1>
           </div>
         </div>
 
-        {/* Hero Content Overlay Grid (z-20 so buttons & photo float ON TOP of wave) */}
+        {/* Hero Content Overlay Grid */}
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 sm:pt-10 pb-12 sm:pb-16">
-
 
           {/* Main Hero Center Container */}
           <div className="relative w-full flex flex-col sm:flex-row items-center justify-between min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
@@ -359,11 +366,11 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Centerpiece Portrait Photo (z-20) seamlessly blending with background */}
             <div className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto">
 
-              {/* Feature 1.1: Organic Parallax Backlight Halo Glow */}
+              {/* Parallax Backlight Halo Glow */}
               <div
-                className="absolute -inset-6 sm:-inset-10 rounded-full pointer-events-none transition-all duration-500 opacity-60 filter blur-3xl -z-10"
+                className="absolute -inset-6 sm:-inset-10 rounded-full pointer-events-none transition-all duration-500 opacity-75 filter blur-3xl -z-10"
                 style={{
-                  background: `radial-gradient(circle at ${heroMousePos.x}% ${heroMousePos.y}%, rgba(220, 38, 38, 0.45), rgba(37, 99, 235, 0.25), transparent 70%)`
+                  background: `radial-gradient(circle at ${heroMousePos.x}% ${heroMousePos.y}%, rgba(220, 38, 38, 0.5), rgba(79, 70, 229, 0.3), transparent 70%)`
                 }}
               />
 
@@ -388,24 +395,24 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             </div>
 
             {/* Desktop Headline & CTAs */}
-            <div className="hidden sm:flex flex-col order-1 z-20 space-y-4 max-w-2xl text-left text-white drop-shadow-md">
-              <h1 className="font-display text-4xl lg:text-5xl font-black uppercase tracking-tight leading-none">
+            <div className="hidden sm:flex flex-col order-1 z-20 space-y-5 max-w-2xl text-left drop-shadow-md">
+              <h1 className="font-display text-4xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95]">
                 <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
                 <br />
-                <span>UTAMA</span>
+                <span className="text-[#DC2626]">UTAMA</span>
               </h1>
-              <p className="text-sm text-white/95 leading-relaxed font-sans max-w-sm font-medium">
+              <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
                 {lang === "id"
                   ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
                   : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
               </p>
 
               {/* Two CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-3.5 pt-1">
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-[#DC2626]/40 border border-white/20"
+                  className="px-7 py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
                 >
                   <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
                 </a>
@@ -413,7 +420,11 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 <a
                   href="#about"
                   onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-full border-[1.5px] border-white text-white font-bold text-xs uppercase tracking-wider transition-all duration-200 hover:bg-white hover:text-[#1A1A1A] cursor-pointer inline-flex items-center gap-2 shadow-lg hover:scale-[1.03]"
+                  className={`px-7 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
+                    isNight
+                      ? "border-white/25 text-white hover:bg-white hover:text-black hover:border-white"
+                      : "border-black/30 text-black hover:bg-black hover:text-white hover:border-black"
+                  }`}
                 >
                   <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
                 </a>
@@ -421,13 +432,13 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             </div>
 
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
-            <div className="sm:hidden w-full z-20 space-y-3.5 text-center text-white px-2 pt-2 pb-4">
+            <div className="sm:hidden w-full z-20 space-y-4 text-center px-2 pt-2 pb-4">
               <h1 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
                 <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
                 <br />
-                <span>UTAMA</span>
+                <span className="text-[#DC2626]">UTAMA</span>
               </h1>
-              <p className="text-sm text-white/95 leading-relaxed font-sans max-w-xs mx-auto drop-shadow-sm font-medium">
+              <p className={`text-sm leading-relaxed font-sans max-w-xs mx-auto font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
                 {lang === "id"
                   ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen interaktif, serta solusi digital performa tinggi."
                   : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
@@ -438,7 +449,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-5 py-2.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/40 hover:scale-105 transition-transform border border-white/20"
+                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/30 hover:scale-105 transition-transform border border-white/20"
                 >
                   {lang === "id" ? "PROYEK" : "PROJECTS"}
                 </a>
@@ -446,7 +457,11 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 <a
                   href="#about"
                   onClick={() => soundFx.playClick()}
-                  className="px-5 py-2.5 rounded-full border-[1.5px] border-white text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-white hover:text-[#1A1A1A] transition-all duration-200"
+                  className={`px-6 py-2.5 rounded-full border text-xs font-bold uppercase tracking-wider shadow-md transition-all duration-200 ${
+                    isNight
+                      ? "border-white/30 text-white hover:bg-white hover:text-black"
+                      : "border-black/30 text-black hover:bg-black hover:text-white"
+                  }`}
                 >
                   {lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}
                 </a>
