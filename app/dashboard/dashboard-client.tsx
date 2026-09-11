@@ -21,7 +21,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
@@ -77,6 +77,24 @@ interface DashboardClientProps {
   isAdmin?: boolean;
 }
 
+const GREETINGS = [
+  "Halo",
+  "Hello",
+  "こんにちは",
+  "안녕하세요",
+  "你好",
+  "Bonjour",
+  "Hola",
+  "Ciao",
+  "Hallo",
+  "Olá",
+  "Привет",
+  "مرحبا",
+  "नमस्ते",
+  "Merhaba",
+  "Γεια σου",
+];
+
 export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = false }: DashboardClientProps) {
   const { lang, toggleLang } = useLanguage();
   const [mode, setMode] = useState<"day" | "night">("day");
@@ -85,12 +103,20 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [greetingIndex, setGreetingIndex] = useState(0);
 
   const showToast = (msg: string) => {
     soundFx.playClick();
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 3000);
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setGreetingIndex((prev) => (prev + 1) % GREETINGS.length);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     setSfxEnabled(soundFx.getIsEnabled());
@@ -368,7 +394,27 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             </div>
 
             {/* Desktop Headline & CTAs */}
-            <div className="hidden sm:flex flex-col order-1 z-20 space-y-5 max-w-2xl text-left drop-shadow-md">
+            <div className="hidden sm:flex flex-col order-1 z-20 space-y-4 max-w-2xl text-left drop-shadow-md">
+              {/* Animated Multilingual Greeting Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] font-mono text-xs font-bold tracking-wider uppercase shadow-sm backdrop-blur-md w-fit">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#DC2626] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#DC2626]"></span>
+                </span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={GREETINGS[greetingIndex]}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.3 }}
+                    className="inline-block"
+                  >
+                    {GREETINGS[greetingIndex]} 👋
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+
               <h1 className="font-display text-4xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95]">
                 <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
                 <br />
@@ -405,7 +451,27 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             </div>
 
             {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
-            <div className="sm:hidden w-full z-20 space-y-4 text-center px-2 pt-2 pb-4">
+            <div className="sm:hidden w-full z-20 space-y-4 text-center px-2 pt-2 pb-4 flex flex-col items-center">
+              {/* Animated Multilingual Greeting Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] font-mono text-xs font-bold tracking-wider uppercase shadow-sm backdrop-blur-md w-fit">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#DC2626] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#DC2626]"></span>
+                </span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={GREETINGS[greetingIndex]}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.3 }}
+                    className="inline-block"
+                  >
+                    {GREETINGS[greetingIndex]} 👋
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+
               <h1 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
                 <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
                 <br />
