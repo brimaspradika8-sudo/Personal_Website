@@ -126,22 +126,6 @@ export default function IntroLoader({
                   </div>
                 </div>
               )}
-
-              {/* Title Overlay: Seamlessly replaces PROJECT PLUTO with BRIMAS WEBSITE */}
-              {riveReady && !isLaunching && !isLaunched && (
-                <div className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none flex flex-col items-center justify-center bg-black px-12 py-6 rounded-2xl">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-ping" />
-                    <span className="text-[11px] font-mono font-bold text-[#DC2626] tracking-widest uppercase">
-                      PORTFOLIO INTRO
-                    </span>
-                  </div>
-                  <h1 className="font-display text-4xl sm:text-6xl font-black uppercase text-white tracking-tight leading-none text-center">
-                    BRIMAS<br />
-                    <span className="text-[#DC2626]">WEBSITE</span>
-                  </h1>
-                </div>
-              )}
             </div>
           ) : (
             /* FALLBACK INTRO HTML/CSS (Jika Rive .riv gagal load) */
