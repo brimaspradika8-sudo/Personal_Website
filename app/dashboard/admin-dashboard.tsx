@@ -90,19 +90,19 @@ export default function AdminDashboard({
   ];
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-500 ${isNight ? "bg-[#0b0c10] text-[#c5c6c7]" : "bg-[#f4f7f6] text-[#2c3e50]"}`}>
+    <div className={`min-h-screen flex transition-colors duration-500 ${isNight ? "bg-[#0A0A0B] text-[#FAF9F6]" : "bg-[#FAF9F6] text-[#1A1A1A]"}`}>
       
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:flex lg:flex-col lg:shrink-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} ${isNight ? "bg-[#111216] border-r border-white/5" : "bg-white border-r border-[#e0e0e0]"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:flex lg:flex-col lg:shrink-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} ${isNight ? "bg-[#0D0D0E] border-r border-white/10" : "bg-white border-r border-slate-200"}`}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-inherit">
-          <Link href="/dashboard" className="flex items-center gap-2 group">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#DC2626] to-[#991b1b] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-red-500/20 group-hover:scale-105 transition-transform">
+          <Link href="/dashboard" className="flex items-center gap-2.5 group">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#B91C1C] to-[#DC2626] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-[#DC2626]/30 group-hover:scale-105 transition-transform border border-white/20">
               B
             </div>
             <span className={`font-bold tracking-tight text-sm font-sans ${isNight ? "text-white" : "text-black"}`}>
@@ -121,29 +121,29 @@ export default function AdminDashboard({
               key={item.label}
               href={item.href}
               onClick={() => soundFx.playClick()}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${item.active ? (isNight ? "bg-white/10 text-white shadow-sm" : "bg-[#DC2626]/10 text-[#DC2626] font-semibold") : (isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black")}`}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${item.active ? (isNight ? "bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30 font-semibold" : "bg-[#DC2626] text-white font-semibold shadow-md") : (isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black")}`}
             >
-              <item.icon className="w-5 h-5" />
-              <span className="text-sm font-medium">{item.label}</span>
+              <item.icon className="w-4 h-4" />
+              <span className="text-xs font-semibold uppercase tracking-wider">{item.label}</span>
             </Link>
           ))}
           
           <div className="mt-8 text-[10px] font-bold uppercase tracking-widest text-[#DC2626] mb-4 px-2">Pengaturan</div>
-          <Link href="/dashboard/settings" className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black"}`}>
-            <Settings className="w-5 h-5" />
-            <span className="text-sm font-medium">Settings</span>
+          <Link href="/dashboard/settings" className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black"}`}>
+            <Settings className="w-4 h-4" />
+            <span className="text-xs font-semibold uppercase tracking-wider">Settings</span>
           </Link>
         </nav>
 
         <div className="p-4 border-t border-inherit space-y-2">
-          <div className={`p-3 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-white/5" : "bg-black/5"}`}>
+          <div className={`p-3 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-white/5 border border-white/10" : "bg-black/5 border border-black/10"}`}>
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-9 h-9 rounded-full bg-[#DC2626] flex shrink-0 items-center justify-center text-white font-bold text-sm shadow-md overflow-hidden relative">
                 {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
               </div>
               <div className="truncate">
                 <p className={`text-xs font-bold truncate ${isNight ? "text-white" : "text-black"}`}>{displayName}</p>
-                <p className="text-[10px] opacity-60 truncate">Admin</p>
+                <p className="text-[10px] opacity-60 truncate font-mono">Admin</p>
               </div>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function AdminDashboard({
               soundFx.playClick();
               await signOut();
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white text-xs font-bold transition-all border border-red-500/20 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white text-xs font-bold transition-all border border-red-500/20 cursor-pointer"
             title="Keluar dari Akun Admin"
           >
             <LogOut className="w-4 h-4" />
@@ -164,7 +164,7 @@ export default function AdminDashboard({
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
-        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-xl border-b transition-colors duration-300 ${isNight ? "bg-[#111216]/80 border-white/5" : "bg-white/80 border-[#e0e0e0]"}`}>
+        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-xl border-b transition-colors duration-300 ${isNight ? "bg-[#0D0D0E]/80 border-white/10 shadow-2xl" : "bg-white/80 border-slate-200 shadow-sm"}`}>
           <div className="flex items-center gap-3 md:gap-6">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -180,7 +180,7 @@ export default function AdminDashboard({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <div className={`hidden sm:flex items-center px-3 py-1.5 rounded-full border transition-colors ${isNight ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10"}`}>
+            <div className={`hidden sm:flex items-center px-3.5 py-1.5 rounded-full border transition-colors ${isNight ? "bg-white/5 border-white/10 text-white" : "bg-black/5 border-black/10 text-black"}`}>
               <Search className="w-4 h-4 opacity-50 mr-2" />
               <input type="text" placeholder="Search..." className="bg-transparent text-xs outline-none w-32 placeholder:opacity-50" />
             </div>
@@ -188,7 +188,7 @@ export default function AdminDashboard({
             <Link
               href="/dashboard"
               onClick={() => soundFx.playClick()}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] text-xs font-bold hover:bg-[#DC2626] hover:text-white transition-all shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] text-xs font-bold hover:bg-[#DC2626] hover:text-white transition-all shadow-sm"
               title="Lihat Tampilan Portfolio / Site"
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -211,19 +211,35 @@ export default function AdminDashboard({
             
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <p className="text-sm font-mono text-[#DC2626] uppercase tracking-widest mb-1">Welcome back, Boss</p>
+                <p className="text-xs font-mono text-[#DC2626] uppercase tracking-widest mb-1">Welcome back, Boss</p>
                 <h2 className={`font-display text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none ${isNight ? "text-white" : "text-black"}`}>
                   {displayName}
                 </h2>
               </div>
-              <div className="flex items-center gap-3">
-                <button className="px-4 py-2 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 shadow-lg shadow-[#DC2626]/30 flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Interactive Action: Reset Rive Intro State On Click */}
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    try {
+                      sessionStorage.removeItem("hasSeenRiveIntro");
+                    } catch {}
+                    alert("Animasi Rive Intro berhasil di-reset! Silakan buka halaman awal / untuk menonton animasi intro kembali.");
+                  }}
+                  className={`px-4 py-2 rounded-full border text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 flex items-center gap-2 cursor-pointer shadow-sm ${
+                    isNight
+                      ? "border-white/20 text-white hover:bg-[#DC2626] hover:border-[#DC2626]"
+                      : "border-black/20 text-black hover:bg-[#DC2626] hover:text-white"
+                  }`}
+                  title="Reset status Rive Intro untuk diputar ulang saat membuka beranda"
+                >
+                  <Sparkles className="w-4 h-4 text-[#DC2626]" />
+                  <span>Reset Intro Rive</span>
+                </button>
+
+                <button className="px-4 py-2 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 shadow-lg shadow-[#DC2626]/30 flex items-center gap-2 border border-white/20 cursor-pointer">
                   <Plus className="w-4 h-4" />
                   <span>New Project</span>
-                </button>
-                <button className={`px-4 py-2 rounded-full border text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 flex items-center gap-2 ${isNight ? "border-white/20 text-white hover:bg-white/10" : "border-black/20 text-black hover:bg-black/5"}`}>
-                  <FileText className="w-4 h-4" />
-                  <span>Write Post</span>
                 </button>
               </div>
             </div>
