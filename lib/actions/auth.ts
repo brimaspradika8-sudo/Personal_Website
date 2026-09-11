@@ -60,17 +60,17 @@ export async function syncUserToDatabase(
       });
     }
 
-    // Existing user: ONLY update avatar if existingUser.avatar is currently empty/null.
-    // Once user sets their own photo in DB, Google OAuth MUST NOT override it!
     const shouldUpdateAvatar = !existingUser.avatar && Boolean(avatar);
     const shouldUpdateName = !existingUser.name && Boolean(name);
+    const shouldUpdateRole = isAdmin && existingUser.role !== "ADMIN";
 
-    if (shouldUpdateAvatar || shouldUpdateName) {
+    if (shouldUpdateAvatar || shouldUpdateName || shouldUpdateRole) {
       return await prisma.user.update({
         where: { email },
         data: {
           ...(shouldUpdateName && name ? { name } : {}),
           ...(shouldUpdateAvatar && avatar ? { avatar } : {}),
+          ...(shouldUpdateRole ? { role: "ADMIN" } : {}),
         },
       });
     }
@@ -192,7 +192,6 @@ export async function signInWithGithub() {
 
 // --- Login manual (email + password) ---
 export async function signInWithPassword(formData: FormData) {
-  let targetPath = "/dashboard";
   try {
     const email = (formData.get("email") as string || "").trim();
     const password = (formData.get("password") as string || "").trim();
@@ -217,7 +216,7 @@ export async function signInWithPassword(formData: FormData) {
       return { error: formatAuthError(error.message) };
     }
 
-    // Pastikan user juga ada di tabel User sendiri
+    let targetPath = "/dashboard";
     if (data.user?.email) {
       await syncUserToDatabase(
         data.user.email,
@@ -228,18 +227,17 @@ export async function signInWithPassword(formData: FormData) {
       const isAdmin = await checkIsAdmin(data.user.email);
       targetPath = isAdmin ? "/admin" : "/dashboard";
     }
+
+    revalidatePath("/dashboard");
+    revalidatePath("/admin");
+    revalidatePath("/profile");
+    revalidatePath("/", "layout");
+
+    return { success: true, targetPath };
   } catch (err: any) {
-    if (err?.digest?.startsWith("NEXT_REDIRECT") || err?.message?.includes("NEXT_REDIRECT")) {
-      throw err;
-    }
     console.error("Error during signInWithPassword:", err);
     return { error: formatAuthError(err?.message || "Gagal melakukan proses masuk.") };
   }
-
-  revalidatePath("/dashboard");
-  revalidatePath("/profile");
-  revalidatePath("/", "layout");
-  redirect(targetPath);
 }
 
 // --- Register manual (nama, email, password) ---
