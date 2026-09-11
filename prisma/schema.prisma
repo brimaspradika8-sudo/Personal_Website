@@ -22,15 +22,16 @@ enum Role {
 }
 
 model User {
-  id         String     @id @default(uuid()) @db.Uuid
+  id         String      @id @default(uuid()) @db.Uuid
   name       String
-  email      String     @unique
+  email      String      @unique
   avatar     String?
-  role       Role       @default(USER)
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
+  role       Role        @default(USER)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
   reactions  Reaction[]
   comments   Comment[]
+  guestbooks Guestbook[]
 }
 
 model Article {
@@ -88,6 +89,17 @@ model Project {
   repository_url String?
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
+
+  @@index([created_at(sort: Desc)])
+}
+
+model Guestbook {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  message    String
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([created_at(sort: Desc)])
 }

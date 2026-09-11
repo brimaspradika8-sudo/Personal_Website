@@ -31,6 +31,7 @@ import ProjectModal, { ProjectData } from "@/components/ProjectModal";
 import TechStackMatrix from "@/components/TechStackMatrix";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
+import GuestbookSection from "@/components/GuestbookSection";
 import ScrollReveal from "@/components/ScrollReveal";
 
 const Lanyard = dynamic(() => import("@/components/Lanyard"), {
@@ -767,6 +768,11 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
       {/* 7. EXPERIENCE & JOURNEY TIMELINE SECTION */}
       <ScrollReveal direction="up" delayMs={50}>
         <ExperienceTimeline isNight={isNight} lang={lang} />
+      </ScrollReveal>
+
+      {/* 8. PUBLIC GUESTBOOK SECTION */}
+      <ScrollReveal direction="up" delayMs={50}>
+        <GuestbookSection user={user} isNight={isNight} />
       </ScrollReveal>
 
       {/* Toast Notification */}
