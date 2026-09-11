@@ -198,6 +198,20 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
               </div>
             ))}
           </div>
+        ) : displayProjects.length === 0 ? (
+          <div className={`p-10 rounded-2xl border text-center space-y-3 ${isNight ? "bg-[#1A211A]/50 border-[#2A2F26]" : "bg-slate-50 border-slate-200"}`}>
+            <FolderGit2 className="w-10 h-10 text-[#DC2626] mx-auto opacity-70" />
+            <p className="font-mono text-sm font-bold opacity-80">
+              {lang === "id" ? "Belum ada proyek untuk kategori ini." : "No projects found in this category."}
+            </p>
+            <button
+              type="button"
+              onClick={() => setSelectedCategory(lang === "id" ? "Semua" : "All")}
+              className="text-xs font-mono font-bold text-[#DC2626] hover:underline cursor-pointer"
+            >
+              {lang === "id" ? "Tampilkan Semua Proyek" : "Show All Projects"}
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayProjects.map((project, idx) => (
