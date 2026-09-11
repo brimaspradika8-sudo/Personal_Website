@@ -617,13 +617,19 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
       <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-          {/* Left Column: Interactive 3D Physics Lanyard Photo Card */}
+          {/* Left Column: Interactive 3D Physics Lanyard Photo Card (Smooth Drop from Top Animation) */}
           <div className="lg:col-span-5 flex justify-center items-center">
-            <ScrollReveal direction="right" delayMs={100} durationMs={800} className="w-full flex justify-center">
-              <div className="relative w-full max-w-md h-[520px] sm:h-[580px] flex items-center justify-center overflow-visible">
+            <motion.div
+              initial={{ opacity: 0, y: -140, scale: 0.94 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full flex justify-center"
+            >
+              <div className="relative w-full max-w-md h-[520px] sm:h-[580px] flex items-center justify-center overflow-visible z-20 pointer-events-auto">
                 <Lanyard />
               </div>
-            </ScrollReveal>
+            </motion.div>
           </div>
 
           {/* Right Column: About Me Bio & Details */}

@@ -243,29 +243,35 @@ function ReactBitsLanyardContent() {
   const dir = useMemo(() => new THREE.Vector3(), []);
 
   useFrame((state) => {
-    // Collect positions for Ribbon geometry
-    if (fixed.current) {
-      const p0 = fixed.current.translation();
-      const p1 = j1.current?.translation();
-      const p2 = j2.current?.translation();
-      const p3 = j3.current?.translation();
-      const p4 = j4.current?.translation();
-      const p5 = card.current?.translation();
+    // Collect positions for Ribbon geometry safely
+    try {
+      if (fixed.current && typeof fixed.current.translation === "function") {
+        const p0 = fixed.current.translation();
+        const p1 = j1.current?.translation?.();
+        const p2 = j2.current?.translation?.();
+        const p3 = j3.current?.translation?.();
+        const p4 = j4.current?.translation?.();
+        const p5 = card.current?.translation?.();
 
-      nodePositions.current[0] = p0 ? new THREE.Vector3(p0.x, p0.y, p0.z) : null;
-      nodePositions.current[1] = p1 ? new THREE.Vector3(p1.x, p1.y, p1.z) : null;
-      nodePositions.current[2] = p2 ? new THREE.Vector3(p2.x, p2.y, p2.z) : null;
-      nodePositions.current[3] = p3 ? new THREE.Vector3(p3.x, p3.y, p3.z) : null;
-      nodePositions.current[4] = p4 ? new THREE.Vector3(p4.x, p4.y, p4.z) : null;
-      nodePositions.current[5] = p5 ? new THREE.Vector3(p5.x, p5.y + 1.45, p5.z) : null;
+        if (p0 && p1 && p2 && p3 && p4 && p5) {
+          nodePositions.current[0] = new THREE.Vector3(p0.x, p0.y, p0.z);
+          nodePositions.current[1] = new THREE.Vector3(p1.x, p1.y, p1.z);
+          nodePositions.current[2] = new THREE.Vector3(p2.x, p2.y, p2.z);
+          nodePositions.current[3] = new THREE.Vector3(p3.x, p3.y, p3.z);
+          nodePositions.current[4] = new THREE.Vector3(p4.x, p4.y, p4.z);
+          nodePositions.current[5] = new THREE.Vector3(p5.x, p5.y + 1.45, p5.z);
+        }
+      }
+    } catch {
+      // Rapier initializing...
     }
 
-    if (dragged && card.current) {
+    if (dragged && card.current && typeof card.current.setNextKinematicTranslation === "function") {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
       vec.add(dir.multiplyScalar(state.camera.position.length()));
 
-      [card, j1, j2, j3, j4, fixed].forEach((ref) => ref.current?.wakeUp());
+      [card, j1, j2, j3, j4, fixed].forEach((ref) => ref.current?.wakeUp?.());
       card.current.setNextKinematicTranslation({
         x: vec.x - dragged.x,
         y: vec.y - dragged.y,
