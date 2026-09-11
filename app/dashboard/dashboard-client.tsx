@@ -123,27 +123,10 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
     });
   };
 
-  // PENTING: displayName & avatarSrc SELALU diambil dari data user yang sedang login.
-  // Tidak ada hardcode nama/avatar di sini — semua dinamis berdasarkan sesi aktif.
-  const displayName =
-    dbUser?.name ||
-    user?.user_metadata?.full_name ||
-    user?.user_metadata?.name ||
-    user?.email?.split("@")[0] ||
-    "Guest User";
-
-  const avatarSrc = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
-
-  const isLoggedIn = !!user;
-  const activeUserName =
-    dbUser?.name ||
-    user?.user_metadata?.full_name ||
-    user?.user_metadata?.name ||
-    (user?.email ? user.email.split("@")[0] : "");
-
-  const welcomeMarqueeText = isLoggedIn && activeUserName
-    ? `WELCOME ${activeUserName.toUpperCase()}`
-    : "WELCOME";
+  // Brand identity statis pemilik situs (Brimas Pradika Utama)
+  const displayName = "Brimas Pradika Utama";
+  const avatarSrc = "/images/avatar.webp";
+  const welcomeMarqueeText = "WELCOME BRIMAS PRADIKA UTAMA";
 
   const initialLetter = displayName ? displayName.charAt(0).toUpperCase() : "G";
   const isNight = mode === "night";
