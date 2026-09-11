@@ -1,19 +1,75 @@
 'use client';
 
-import React, { useRef, useState, useEffect, useMemo, Suspense } from 'react';
+import React, { useRef, useState, useEffect, useMemo, Component, ReactNode } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { RoundedBox } from '@react-three/drei';
-import {
-  Physics,
-  RigidBody,
-  useRopeJoint,
-  useSphericalJoint,
-  BallCollider,
-  CuboidCollider,
-  RapierRigidBody,
-} from '@react-three/rapier';
 import * as THREE from 'three';
 
+// Fallback HTML card if WebGL context or R3F Canvas encounters an issue
+function LanyardFallbackHTML() {
+  return (
+    <div className="relative w-full max-w-xs h-[480px] flex flex-col items-center justify-center p-4">
+      {/* Red Ribbon Strap */}
+      <div className="w-10 h-32 bg-gradient-to-b from-[#B91C1C] via-[#DC2626] to-[#EF4444] rounded-t-md shadow-md flex items-center justify-center overflow-hidden border border-white/20">
+        <span className="text-[10px] font-black text-white uppercase tracking-widest -rotate-90 whitespace-nowrap">
+          BRIMAS PRADIKA • AI DEVELOPER
+        </span>
+      </div>
+      {/* Carabiner Ring */}
+      <div className="w-6 h-6 rounded-full border-4 border-zinc-700 bg-zinc-900 -mt-2 z-10 shadow-inner" />
+      {/* ID Card */}
+      <div className="w-64 h-80 bg-zinc-900 border-2 border-white/20 rounded-2xl p-4 flex flex-col items-center justify-between shadow-2xl backdrop-blur-xl relative overflow-hidden -mt-2">
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-2 bg-zinc-800 rounded-full" />
+        <div className="w-full h-44 rounded-xl overflow-hidden relative border border-white/10 mt-3">
+          <img
+            src="/images/avatar.webp"
+            alt="Brimas Pradika Utama"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/images/avatar.png';
+            }}
+          />
+        </div>
+        <div className="text-center w-full pb-2">
+          <h3 className="font-display font-black text-sm text-white uppercase tracking-wider">
+            BRIMAS PRADIKA
+          </h3>
+          <p className="text-[11px] font-mono text-[#DC2626] uppercase font-bold tracking-widest mt-0.5">
+            AI SYSTEMS DEVELOPER
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// React Error Boundary for 3D Canvas
+class CanvasErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; fallback: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(err: any) {
+    console.warn("Lanyard 3D Canvas error caught:", err);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+// 3D Front Avatar Photo Plane
 function CardFrontPhoto() {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
@@ -71,11 +127,8 @@ function CardFrontPhoto() {
   );
 }
 
-function BandRibbon({
-  nodes,
-}: {
-  nodes: React.RefObject<(THREE.Vector3 | null)[]>;
-}) {
+// Dynamic Strap Ribbon Mesh
+function BandRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
   const strapTexture = useMemo(() => {
     if (typeof window === 'undefined') return null;
     const canvas = document.createElement('canvas');
@@ -87,18 +140,18 @@ function BandRibbon({
       ctx.fillRect(0, 0, 128, 512);
 
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 22px system-ui, -apple-system, sans-serif';
+      ctx.font = '900 24px system-ui, -apple-system, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       ctx.save();
-      ctx.translate(64, 128);
+      ctx.translate(64, 140);
       ctx.rotate(-Math.PI / 2);
       ctx.fillText('BRIMAS PRADIKA', 0, 0);
       ctx.restore();
 
       ctx.save();
-      ctx.translate(64, 384);
+      ctx.translate(64, 370);
       ctx.rotate(-Math.PI / 2);
       ctx.fillText('AI DEVELOPER', 0, 0);
       ctx.restore();
@@ -110,7 +163,7 @@ function BandRibbon({
     return tex;
   }, []);
 
-  const numSamples = 32;
+  const numSamples = 24;
   const ribbonGeo = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     const positions = new Float32Array(numSamples * 2 * 3);
@@ -149,7 +202,12 @@ function BandRibbon({
   const curve = useMemo(
     () =>
       new THREE.CatmullRomCurve3(
-        Array.from({ length: 6 }, () => new THREE.Vector3()),
+        [
+          new THREE.Vector3(0, 2.3, 0),
+          new THREE.Vector3(0, 1.4, 0.1),
+          new THREE.Vector3(0, 0.5, 0.15),
+          new THREE.Vector3(0, -0.4, 0),
+        ],
         false,
         'catmullrom',
         0.5
@@ -158,19 +216,15 @@ function BandRibbon({
   );
 
   useFrame(() => {
-    const pts = nodes.current;
-    if (!pts || !pts[0]) return;
-
-    for (let i = 0; i < 6; i++) {
-      if (pts[i]) {
-        curve.points[i].copy(pts[i]!);
-      }
-    }
+    curve.points[0].set(0, 2.3, 0);
+    curve.points[1].set(cardPos.x * 0.4, 1.4, Math.abs(cardPos.x) * 0.2 + 0.1);
+    curve.points[2].set(cardPos.x * 0.7, 0.5 + cardPos.y * 0.3, Math.abs(cardPos.x) * 0.3 + 0.15);
+    curve.points[3].set(cardPos.x, cardPos.y + 1.45, cardPos.z + 0.05);
 
     const curvePoints = curve.getPoints(numSamples - 1);
     const positionsAttr = ribbonGeo.attributes.position;
     const posArray = positionsAttr.array as Float32Array;
-    const strapWidth = 0.12;
+    const strapWidth = 0.13;
     const camDir = new THREE.Vector3(0, 0, 1);
 
     for (let i = 0; i < curvePoints.length; i++) {
@@ -212,179 +266,151 @@ function BandRibbon({
   );
 }
 
-function ReactBitsLanyardContent() {
-  const fixed = useRef<any>(null);
-  const j1 = useRef<any>(null);
-  const j2 = useRef<any>(null);
-  const j3 = useRef<any>(null);
-  const j4 = useRef<any>(null);
-  const card = useRef<any>(null);
-
-  const nodePositions = useRef<(THREE.Vector3 | null)[]>([
-    new THREE.Vector3(0, 2.2, 0),
-    new THREE.Vector3(0, 1.7, 0),
-    new THREE.Vector3(0, 1.2, 0),
-    new THREE.Vector3(0, 0.7, 0),
-    new THREE.Vector3(0, 0.2, 0),
-    new THREE.Vector3(0, -0.3, 0),
-  ]);
-
-  // Joints connecting the physics rope segments
-  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 0.45]);
-  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 0.45]);
-  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 0.45]);
-  useRopeJoint(j3, j4, [[0, 0, 0], [0, 0, 0], 0.45]);
-  useSphericalJoint(j4, card, [[0, 0, 0], [0, 1.45, 0]]);
-
-  const [dragged, setDragged] = useState<THREE.Vector3 | false>(false);
+// 3D Lanyard Interactive Card Content Component
+function LanyardCard3D() {
+  const cardGroup = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const vec = useMemo(() => new THREE.Vector3(), []);
-  const dir = useMemo(() => new THREE.Vector3(), []);
+  // Motion dynamics state
+  const targetPos = useRef(new THREE.Vector3(0, -0.6, 0));
+  const currentPos = useRef(new THREE.Vector3(0, -0.6, 0));
+  const velocityPos = useRef(new THREE.Vector3(0, 0, 0));
 
-  useFrame((state) => {
-    // Collect positions for Ribbon geometry safely
-    try {
-      if (fixed.current && typeof fixed.current.translation === "function") {
-        const p0 = fixed.current.translation();
-        const p1 = j1.current?.translation?.();
-        const p2 = j2.current?.translation?.();
-        const p3 = j3.current?.translation?.();
-        const p4 = j4.current?.translation?.();
-        const p5 = card.current?.translation?.();
+  const targetRot = useRef(new THREE.Euler(0, 0, 0));
+  const currentRot = useRef(new THREE.Euler(0, 0, 0));
 
-        if (p0 && p1 && p2 && p3 && p4 && p5) {
-          nodePositions.current[0] = new THREE.Vector3(p0.x, p0.y, p0.z);
-          nodePositions.current[1] = new THREE.Vector3(p1.x, p1.y, p1.z);
-          nodePositions.current[2] = new THREE.Vector3(p2.x, p2.y, p2.z);
-          nodePositions.current[3] = new THREE.Vector3(p3.x, p3.y, p3.z);
-          nodePositions.current[4] = new THREE.Vector3(p4.x, p4.y, p4.z);
-          nodePositions.current[5] = new THREE.Vector3(p5.x, p5.y + 1.45, p5.z);
-        }
-      }
-    } catch {
-      // Rapier initializing...
+  const pointerOffset = useRef(new THREE.Vector2(0, 0));
+
+  useFrame((state, delta) => {
+    if (!cardGroup.current) return;
+
+    if (isDragging) {
+      const mouseX = (state.pointer.x * 2.8) - pointerOffset.current.x;
+      const mouseY = (state.pointer.y * 2.2) - pointerOffset.current.y;
+      targetPos.current.set(mouseX, mouseY, 0.4);
+      targetRot.current.set(
+        -state.pointer.y * 0.45,
+        state.pointer.x * 0.65,
+        -state.pointer.x * 0.35
+      );
+    } else {
+      // Natural sway resting dynamics
+      const t = state.clock.getElapsedTime();
+      const swayX = Math.sin(t * 1.5) * 0.08;
+      const swayY = Math.cos(t * 1.2) * 0.04 - 0.6;
+      targetPos.current.set(swayX, swayY, 0);
+      targetRot.current.set(
+        Math.sin(t * 1.2) * 0.05,
+        Math.cos(t * 1.5) * 0.08,
+        Math.sin(t * 1.8) * 0.04
+      );
     }
 
-    if (dragged && card.current && typeof card.current.setNextKinematicTranslation === "function") {
-      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
-      dir.copy(vec).sub(state.camera.position).normalize();
-      vec.add(dir.multiplyScalar(state.camera.position.length()));
+    // Spring physics integration
+    const stiffness = isDragging ? 25 : 12;
+    const damping = isDragging ? 0.75 : 0.82;
 
-      [card, j1, j2, j3, j4, fixed].forEach((ref) => ref.current?.wakeUp?.());
-      card.current.setNextKinematicTranslation({
-        x: vec.x - dragged.x,
-        y: vec.y - dragged.y,
-        z: vec.z - dragged.z,
-      });
-    }
+    const forceX = (targetPos.current.x - currentPos.current.x) * stiffness;
+    const forceY = (targetPos.current.y - currentPos.current.y) * stiffness;
+    const forceZ = (targetPos.current.z - currentPos.current.z) * stiffness;
+
+    velocityPos.current.x = (velocityPos.current.x + forceX * delta) * damping;
+    velocityPos.current.y = (velocityPos.current.y + forceY * delta) * damping;
+    velocityPos.current.z = (velocityPos.current.z + forceZ * delta) * damping;
+
+    currentPos.current.x += velocityPos.current.x * delta;
+    currentPos.current.y += velocityPos.current.y * delta;
+    currentPos.current.z += velocityPos.current.z * delta;
+
+    currentRot.current.x += (targetRot.current.x - currentRot.current.x) * 8 * delta;
+    currentRot.current.y += (targetRot.current.y - currentRot.current.y) * 8 * delta;
+    currentRot.current.z += (targetRot.current.z - currentRot.current.z) * 8 * delta;
+
+    cardGroup.current.position.copy(currentPos.current);
+    cardGroup.current.rotation.copy(currentRot.current);
   });
 
   return (
     <>
-      <BandRibbon nodes={nodePositions} />
+      <BandRibbon cardPos={currentPos.current} />
 
-      {/* Anchor Point at Ceiling */}
-      <RigidBody ref={fixed} type="fixed" position={[0, 2.2, 0]}>
+      {/* Anchor Ring at Ceiling */}
+      <group position={[0, 2.3, 0]}>
         <mesh position={[0, 0.08, 0]}>
-          <boxGeometry args={[0.3, 0.1, 0.14]} />
-          <meshStandardMaterial color="#1c1c1c" roughness={0.3} metalness={0.7} />
+          <boxGeometry args={[0.32, 0.1, 0.14]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.3} metalness={0.8} />
         </mesh>
         <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.07, 0.018, 16, 32]} />
-          <meshStandardMaterial color="#2a2a2a" metalness={0.8} roughness={0.2} />
+          <meshStandardMaterial color="#2a2a2a" metalness={0.85} roughness={0.2} />
         </mesh>
-      </RigidBody>
+      </group>
 
-      {/* Physics Rope Segments */}
-      <RigidBody ref={j1} position={[0, 1.75, 0]} colliders={false} angularDamping={2} linearDamping={2}>
-        <BallCollider args={[0.1]} />
-      </RigidBody>
-      <RigidBody ref={j2} position={[0, 1.3, 0]} colliders={false} angularDamping={2} linearDamping={2}>
-        <BallCollider args={[0.1]} />
-      </RigidBody>
-      <RigidBody ref={j3} position={[0, 0.85, 0]} colliders={false} angularDamping={2} linearDamping={2}>
-        <BallCollider args={[0.1]} />
-      </RigidBody>
-      <RigidBody ref={j4} position={[0, 0.4, 0]} colliders={false} angularDamping={2} linearDamping={2}>
-        <BallCollider args={[0.1]} />
-      </RigidBody>
-
-      {/* Dynamic 3D Card Rigid Body */}
-      <RigidBody
-        ref={card}
-        position={[0, -1.05, 0]}
-        type={dragged ? 'kinematicPosition' : 'dynamic'}
-        colliders={false}
-        angularDamping={3.5}
-        linearDamping={2.5}
+      {/* Main Interactive 3D Card */}
+      <group
+        ref={cardGroup}
+        position={[0, -0.6, 0]}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+          setIsDragging(true);
+          pointerOffset.current.set(
+            (e.pointer.x * 2.8) - currentPos.current.x,
+            (e.pointer.y * 2.2) - currentPos.current.y
+          );
+        }}
+        onPointerUp={(e) => {
+          e.stopPropagation();
+          (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+          setIsDragging(false);
+        }}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => {
+          setHovered(false);
+          setIsDragging(false);
+        }}
       >
-        <CuboidCollider args={[1.05, 1.5, 0.04]} />
-
-        <group
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-            if (card.current) {
-              const p = card.current.translation();
-              const threeCamera = (e as any).camera;
-              vec.set(e.pointer.x, e.pointer.y, 0.5).unproject(threeCamera);
-              dir.copy(vec).sub(threeCamera.position).normalize();
-              vec.add(dir.multiplyScalar(threeCamera.position.length()));
-              setDragged(new THREE.Vector3(vec.x - p.x, vec.y - p.y, vec.z - p.z));
-            }
-          }}
-          onPointerUp={(e) => {
-            e.stopPropagation();
-            (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
-            setDragged(false);
-          }}
-          onPointerOver={() => setHovered(true)}
-          onPointerOut={() => setHovered(false)}
-        >
-          {/* Carabiner Clip Top Joint */}
-          <group position={[0, 1.45, 0.02]}>
-            <mesh position={[0, 0.06, 0]} rotation={[Math.PI / 2, 0, 0]}>
-              <torusGeometry args={[0.08, 0.02, 16, 32]} />
-              <meshStandardMaterial color="#222222" metalness={0.85} roughness={0.2} />
-            </mesh>
-            <mesh position={[0, -0.03, 0]}>
-              <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
-              <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.2} />
-            </mesh>
-            <mesh position={[0, -0.12, 0]} rotation={[Math.PI / 2, 0, 0]}>
-              <torusGeometry args={[0.07, 0.02, 16, 32]} />
-              <meshStandardMaterial color="#222222" metalness={0.85} roughness={0.2} />
-            </mesh>
-          </group>
-
-          {/* Clean White Plastic Card Body */}
-          <RoundedBox args={[2.05, 2.95, 0.07]} radius={0.14} smoothness={4}>
-            <meshStandardMaterial
-              color={hovered ? '#ffffff' : '#f5f5f5'}
-              roughness={0.25}
-              metalness={0.1}
-            />
-          </RoundedBox>
-
-          {/* Top Lanyard Clip Hole */}
-          <mesh position={[0, 1.32, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.07, 0.07, 0.08, 16]} />
-            <meshStandardMaterial color="#1a1a1a" roughness={0.5} />
+        {/* Carabiner Clip Top Joint */}
+        <group position={[0, 1.45, 0.02]}>
+          <mesh position={[0, 0.06, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.08, 0.02, 16, 32]} />
+            <meshStandardMaterial color="#222222" metalness={0.85} roughness={0.2} />
           </mesh>
-
-          {/* Inner Photo */}
-          <Suspense fallback={null}>
-            <CardFrontPhoto />
-          </Suspense>
-
-          {/* Back Plate */}
-          <mesh position={[0, 0, -0.038]} rotation={[0, Math.PI, 0]}>
-            <planeGeometry args={[1.95, 2.85]} />
-            <meshStandardMaterial color="#e5e5e5" roughness={0.3} />
+          <mesh position={[0, -0.03, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
+            <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.2} />
+          </mesh>
+          <mesh position={[0, -0.12, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.07, 0.02, 16, 32]} />
+            <meshStandardMaterial color="#222222" metalness={0.85} roughness={0.2} />
           </mesh>
         </group>
-      </RigidBody>
+
+        {/* Clean Rounded ID Card Body */}
+        <RoundedBox args={[2.05, 2.95, 0.07]} radius={0.14} smoothness={4}>
+          <meshStandardMaterial
+            color={hovered ? '#ffffff' : '#f5f5f5'}
+            roughness={0.25}
+            metalness={0.1}
+          />
+        </RoundedBox>
+
+        {/* Lanyard Hole */}
+        <mesh position={[0, 1.32, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.07, 0.07, 0.08, 16]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.5} />
+        </mesh>
+
+        {/* Front Avatar Photo */}
+        <CardFrontPhoto />
+
+        {/* Card Back Plate */}
+        <mesh position={[0, 0, -0.038]} rotation={[0, Math.PI, 0]}>
+          <planeGeometry args={[1.95, 2.85]} />
+          <meshStandardMaterial color="#e5e5e5" roughness={0.3} />
+        </mesh>
+      </group>
     </>
   );
 }
@@ -397,31 +423,27 @@ export default function Lanyard() {
   }, []);
 
   if (!mounted) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#DC2626] animate-pulse min-h-[520px]">
-        Loading React Bits Lanyard 3D...
-      </div>
-    );
+    return <LanyardFallbackHTML />;
   }
 
   return (
-    <div className="w-full h-[520px] sm:h-[580px] relative flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none overflow-visible">
-      <Canvas
-        camera={{ position: [0, -0.4, 8.0], fov: 42 }}
-        gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
-        onCreated={({ gl }) => {
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-        }}
-      >
-        <ambientLight intensity={1.8} />
-        <directionalLight position={[5, 8, 5]} intensity={2.2} castShadow />
-        <directionalLight position={[-5, -4, -2]} intensity={0.8} />
-        <pointLight position={[0, 3, 2]} intensity={1.0} color="#FFFFFF" />
+    <CanvasErrorBoundary fallback={<LanyardFallbackHTML />}>
+      <div className="w-full h-[520px] sm:h-[580px] relative flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none overflow-visible">
+        <Canvas
+          camera={{ position: [0, -0.2, 7.5], fov: 42 }}
+          gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
+          onCreated={({ gl }) => {
+            gl.toneMapping = THREE.ACESFilmicToneMapping;
+          }}
+        >
+          <ambientLight intensity={1.8} />
+          <directionalLight position={[5, 8, 5]} intensity={2.2} castShadow />
+          <directionalLight position={[-5, -4, -2]} intensity={0.8} />
+          <pointLight position={[0, 3, 2]} intensity={1.0} color="#FFFFFF" />
 
-        <Physics gravity={[0, -25, 0]} timeStep={1 / 60} interpolate={false}>
-          <ReactBitsLanyardContent />
-        </Physics>
-      </Canvas>
-    </div>
+          <LanyardCard3D />
+        </Canvas>
+      </div>
+    </CanvasErrorBoundary>
   );
 }
