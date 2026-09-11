@@ -23,6 +23,8 @@ import {
   ChevronRight,
   Sparkles,
   LogOut,
+  Globe,
+  ExternalLink,
 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
@@ -88,8 +90,9 @@ export default function AdminDashboard({
   const initial = displayName.charAt(0).toUpperCase();
 
   const NAV_ITEMS = [
-    { label: "Overview", icon: LayoutDashboard, href: "/admin", active: true },
-    { label: "Artikel (CRUD)", icon: FileText, href: "/admin/articles", active: false },
+    { label: "Overview", icon: LayoutDashboard, href: "/admin", active: true, external: false },
+    { label: "Artikel (CRUD)", icon: FileText, href: "/admin/articles", active: false, external: false },
+    { label: "Lihat Website", icon: Globe, href: "/dashboard", active: false, external: true },
   ];
 
   return (
@@ -123,11 +126,15 @@ export default function AdminDashboard({
             <Link
               key={item.label}
               href={item.href}
+              target={item.external ? "_blank" : undefined}
               onClick={() => soundFx.playClick()}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${item.active ? (isNight ? "bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30 font-semibold" : "bg-[#DC2626] text-white font-semibold shadow-md") : (isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black")}`}
+              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 ${item.active ? (isNight ? "bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30 font-semibold" : "bg-[#DC2626] text-white font-semibold shadow-md") : (isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black")}`}
             >
-              <item.icon className="w-4 h-4" />
-              <span className="text-xs font-semibold uppercase tracking-wider">{item.label}</span>
+              <div className="flex items-center gap-3">
+                <item.icon className="w-4 h-4" />
+                <span className="text-xs font-semibold uppercase tracking-wider">{item.label}</span>
+              </div>
+              {item.external && <ExternalLink className="w-3.5 h-3.5 opacity-50" />}
             </Link>
           ))}
         </nav>
@@ -180,12 +187,14 @@ export default function AdminDashboard({
 
             <Link
               href="/dashboard"
+              target="_blank"
               onClick={() => soundFx.playClick()}
-              className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] text-xs font-bold hover:bg-[#DC2626] hover:text-white transition-all shadow-sm"
-              title="Lihat Tampilan Portfolio / Site"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] text-xs font-bold hover:bg-[#DC2626] hover:text-white transition-all shadow-sm cursor-pointer"
+              title="Buka Website Publik di Tab Baru"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Tampilan Site</span>
+              <Globe className="w-3.5 h-3.5" />
+              <span>Lihat Website</span>
+              <ExternalLink className="w-3 h-3 opacity-70" />
             </Link>
 
             <button

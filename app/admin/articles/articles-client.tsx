@@ -24,6 +24,7 @@ import {
   Eye,
   FileCode,
   Check,
+  Globe,
 } from "lucide-react";
 import {
   ArticleItem,
@@ -302,6 +303,19 @@ export default function AdminArticlesClient({
             <FileText className="w-4 h-4" />
             <span className="text-xs font-semibold uppercase tracking-wider">Artikel (CRUD)</span>
           </Link>
+
+          <Link
+            href="/dashboard"
+            target="_blank"
+            onClick={() => soundFx.playClick()}
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 ${isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black"}`}
+          >
+            <div className="flex items-center gap-3">
+              <Globe className="w-4 h-4 text-[#DC2626]" />
+              <span className="text-xs font-semibold uppercase tracking-wider">Lihat Website</span>
+            </div>
+            <ExternalLink className="w-3.5 h-3.5 opacity-50" />
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-inherit space-y-2">
@@ -336,6 +350,18 @@ export default function AdminArticlesClient({
           </div>
 
           <div className="flex items-center gap-3">
+            <Link
+              href="/dashboard"
+              target="_blank"
+              onClick={() => soundFx.playClick()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold font-mono transition-all cursor-pointer shadow-sm bg-[#DC2626]/10 border-[#DC2626]/30 text-[#DC2626] hover:bg-[#DC2626] hover:text-white"
+              title="Buka Website Publik di Tab Baru"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">LIHAT WEBSITE</span>
+              <ExternalLink className="w-3 h-3 opacity-70" />
+            </Link>
+
             <button
               onClick={handleOpenCommentsModal}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold font-mono transition-all cursor-pointer shadow-sm ${
