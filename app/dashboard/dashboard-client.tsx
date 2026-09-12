@@ -426,7 +426,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               initial={{ opacity: 0, y: 75 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[270px] h-[360px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto"
+              className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[220px] h-[280px] xs:w-[260px] xs:h-[340px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto"
             >
               {/* Hero Portrait Photo (Seamless Radial Edge Feather Masking) */}
               <div
@@ -448,11 +448,11 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
               </div>
             </motion.div>
 
-            {/* Desktop Headline & CTAs */}
-            <div className="hidden sm:flex flex-col order-1 z-20 space-y-5 max-w-2xl text-left drop-shadow-md">
-              <h1 className="font-display text-4xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95]">
+            {/* Responsive Hero Headline & CTAs */}
+            <div className="flex flex-col items-center sm:items-start text-center sm:text-left z-20 space-y-4 sm:space-y-5 max-w-2xl drop-shadow-md order-1">
+              <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95]">
                 {/* Giant Multilingual Greeting Animated Line */}
-                <span className="block text-[#DC2626] h-[1.05em] overflow-hidden mb-1.5">
+                <span className="block text-[#DC2626] h-[1.05em] overflow-hidden mb-1 sm:mb-1.5">
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={GREETINGS[greetingIndex]}
@@ -468,28 +468,28 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 </span>
 
                 {/* Typewriter Line: "I'M BRIMAS PRADIKA" */}
-                <span className="whitespace-nowrap inline-flex items-center">
+                <span className="whitespace-nowrap inline-flex items-center justify-center sm:justify-start">
                   <span>{typedText}</span>
                   {!isTypingDone && (
-                    <span className="inline-block w-2.5 h-[0.8em] bg-[#DC2626] ml-1.5 animate-pulse align-middle" />
+                    <span className="inline-block w-2 sm:w-2.5 h-[0.8em] bg-[#DC2626] ml-1 sm:ml-1.5 animate-pulse align-middle" />
                   )}
                 </span>
                 <br />
                 <span className="text-[#DC2626]">UTAMA</span>
               </h1>
 
-              <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
+              <p className={`text-xs sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
                 {lang === "id"
                   ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
                   : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
               </p>
 
               {/* Two CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-1">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-3.5 pt-1">
                 <a
                   href="#projects"
                   onClick={() => soundFx.playClick()}
-                  className="px-7 py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
+                  className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
                 >
                   <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
                 </a>
@@ -497,127 +497,13 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                 <a
                   href="#about"
                   onClick={() => soundFx.playClick()}
-                  className={`px-7 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
+                  className={`px-6 sm:px-7 py-2.5 sm:py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
                     isNight
                       ? "border-white/25 text-white hover:bg-white hover:text-black hover:border-white"
                       : "border-black/30 text-black hover:bg-black hover:text-white hover:border-black"
                   }`}
                 >
                   <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
-            <div className="sm:hidden w-full z-20 space-y-4 text-center px-2 pt-2 pb-4 flex flex-col items-center">
-              <h1 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
-                {/* Giant Multilingual Greeting Animated Line (Mobile) */}
-                <span className="block text-[#DC2626] h-[1.1em] overflow-hidden mb-1">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={GREETINGS[greetingIndex]}
-                      initial={{ opacity: 0, y: 18 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -18 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      className="inline-block"
-                    >
-                      {GREETINGS[greetingIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-
-                {/* Typewriter Line (Mobile) */}
-                <span className="whitespace-nowrap inline-flex items-center justify-center">
-                  <span>{typedText}</span>
-                  {!isTypingDone && (
-                    <span className="inline-block w-2 h-[0.8em] bg-[#DC2626] ml-1 animate-pulse align-middle" />
-                  )}
-                </span>
-                <br />
-                <span className="text-[#DC2626]">UTAMA</span>
-              </h1>
-
-              <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
-                {lang === "id"
-                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
-                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
-              </p>
-
-              {/* Two CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-1">
-                <a
-                  href="#projects"
-                  onClick={() => soundFx.playClick()}
-                  className="px-7 py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
-                >
-                  <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
-                </a>
-
-                <a
-                  href="#about"
-                  onClick={() => soundFx.playClick()}
-                  className={`px-7 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
-                    isNight
-                      ? "border-white/25 text-white hover:bg-white hover:text-black hover:border-white"
-                      : "border-black/30 text-black hover:bg-black hover:text-white hover:border-black"
-                  }`}
-                >
-                  <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Mobile Headline & CTAs (Stacked Cleanly Below Photo) */}
-            <div className="sm:hidden w-full z-20 space-y-4 text-center px-2 pt-2 pb-4 flex flex-col items-center">
-              <h1 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none drop-shadow-md">
-                {/* Giant Multilingual Greeting Animated Line (Mobile) */}
-                <span className="block text-[#DC2626] h-[1.1em] overflow-hidden mb-1">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={GREETINGS[greetingIndex]}
-                      initial={{ opacity: 0, y: 18 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -18 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      className="inline-block"
-                    >
-                      {GREETINGS[greetingIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-
-                <span className="whitespace-nowrap">{lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA"}</span>
-                <br />
-                <span className="text-[#DC2626]">UTAMA</span>
-              </h1>
-
-              <p className={`text-sm leading-relaxed font-sans max-w-xs mx-auto font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
-                {lang === "id"
-                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen interaktif, serta solusi digital performa tinggi."
-                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
-              </p>
-
-              {/* Two Mobile CTA Buttons */}
-              <div className="flex items-center justify-center gap-3 pt-1">
-                <a
-                  href="#projects"
-                  onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/30 hover:scale-105 transition-transform border border-white/20"
-                >
-                  {lang === "id" ? "PROYEK" : "PROJECTS"}
-                </a>
-
-                <a
-                  href="#about"
-                  onClick={() => soundFx.playClick()}
-                  className={`px-6 py-2.5 rounded-full border text-xs font-bold uppercase tracking-wider shadow-md transition-all duration-200 ${
-                    isNight
-                      ? "border-white/30 text-white hover:bg-white hover:text-black"
-                      : "border-black/30 text-black hover:bg-black hover:text-white"
-                  }`}
-                >
-                  {lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}
                 </a>
               </div>
             </div>
