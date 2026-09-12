@@ -369,7 +369,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <Flame className="w-3.5 h-3.5 text-[#DC2626]" />
                     <span>MEMBER</span>
                   </span>
-                  <span className="px-3 py-0.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/40 text-[#DC2626] text-xs font-mono font-bold uppercase tracking-wider">
+                  <span className={`px-3 py-0.5 rounded-full border text-xs font-mono font-bold uppercase tracking-wider ${
+                    isNight ? "bg-white/5 border-white/20 text-white/70" : "bg-black/5 border-black/20 text-black/60"
+                  }`}>
                     TERAUTENTIKASI
                   </span>
                 </div>
