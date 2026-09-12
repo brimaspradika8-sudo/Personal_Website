@@ -373,7 +373,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
       <section
         id="hero"
         onMouseMove={handleMouseMoveHero}
-        className={`relative min-h-[88vh] lg:min-h-[94vh] flex flex-col justify-between overflow-hidden transition-colors duration-500 pt-12 sm:pt-16 md:pt-20 ${isNight ? "bg-[#0D0D0E]" : "bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#FAF9F6]"
+        className={`relative min-h-[88vh] lg:min-h-[94vh] flex flex-col justify-between overflow-hidden transition-colors duration-500 pt-12 sm:pt-16 md:pt-20 scroll-mt-20 ${isNight ? "bg-[#0D0D0E]" : "bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#FAF9F6]"
           }`}
       >
         {/* Giant Moving Backdrop Typography Watermark */}
@@ -643,7 +643,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
 
 
       {/* 4. SECTION "ABOUT ME" WITH STAGGERED SCROLL ANIMATIONS */}
-      <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
+      <section id="about" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
           {/* Left Column: Interactive 3D Physics Lanyard Photo Card (Smooth Drop from Top Animation) */}

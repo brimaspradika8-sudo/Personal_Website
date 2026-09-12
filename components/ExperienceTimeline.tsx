@@ -50,7 +50,7 @@ interface ExperienceTimelineProps {
 
 export default function ExperienceTimeline({ isNight, lang }: ExperienceTimelineProps) {
   return (
-    <section id="experience" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-b border-current/10">
+    <section id="experience" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 py-16 border-b border-current/10">
       <div className="space-y-10 text-left">
         
         {/* Header */}

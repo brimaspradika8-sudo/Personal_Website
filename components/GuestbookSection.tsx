@@ -71,7 +71,7 @@ export default function GuestbookSection({ user, isNight = true }: GuestbookSect
   const isAdmin = user?.email?.toLowerCase().trim() === "brimaspradika8@gmail.com";
 
   return (
-    <section id="guestbook" className="w-full py-12 relative z-10">
+    <section id="guestbook" className="scroll-mt-20 w-full py-12 relative z-10">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-8">
         
         {/* Section Header */}
