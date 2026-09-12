@@ -67,10 +67,8 @@ class CanvasErrorBoundary extends Component<
     }
     return this.props.children;
   }
-}
-
-// 3D Front Avatar Photo Plane
-function CardFrontPhoto() {
+}// 3D Front Avatar Photo Plane
+const CardFrontPhoto = React.memo(function CardFrontPhoto() {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
   useEffect(() => {
@@ -125,10 +123,10 @@ function CardFrontPhoto() {
       <meshBasicMaterial map={texture} />
     </mesh>
   );
-}
+});
 
 // Realistic 2-Strand V-Neck Lanyard Strap Mesh
-function DoubleStrapRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
+const DoubleStrapRibbon = React.memo(function DoubleStrapRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
   const strapTexture = useMemo(() => {
     if (typeof window === 'undefined') return null;
     const canvas = document.createElement('canvas');
@@ -299,7 +297,7 @@ function DoubleStrapRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
       </mesh>
     </group>
   );
-}
+});
 
 // 3D Lanyard Interactive Card Content Component
 function LanyardCard3D() {
@@ -463,7 +461,13 @@ export default function Lanyard() {
       <div className="w-full h-[520px] sm:h-[580px] relative flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none overflow-visible">
         <Canvas
           camera={{ position: [0, -0.2, 7.5], fov: 42 }}
-          gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
+          dpr={[1, 1.5]}
+          gl={{
+            alpha: true,
+            antialias: true,
+            preserveDrawingBuffer: false,
+            powerPreference: 'high-performance',
+          }}
           onCreated={({ gl }) => {
             gl.toneMapping = THREE.ACESFilmicToneMapping;
           }}
