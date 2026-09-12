@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="https://www.xml-sitemaps.com/css/sitemap.css"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+       <loc>https://brimas.vercel.app/</loc>
+       <lastmod>2026-09-12T04:42:32+00:00</lastmod>
+       <priority>1.0000</priority>
+  </url>
+  <url>
+       <loc>https://brimas.vercel.app/dashboard</loc>
+       <lastmod>2026-09-12T04:42:32+00:00</lastmod>
+       <priority>0.9000</priority>
+  </url>
+  <url>
+       <loc>https://brimas.vercel.app/posts</loc>
+       <lastmod>2026-09-12T04:42:32+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://brimas.vercel.app/profile</loc>
+       <lastmod>2026-09-12T04:42:32+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://brimas.vercel.app/posts/membangun-ai-agent-automation-nextjs-supabase</loc>
+       <lastmod>2026-09-12T04:42:32+00:00</lastmod>
+       <priority>0.7000</priority>
+  </url>
+  <url>
+       <loc>https://brimas.vercel.app/posts/optimasi-performa-web-modern-server-components-edge-caching</loc>
+       <lastmod>2026-09-12T04:42:32+00:00</lastmod>
+       <priority>0.7000</priority>
+  </url>
+  <url>
+       <loc>https://brimas.vercel.app/posts/panduan-lengkap-arsitektur-database-supabase-prisma-orm</loc>
+       <lastmod>2026-09-12T04:42:32+00:00</lastmod>
+       <priority>0.7000</priority>
+  </url>
+</urlset>
