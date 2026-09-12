@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Cinzel } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
@@ -16,6 +16,13 @@ const cinzel = Cinzel({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#0A0A0B",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://brimas.vercel.app"),
   title: {
@@ -27,6 +34,11 @@ export const metadata: Metadata = {
   authors: [{ name: "Brimas Pradika Utama" }],
   creator: "Brimas Pradika Utama",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Brimas Portfolio",
+  },
   openGraph: {
     title: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
     description: "Personal Portfolio & Dashboard — AI Systems Developer.",
