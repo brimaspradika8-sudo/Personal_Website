@@ -73,14 +73,14 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="id" className={`${plusJakartaSans.variable} ${cinzel.variable}`}>
+    <html lang="id" className={`dark ${plusJakartaSans.variable} ${cinzel.variable}`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${plusJakartaSans.className} antialiased min-h-screen transition-colors duration-500 overflow-x-hidden`}>
+      <body className={`${plusJakartaSans.className} antialiased min-h-screen bg-[#0A0A0B] text-[#F1EFE9] transition-colors duration-500 overflow-x-hidden`}>
         <LanguageProvider>
           {children}
         </LanguageProvider>

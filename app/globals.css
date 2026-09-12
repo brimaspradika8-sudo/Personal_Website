@@ -23,6 +23,12 @@
   }
 }
 
+html {
+  color-scheme: dark;
+  background-color: #0A0A0B;
+  color: #F1EFE9;
+}
+
 :root {
   --bg: #0A0A0B;
   --surface: #121214;
