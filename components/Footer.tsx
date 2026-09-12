@@ -96,7 +96,7 @@ export default function Footer({ isNight = true }: FooterProps) {
 
   return (
     <footer
-      className={`relative pt-16 pb-12 border-t transition-colors duration-500 ${
+      className={`relative pt-16 pb-20 md:pb-12 border-t transition-colors duration-500 ${
         isNight
           ? "bg-[#0a0b0d] border-white/10 text-slate-300"
           : "bg-white border-slate-200 text-slate-700"

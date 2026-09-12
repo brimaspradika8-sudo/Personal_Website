@@ -228,7 +228,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
         ease: [0.16, 1, 0.3, 1],
         delay: 0.15,
       }}
-      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${isNight ? "bg-[#0A0A0B] text-[#FAF9F6]" : "bg-[#FAF9F6] text-[#1A1A1A]"
+      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 ${isNight ? "bg-[#0A0A0B] text-[#FAF9F6]" : "bg-[#FAF9F6] text-[#1A1A1A]"
         }`}
     >
       {/* 1. TOP NAVIGATION HEADER (FLOATING CAPSULE NAVBAR) */}

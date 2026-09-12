@@ -119,7 +119,7 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#1A1A1A] font-sans selection:bg-[#DC2626] selection:text-white pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] text-[#1A1A1A] font-sans selection:bg-[#DC2626] selection:text-white">
       
       {/* Top Header Light Red Glow */}
       <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-[#DC2626]/10 via-[#DC2626]/5 to-transparent pointer-events-none -z-10" />
