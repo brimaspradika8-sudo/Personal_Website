@@ -204,42 +204,8 @@ function calculateReadTime(content: string): string {
   return `${minutes} min read`;
 }
 
-// --- HELPER LOGIC ADMIN ROLE ---
-export async function checkIsAdmin(email?: string | null): Promise<boolean> {
-  if (!email) return false;
-  const normalizedEmail = email.toLowerCase().trim();
-
-  // 1. Cek environment variables ADMIN_EMAILS (daftar email admin eksplisit).
-  //    Set di Vercel: ADMIN_EMAILS="email1@domain.com,email2@domain.com"
-  const envAdminEmails = (process.env.ADMIN_EMAILS || "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
-  if (normalizedEmail === "brimaspradika8@gmail.com") {
-    return true;
-  }
-
-  if (envAdminEmails.length > 0 && envAdminEmails.includes(normalizedEmail)) {
-    return true;
-  }
-
-  // 2. Periksa role ADMIN di database Prisma (sumber kebenaran utama).
-  //    HANYA user dengan role="ADMIN" di DB yang dianggap admin.
-  //    TIDAK ada fallback berdasarkan keyword email — itu celah keamanan
-  //    karena siapa pun dengan "admin" di emailnya bisa mendapat akses penuh.
-  try {
-    const dbUser = await prisma.user.findUnique({
-      where: { email: normalizedEmail },
-      select: { role: true },
-    });
-    if (dbUser && dbUser.role === "ADMIN") {
-      return true;
-    }
-  } catch {}
-
-  return false;
-}
+import { checkIsAdmin } from "./auth";
+export { checkIsAdmin };
 
 // 1. Ambil daftar artikel dengan filter search, kategori, dan sort
 export async function getArticles(params?: {
@@ -789,8 +755,15 @@ export async function deleteArticleComment(commentId: string) {
   }
 }
 
-// 8. Seed Artikel Sampel ke Database jika kosong
+// 8. Seed Artikel Sampel ke Database jika kosong (Admin only)
 export async function seedSampleArticlesIfEmpty() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user || !(await checkIsAdmin(user.email))) {
+    return { seeded: false, error: "Akses ditolak. Hanya Admin yang dapat melakukan seeding artikel." };
+  }
+
   try {
     const count = await prisma.article.count();
     if (count === 0) {

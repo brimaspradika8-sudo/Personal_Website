@@ -32,7 +32,35 @@ function formatAuthError(errorMsg: string): string {
 
 import { revalidatePath } from "next/cache";
 
-import { checkIsAdmin } from "./article";
+export async function checkIsAdmin(email?: string | null): Promise<boolean> {
+  if (!email) return false;
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const envAdminEmails = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (normalizedEmail === "brimaspradika8@gmail.com") {
+    return true;
+  }
+
+  if (envAdminEmails.length > 0 && envAdminEmails.includes(normalizedEmail)) {
+    return true;
+  }
+
+  try {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: { role: true },
+    });
+    if (dbUser && dbUser.role === "ADMIN") {
+      return true;
+    }
+  } catch {}
+
+  return false;
+}
 
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---
 // Sesuaikan nama field (name, email, dst) dengan schema.prisma kamu.

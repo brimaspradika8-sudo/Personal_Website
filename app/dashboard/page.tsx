@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { unstable_noStore as noStore } from "next/cache";
+import { checkIsAdmin } from "@/lib/actions/auth";
 import DashboardClient from "./dashboard-client";
 
 export const dynamic = "force-dynamic";
@@ -30,15 +31,7 @@ export default async function DashboardPage() {
   }
 
   // 3. Cek role admin untuk menentukan apakah tombol Admin Panel ditampilkan
-  const envAdminEmails = (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
-  const isAdmin =
-    userEmail === "brimaspradika8@gmail.com" ||
-    envAdminEmails.includes(userEmail) ||
-    dbUser?.role === "ADMIN";
+  const isAdmin = await checkIsAdmin(userEmail);
 
   // 4. Fetch daftar proyek publik untuk tampilan portfolio
   let supabaseProjects: any[] = [];

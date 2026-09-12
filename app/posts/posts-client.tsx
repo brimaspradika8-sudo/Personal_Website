@@ -27,11 +27,12 @@ interface PostsClientProps {
     email?: string;
     user_metadata?: { full_name?: string; avatar_url?: string };
   } | null;
+  isAdmin?: boolean;
 }
 
 const CATEGORIES = ["Semua", "AI Systems", "Web Dev", "Database", "Tutorial"];
 
-export default function PostsClient({ initialArticles, user }: PostsClientProps) {
+export default function PostsClient({ initialArticles, user, isAdmin = false }: PostsClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
@@ -101,15 +102,17 @@ export default function PostsClient({ initialArticles, user }: PostsClientProps)
             <span>Kembali ke Beranda</span>
           </Link>
 
-          <button
-            onClick={handleSeedArticles}
-            disabled={isPending}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 text-xs font-mono hover:bg-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
-            title="Isi sampel artikel ke database jika kosong"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
-            <span>{isPending ? "Proses..." : "Seed Artikel"}</span>
-          </button>
+          {isAdmin && (
+            <button
+              onClick={handleSeedArticles}
+              disabled={isPending}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 text-xs font-mono hover:bg-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
+              title="Isi sampel artikel ke database jika kosong"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
+              <span>{isPending ? "Proses..." : "Seed Artikel"}</span>
+            </button>
+          )}
         </div>
 
         {/* 2. HERO TITLE SECTION */}
@@ -165,7 +168,6 @@ export default function PostsClient({ initialArticles, user }: PostsClientProps)
                 <option value="oldest">Urutkan: Terlama</option>
               </select>
             </div>
-
           </div>
 
           {/* Category Filter Pills */}
