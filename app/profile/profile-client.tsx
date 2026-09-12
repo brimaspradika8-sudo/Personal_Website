@@ -255,7 +255,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
       {/* Glowing Ambient Orbs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-[#DC2626]/10 rounded-full filter blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-[#2563EB]/10 rounded-full filter blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-[#DC2626]/5 rounded-full filter blur-[120px] pointer-events-none" />
 
       {/* Header / Sticky Top Navbar */}
       <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-colors duration-300 border-b ${
@@ -369,7 +369,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <Flame className="w-3.5 h-3.5 text-[#DC2626]" />
                     <span>MEMBER</span>
                   </span>
-                  <span className="px-3 py-0.5 rounded-full bg-[#2563EB]/15 border border-[#2563EB] text-[#2563EB] dark:text-[#60A5FA] text-xs font-mono font-bold uppercase tracking-wider">
+                  <span className="px-3 py-0.5 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/40 text-[#DC2626] text-xs font-mono font-bold uppercase tracking-wider">
                     TERAUTENTIKASI
                   </span>
                 </div>
@@ -487,8 +487,8 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <p className="text-sm font-bold">Terautentikasi (Aktif)</p>
                   </div>
 
-                  <div className={`p-4 rounded-xl border space-y-1 ${isNight ? "bg-[#12160F] border-[#2563EB]/30" : "bg-slate-50 border-slate-200"}`}>
-                    <span className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-mono font-bold uppercase flex items-center gap-2">
+                  <div className={`p-4 rounded-xl border space-y-1 ${isNight ? "bg-[#121214] border-[#DC2626]/30" : "bg-slate-50 border-slate-200"}`}>
+                    <span className="text-xs text-[#DC2626] font-mono font-bold uppercase flex items-center gap-2">
                       <Calendar className="w-3.5 h-3.5" />
                       <span>TERDAFTAR SEJAK</span>
                     </span>
