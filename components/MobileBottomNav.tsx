@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { BookOpen, FolderGit2, Compass, User, UserCheck } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useRouter, usePathname } from "next/navigation";
@@ -19,11 +20,6 @@ export default function MobileBottomNav() {
     { id: "blog", label: lang === "id" ? "Artikel" : "Blog", href: "/posts", Icon: BookOpen },
     { id: "profile", label: lang === "id" ? "Profil" : "Profile", href: "/profile", Icon: UserCheck },
   ];
-
-  const getTabIndex = (tab: string) => {
-    const idx = navItems.findIndex((item) => item.id === tab);
-    return idx !== -1 ? idx : 0;
-  };
 
   useEffect(() => {
     router.prefetch("/profile");
@@ -52,16 +48,9 @@ export default function MobileBottomNav() {
     }
   };
 
-  const activeIndex = getTabIndex(activeTab);
-  const cx = 40 + activeIndex * 80;
-  const leftEnd = Math.max(0, cx - 35);
-  const rightStart = Math.min(400, cx + 35);
-
-  const svgPathD = `M 0,0 L ${leftEnd},0 C ${cx - 18},0 ${cx - 15},32 ${cx},32 C ${cx + 15},32 ${cx + 18},0 ${rightStart},0 L 400,0 L 400,68 L 0,68 Z`;
-
   return (
     <div className="md:hidden fixed bottom-3 inset-x-2 z-50 pointer-events-auto">
-      <div className="max-w-md mx-auto bg-[#1A1A1A]/95 dark:bg-[#0A0A0B]/95 backdrop-blur-xl border border-white/20 dark:border-[#26262A] rounded-full shadow-2xl px-1.5 py-1.5 flex items-center justify-between">
+      <div className="max-w-md mx-auto bg-[#1A1A1A]/95 dark:bg-[#0A0A0B]/95 backdrop-blur-xl border border-white/20 dark:border-[#26262A] rounded-full shadow-2xl px-1.5 py-1.5 flex items-center justify-between relative overflow-hidden">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           const IconComponent = item.Icon;
@@ -71,18 +60,26 @@ export default function MobileBottomNav() {
               key={item.id}
               type="button"
               onClick={() => handleNav(item.id, item.href)}
-              className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-300 relative ${
-                isActive
-                  ? "bg-[#DC2626] text-white font-bold shadow-lg shadow-[#DC2626]/40"
-                  : "text-white/70 hover:text-white"
+              className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-full transition-colors duration-200 relative ${
+                isActive ? "text-white font-bold" : "text-white/60 hover:text-white"
               }`}
             >
-              {/* Feature 3.1: Glowing White Active Indicator Dot */}
+              {/* Smooth Spring Sliding Pill Active Background Indicator */}
               {isActive && (
-                <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,1)] animate-pulse mb-0.5" />
+                <motion.div
+                  layoutId="activeMobileBottomTab"
+                  transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                  className="absolute inset-0 bg-gradient-to-r from-[#DC2626] to-[#B91C1C] rounded-full shadow-lg shadow-[#DC2626]/40 z-0"
+                />
               )}
-              <IconComponent className={`w-4 h-4 ${isActive ? "text-white" : "text-white/70"}`} />
-              <span className={`text-[10px] tracking-tight truncate max-w-[54px] ${isActive ? "text-white font-bold" : "text-white/70"}`}>
+
+              {/* Glowing White Dot Indicator */}
+              {isActive && (
+                <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,1)] animate-pulse mb-0.5 relative z-10" />
+              )}
+              
+              <IconComponent className={`w-4 h-4 relative z-10 ${isActive ? "text-white" : "text-white/70"}`} />
+              <span className={`text-[10px] tracking-tight truncate max-w-[54px] relative z-10 ${isActive ? "text-white font-bold" : "text-white/70"}`}>
                 {item.label}
               </span>
             </button>
