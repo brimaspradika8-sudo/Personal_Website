@@ -43,6 +43,14 @@ function TikTokIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.445 4.43-9.874 9.877-9.874 2.637 0 5.116 1.028 6.98 2.894A9.814 9.814 0 0122 11.96c0 5.447-4.43 9.876-9.949 9.876M12.05 0C5.395 0 0 5.395 0 12.05c0 2.12.553 4.187 1.605 6.002L0 24l6.103-1.6c1.751.956 3.737 1.46 5.945 1.46 6.653 0 12.048-5.393 12.048-12.05C24.096 5.395 18.703 0 12.05 0z" />
+    </svg>
+  );
+}
+
 interface FooterProps {
   isNight?: boolean;
 }
@@ -55,18 +63,6 @@ export default function Footer({ isNight = true }: FooterProps) {
 
   const SOCIAL_LINKS = [
     {
-      name: "Instagram",
-      href: "https://instagram.com/brimaspradika",
-      icon: InstagramIcon,
-      color: "hover:text-pink-500 hover:border-pink-500/40 hover:bg-pink-500/10",
-    },
-    {
-      name: "TikTok",
-      href: "https://tiktok.com/@brimaspradika",
-      icon: TikTokIcon,
-      color: "hover:text-cyan-400 hover:border-cyan-400/40 hover:bg-cyan-400/10",
-    },
-    {
       name: "GitHub",
       href: "https://github.com/brimaspradika8-sudo",
       icon: GithubIcon,
@@ -77,6 +73,24 @@ export default function Footer({ isNight = true }: FooterProps) {
       href: "https://linkedin.com/in/brimaspradika",
       icon: LinkedInIcon,
       color: "hover:text-blue-500 hover:border-blue-500/40 hover:bg-blue-500/10",
+    },
+    {
+      name: "Instagram",
+      href: "https://instagram.com/brimaspradika",
+      icon: InstagramIcon,
+      color: "hover:text-pink-500 hover:border-pink-500/40 hover:bg-pink-500/10",
+    },
+    {
+      name: "WhatsApp",
+      href: "https://wa.me/6281234567890",
+      icon: WhatsAppIcon,
+      color: "hover:text-emerald-500 hover:border-emerald-500/40 hover:bg-emerald-500/10",
+    },
+    {
+      name: "TikTok",
+      href: "https://tiktok.com/@brimaspradika",
+      icon: TikTokIcon,
+      color: "hover:text-cyan-400 hover:border-cyan-400/40 hover:bg-cyan-400/10",
     },
   ];
 
@@ -169,8 +183,8 @@ export default function Footer({ isNight = true }: FooterProps) {
               Ikuti perkembangan proyek, tutorial coding, dan aktivitas terbaru saya di media sosial berikut:
             </p>
 
-            {/* Social Icons Grid */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
+            {/* Social Icons Grid (Icon Only) */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
               {SOCIAL_LINKS.map((s) => (
                 <a
                   key={s.name}
@@ -178,13 +192,13 @@ export default function Footer({ isNight = true }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => soundFx.playClick()}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-mono font-bold transition-all shadow-sm ${
+                  className={`p-2.5 rounded-xl border transition-all shadow-sm flex items-center justify-center hover:scale-110 cursor-pointer ${
                     isNight ? "bg-white/5 border-white/10 text-white" : "bg-slate-100 border-slate-200 text-slate-800"
                   } ${s.color}`}
-                  title={`Kunjungi ${s.name}`}
+                  title={s.name}
+                  aria-label={s.name}
                 >
                   <s.icon className="w-4 h-4 shrink-0" />
-                  <span>{s.name}</span>
                 </a>
               ))}
             </div>
