@@ -32,6 +32,41 @@ interface PostsClientProps {
 
 const CATEGORIES = ["Semua", "AI Systems", "Web Dev", "Database", "Tutorial"];
 
+function ArticleThumbnail({ src, title }: { src?: string | null; title: string }) {
+  const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  if (!src || hasError) {
+    return (
+      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+        <BookOpen className="w-12 h-12 text-[#DC2626]/60 group-hover:scale-110 transition-transform duration-300" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
+          <BookOpen className="w-8 h-8 text-black/10 animate-bounce" />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={title}
+        onLoad={() => setIsLoading(false)}
+        onError={() => {
+          setIsLoading(false);
+          setHasError(true);
+        }}
+        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+          isLoading ? "opacity-0" : "opacity-100"
+        }`}
+      />
+    </>
+  );
+}
+
 export default function PostsClient({ initialArticles, user, isAdmin = false }: PostsClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
@@ -226,17 +261,7 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
               >
                 {/* Thumbnail Header */}
                 <div className="relative w-full h-48 bg-gray-100 overflow-hidden shrink-0">
-                  {article.thumbnail ? (
-                    <img
-                      src={article.thumbnail}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      <BookOpen className="w-12 h-12 text-black/20 group-hover:scale-110 text-[#DC2626] transition-transform" />
-                    </div>
-                  )}
+                  <ArticleThumbnail src={article.thumbnail} title={article.title} />
 
                   {/* Category Pill Badge */}
                   <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/80 text-white backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold uppercase tracking-wider shadow-md">
