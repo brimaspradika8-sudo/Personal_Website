@@ -239,13 +239,13 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
                   )}
 
                   {/* Category Pill Badge */}
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 text-[10px] font-mono font-bold uppercase text-black tracking-wider shadow-sm">
+                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/80 text-white backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold uppercase tracking-wider shadow-md">
                     {article.category || "Tutorial"}
                   </div>
 
                   {/* Estimated Read Time Badge */}
                   {article.readTime && (
-                    <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 text-[10px] font-mono text-black/80 flex items-center gap-1 shadow-sm">
+                    <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 text-[10px] font-mono font-bold text-black/80 flex items-center gap-1 shadow-sm">
                       <Clock className="w-3 h-3 text-[#DC2626]" />
                       <span>{article.readTime}</span>
                     </div>
@@ -272,11 +272,11 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
 
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1 hover:text-[#DC2626]">
-                        <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500/20" />
+                        <Heart className="w-3.5 h-3.5 text-[#DC2626] fill-[#DC2626]/20" />
                         <span>{article.likeCount}</span>
                       </span>
-                      <span className="flex items-center gap-1">
-                        <MessageSquare className="w-3.5 h-3.5 text-blue-500" />
+                      <span className="flex items-center gap-1 hover:text-[#DC2626]">
+                        <MessageSquare className="w-3.5 h-3.5 text-black/60" />
                         <span>{article.commentCount}</span>
                       </span>
                       <ChevronRight className="w-4 h-4 text-black/40 group-hover:text-[#DC2626] group-hover:translate-x-1 transition-all" />

@@ -273,7 +273,11 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                           {project.techStack?.map((tech) => (
                             <span
                               key={tech}
-                              className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-current/5 border border-current/10 opacity-90"
+                              className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold border transition-all ${
+                                isNight
+                                  ? "bg-[#DC2626]/10 text-slate-200 border-[#DC2626]/30 hover:border-[#DC2626] hover:text-white"
+                                  : "bg-slate-100 text-slate-700 border-slate-200 hover:border-[#DC2626]"
+                              }`}
                             >
                               {tech}
                             </span>
