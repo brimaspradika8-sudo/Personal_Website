@@ -122,12 +122,12 @@ export default function CommandPalette({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-[#12160F]/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-[#0A0A0B]/80 backdrop-blur-sm animate-fadeIn">
       <div className="fixed inset-0 -z-10" onClick={onClose} />
       
-      <div className="w-full max-w-xl bg-[#1A211A] border border-[#2A2F26] rounded-xl overflow-hidden text-[#F1EFE9]">
+      <div className="w-full max-w-xl bg-[#121214] border border-[#26262A] rounded-xl overflow-hidden text-[#F1EFE9]">
         {/* Search Input Bar */}
-        <div className="relative flex items-center px-4 py-3 border-b border-[#2A2F26]">
+        <div className="relative flex items-center px-4 py-3 border-b border-[#26262A]">
           <Search className="w-4 h-4 text-[#A8A79C] shrink-0 mr-3" />
           <input
             ref={inputRef}
@@ -143,7 +143,7 @@ export default function CommandPalette({
           />
           <button
             onClick={onClose}
-            className="p-1 rounded-lg bg-[#12160F] hover:bg-[#212A20] text-[#A8A79C] border border-[#2A2F26] transition-colors ml-2 cursor-pointer"
+            className="p-1 rounded-lg bg-[#0A0A0B] hover:bg-[#1A1A1E] text-[#A8A79C] border border-[#26262A] transition-colors ml-2 cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -159,10 +159,10 @@ export default function CommandPalette({
                   key={item.id}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => soundFx.playHover()}
-                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg hover:bg-[#212A20] transition-colors text-left group cursor-pointer"
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg hover:bg-[#1A1A1E] transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-[#12160F] text-[#3B5D42] border border-[#2A2F26]">
+                    <div className="p-2 rounded-lg bg-[#0A0A0B] text-[#DC2626] border border-[#26262A]">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
@@ -174,7 +174,7 @@ export default function CommandPalette({
                       </span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#12160F] text-[#A8A79C] border border-[#2A2F26]">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#0A0A0B] text-[#A8A79C] border border-[#26262A]">
                     ↵ {lang === "id" ? "Pilih" : "Select"}
                   </span>
                 </button>
@@ -190,11 +190,11 @@ export default function CommandPalette({
         </div>
 
         {/* Footer info */}
-        <div className="px-4 py-2.5 bg-[#12160F] border-t border-[#2A2F26] flex items-center justify-between text-[11px] text-[#A8A79C]">
+        <div className="px-4 py-2.5 bg-[#0A0A0B] border-t border-[#26262A] flex items-center justify-between text-[11px] text-[#A8A79C]">
           <div className="flex items-center gap-2">
-            <span className="px-1.5 py-0.5 rounded bg-[#1A211A] border border-[#2A2F26] font-mono">↑↓</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#121214] border border-[#26262A] font-mono">↑↓</span>
             <span>{lang === "id" ? "Navigasi" : "Navigate"}</span>
-            <span className="px-1.5 py-0.5 rounded bg-[#1A211A] border border-[#2A2F26] font-mono ml-2">ESC</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#121214] border border-[#26262A] font-mono ml-2">ESC</span>
             <span>{lang === "id" ? "Tutup" : "Close"}</span>
           </div>
         </div>

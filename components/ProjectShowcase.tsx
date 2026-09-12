@@ -173,7 +173,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
             })}
           </div>
           {/* Right edge fade gradient hint */}
-          <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l ${isNight ? "from-[#12160F]" : "from-white"} to-transparent z-10 sm:hidden`} />
+          <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l ${isNight ? "from-[#0A0A0B]" : "from-white"} to-transparent z-10 sm:hidden`} />
         </div>
 
         {/* Feature 2.1: Skeleton Shimmer Loading Cards vs 3D Glassmorphism Cards Grid */}
@@ -183,7 +183,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
               <div
                 key={n}
                 className={`rounded-2xl border p-5 space-y-4 animate-pulse ${
-                  isNight ? "bg-[#1A211A]/60 border-[#2A2F26]" : "bg-slate-100 border-slate-200"
+                  isNight ? "bg-[#121214]/60 border-[#26262A]" : "bg-slate-100 border-slate-200"
                 }`}
               >
                 <div className="w-full h-48 rounded-xl bg-current/10" />
@@ -200,7 +200,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
             ))}
           </div>
         ) : displayProjects.length === 0 ? (
-          <div className={`p-10 rounded-2xl border text-center space-y-3 ${isNight ? "bg-[#1A211A]/50 border-[#2A2F26]" : "bg-slate-50 border-slate-200"}`}>
+          <div className={`p-10 rounded-2xl border text-center space-y-3 ${isNight ? "bg-[#121214]/50 border-[#26262A]" : "bg-slate-50 border-slate-200"}`}>
             <FolderGit2 className="w-10 h-10 text-[#DC2626] mx-auto opacity-70" />
             <p className="font-mono text-sm font-bold opacity-80">
               {lang === "id" ? "Belum ada proyek untuk kategori ini." : "No projects found in this category."}

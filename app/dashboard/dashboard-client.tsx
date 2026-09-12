@@ -628,7 +628,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
         {/* Ultra-Smooth Organic SVG Wave Divider */}
         <div className="absolute -bottom-[1px] left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
           <svg
-            className={`w-full h-12 sm:h-20 md:h-24 block fill-current transition-colors duration-300 ${isNight ? "text-[#12160F]" : "text-[#ffffff]"
+            className={`w-full h-12 sm:h-20 md:h-24 block fill-current transition-colors duration-300 ${isNight ? "text-[#0A0A0B]" : "text-[#ffffff]"
               }`}
             viewBox="0 0 1440 120"
             preserveAspectRatio="none"
@@ -691,7 +691,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             {/* Feature Badges Grid */}
             <ScrollReveal direction="zoom" delayMs={450} durationMs={700}>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#121214] border-[#26262A]" : "bg-[#F8F8F6] border-[#E5E5E2]"
                   }`}>
                   <div className="flex items-center gap-1.5 text-[#DC2626]">
                     <MapPin className="w-4 h-4" />
@@ -700,7 +700,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   <p className="text-xs font-bold truncate">SMK Bhakti Mulia Pare</p>
                 </div>
 
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#121214] border-[#26262A]" : "bg-[#F8F8F6] border-[#E5E5E2]"
                   }`}>
                   <div className="flex items-center gap-1.5 text-[#DC2626]">
                     <Code className="w-4 h-4" />
@@ -709,7 +709,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
                   <p className="text-xs font-bold truncate">AI Systems Developer</p>
                 </div>
 
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#1A211A] border-[#2A2F26]" : "bg-[#F8F8F6] border-[#E5E5E2]"
+                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#121214] border-[#26262A]" : "bg-[#F8F8F6] border-[#E5E5E2]"
                   }`}>
                   <div className="flex items-center gap-1.5 text-[#DC2626]">
                     <Layers className="w-4 h-4" />

@@ -61,7 +61,7 @@ export default function MobileBottomNav() {
 
   return (
     <div className="md:hidden fixed bottom-3 inset-x-2 z-50 pointer-events-auto">
-      <div className="max-w-md mx-auto bg-[#1A1A1A]/95 dark:bg-[#12160F]/95 backdrop-blur-xl border border-white/20 dark:border-[#2A2F26] rounded-full shadow-2xl px-1.5 py-1.5 flex items-center justify-between">
+      <div className="max-w-md mx-auto bg-[#1A1A1A]/95 dark:bg-[#0A0A0B]/95 backdrop-blur-xl border border-white/20 dark:border-[#26262A] rounded-full shadow-2xl px-1.5 py-1.5 flex items-center justify-between">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           const IconComponent = item.Icon;
