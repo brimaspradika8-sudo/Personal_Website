@@ -250,10 +250,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       isNight ? "bg-[#12160F] text-[#F1EFE9]" : "bg-[#F8F9FA] text-[#1A1A1A]"
     }`}>
       
-      {/* Subtle Spider-Man Ambient Background Overlay */}
+      {/* Subtle Ambient Background Overlay */}
       <div className={`fixed inset-0 z-0 pointer-events-none opacity-15 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:24px_24px]`} />
 
-      {/* Spider-Man Glowing Ambient Orbs */}
+      {/* Glowing Ambient Orbs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-[#DC2626]/10 rounded-full filter blur-[120px] pointer-events-none" />
       <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-[#2563EB]/10 rounded-full filter blur-[120px] pointer-events-none" />
 
@@ -298,7 +298,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* Main Container */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 space-y-6 relative z-10">
 
-        {/* Profile Spider-Man Banner Card */}
+        {/* Profile Banner Card */}
         <div className={`relative backdrop-blur-xl border rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl overflow-hidden group transition-colors duration-300 ${
           isNight ? "bg-[#1A211A]/90 border-[#2A2F26]" : "bg-white border-slate-200 text-slate-900 shadow-md"
         }`}>
@@ -676,10 +676,20 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 <div className={`p-4 rounded-xl border space-y-1 ${isNight ? "bg-[#12160F] border-white/10" : "bg-slate-50 border-slate-200"}`}>
                   <h4 className="text-xs font-bold flex items-center gap-2">
                     <MessageSquare className="w-3.5 h-3.5 text-[#DC2626]" />
-                    <span>Bagaimana cara kerja Spider-Man Unmasking effect?</span>
+                    <span>Bagaimana cara mengubah tema aplikasi (Day / Night)?</span>
                   </h4>
                   <p className={`text-xs leading-relaxed pl-5 ${isNight ? "text-white/70" : "text-slate-600"}`}>
-                    Klik foto profil di Hero Section atau tombol UNMASK di pojok kanan atas foto untuk memicu animasi terkelupasnya topeng Spider-Man dari atas ke bawah.
+                    Anda dapat mengubah tema antara mode siang (Light) dan malam (Dark) melalui ikon toggle matahari/bulan di navigasi atas atau lewat tab Pengaturan.
+                  </p>
+                </div>
+
+                <div className={`p-4 rounded-xl border space-y-1 ${isNight ? "bg-[#12160F] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                  <h4 className="text-xs font-bold flex items-center gap-2">
+                    <MessageSquare className="w-3.5 h-3.5 text-[#DC2626]" />
+                    <span>Bagaimana cara mengunggah foto profil kustom?</span>
+                  </h4>
+                  <p className={`text-xs leading-relaxed pl-5 ${isNight ? "text-white/70" : "text-slate-600"}`}>
+                    Pastikan Anda telah masuk ke akun Anda, buka tab &quot;Edit Profil&quot;, lalu klik foto profil Anda untuk mengunggah berkas gambar kustom (maksimal 5MB).
                   </p>
                 </div>
               </div>

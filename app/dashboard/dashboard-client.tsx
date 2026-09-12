@@ -244,7 +244,7 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
             : "bg-white/60 border-slate-300/80 shadow-lg text-slate-900"
         }`}>
 
-          {/* Logo (Icon Bulat Merah Spider-Man + Personal Brand Name) */}
+          {/* Logo (Icon Bulat Merah + Personal Brand Name) */}
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}

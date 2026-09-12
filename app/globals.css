@@ -34,8 +34,7 @@
   --text-muted: #A8A79C;
   --border: #2A2F26;
   --danger-muted: #7A3B32;
-  --spiderman-accent: #DC2626;
-  --spiderman-glow: #DC2626;
+  --accent-glow: #DC2626;
 }
 
 @layer base {
@@ -114,7 +113,7 @@ input::-ms-clear {
   animation: welcomeMarqueeReverse 30s linear infinite !important;
 }
 
-/* Scoped Spider-Man Theme for Hero Photo Wrapper */
+/* Wrapper foto Hero dengan efek ambient glow merah */
 .hero-photo-wrapper {
   position: relative;
   overflow: hidden;
