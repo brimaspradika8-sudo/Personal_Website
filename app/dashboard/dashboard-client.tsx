@@ -382,7 +382,13 @@ export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = fa
           }`}
       >
         {/* Giant Moving Backdrop Typography Watermark */}
-        <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
+        <div
+          className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8"
+          style={{
+            maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+          }}
+        >
           {/* Line 1: Dynamic WELCOME Marquee */}
           <div
             className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
