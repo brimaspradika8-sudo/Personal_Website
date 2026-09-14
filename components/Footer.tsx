@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Heart, ArrowUp, Mail } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 
-// Social SVG Icons
 function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -66,43 +65,38 @@ export default function Footer({ isNight = true }: FooterProps) {
       name: "GitHub",
       href: "https://github.com/brimaspradika8-sudo",
       icon: GithubIcon,
-      color: "hover:text-[#DC2626] hover:border-[#DC2626]/40 hover:bg-[#DC2626]/10",
     },
     {
       name: "LinkedIn",
       href: "https://linkedin.com/in/brimaspradika",
       icon: LinkedInIcon,
-      color: "hover:text-blue-500 hover:border-blue-500/40 hover:bg-blue-500/10",
     },
     {
       name: "Instagram",
       href: "https://instagram.com/brimaspradika",
       icon: InstagramIcon,
-      color: "hover:text-pink-500 hover:border-pink-500/40 hover:bg-pink-500/10",
     },
     {
       name: "WhatsApp",
       href: "https://wa.me/6281234567890",
       icon: WhatsAppIcon,
-      color: "hover:text-emerald-500 hover:border-emerald-500/40 hover:bg-emerald-500/10",
     },
     {
       name: "TikTok",
       href: "https://tiktok.com/@brimaspradika",
       icon: TikTokIcon,
-      color: "hover:text-cyan-400 hover:border-cyan-400/40 hover:bg-cyan-400/10",
     },
   ];
 
   return (
     <footer
-      className={`relative pt-16 pb-20 md:pb-12 border-t transition-colors duration-500 ${
+      className={`relative pt-16 pb-20 md:pb-12 border-t transition-colors duration-300 ${
         isNight
-          ? "bg-[#0a0b0d] border-white/10 text-slate-300"
-          : "bg-white border-slate-200 text-slate-700"
+          ? "bg-[#0B0F17] border-slate-800 text-slate-400"
+          : "bg-white border-slate-200 text-slate-600"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Top Footer Section */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
@@ -112,29 +106,29 @@ export default function Footer({ isNight = true }: FooterProps) {
             <Link
               href="/"
               onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-3 group"
+              className="inline-flex items-center gap-2.5 group"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#B91C1C] to-[#DC2626] flex items-center justify-center text-white font-black text-lg shadow-lg shadow-[#DC2626]/30 group-hover:scale-105 transition-transform border border-white/20">
+              <div className="w-8 h-8 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-sm shadow-xs">
                 B
               </div>
               <div>
-                <h3 className={`font-display text-lg font-black uppercase tracking-tight ${isNight ? "text-white" : "text-slate-900"}`}>
-                  Brimas Pradika <span className="text-[#DC2626]">Utama</span>
+                <h3 className={`text-base font-semibold ${isNight ? "text-slate-100" : "text-slate-900"}`}>
+                  Brimas Pradika Utama
                 </h3>
-                <p className="text-[11px] font-mono opacity-60">AI Systems & Fullstack Developer</p>
+                <p className="text-xs text-slate-500 font-sans">AI Systems & Fullstack Developer</p>
               </div>
             </Link>
 
-            <p className="text-xs leading-relaxed opacity-80 max-w-sm font-sans">
-              Membangun aplikasi web generasi terbaru, sistem cerdas berbasis Agentic AI, serta antarmuka digital yang interaktif dan berperforma tinggi.
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400 max-w-sm font-sans">
+              Membangun aplikasi web generasi terbaru, sistem berbasis kecerdasan buatan, serta antarmuka digital performa tinggi.
             </p>
 
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex items-center gap-2 pt-1">
               <a
                 href="mailto:brimaspradika8@gmail.com"
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold transition-all border-[#DC2626]/30 bg-[#DC2626]/10 text-[#DC2626] hover:bg-[#DC2626] hover:text-white shadow-sm"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md border text-xs font-sans text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 hover:border-[#D32F2F] hover:text-[#D32F2F] transition-all"
               >
-                <Mail className="w-3.5 h-3.5" />
+                <Mail className="w-3.5 h-3.5 text-[#D32F2F]" />
                 <span>brimaspradika8@gmail.com</span>
               </a>
             </div>
@@ -142,49 +136,49 @@ export default function Footer({ isNight = true }: FooterProps) {
 
           {/* Quick Navigation Links Column */}
           <div className="md:col-span-3 space-y-3">
-            <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-[#DC2626]">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
               Navigasi Cepat
             </h4>
             <ul className="space-y-2 text-xs font-medium">
               <li>
-                <a href="#hero" className="hover:text-[#DC2626] transition-colors">
-                  Beranda Overview
+                <a href="#hero" className="hover:text-[#D32F2F] transition-colors">
+                  Beranda
                 </a>
               </li>
               <li>
-                <a href="#skills" className="hover:text-[#DC2626] transition-colors">
-                  Skills & Tech Stack
+                <a href="#skills" className="hover:text-[#D32F2F] transition-colors">
+                  Teknologi & Stack
                 </a>
               </li>
               <li>
-                <a href="#projects" className="hover:text-[#DC2626] transition-colors">
-                  Etalase Proyek
+                <a href="#projects" className="hover:text-[#D32F2F] transition-colors">
+                  Proyek Unggulan
                 </a>
               </li>
               <li>
-                <Link href="/posts" className="hover:text-[#DC2626] transition-colors">
+                <Link href="/posts" className="hover:text-[#D32F2F] transition-colors">
                   Artikel & Tutorial
                 </Link>
               </li>
               <li>
-                <a href="#guestbook" className="hover:text-[#DC2626] transition-colors">
-                  Public Guestbook
+                <a href="#guestbook" className="hover:text-[#D32F2F] transition-colors">
+                  Buku Tamu
                 </a>
               </li>
             </ul>
           </div>
 
           {/* Social Media Column */}
-          <div className="md:col-span-4 space-y-4">
-            <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-[#DC2626]">
-              Media Sosial & Komunitas
+          <div className="md:col-span-4 space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
+              Media Sosial
             </h4>
-            <p className="text-xs opacity-75 leading-relaxed">
-              Ikuti perkembangan proyek, tutorial coding, dan aktivitas terbaru saya di media sosial berikut:
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
+              Hubungi saya atau ikuti pembaruan proyek terbaru melalui saluran media sosial berikut.
             </p>
 
-            {/* Social Icons Grid (Icon Only) */}
-            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+            {/* Social Icons Grid */}
+            <div className="flex flex-wrap items-center gap-2 pt-1">
               {SOCIAL_LINKS.map((s) => (
                 <a
                   key={s.name}
@@ -192,9 +186,11 @@ export default function Footer({ isNight = true }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => soundFx.playClick()}
-                  className={`p-2.5 rounded-xl border transition-all shadow-sm flex items-center justify-center hover:scale-110 cursor-pointer ${
-                    isNight ? "bg-white/5 border-white/10 text-white" : "bg-slate-100 border-slate-200 text-slate-800"
-                  } ${s.color}`}
+                  className={`p-2.5 rounded-lg border transition-all flex items-center justify-center cursor-pointer ${
+                    isNight
+                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
+                      : "bg-slate-100 border-slate-200 text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                  }`}
                   title={s.name}
                   aria-label={s.name}
                 >
@@ -207,18 +203,18 @@ export default function Footer({ isNight = true }: FooterProps) {
         </div>
 
         {/* Bottom Footer Border & Copyright */}
-        <div className="pt-8 border-t border-current/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono opacity-70">
-          <p className="flex items-center gap-1.5">
+        <div className="pt-8 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <p className="flex items-center gap-1.5 font-sans">
             <span>© {new Date().getFullYear()} Brimas Pradika Utama. Made with</span>
-            <Heart className="w-3.5 h-3.5 text-[#DC2626] fill-[#DC2626]" />
+            <Heart className="w-3.5 h-3.5 text-[#D32F2F] fill-[#D32F2F]" />
             <span>in Indonesia.</span>
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 font-sans">
             <span className="hidden sm:inline">Built with Next.js 16 & Supabase</span>
             <button
               onClick={scrollToTop}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-current/20 hover:border-[#DC2626] hover:text-[#DC2626] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300 dark:border-slate-800 hover:border-[#D32F2F] hover:text-[#D32F2F] transition-all cursor-pointer"
             >
               <span>Kembali ke Atas</span>
               <ArrowUp className="w-3.5 h-3.5" />

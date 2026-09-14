@@ -17,13 +17,11 @@ import {
   Sun,
   Moon,
   LogOut,
-  Sparkles,
   ExternalLink,
   Upload,
   MessageSquare,
   Eye,
   FileCode,
-  Check,
   Globe,
 } from "lucide-react";
 import {
@@ -60,20 +58,18 @@ export default function AdminArticlesClient({
     } else {
       setIsNight(false);
       document.documentElement.classList.remove("dark");
+      localStorage.setItem("dashboard_theme", "day");
     }
   }, []);
 
-  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState<ArticleItem | null>(null);
   const [editorTab, setEditorTab] = useState<"write" | "preview">("write");
 
-  // Comment Moderation Modal State
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [adminComments, setAdminComments] = useState<any[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
 
-  // Form State
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
@@ -265,66 +261,64 @@ export default function AdminArticlesClient({
       a.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const displayName = dbUser?.name || user?.user_metadata?.full_name || "Admin";
-
   return (
-    <div className={`min-h-screen flex transition-colors duration-500 ${isNight ? "bg-[#0A0A0B] text-[#FAF9F6]" : "bg-[#FAF9F6] text-[#1A1A1A]"}`}>
+    <div className={`min-h-screen flex transition-colors duration-300 ${isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F8F9FA] text-slate-900"}`}>
       
       {/* Sidebar */}
-      <aside className={`w-64 shrink-0 hidden lg:flex lg:flex-col ${isNight ? "bg-[#0D0D0E] border-r border-white/10" : "bg-white border-r border-slate-200"}`}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-inherit">
+      <aside className={`w-64 shrink-0 hidden lg:flex lg:flex-col ${isNight ? "bg-[#0E1015] border-r border-slate-800" : "bg-white border-r border-slate-200"}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#B91C1C] to-[#DC2626] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-[#DC2626]/30 group-hover:scale-105 transition-transform border border-white/20">
+            <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-xs shadow-xs">
               B
             </div>
-            <span className={`font-bold tracking-tight text-sm font-sans ${isNight ? "text-white" : "text-black"}`}>
-              Brimas <span className="opacity-70 font-normal">Admin</span>
+            <span className="font-semibold text-sm tracking-tight font-sans">
+              Brimas <span className="font-normal text-slate-500">Admin</span>
             </span>
           </Link>
         </div>
 
         <nav className="flex-1 px-4 py-8 space-y-2">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] mb-4 px-2">Menu Utama</div>
+          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Utama</div>
           
           <Link
             href="/admin"
             onClick={() => soundFx.playClick()}
-            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black"}`}
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-400 hover:bg-slate-900 hover:text-slate-100" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span className="text-xs font-semibold uppercase tracking-wider">Overview</span>
+            <span className="text-xs font-medium">Overview</span>
           </Link>
 
           <Link
             href="/admin/articles"
             onClick={() => soundFx.playClick()}
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 bg-[#DC2626] text-white font-semibold shadow-lg shadow-[#DC2626]/30"
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all bg-[#D32F2F] text-white font-medium shadow-xs"
           >
             <FileText className="w-4 h-4" />
-            <span className="text-xs font-semibold uppercase tracking-wider">Artikel (CRUD)</span>
+            <span className="text-xs font-medium">Artikel (CRUD)</span>
           </Link>
 
           <Link
             href="/dashboard"
             target="_blank"
             onClick={() => soundFx.playClick()}
-            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 ${isNight ? "text-white/60 hover:bg-white/5 hover:text-white" : "text-black/60 hover:bg-black/5 hover:text-black"}`}
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-400 hover:bg-slate-900 hover:text-slate-100" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}
           >
             <div className="flex items-center gap-3">
-              <Globe className="w-4 h-4 text-[#DC2626]" />
-              <span className="text-xs font-semibold uppercase tracking-wider">Lihat Website</span>
+              <Globe className="w-4 h-4 text-[#D32F2F]" />
+              <span className="text-xs font-medium">Lihat Website</span>
             </div>
             <ExternalLink className="w-3.5 h-3.5 opacity-50" />
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-inherit space-y-2">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
           <button
             onClick={async () => {
               soundFx.playClick();
               await signOut();
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white text-xs font-bold transition-all border border-red-500/20 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-medium transition-colors border border-red-500/20 cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Keluar (Logout)</span>
@@ -336,68 +330,38 @@ export default function AdminArticlesClient({
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         {/* Header */}
-        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-xl border-b transition-colors duration-300 ${isNight ? "bg-[#0D0D0E]/80 border-white/10 shadow-2xl" : "bg-white/80 border-slate-200 shadow-sm"}`}>
+        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/80 border-slate-200 shadow-xs"}`}>
           <div className="flex items-center gap-3">
             <Link
               href="/admin"
-              className="lg:hidden p-2 rounded-md hover:bg-black/5 dark:hover:bg-white/10"
+              className="lg:hidden p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className={`text-lg sm:text-xl font-bold font-display uppercase tracking-tight ${isNight ? "text-white" : "text-black"}`}>
-              Kelola <span className="text-[#DC2626]">Artikel (CRUD)</span>
+            <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+              Kelola Artikel (CRUD)
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              target="_blank"
-              onClick={() => soundFx.playClick()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold font-mono transition-all cursor-pointer shadow-sm bg-[#DC2626]/10 border-[#DC2626]/30 text-[#DC2626] hover:bg-[#DC2626] hover:text-white"
-              title="Buka Website Publik di Tab Baru"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">LIHAT WEBSITE</span>
-              <ExternalLink className="w-3 h-3 opacity-70" />
-            </Link>
-
+          <div className="flex items-center gap-2.5">
             <button
               onClick={handleOpenCommentsModal}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold font-mono transition-all cursor-pointer shadow-sm ${
-                isNight
-                  ? "bg-white/10 border-white/15 text-white hover:bg-white/20"
-                  : "bg-slate-100 border-slate-200 text-slate-800 hover:bg-slate-200"
-              }`}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-slate-400 transition-colors cursor-pointer"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-[#DC2626]" />
-              <span className="hidden sm:inline">MODERASI KOMENTAR</span>
+              <MessageSquare className="w-3.5 h-3.5 text-[#D32F2F]" />
+              <span className="hidden sm:inline">Moderasi Komentar</span>
             </button>
 
             <button
               onClick={toggleTheme}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold font-mono transition-all cursor-pointer shadow-sm ${
-                isNight
-                  ? "bg-white/10 border-white/15 text-white hover:bg-white/20"
-                  : "bg-slate-100 border-slate-200 text-slate-800 hover:bg-slate-200"
-              }`}
+              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
             >
-              {isNight ? (
-                <>
-                  <Sun className="w-4 h-4 text-amber-400" />
-                  <span className="hidden sm:inline">MODE TERANG</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-4 h-4 text-slate-700" />
-                  <span className="hidden sm:inline">MODE GELAP</span>
-                </>
-              )}
+              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
 
             <button
               onClick={handleOpenCreateModal}
-              className="px-4 py-2 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 shadow-lg shadow-[#DC2626]/30 flex items-center gap-2 border border-white/20 cursor-pointer"
+              className="px-4 py-1.5 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-medium transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Artikel Baru</span>
@@ -407,74 +371,70 @@ export default function AdminArticlesClient({
 
         {/* Content Container */}
         <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div className="max-w-6xl mx-auto space-y-6">
             
             {/* Search & Actions Bar */}
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="relative w-full sm:w-80">
-                <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari artikel berdasarkan judul atau slug..."
-                  className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-xs font-mono transition-all ${
-                    isNight
-                      ? "bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-[#DC2626]"
-                      : "bg-white border-slate-300 text-black placeholder-slate-400 focus:border-[#DC2626]"
-                  }`}
+                  placeholder="Cari judul artikel atau slug..."
+                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-sans focus:outline-none focus:border-[#D32F2F] transition-all"
                 />
               </div>
 
-              <div className="text-xs font-mono opacity-60">
-                Total Artikel: <span className="font-bold text-[#DC2626]">{filteredArticles.length}</span>
+              <div className="text-xs text-slate-500 font-sans">
+                Total Artikel: <span className="font-semibold text-slate-900 dark:text-slate-100">{filteredArticles.length}</span>
               </div>
             </div>
 
             {/* Articles Table */}
-            <div className={`rounded-2xl border overflow-hidden ${isNight ? "bg-white/5 border-white/10" : "bg-white border-slate-200 shadow-sm"}`}>
+            <div className={`rounded-2xl border overflow-hidden ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="w-full text-left border-collapse font-sans">
                   <thead>
-                    <tr className={`border-b text-[11px] font-mono uppercase tracking-wider ${isNight ? "border-white/10 text-white/60 bg-white/5" : "border-slate-200 text-slate-500 bg-slate-50"}`}>
-                      <th className="py-3.5 px-4 font-bold">Artikel</th>
-                      <th className="py-3.5 px-4 font-bold">Slug</th>
-                      <th className="py-3.5 px-4 font-bold">Tanggal</th>
-                      <th className="py-3.5 px-4 font-bold text-center">Interaksi</th>
-                      <th className="py-3.5 px-4 font-bold text-right">Aksi</th>
+                    <tr className={`border-b text-xs font-semibold uppercase tracking-wider ${isNight ? "border-slate-800 text-slate-400 bg-slate-900/50" : "border-slate-200 text-slate-500 bg-slate-50"}`}>
+                      <th className="py-3.5 px-4">Artikel</th>
+                      <th className="py-3.5 px-4">Slug</th>
+                      <th className="py-3.5 px-4">Tanggal</th>
+                      <th className="py-3.5 px-4 text-center">Interaksi</th>
+                      <th className="py-3.5 px-4 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-inherit text-xs">
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 text-xs">
                     {filteredArticles.length > 0 ? (
                       filteredArticles.map((art) => (
-                        <tr key={art.id} className={`transition-colors ${isNight ? "hover:bg-white/5 border-white/5" : "hover:bg-slate-50 border-slate-100"}`}>
+                        <tr key={art.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-lg shrink-0 border overflow-hidden relative ${isNight ? "bg-white/10 border-white/10" : "bg-slate-100 border-slate-200"}`}>
+                              <div className="w-10 h-10 rounded-lg shrink-0 border overflow-hidden relative bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-800">
                                 {art.thumbnail ? (
                                   <Image src={art.thumbnail} alt={art.title} fill className="object-cover" />
                                 ) : (
-                                  <FileText className="w-5 h-5 m-auto text-white/40" />
+                                  <FileText className="w-4 h-4 m-auto text-slate-400" />
                                 )}
                               </div>
                               <div className="min-w-0">
                                 <Link
                                   href={`/posts/${art.slug}`}
                                   target="_blank"
-                                  className={`font-bold hover:text-[#DC2626] transition-colors truncate block max-w-xs sm:max-w-md ${isNight ? "text-white" : "text-slate-900"}`}
+                                  className="font-semibold text-slate-900 dark:text-slate-100 hover:text-[#D32F2F] transition-colors truncate block max-w-xs sm:max-w-md"
                                 >
                                   {art.title}
                                 </Link>
-                                <span className="text-[10px] font-mono opacity-50 block">{art.category || "Tutorial"}</span>
+                                <span className="text-[11px] text-slate-500 block">{art.category || "Tutorial"}</span>
                               </div>
                             </div>
                           </td>
 
-                          <td className="py-4 px-4 font-mono text-[11px] opacity-70">
+                          <td className="py-4 px-4 font-mono text-xs text-slate-500">
                             {art.slug}
                           </td>
 
-                          <td className="py-4 px-4 font-mono text-[11px] opacity-70 whitespace-nowrap">
+                          <td className="py-4 px-4 text-xs text-slate-500 whitespace-nowrap">
                             {new Date(art.created_at).toLocaleDateString("id-ID", {
                               day: "numeric",
                               month: "short",
@@ -483,34 +443,34 @@ export default function AdminArticlesClient({
                           </td>
 
                           <td className="py-4 px-4 text-center whitespace-nowrap">
-                            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-[#DC2626]/10 text-[#DC2626]">
-                              👁️ {art.views || 0} • ❤️ {art.likeCount} • 💬 {art.commentCount}
+                            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-sans bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800">
+                              👁️ {art.views || 0} · ❤️ {art.likeCount} · 💬 {art.commentCount}
                             </span>
                           </td>
 
                           <td className="py-4 px-4 text-right whitespace-nowrap">
-                            <div className="flex items-center justify-end gap-2">
+                            <div className="flex items-center justify-end gap-1.5">
                               <Link
                                 href={`/posts/${art.slug}`}
                                 target="_blank"
-                                className={`p-2 rounded-lg transition-colors ${isNight ? "hover:bg-white/10 text-white/70" : "hover:bg-black/5 text-slate-600"}`}
-                                title="Pratinjau Artikel"
+                                className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                                title="Pratinjau"
                               >
                                 <ExternalLink className="w-4 h-4" />
                               </Link>
 
                               <button
                                 onClick={() => handleOpenEditModal(art)}
-                                className={`p-2 rounded-lg transition-colors text-amber-500 ${isNight ? "hover:bg-amber-500/10" : "hover:bg-amber-50"}`}
-                                title="Edit Artikel"
+                                className="p-1.5 rounded-md hover:bg-amber-500/10 text-amber-500 transition-colors"
+                                title="Edit"
                               >
                                 <Edit3 className="w-4 h-4" />
                               </button>
 
                               <button
                                 onClick={() => handleDelete(art.id, art.title)}
-                                className={`p-2 rounded-lg transition-colors text-red-500 ${isNight ? "hover:bg-red-500/10" : "hover:bg-red-50"}`}
-                                title="Hapus Artikel"
+                                className="p-1.5 rounded-md hover:bg-red-500/10 text-red-500 transition-colors"
+                                title="Hapus"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -520,7 +480,7 @@ export default function AdminArticlesClient({
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center opacity-50 font-mono text-xs">
+                        <td colSpan={5} className="py-12 text-center text-slate-500 text-xs font-sans">
                           Belum ada artikel ditemukan. Klik tombol &quot;Artikel Baru&quot; untuk menambahkan.
                         </td>
                       </tr>
@@ -537,17 +497,16 @@ export default function AdminArticlesClient({
 
       {/* Modal Form Tambah / Edit Artikel */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className={`w-full max-w-2xl rounded-2xl border p-6 space-y-6 shadow-2xl relative ${isNight ? "bg-[#141414] border-white/10 text-white" : "bg-white border-slate-200 text-black"}`}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+          <div className={`w-full max-w-2xl rounded-2xl border p-6 space-y-6 shadow-lg relative ${isNight ? "bg-[#0E1015] border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"}`}>
             
-            {/* Header Modal */}
-            <div className="flex items-center justify-between border-b border-inherit pb-4">
-              <h2 className="font-display text-xl font-bold uppercase tracking-tight">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+              <h2 className="text-lg font-bold tracking-tight">
                 {editingArticle ? "Edit Artikel" : "Tambah Artikel Baru"}
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-lg opacity-70 hover:opacity-100"
+                className="p-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -555,10 +514,10 @@ export default function AdminArticlesClient({
 
             {statusMsg && (
               <div
-                className={`p-3.5 rounded-xl border text-xs font-bold flex items-center gap-2 ${
+                className={`p-3.5 rounded-xl border text-xs font-medium flex items-center gap-2 ${
                   statusMsg.type === "success"
-                    ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-400"
-                    : "bg-red-950/40 border-red-500/30 text-red-400"
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                    : "bg-red-500/10 border-red-500/20 text-red-500"
                 }`}
               >
                 {statusMsg.type === "success" ? (
@@ -570,42 +529,37 @@ export default function AdminArticlesClient({
               </div>
             )}
 
-            {/* Form Inputs */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 font-sans">
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold font-mono uppercase opacity-80">Judul Artikel</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Judul Artikel</label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   placeholder="Contoh: Membangun Web Modern dengan Next.js"
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans focus:outline-none focus:border-[#DC2626] ${
-                    isNight ? "bg-[#1A1A1A] border-white/10 text-white" : "bg-slate-50 border-slate-300 text-black"
-                  }`}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-[#D32F2F]"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold font-mono uppercase opacity-80">Slug URL</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Slug URL</label>
                 <input
                   type="text"
                   required
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
                   placeholder="membangun-web-modern-dengan-nextjs"
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs font-mono focus:outline-none focus:border-[#DC2626] ${
-                    isNight ? "bg-[#1A1A1A] border-white/10 text-white" : "bg-slate-50 border-slate-300 text-black"
-                  }`}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-mono focus:outline-none focus:border-[#D32F2F]"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold font-mono uppercase opacity-80">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Thumbnail Image URL / Upload File
                   </label>
-                  <label className="cursor-pointer bg-[#DC2626]/10 text-[#DC2626] hover:bg-[#DC2626]/20 border border-[#DC2626]/30 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all">
+                  <label className="cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all">
                     <Upload className="w-3.5 h-3.5" />
                     <span>Upload Foto</span>
                     <input
@@ -620,31 +574,29 @@ export default function AdminArticlesClient({
                   type="text"
                   value={thumbnail}
                   onChange={(e) => setThumbnail(e.target.value)}
-                  placeholder="https://images.unsplash.com/photo-... atau upload file foto"
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs font-mono focus:outline-none focus:border-[#DC2626] ${
-                    isNight ? "bg-[#1A1A1A] border-white/10 text-white" : "bg-slate-50 border-slate-300 text-black"
-                  }`}
+                  placeholder="https://images.unsplash.com/... atau upload file"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-[#D32F2F]"
                 />
                 {thumbnail && (
-                  <div className="relative w-full h-24 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 mt-2">
+                  <div className="relative w-full h-24 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 mt-2">
                     <Image src={thumbnail} alt="Thumbnail preview" fill className="object-cover" />
                   </div>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between border-b border-inherit pb-2">
-                  <label className="block text-xs font-bold font-mono uppercase opacity-80">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Konten Artikel (Markdown Format)
                   </label>
-                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/10 p-1 rounded-lg">
+                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg">
                     <button
                       type="button"
                       onClick={() => setEditorTab("write")}
-                      className={`px-3 py-1 rounded-md text-[11px] font-mono font-bold transition-all ${
+                      className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
                         editorTab === "write"
-                          ? "bg-[#DC2626] text-white shadow-sm"
-                          : "text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white"
+                          ? "bg-[#D32F2F] text-white"
+                          : "text-slate-600 dark:text-slate-400"
                       }`}
                     >
                       <FileCode className="w-3 h-3 inline mr-1" />
@@ -653,10 +605,10 @@ export default function AdminArticlesClient({
                     <button
                       type="button"
                       onClick={() => setEditorTab("preview")}
-                      className={`px-3 py-1 rounded-md text-[11px] font-mono font-bold transition-all ${
+                      className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
                         editorTab === "preview"
-                          ? "bg-[#DC2626] text-white shadow-sm"
-                          : "text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white"
+                          ? "bg-[#D32F2F] text-white"
+                          : "text-slate-600 dark:text-slate-400"
                       }`}
                     >
                       <Eye className="w-3 h-3 inline mr-1" />
@@ -672,20 +624,16 @@ export default function AdminArticlesClient({
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Tulis konten artikel di sini dalam format Markdown..."
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs font-mono focus:outline-none focus:border-[#DC2626] leading-relaxed ${
-                      isNight ? "bg-[#1A1A1A] border-white/10 text-white" : "bg-slate-50 border-slate-300 text-black"
-                    }`}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-mono leading-relaxed focus:outline-none focus:border-[#D32F2F]"
                   />
                 ) : (
-                  <div className={`w-full h-64 p-4 rounded-xl border overflow-auto prose dark:prose-invert prose-sm max-w-none ${
-                    isNight ? "bg-[#1A1A1A] border-white/10 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
-                  }`}>
+                  <div className="w-full h-64 p-4 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 overflow-auto text-xs leading-relaxed">
                     {content.trim() ? (
-                      <div className="space-y-3 whitespace-pre-wrap font-sans text-xs sm:text-sm leading-relaxed">
+                      <div className="space-y-3 whitespace-pre-wrap font-sans">
                         {content}
                       </div>
                     ) : (
-                      <p className="text-xs font-mono opacity-40 italic text-center py-10">
+                      <p className="text-xs opacity-40 italic text-center py-10">
                         Belum ada konten untuk dipratinjau.
                       </p>
                     )}
@@ -693,11 +641,11 @@ export default function AdminArticlesClient({
                 )}
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-inherit">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold opacity-70 hover:opacity-100"
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                 >
                   Batal
                 </button>
@@ -705,7 +653,7 @@ export default function AdminArticlesClient({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-[#DC2626]/30 disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-medium transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? "Menyimpan..." : editingArticle ? "Simpan Perubahan" : "Terbitkan Artikel"}
                 </button>
@@ -718,27 +666,27 @@ export default function AdminArticlesClient({
 
       {/* Modal Moderasi Komentar */}
       {isCommentsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className={`w-full max-w-3xl max-h-[85vh] flex flex-col rounded-2xl border p-6 space-y-4 shadow-2xl relative ${isNight ? "bg-[#141414] border-white/10 text-white" : "bg-white border-slate-200 text-black"}`}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+          <div className={`w-full max-w-3xl max-h-[85vh] flex flex-col rounded-2xl border p-6 space-y-4 shadow-lg relative ${isNight ? "bg-[#0E1015] border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"}`}>
             
-            <div className="flex items-center justify-between border-b border-inherit pb-4 shrink-0">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 shrink-0 font-sans">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-[#DC2626]" />
-                <h2 className="font-display text-xl font-bold uppercase tracking-tight">
+                <MessageSquare className="w-5 h-5 text-[#D32F2F]" />
+                <h2 className="text-base font-bold">
                   Moderasi Komentar Artikel
                 </h2>
               </div>
               <button
                 onClick={() => setIsCommentsModalOpen(false)}
-                className="p-1 rounded-lg opacity-70 hover:opacity-100"
+                className="p-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 font-sans">
               {loadingComments ? (
-                <div className="py-12 text-center font-mono text-xs opacity-60">
+                <div className="py-12 text-center text-xs text-slate-500">
                   Memuat daftar komentar...
                 </div>
               ) : adminComments.length > 0 ? (
@@ -746,24 +694,24 @@ export default function AdminArticlesClient({
                   <div
                     key={c.id}
                     className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
-                      isNight ? "bg-white/5 border-white/10" : "bg-slate-50 border-slate-200"
+                      isNight ? "bg-slate-900/60 border-slate-800" : "bg-slate-50 border-slate-200"
                     }`}
                   >
                     <div className="space-y-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs">{c.user.name}</span>
-                        <span className="text-[10px] font-mono opacity-50">({c.user.email})</span>
-                        <span className="text-[10px] font-mono opacity-40">• {new Date(c.created_at).toLocaleDateString("id-ID")}</span>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="font-semibold">{c.user.name}</span>
+                        <span className="text-[11px] text-slate-500">({c.user.email})</span>
+                        <span className="text-[11px] text-slate-500">· {new Date(c.created_at).toLocaleDateString("id-ID")}</span>
                       </div>
-                      <p className="text-xs opacity-90 line-clamp-2 leading-relaxed">&quot;{c.content}&quot;</p>
-                      <div className="text-[10px] font-mono text-[#DC2626] truncate">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">&quot;{c.content}&quot;</p>
+                      <div className="text-[11px] text-[#D32F2F] truncate font-mono">
                         Artikel: {c.article.title}
                       </div>
                     </div>
 
                     <button
                       onClick={() => handleDeleteComment(c.id)}
-                      className="px-3 py-1.5 rounded-lg bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white text-xs font-bold transition-all border border-red-500/20 shrink-0 flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-medium transition-colors border border-red-500/20 shrink-0 flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       <span>Hapus</span>
@@ -771,16 +719,16 @@ export default function AdminArticlesClient({
                   </div>
                 ))
               ) : (
-                <div className="py-12 text-center font-mono text-xs opacity-50">
+                <div className="py-12 text-center text-xs text-slate-500 font-sans">
                   Belum ada komentar dari pengunjung.
                 </div>
               )}
             </div>
 
-            <div className="pt-3 border-t border-inherit flex justify-end shrink-0">
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end shrink-0 font-sans">
               <button
                 onClick={() => setIsCommentsModalOpen(false)}
-                className="px-5 py-2 rounded-xl bg-slate-200 dark:bg-white/10 text-xs font-bold hover:opacity-90"
+                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-medium hover:opacity-90"
               >
                 Tutup
               </button>

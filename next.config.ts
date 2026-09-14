@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  compress: true,
+  reactStrictMode: true,
   experimental: {
     optimizePackageImports: [
       "lucide-react",
@@ -9,9 +11,14 @@ const nextConfig: NextConfig = {
       "@react-three/fiber",
       "@react-three/rapier",
       "@rive-app/react-canvas",
+      "@tiptap/react",
+      "@tiptap/starter-kit",
+      "@tiptap/extension-image",
     ],
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 2592000,
     remotePatterns: [
       {
         protocol: "https",

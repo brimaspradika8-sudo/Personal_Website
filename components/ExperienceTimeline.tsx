@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Briefcase, GraduationCap, Code2, Award, Calendar } from "lucide-react";
+import { GraduationCap, Code2, Award, Calendar } from "lucide-react";
 
 interface TimelineItem {
   id: string;
@@ -19,7 +19,7 @@ const timelineData: TimelineItem[] = [
     year: "2024 - PRESENT",
     title: "Student & AI Systems Developer",
     organization: "SMK Bhakti Mulia Pare",
-    description: "Aktif mengeksplorasi dan membangun aplikasi berbasis kecerdasan buatan, LLM integrations, RESTful API, hingga antarmuka pengguna (UI) yang responsif dan interaktif.",
+    description: "Membangun aplikasi berbasis kecerdasan buatan, integrasi LLM API, RESTful API backend, serta arsitektur antarmuka modern yang scalable.",
     icon: GraduationCap,
     highlights: ["AI Systems & LLM Integration", "PHP & Laravel 11", "React & Next.js App Router", "Python & Supabase"],
   },
@@ -27,19 +27,19 @@ const timelineData: TimelineItem[] = [
     id: "time-2",
     year: "2024",
     title: "Backend Architecture & Database Engineering",
-    organization: "Self-Directed & Project Builds",
-    description: "Fokus pada pembuatan arsitektur database relasional terstruktur, skema Prisma ORM, integrasi Supabase Realtime, dan keamanan REST API.",
+    organization: "Project Engineering",
+    description: "Perancangan database relasional terstruktur, ORM Prisma, integrasi Supabase Realtime, serta keamanan REST API.",
     icon: Code2,
     highlights: ["Prisma ORM", "Supabase BaaS", "RESTful API Security", "Database Indexing"],
   },
   {
     id: "time-3",
     year: "2023",
-    title: "Frontend Development & Interactive UI Exploration",
-    organization: "Software Exploration",
-    description: "Mempelajari fundamental modern web development, JavaScript ES6+, Vanilla & Tailwind CSS, serta komponen React reusable.",
+    title: "Frontend Development & Web Fundamentals",
+    organization: "Web Development",
+    description: "Penguasaan dasar-dasar web development, JavaScript ES6+, Vanilla CSS & Tailwind CSS, serta arsitektur komponen React.",
     icon: Award,
-    highlights: ["JavaScript ES6+", "Tailwind CSS", "React Components", "UI/UX Micro-animations"],
+    highlights: ["JavaScript ES6+", "Tailwind CSS", "React Components", "UI Micro-interactions"],
   },
 ];
 
@@ -50,69 +50,61 @@ interface ExperienceTimelineProps {
 
 export default function ExperienceTimeline({ isNight, lang }: ExperienceTimelineProps) {
   return (
-    <section id="experience" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 py-16 border-b border-current/10">
+    <section id="experience" className="scroll-mt-20 max-w-6xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80">
       <div className="space-y-10 text-left">
         
         {/* Header */}
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
-            <Briefcase className="w-3.5 h-3.5" />
-            <span>{lang === "id" ? "PERJALANAN & MILESTONE" : "JOURNEY & MILESTONES"}</span>
-          </div>
-          <h2 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight">
-            {lang === "id" ? (
-              <>PENGALAMAN &amp; <span className="text-[#DC2626]">REKAM JEJAK</span></>
-            ) : (
-              <>EXPERIENCE &amp; <span className="text-[#DC2626]">LEARNING TIMELINE</span></>
-            )}
+        <div className="space-y-2 max-w-xl">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            {lang === "id" ? "Pengalaman & Tahap Belajar" : "Experience & Learning Journey"}
           </h2>
-          <p className="text-xs sm:text-sm opacity-80 max-w-xl font-sans">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
             {lang === "id"
-              ? "Langkah perjalanan dan milestone pengembangan diri saya sebagai siswa AI Systems Developer di SMK Bhakti Mulia Pare."
-              : "My learning journey and development milestones as an AI Systems Developer student at SMK Bhakti Mulia Pare."}
+              ? "Perjalanan pengembangan kemampuan teknis sebagai siswa SMK Bhakti Mulia Pare dalam bidang AI Systems & Software Engineering."
+              : "Timeline of technical learning and development as an AI Systems Developer student."}
           </p>
         </div>
 
-        {/* Vertical Glowing Timeline */}
-        <div className="relative pl-6 sm:pl-8 border-l-2 border-[#DC2626]/40 space-y-10">
+        {/* Vertical Clean Timeline */}
+        <div className="relative pl-6 sm:pl-8 border-l border-slate-200 dark:border-slate-800 space-y-10">
           {timelineData.map((item) => {
             const IconComponent = item.icon;
             return (
               <div key={item.id} className="relative group">
                 
-                {/* Glowing Node Marker */}
-                <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-6 h-6 rounded-full bg-[#DC2626] text-white flex items-center justify-center font-bold shadow-md shadow-[#DC2626]/40 group-hover:scale-125 transition-transform duration-300">
-                  <IconComponent className="w-3.5 h-3.5 text-white" />
+                {/* Node Marker */}
+                <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center justify-center font-bold shadow-xs">
+                  <IconComponent className="w-3 h-3 text-[#D32F2F]" />
                 </div>
 
-                {/* Content Card */}
-                <div className={`p-6 rounded-2xl border transition-all duration-300 ${
+                {/* Content Area */}
+                <div className={`p-6 rounded-2xl border transition-all duration-200 ${
                   isNight
-                    ? "bg-[#141416] border-white/10 group-hover:border-[#DC2626] group-hover:shadow-xl"
-                    : "bg-white border-slate-200 group-hover:border-[#DC2626] group-hover:shadow-lg"
+                    ? "bg-[#0E1015] border-slate-800/80"
+                    : "bg-white border-slate-200 shadow-xs"
                 }`}>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                     <div>
-                      <span className="text-[11px] font-mono font-bold text-[#DC2626] uppercase tracking-wider flex items-center gap-1">
+                      <span className="text-xs font-mono text-[#D32F2F] flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         <span>{item.year}</span>
                       </span>
-                      <h3 className="font-display text-lg font-bold mt-0.5">{item.title}</h3>
+                      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{item.title}</h3>
                     </div>
-                    <span className="text-xs font-mono opacity-70 bg-current/5 px-2.5 py-1 rounded-md border border-current/10 self-start sm:self-auto">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-800 self-start sm:self-auto font-sans">
                       {item.organization}
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm opacity-85 leading-relaxed font-sans mt-2">
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-sans mt-2">
                     {item.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-2 pt-4">
+                  <div className="flex flex-wrap gap-1.5 pt-4">
                     {item.highlights.map((badge) => (
                       <span
                         key={badge}
-                        className="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/30 font-semibold"
+                        className="px-2.5 py-1 rounded-md text-[11px] font-sans bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800"
                       >
                         {badge}
                       </span>

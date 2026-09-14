@@ -1,697 +1,353 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
+  FileText,
+  Plus,
+  Trash2,
+  Edit3,
   Search,
-  ShoppingBag,
-  Play,
-  ArrowRight,
+  LogOut,
   Sun,
   Moon,
-  Volume2,
-  VolumeX,
-  User,
-  MapPin,
-  ChevronDown,
-  Code,
-  Layers,
-  Database,
-  ShieldCheck,
+  ExternalLink,
+  Globe,
+  LayoutDashboard,
+  MessageSquare,
+  AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
-
-import { motion, AnimatePresence } from "framer-motion";
-import dynamic from "next/dynamic";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
-import MobileBottomNav from "@/components/MobileBottomNav";
+import { ArticleItem, deleteArticle } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
-import CommandPalette from "@/components/CommandPalette";
-import ProjectModal, { ProjectData } from "@/components/ProjectModal";
-import TechStackMatrix from "@/components/TechStackMatrix";
-import ProjectShowcase from "@/components/ProjectShowcase";
-import ExperienceTimeline from "@/components/ExperienceTimeline";
-import GuestbookSection from "@/components/GuestbookSection";
-import Footer from "@/components/Footer";
-import ScrollReveal from "@/components/ScrollReveal";
-
-const Lanyard = dynamic(() => import("@/components/Lanyard"), {
-  ssr: false,
-});
-
+import { signOut } from "@/lib/actions/auth";
 
 interface DashboardClientProps {
-  user: {
-    id: string;
-    email?: string;
-    last_sign_in_at?: string;
-    created_at?: string;
-    app_metadata?: {
-      provider?: string;
-      providers?: string[];
-    };
-    user_metadata?: {
-      full_name?: string;
-      avatar_url?: string;
-      name?: string;
-      picture?: string;
-    };
-  } | null;
-  dbUser: {
-    id: string;
-    email: string;
-    name: string | null;
-    avatar: string | null;
-    role?: string | null;
-    created_at: Date | string;
-  } | null;
-  dbProjects?: Array<{
-    id: string;
-    title: string;
-    slug: string;
-    description: string;
-    thumbnail: string | null;
-    demo_url: string | null;
-    repository_url: string | null;
-    created_at: Date | string;
-  }>;
-  /** Ditentukan di Server Component berdasarkan role dari database — tidak bisa di-bypass dari client */
-  isAdmin?: boolean;
+  user: any;
+  dbUser: any;
+  initialArticles: ArticleItem[];
+  isAdmin: boolean;
 }
 
-const GREETINGS = [
-  "Halo",
-  "Hello",
-  "こんにちは",
-  "안녕하세요",
-  "你好",
-  "Bonjour",
-  "Hola",
-  "Ciao",
-  "Hallo",
-  "Olá",
-  "Привет",
-  "مرحبا",
-  "नमस्ते",
-  "Merhaba",
-  "Γεια σου",
-];
-
-export default function DashboardClient({ user, dbUser, dbProjects, isAdmin = false }: DashboardClientProps) {
-  const { lang, toggleLang } = useLanguage();
-  const [mode, setMode] = useState<"day" | "night">("day");
-  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
-  const [sfxEnabled, setSfxEnabled] = useState(true);
-  const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
+export default function DashboardClient({
+  user,
+  dbUser,
+  initialArticles,
+  isAdmin,
+}: DashboardClientProps) {
+  const router = useRouter();
+  const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
-  const [greetingIndex, setGreetingIndex] = useState(0);
-
-  // Typewriter animation state for "I'M BRIMAS PRADIKA"
-  const fullHeadline = lang === "id" ? "SAYA BRIMAS PRADIKA" : "I'M BRIMAS PRADIKA";
-  const [typedText, setTypedText] = useState("");
-  const [isTypingDone, setIsTypingDone] = useState(false);
+  const [isNight, setIsNight] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [alertMsg, setAlertMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    setTypedText("");
-    setIsTypingDone(false);
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < fullHeadline.length) {
-        setTypedText(fullHeadline.slice(0, i + 1));
-        i++;
-      } else {
-        setIsTypingDone(true);
-        clearInterval(interval);
-      }
-    }, 60);
-
-    return () => clearInterval(interval);
-  }, [fullHeadline]);
-
-  const showToast = (msg: string) => {
-    soundFx.playClick();
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 3000);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setGreetingIndex((prev) => (prev + 1) % GREETINGS.length);
-    }, 2000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    setSfxEnabled(soundFx.getIsEnabled());
-    const handleOpen = () => setCmdPaletteOpen(true);
-
-    window.addEventListener("open-command-palette", handleOpen);
-
-    const savedMode = localStorage.getItem("landscape_mode");
-    if (savedMode === "night") {
-      setMode("night");
+    const saved = localStorage.getItem("dashboard_theme");
+    if (saved === "night") {
+      setIsNight(true);
       document.documentElement.classList.add("dark");
     } else {
-      setMode("day");
+      setIsNight(false);
       document.documentElement.classList.remove("dark");
+      localStorage.setItem("dashboard_theme", "day");
     }
-
-    return () => {
-      window.removeEventListener("open-command-palette", handleOpen);
-    };
   }, []);
 
-  const handleToggleMode = () => {
-    setMode((prev) => {
-      const nextMode = prev === "day" ? "night" : "day";
-      if (nextMode === "night") {
+  const toggleTheme = () => {
+    soundFx.playClick();
+    setIsNight((prev) => {
+      const next = !prev;
+      if (next) {
         document.documentElement.classList.add("dark");
-        localStorage.setItem("landscape_mode", "night");
+        localStorage.setItem("dashboard_theme", "night");
       } else {
         document.documentElement.classList.remove("dark");
-        localStorage.setItem("landscape_mode", "day");
+        localStorage.setItem("dashboard_theme", "day");
       }
-      showToast(nextMode === "night" ? (lang === "id" ? "Mode Malam Hari" : "Night Mode") : (lang === "id" ? "Mode Siang Hari" : "Day Mode"));
-      return nextMode;
+      return next;
     });
   };
 
-  // Avatar & Nama user aktif yang sedang login (identik dengan halaman /profile)
-  const userAvatarSrc = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
-  const userDisplayName =
-    dbUser?.name ||
-    user?.user_metadata?.full_name ||
-    user?.user_metadata?.name ||
-    user?.email?.split("@")[0] ||
-    "User";
+  // Subtask 9: Hapus artikel dengan konfirmasi & refresh list
+  const handleDeleteArticle = async (id: string, title: string) => {
+    soundFx.playClick();
+    const confirmed = window.confirm(`Apakah Anda yakin ingin menghapus artikel "${title}"?`);
+    if (!confirmed) return;
 
-  // Teks marquee sapaan dinamis (Line 1 marquee Hero)
-  const isLoggedIn = !!user;
-  const activeUserName = (
-    dbUser?.name ||
-    user?.user_metadata?.full_name ||
-    user?.user_metadata?.name ||
-    (user?.email ? user.email.split("@")[0] : "")
-  ).toUpperCase();
+    setDeletingId(id);
+    setAlertMsg(null);
 
-  const greetingPrefix = lang === "en" ? "HELLO," : "HALO,";
-  const defaultGuestName = lang === "en" ? "VISITOR" : "PENGUNJUNG";
+    const res = await deleteArticle(id);
+    setDeletingId(null);
 
-  const welcomeMarqueeText = isLoggedIn && activeUserName
-    ? `${greetingPrefix} ${activeUserName}`
-    : `${greetingPrefix} ${defaultGuestName}`;
-
-  const isNight = mode === "night";
-
-  const [heroMousePos, setHeroMousePos] = useState({ x: 50, y: 50 });
-
-  const handleMouseMoveHero = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
-    setHeroMousePos({ x, y });
+    if (res.error) {
+      setAlertMsg({ type: "error", text: res.error });
+    } else {
+      setAlertMsg({ type: "success", text: `Artikel "${title}" berhasil dihapus!` });
+      setArticles((prev) => prev.filter((a) => a.id !== id));
+      router.refresh();
+    }
   };
 
-  const handleToggleSfx = () => {
-    const next = soundFx.toggleMute();
-    setSfxEnabled(next);
-    showToast(next ? (lang === "id" ? "Suara Aktif" : "Sound Enabled") : (lang === "id" ? "Suara Senyap" : "Sound Muted"));
-  };
+  const filteredArticles = articles.filter(
+    (a) =>
+      a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.slug.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-        delay: 0.15,
-      }}
-      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 ${isNight ? "bg-[#0A0A0B] text-[#FAF9F6]" : "bg-[#FAF9F6] text-[#1A1A1A]"
-        }`}
-    >
-      {/* 1. TOP NAVIGATION HEADER (FLOATING CAPSULE NAVBAR) */}
-      <header className="sticky top-4 z-50 max-w-5xl mx-auto px-4 sm:px-6 w-full pointer-events-auto">
-        <div className={`h-14 px-5 sm:px-6 rounded-full border backdrop-blur-xl flex items-center justify-between gap-4 transition-all duration-300 ${
-          isNight
-            ? "bg-black/40 border-white/15 shadow-2xl shadow-black/60 text-white"
-            : "bg-white/60 border-slate-300/80 shadow-lg text-slate-900"
-        }`}>
+    <div className={`min-h-screen flex font-sans transition-colors duration-300 ${isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F8F9FA] text-slate-900"}`}>
+      
+      {/* Sidebar */}
+      <aside className={`w-64 shrink-0 hidden lg:flex lg:flex-col ${isNight ? "bg-[#0E1015] border-r border-slate-800" : "bg-white border-r border-slate-200"}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+          <Link href="/dashboard" className="flex items-center gap-2.5 group">
+            <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-xs shadow-xs">
+              B
+            </div>
+            <span className="font-semibold text-sm tracking-tight font-sans">
+              Pemilik <span className="font-normal text-slate-500">Dashboard</span>
+            </span>
+          </Link>
+        </div>
 
-          {/* Logo (Icon Bulat Merah + Personal Brand Name) */}
+        <nav className="flex-1 px-4 py-8 space-y-2">
+          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Utama</div>
+          
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="flex items-center gap-2.5 shrink-0 group"
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all bg-[#D32F2F] text-white font-medium shadow-xs"
           >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#B91C1C] to-[#DC2626] flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-[#DC2626]/40 group-hover:scale-105 transition-transform border border-white/20">
-              B
-            </div>
-            <span className="font-bold tracking-tight text-sm font-sans">
-              Brimas <span className="font-normal opacity-70">Pradika</span>
-            </span>
+            <FileText className="w-4 h-4" />
+            <span className="text-xs font-medium">Daftar Artikel</span>
           </Link>
 
-          {/* Navigation Menu Items */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold tracking-wider uppercase opacity-90">
-            {[
-              { label: lang === "id" ? "Beranda" : "Home", href: "#hero" },
-              { label: lang === "id" ? "Tentang" : "About", href: "#about" },
-              { label: lang === "id" ? "Proyek" : "Projects", href: "#projects" },
-              { label: lang === "id" ? "Artikel" : "Blog", href: "/posts" },
-            ].map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => soundFx.playClick()}
-                className="transition-colors hover:text-[#DC2626] flex items-center gap-0.5"
-              >
-                <span>{item.label}</span>
-              </a>
-            ))}
-          </nav>
+          {/* Subtask 5 Link */}
+          <Link
+            href="/dashboard/artikel/tambah"
+            onClick={() => soundFx.playClick()}
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-400 hover:bg-slate-900 hover:text-slate-100" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}
+          >
+            <Plus className="w-4 h-4 text-[#D32F2F]" />
+            <span className="text-xs font-medium">Tambah Artikel Baru</span>
+          </Link>
 
-          {/* Right Action Icons & Profile Avatar */}
-          <div className="flex items-center gap-3 shrink-0">
+          <Link
+            href="/posts"
+            target="_blank"
+            onClick={() => soundFx.playClick()}
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-400 hover:bg-slate-900 hover:text-slate-100" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}
+          >
+            <div className="flex items-center gap-3">
+              <Globe className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-medium">Lihat Blog Publik</span>
+            </div>
+            <ExternalLink className="w-3.5 h-3.5 opacity-50" />
+          </Link>
+        </nav>
 
-            {/* Language & Theme Switcher Toggles */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="px-2 py-1.5 text-xs text-slate-500 truncate">
+            Owner: <span className="font-semibold text-slate-700 dark:text-slate-300">{user?.email}</span>
+          </div>
+          <button
+            onClick={async () => {
+              soundFx.playClick();
+              await signOut();
+            }}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-medium transition-colors border border-red-500/20 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Keluar (Logout)</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        {/* Header */}
+        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/80 border-slate-200 shadow-xs"}`}>
+          <div className="flex items-center gap-3">
+            <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+              Dashboard Pemilik — Kelola Artikel
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-2.5">
             <button
-              onClick={() => {
-                soundFx.playClick();
-                toggleLang();
-              }}
-              className={`p-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border px-2.5 ${
-                isNight ? "border-white/10 hover:bg-white/10" : "border-black/10 hover:bg-black/5"
-              }`}
-              title="Ganti Bahasa / Switch Language"
+              onClick={toggleTheme}
+              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
             >
-              <span>{lang.toUpperCase()}</span>
+              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
 
-            {/* Theme Switcher Button */}
-            <button
-              onClick={() => {
-                soundFx.playClick();
-                handleToggleMode();
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold font-mono transition-all cursor-pointer border shadow-sm ${
-                isNight
-                  ? "border-white/15 bg-white/10 hover:bg-white/20 text-white"
-                  : "border-black/15 bg-black/5 hover:bg-black/10 text-slate-900"
-              }`}
-              title={isNight ? "Beralih ke Tema Terang (Light Mode)" : "Beralih ke Tema Gelap (Dark Mode)"}
+            {/* Subtask 5: Button Tambah Artikel */}
+            <Link
+              href="/dashboard/artikel/tambah"
+              onClick={() => soundFx.playClick()}
+              className="px-4 py-1.5 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-medium transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
-              {isNight ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="hidden sm:inline">DAY</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-slate-700" />
-                  <span className="hidden sm:inline">NIGHT</span>
-                </>
-              )}
-            </button>
-
-            {/* Admin Hub Link (Hanya untuk Admin) */}
-            {isAdmin && (
-              <Link
-                href="/admin"
-                onClick={() => soundFx.playClick()}
-                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-[#DC2626]/30 border border-white/20 hover:scale-105"
-                title="Admin Hub"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Hub</span>
-              </Link>
-            )}
-
-            {/* Profile Avatar / Login Action Button */}
-            {user ? (
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/profile"
-                  prefetch={false}
-                  onClick={() => soundFx.playClick()}
-                  className="relative w-8 h-8 rounded-full overflow-hidden border border-[#DC2626] shrink-0 flex items-center justify-center font-bold text-xs transition-transform hover:scale-105 bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30"
-                  title={lang === "id" ? "Buka Profil Saya" : "Open My Profile"}
-                >
-                  {userAvatarSrc ? (
-                    <Image
-                      src={userAvatarSrc}
-                      alt={userDisplayName}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  ) : (
-                    <span>{(userDisplayName || "U").charAt(0).toUpperCase()}</span>
-                  )}
-                </Link>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                onClick={() => {
-                  try {
-                    soundFx.playClick();
-                  } catch { }
-                }}
-                className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white text-xs font-bold transition-all hover:scale-105 shadow-md shadow-[#DC2626]/30 border border-white/20 relative z-10 cursor-pointer inline-flex items-center justify-center"
-              >
-                {lang === "id" ? "Masuk Akun" : "Sign In"}
-              </Link>
-            )}
+              <Plus className="w-4 h-4" />
+              <span>Artikel Baru</span>
+            </Link>
           </div>
+        </header>
 
-        </div>
-      </header>
-
-      {/* 2. HERO SECTION */}
-      <section
-        id="hero"
-        onMouseMove={handleMouseMoveHero}
-        className={`relative min-h-[88vh] lg:min-h-[94vh] flex flex-col justify-between overflow-hidden transition-colors duration-500 pt-12 sm:pt-16 md:pt-20 scroll-mt-20 ${isNight ? "bg-[#0D0D0E]" : "bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#FAF9F6]"
-          }`}
-      >
-        {/* Giant Moving Backdrop Typography Watermark */}
-        <div
-          className="absolute top-12 sm:top-16 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8"
-          style={{
-            maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-          }}
-        >
-          {/* Line 1: Dynamic WELCOME Marquee */}
-          <div
-            className="animate-welcome-marquee flex gap-4 whitespace-nowrap will-change-transform"
-            style={{ animation: "welcomeMarquee 28s linear infinite" }}
-          >
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.05]" : "text-black/[0.06]"
-              }`}>
-              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-            <h1 className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.05]" : "text-black/[0.06]"
-              }`}>
-              {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span> {welcomeMarqueeText} <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-          </div>
-
-          {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
-          <div
-            className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap will-change-transform"
-            style={{ animation: "welcomeMarqueeReverse 34s linear infinite" }}
-          >
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.04]" : "text-black/[0.05]"
-              }`}>
-              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-            <h1 className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${isNight ? "text-white/[0.04]" : "text-black/[0.05]"
-              }`}>
-              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span> BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-50">&bull;</span>
-            </h1>
-          </div>
-        </div>
-
-        {/* Hero Content Overlay Grid */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 sm:pt-10 pb-12 sm:pb-16">
-
-          {/* Main Hero Center Container */}
-          <div className="relative w-full flex flex-col sm:flex-row items-center justify-between min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
-
-            {/* Centerpiece Portrait Photo (z-20) with smooth fade-in slide up animation from bottom */}
-            <motion.div
-              initial={{ opacity: 0, y: 75 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="hero-photo-wrapper relative z-20 order-2 shrink-0 w-[220px] h-[280px] xs:w-[260px] xs:h-[340px] sm:w-[380px] sm:h-[480px] md:w-[420px] md:h-[530px] max-w-full flex items-center justify-center pointer-events-auto"
-            >
-              {/* Hero Portrait Photo (Seamless Radial Edge Feather Masking) */}
+        {/* Content Container */}
+        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+          <div className="max-w-6xl mx-auto space-y-6">
+            
+            {/* Alert Banner */}
+            {alertMsg && (
               <div
-                className="relative w-full h-full overflow-hidden pointer-events-none"
-                style={{
-                  maskImage: "radial-gradient(ellipse 75% 82% at center, black 55%, transparent 98%)",
-                  WebkitMaskImage: "radial-gradient(ellipse 75% 82% at center, black 55%, transparent 98%)",
-                }}
+                className={`p-3.5 rounded-xl border text-xs font-medium flex items-center justify-between gap-2 ${
+                  alertMsg.type === "success"
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                    : "bg-red-500/10 border-red-500/20 text-red-500"
+                }`}
               >
-                <Image
-                  src="/images/avatar.webp"
-                  alt="Brimas Pradika Utama"
-                  fill
-                  priority
-                  unoptimized
-                  sizes="(max-width: 768px) 380px, 460px"
-                  className="object-cover object-center w-full h-full pointer-events-none filter brightness-[1.05] contrast-[1.08]"
+                <div className="flex items-center gap-2">
+                  {alertMsg.type === "success" ? (
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                  )}
+                  <span>{alertMsg.text}</span>
+                </div>
+                <button onClick={() => setAlertMsg(null)} className="text-xs opacity-70 hover:opacity-100">
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* Search & Stats Bar */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari judul artikel atau slug..."
+                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-sans focus:outline-none focus:border-[#D32F2F] transition-all"
                 />
               </div>
-            </motion.div>
 
-            {/* Responsive Hero Headline & CTAs */}
-            <div className="flex flex-col items-center sm:items-start text-center sm:text-left z-20 space-y-4 sm:space-y-5 max-w-2xl drop-shadow-md order-1">
-              <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95]">
-                {/* Giant Multilingual Greeting Animated Line */}
-                <span className="block text-[#DC2626] h-[1.05em] overflow-hidden mb-1 sm:mb-1.5">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={GREETINGS[greetingIndex]}
-                      initial={{ opacity: 0, y: 24 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -24 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      className="inline-block"
-                    >
-                      {GREETINGS[greetingIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
+              <div className="text-xs text-slate-500 font-sans">
+                Total Artikel: <span className="font-semibold text-slate-900 dark:text-slate-100">{filteredArticles.length}</span>
+              </div>
+            </div>
 
-                {/* Typewriter Line: "I'M BRIMAS PRADIKA" */}
-                <span className="whitespace-nowrap inline-flex items-center justify-center sm:justify-start">
-                  <span>{typedText}</span>
-                  {!isTypingDone && (
-                    <span className="inline-block w-2 sm:w-2.5 h-[0.8em] bg-[#DC2626] ml-1 sm:ml-1.5 animate-pulse align-middle" />
-                  )}
-                </span>
-                <br />
-                <span className="text-[#DC2626]">UTAMA</span>
-              </h1>
+            {/* Subtask 3: Tabel Articles (Judul, Tanggal Dibuat, Edit & Hapus) */}
+            <div className={`rounded-2xl border overflow-hidden ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse font-sans">
+                  <thead>
+                    <tr className={`border-b text-xs font-semibold uppercase tracking-wider ${isNight ? "border-slate-800 text-slate-400 bg-slate-900/50" : "border-slate-200 text-slate-500 bg-slate-50"}`}>
+                      <th className="py-3.5 px-4">Judul Artikel</th>
+                      <th className="py-3.5 px-4">Tanggal Dibuat</th>
+                      <th className="py-3.5 px-4 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 text-xs">
+                    {filteredArticles.length > 0 ? (
+                      filteredArticles.map((art) => (
+                        <tr key={art.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
+                          
+                          {/* Column 1: Judul */}
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-lg shrink-0 border overflow-hidden relative bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-800">
+                                {art.thumbnail ? (
+                                  <Image src={art.thumbnail} alt={art.title} fill className="object-cover" />
+                                ) : (
+                                  <FileText className="w-4 h-4 m-auto text-slate-400" />
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <Link
+                                  href={`/posts/${art.slug}`}
+                                  target="_blank"
+                                  className="font-semibold text-slate-900 dark:text-slate-100 hover:text-[#D32F2F] transition-colors truncate block max-w-xs sm:max-w-md"
+                                >
+                                  {art.title}
+                                </Link>
+                                <span className="text-[11px] text-slate-500 block font-mono">/{art.slug}</span>
+                              </div>
+                            </div>
+                          </td>
 
-              <p className={`text-xs sm:text-base leading-relaxed font-sans max-w-md font-medium ${isNight ? "text-white/80" : "text-slate-700"}`}>
-                {lang === "id"
-                  ? "Pengembang Perangkat Lunak & Sistem AI yang berfokus pada arsitektur web modern, eksperimen teknologi interaktif, serta solusi digital performa tinggi."
-                  : "Software & AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions."}
-              </p>
+                          {/* Column 2: Tanggal Dibuat */}
+                          <td className="py-4 px-4 text-xs text-slate-500 whitespace-nowrap">
+                            {new Date(art.created_at).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </td>
 
-              {/* Two CTA Buttons */}
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-3.5 pt-1">
-                <a
-                  href="#projects"
-                  onClick={() => soundFx.playClick()}
-                  className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#991B1B] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xl shadow-[#DC2626]/30 border border-white/20"
-                >
-                  <span>{lang === "id" ? "JELAJAH PROYEK" : "EXPLORE PROJECTS"}</span>
-                </a>
+                          {/* Column 3: Tombol Edit & Hapus */}
+                          <td className="py-4 px-4 text-right whitespace-nowrap">
+                            <div className="flex items-center justify-end gap-2">
+                              
+                              {/* External View Link */}
+                              <Link
+                                href={`/posts/${art.slug}`}
+                                target="_blank"
+                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                                title="Lihat di Blog"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </Link>
 
-                <a
-                  href="#about"
-                  onClick={() => soundFx.playClick()}
-                  className={`px-6 sm:px-7 py-2.5 sm:py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-md hover:scale-[1.03] ${
-                    isNight
-                      ? "border-white/25 text-white hover:bg-white hover:text-black hover:border-white"
-                      : "border-black/30 text-black hover:bg-black hover:text-white hover:border-black"
-                  }`}
-                >
-                  <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
-                </a>
+                              {/* Subtask 8: Tombol Edit -> /dashboard/artikel/edit/[id] */}
+                              <Link
+                                href={`/dashboard/artikel/edit/${art.id}`}
+                                onClick={() => soundFx.playClick()}
+                                className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-400 transition-all font-medium text-xs flex items-center gap-1.5 cursor-pointer"
+                                title="Edit Artikel"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </Link>
+
+                              {/* Subtask 9: Tombol Hapus artikel dengan konfirmasi & refresh */}
+                              <button
+                                onClick={() => handleDeleteArticle(art.id, art.title)}
+                                disabled={deletingId === art.id}
+                                className="px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all font-medium text-xs flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                                title="Hapus Artikel"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>{deletingId === art.id ? "Menghapus..." : "Hapus"}</span>
+                              </button>
+
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={3} className="py-12 text-center text-slate-500 text-xs font-sans">
+                          Belum ada artikel ditemukan. Klik &quot;Artikel Baru&quot; untuk membuat artikel pertama Anda.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
 
           </div>
-
         </div>
 
-        {/* Ultra-Smooth Organic SVG Wave Divider */}
-        <div className="absolute -bottom-[1px] left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
-          <svg
-            className={`w-full h-12 sm:h-20 md:h-24 block fill-current transition-colors duration-300 ${isNight ? "text-[#0A0A0B]" : "text-[#ffffff]"
-              }`}
-            viewBox="0 0 1440 120"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,64 C480,112 960,16 1440,64 L1440,120 L0,120 Z" />
-          </svg>
-        </div>
+      </main>
 
-      </section>
-
-
-
-      {/* 4. SECTION "ABOUT ME" WITH STAGGERED SCROLL ANIMATIONS */}
-      <section id="about" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-b border-current/10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-
-          {/* Left Column: Interactive 3D Physics Lanyard Photo Card (Smooth Drop from Top Animation) */}
-          <div className="lg:col-span-5 flex justify-center items-center">
-            <motion.div
-              initial={{ opacity: 0, y: -140, scale: 0.94 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full flex justify-center"
-            >
-              <div className="relative w-full max-w-md h-[520px] sm:h-[580px] flex items-center justify-center overflow-visible z-20 pointer-events-auto">
-                <Lanyard />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Right Column: About Me Bio & Details */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <ScrollReveal direction="up" delayMs={200} durationMs={700}>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
-                <User className="w-3.5 h-3.5" />
-                <span>ABOUT ME</span>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal direction="up" delayMs={250} durationMs={700}>
-              <div className="space-y-3">
-                <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none">
-                  BRIMAS PRADIKA UTAMA
-                </h2>
-                <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#DC2626]">
-                  AI Systems Developer • SMK Bhakti Mulia Pare
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal direction="up" delayMs={350} durationMs={700}>
-              <p className="text-sm sm:text-base opacity-90 leading-relaxed font-sans max-w-xl">
-                {lang === "id"
-                  ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi berbasis kecerdasan buatan & sistem AI secara profesional. Berfokus pada AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, dan Cloud Systems. Bagi saya, coding bukan sekadar menulis sintaks, tapi bagaimana membangun sistem pintar yang rapi, scalable, dan maintainable."
-                  : "Student at SMK Bhakti Mulia Pare actively building AI-powered applications & intelligent systems. Specialized in AI Systems Development, LLM Integration, React, Next.js, Python, Supabase, and Cloud Systems. Focused on writing clean, scalable, and maintainable intelligent systems."}
-              </p>
-            </ScrollReveal>
-
-            {/* Feature Badges Grid */}
-            <ScrollReveal direction="zoom" delayMs={450} durationMs={700}>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#121214] border-[#26262A]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-                  }`}>
-                  <div className="flex items-center gap-1.5 text-[#DC2626]">
-                    <MapPin className="w-4 h-4" />
-                    <span className="text-xs font-mono font-bold uppercase">SCHOOL</span>
-                  </div>
-                  <p className="text-xs font-bold truncate">SMK Bhakti Mulia Pare</p>
-                </div>
-
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#121214] border-[#26262A]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-                  }`}>
-                  <div className="flex items-center gap-1.5 text-[#DC2626]">
-                    <Code className="w-4 h-4" />
-                    <span className="text-xs font-mono font-bold uppercase">ROLE</span>
-                  </div>
-                  <p className="text-xs font-bold truncate">AI Systems Developer</p>
-                </div>
-
-                <div className={`p-3 rounded-xl border space-y-1 transition-colors ${isNight ? "bg-[#121214] border-[#26262A]" : "bg-[#F8F8F6] border-[#E5E5E2]"
-                  }`}>
-                  <div className="flex items-center gap-1.5 text-[#DC2626]">
-                    <Layers className="w-4 h-4" />
-                    <span className="text-xs font-mono font-bold uppercase">STACK</span>
-                  </div>
-                  <p className="text-xs font-bold truncate">Laravel &bull; Next.js</p>
-                </div>
-              </div>
-            </ScrollReveal>
-
-            {/* Action Buttons */}
-            <ScrollReveal direction="up" delayMs={550} durationMs={700}>
-              <div className="flex flex-wrap items-center gap-3 pt-3">
-                <a
-                  href="#projects"
-                  onClick={() => soundFx.playClick()}
-                  className="px-6 py-3 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-[#DC2626]/30 border border-white/20"
-                >
-                  <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-
-                <Link
-                  href="/profile"
-                  onClick={() => soundFx.playClick()}
-                  className={`px-6 py-3 rounded-full border font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 ${isNight
-                      ? "border-white/40 text-white hover:border-[#DC2626] hover:text-[#DC2626]"
-                      : "border-black/40 text-black hover:border-[#DC2626] hover:text-[#DC2626]"
-                    }`}
-                >
-                  <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
-                </Link>
-              </div>
-            </ScrollReveal>
-          </div>
-
-        </div>
-      </section>
-
-
-
-      {/* 5. TECH STACK & CLI MATRIX SECTION */}
-      <ScrollReveal direction="up" delayMs={50}>
-        <TechStackMatrix isNight={isNight} lang={lang} />
-      </ScrollReveal>
-
-      {/* 6. PORTFOLIO PROJECTS SHOWCASE SECTION */}
-      <ScrollReveal direction="up" delayMs={50}>
-        <ProjectShowcase
-          isNight={isNight}
-          lang={lang}
-          fetchedProjects={dbProjects}
-          onSelectProject={(proj) => setSelectedProject(proj)}
-        />
-      </ScrollReveal>
-
-      {/* 7. EXPERIENCE & JOURNEY TIMELINE SECTION */}
-      <ScrollReveal direction="up" delayMs={50}>
-        <ExperienceTimeline isNight={isNight} lang={lang} />
-      </ScrollReveal>
-
-      {/* 8. PUBLIC GUESTBOOK SECTION */}
-      <ScrollReveal direction="up" delayMs={50}>
-        <GuestbookSection user={user} isNight={isNight} />
-      </ScrollReveal>
-
-      {/* Toast Notification */}
-      {toastMsg && (
-        <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-lg bg-[#DC2626] text-white font-bold text-xs font-mono shadow-xl">
-          {toastMsg}
-        </div>
-      )}
-
-      {/* Footer */}
-      <ScrollReveal direction="fade" delayMs={50}>
-        <Footer isNight={isNight} />
-      </ScrollReveal>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
-
-      {/* Command Palette */}
-      <CommandPalette
-        isOpen={cmdPaletteOpen}
-        onClose={() => setCmdPaletteOpen(false)}
-        onToggleTheme={handleToggleMode}
-        isNight={isNight}
-      />
-
-      {/* Project Detail Modal */}
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
-
-    </motion.div>
+    </div>
   );
 }

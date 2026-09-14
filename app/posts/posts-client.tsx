@@ -8,12 +8,10 @@ import {
   Calendar,
   Clock,
   Search,
-  Sparkles,
   Heart,
   MessageSquare,
   ChevronRight,
   RefreshCw,
-  Tag,
   SlidersHorizontal,
 } from "lucide-react";
 
@@ -38,8 +36,8 @@ function ArticleThumbnail({ src, title }: { src?: string | null; title: string }
 
   if (!src || hasError) {
     return (
-      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-        <BookOpen className="w-12 h-12 text-[#DC2626]/60 group-hover:scale-110 transition-transform duration-300" />
+      <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+        <BookOpen className="w-10 h-10 text-slate-400" />
       </div>
     );
   }
@@ -47,8 +45,8 @@ function ArticleThumbnail({ src, title }: { src?: string | null; title: string }
   return (
     <>
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
-          <BookOpen className="w-8 h-8 text-black/10 animate-bounce" />
+        <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-pulse flex items-center justify-center z-10">
+          <BookOpen className="w-6 h-6 text-slate-400" />
         </div>
       )}
       <img
@@ -59,7 +57,7 @@ function ArticleThumbnail({ src, title }: { src?: string | null; title: string }
           setIsLoading(false);
           setHasError(true);
         }}
-        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
           isLoading ? "opacity-0" : "opacity-100"
         }`}
       />
@@ -83,7 +81,6 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
     setTimeout(() => setToastMsg(null), 3000);
   };
 
-  // Filter & Sort Logic
   const filteredArticles = articles
     .filter((article) => {
       const matchSearch =
@@ -119,11 +116,8 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#1A1A1A] font-sans selection:bg-[#DC2626] selection:text-white">
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans selection:bg-[#D32F2F] selection:text-white pb-20">
       
-      {/* Top Header Light Red Glow */}
-      <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-[#DC2626]/10 via-[#DC2626]/5 to-transparent pointer-events-none -z-10" />
-
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
 
         {/* 1. TOP NAV & BREADCRUMB */}
@@ -131,7 +125,7 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-black/15 text-xs font-mono text-black/70 hover:text-black hover:border-black/30 transition-all cursor-pointer shadow-sm group"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-sans text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer shadow-xs group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span>Kembali ke Beranda</span>
@@ -141,7 +135,7 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
             <button
               onClick={handleSeedArticles}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 text-xs font-mono hover:bg-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
               title="Isi sampel artikel ke database jika kosong"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
@@ -151,39 +145,34 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
         </div>
 
         {/* 2. HERO TITLE SECTION */}
-        <div className="space-y-3 text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#DC2626] text-xs font-mono font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Katalog Artikel & Wawasan</span>
-          </div>
-
-          <h1 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight text-[#1A1A1A] leading-none">
-            Artikel <span className="text-[#DC2626]">&amp; Tutorial</span>
+        <div className="space-y-2 text-left">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            Artikel & Wawasan Teknis
           </h1>
 
-          <p className="text-sm text-black/70 font-sans max-w-2xl leading-relaxed">
-            Kumpulan tulisan teknis, dokumentasi riset AI Systems, serta panduan arsitektur web modern oleh Brimas Pradika Utama.
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-sans max-w-2xl leading-relaxed">
+            Tulisan teknis, catatan riset AI Systems, serta panduan arsitektur web modern oleh Brimas Pradika Utama.
           </p>
         </div>
 
         {/* 3. SEARCH & FILTER BAR */}
-        <div className="p-4 rounded-2xl border border-black/10 bg-white shadow-xl space-y-4">
+        <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row items-center gap-3">
             
             {/* Search Bar Input */}
             <div className="relative w-full flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Cari judul artikel atau topik..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-black/5 border border-black/10 text-black placeholder:text-black/40 text-xs font-sans focus:outline-none focus:border-[#DC2626] transition-all"
+                className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-xs font-sans focus:outline-none focus:border-[#D32F2F] transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-black/50 hover:text-black"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer"
                 >
                   Clear
                 </button>
@@ -192,11 +181,11 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
 
             {/* Sort Selector Dropdown */}
             <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-              <SlidersHorizontal className="w-4 h-4 text-black/50 hidden sm:block" />
+              <SlidersHorizontal className="w-4 h-4 text-slate-400 hidden sm:block" />
               <select
                 value={sortBy}
                 onChange={(e: any) => setSortBy(e.target.value)}
-                className="w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-black/5 border border-black/10 text-black text-xs font-mono focus:outline-none focus:border-[#DC2626] cursor-pointer"
+                className="w-full sm:w-auto px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs font-sans focus:outline-none focus:border-[#D32F2F] cursor-pointer"
               >
                 <option value="latest">Urutkan: Terbaru</option>
                 <option value="popular">Urutkan: Terpopuler</option>
@@ -207,7 +196,6 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
 
           {/* Category Filter Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <Tag className="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
             {CATEGORIES.map((cat) => {
               const isActive = selectedCategory === cat;
               return (
@@ -217,10 +205,10 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
                     soundFx.playClick();
                     setSelectedCategory(cat);
                   }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all shrink-0 cursor-pointer border ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 cursor-pointer border ${
                     isActive
-                      ? "bg-[#DC2626] text-white border-[#DC2626] shadow-md shadow-[#DC2626]/30 font-bold"
-                      : "bg-black/5 text-black/70 border-black/10 hover:border-black/30 hover:text-black"
+                      ? "bg-[#D32F2F] text-white border-[#D32F2F] shadow-xs"
+                      : "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
                   }`}
                 >
                   {cat}
@@ -232,10 +220,10 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
 
         {/* 4. ARTICLES GRID LIST */}
         {filteredArticles.length === 0 ? (
-          <div className="py-16 text-center space-y-3 rounded-2xl border border-black/10 bg-white shadow-sm">
-            <BookOpen className="w-10 h-10 text-black/20 mx-auto" />
-            <h3 className="text-base font-bold text-black">Tidak Ada Artikel Ditemukan</h3>
-            <p className="text-xs text-black/50 font-mono">
+          <div className="py-16 text-center space-y-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E1015] shadow-xs">
+            <BookOpen className="w-8 h-8 text-slate-400 mx-auto" />
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Tidak Ada Artikel Ditemukan</h3>
+            <p className="text-xs text-slate-500 font-sans">
               Coba kata kunci pencarian lain atau pilih kategori yang berbeda.
             </p>
             {(searchQuery || selectedCategory !== "Semua") && (
@@ -244,7 +232,7 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
                   setSearchQuery("");
                   setSelectedCategory("Semua");
                 }}
-                className="px-4 py-2 rounded-full bg-[#DC2626] text-white text-xs font-bold hover:bg-[#B91C1C] transition-all cursor-pointer"
+                className="px-4 py-2 rounded-full bg-[#D32F2F] text-white text-xs font-medium hover:bg-[#B91C1C] transition-all cursor-pointer shadow-xs"
               >
                 Reset Filter
               </button>
@@ -257,21 +245,21 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
                 key={article.id}
                 href={`/posts/${article.slug}`}
                 onClick={() => soundFx.playClick()}
-                className="group flex flex-col rounded-2xl border border-black/10 bg-white overflow-hidden hover:border-[#DC2626]/60 transition-all duration-300 hover:-translate-y-1.5 shadow-md hover:shadow-xl"
+                className="group flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 shadow-xs cursor-pointer"
               >
                 {/* Thumbnail Header */}
-                <div className="relative w-full h-48 bg-gray-100 overflow-hidden shrink-0">
+                <div className="relative w-full h-44 bg-slate-100 dark:bg-slate-900 overflow-hidden shrink-0">
                   <ArticleThumbnail src={article.thumbnail} title={article.title} />
 
                   {/* Category Pill Badge */}
-                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/80 text-white backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold uppercase tracking-wider shadow-md">
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-slate-900/80 text-slate-200 backdrop-blur-md border border-white/10 text-[11px] font-sans font-medium shadow-xs">
                     {article.category || "Tutorial"}
                   </div>
 
                   {/* Estimated Read Time Badge */}
                   {article.readTime && (
-                    <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 text-[10px] font-mono font-bold text-black/80 flex items-center gap-1 shadow-sm">
-                      <Clock className="w-3 h-3 text-[#DC2626]" />
+                    <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-md bg-slate-900/80 text-slate-200 backdrop-blur-md border border-white/10 text-[11px] font-sans flex items-center gap-1 shadow-xs">
+                      <Clock className="w-3 h-3 text-[#D32F2F]" />
                       <span>{article.readTime}</span>
                     </div>
                   )}
@@ -280,31 +268,31 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
                 {/* Body Content */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <h3 className="font-bold text-base leading-snug text-[#1A1A1A] group-hover:text-[#DC2626] transition-colors line-clamp-2">
+                    <h3 className="font-semibold text-base leading-snug text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors line-clamp-2">
                       {article.title}
                     </h3>
-                    <p className="text-xs text-black/60 line-clamp-3 leading-relaxed font-sans">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed font-sans">
                       {article.content.replace(/[#*`]/g, "").slice(0, 140)}...
                     </p>
                   </div>
 
                   {/* Footer Meta Details */}
-                  <div className="pt-3 border-t border-black/10 flex items-center justify-between text-xs text-black/50 font-mono">
+                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 font-sans">
                     <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-[#DC2626]" />
+                      <Calendar className="w-3.5 h-3.5 text-[#D32F2F]" />
                       <span>{new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1 hover:text-[#DC2626]">
-                        <Heart className="w-3.5 h-3.5 text-[#DC2626] fill-[#DC2626]/20" />
+                      <span className="flex items-center gap-1">
+                        <Heart className="w-3.5 h-3.5 text-[#D32F2F]" />
                         <span>{article.likeCount}</span>
                       </span>
-                      <span className="flex items-center gap-1 hover:text-[#DC2626]">
-                        <MessageSquare className="w-3.5 h-3.5 text-black/60" />
+                      <span className="flex items-center gap-1">
+                        <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
                         <span>{article.commentCount}</span>
                       </span>
-                      <ChevronRight className="w-4 h-4 text-black/40 group-hover:text-[#DC2626] group-hover:translate-x-1 transition-all" />
+                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#D32F2F] transition-colors" />
                     </div>
                   </div>
                 </div>
@@ -317,7 +305,7 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
 
       {/* Toast popup notification */}
       {toastMsg && (
-        <div className="fixed bottom-10 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#DC2626] text-white font-bold text-xs font-mono shadow-xl">
+        <div className="fixed bottom-10 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#D32F2F] text-white font-medium text-xs shadow-md">
           {toastMsg}
         </div>
       )}

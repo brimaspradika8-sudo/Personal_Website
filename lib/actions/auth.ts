@@ -36,16 +36,21 @@ export async function checkIsAdmin(email?: string | null): Promise<boolean> {
   if (!email) return false;
   const normalizedEmail = email.toLowerCase().trim();
 
+  const ownerEmail = (process.env.OWNER_EMAIL || "").trim().toLowerCase();
+  if (ownerEmail && normalizedEmail === ownerEmail) {
+    return true;
+  }
+
   const envAdminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
 
-  if (normalizedEmail === "brimaspradika8@gmail.com") {
+  if (envAdminEmails.length > 0 && envAdminEmails.includes(normalizedEmail)) {
     return true;
   }
 
-  if (envAdminEmails.length > 0 && envAdminEmails.includes(normalizedEmail)) {
+  if (normalizedEmail === "brimaspradika8@gmail.com") {
     return true;
   }
 
@@ -60,6 +65,10 @@ export async function checkIsAdmin(email?: string | null): Promise<boolean> {
   } catch {}
 
   return false;
+}
+
+export async function checkIsOwner(email?: string | null): Promise<boolean> {
+  return checkIsAdmin(email);
 }
 
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---

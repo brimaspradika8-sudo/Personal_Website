@@ -450,6 +450,63 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
   return null;
 }
 
+// Ambil detail artikel berdasarkan ID (untuk halaman Edit)
+export async function getArticleById(id: string): Promise<ArticleItem | null> {
+  try {
+    const art = await prisma.article.findUnique({
+      where: { id },
+    });
+    if (art) {
+      return {
+        id: art.id,
+        title: art.title,
+        slug: art.slug,
+        content: art.content,
+        thumbnail: art.thumbnail,
+        created_at: art.created_at.toISOString(),
+        updated_at: art.updated_at.toISOString(),
+        likeCount: 0,
+        dislikeCount: 0,
+        commentCount: 0,
+      };
+    }
+  } catch (err) {
+    console.warn("Prisma getArticleById error:", err);
+  }
+
+  const sampleMatch = SAMPLE_ARTICLES.find((s) => s.id === id || s.slug === id);
+  if (sampleMatch) return sampleMatch;
+
+  return null;
+}
+
+import { uploadFileToSupabaseStorage } from "@/lib/supabase/storage";
+
+// Upload gambar artikel (Thumbnail atau Embed Content) ke Supabase Storage (Membaca ENV)
+export async function uploadArticleImage(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user || !(await checkIsAdmin(user.email))) {
+    return { error: "Akses ditolak. Hanya pemilik yang dapat mengunggah gambar artikel." };
+  }
+
+  const file = formData.get("file") as File | null;
+  if (!file || file.size === 0) {
+    return { error: "File gambar tidak ditemukan." };
+  }
+
+  if (!file.type.startsWith("image/")) {
+    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." };
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: "Ukuran file terlalu besar. Maksimal 5MB." };
+  }
+
+  return await uploadFileToSupabaseStorage({ file, folder: "article-images" });
+}
+
 // 3. Admin-only: Buat Artikel Baru
 export async function createArticle(data: {
   title: string;

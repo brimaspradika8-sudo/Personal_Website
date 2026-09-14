@@ -5,7 +5,6 @@ import Image from "next/image";
 import { FolderGit2, ExternalLink, Code2, Eye, RefreshCw, Database, CheckCircle2 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { ProjectData } from "@/components/ProjectModal";
-import ScrollReveal from "@/components/ScrollReveal";
 import { createClient } from "@/lib/supabase/client";
 import TiltCard from "@/components/TiltCard";
 
@@ -96,33 +95,25 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
   });
 
   return (
-    <section id="projects" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 py-16 border-b border-current/10">
+    <section id="projects" className="scroll-mt-20 max-w-6xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80">
       <div className="space-y-8 text-left">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
-                <FolderGit2 className="w-3.5 h-3.5" />
-                <span>{lang === "id" ? "ETALASE PROYEK" : "PROJECT SHOWCASE"}</span>
-              </div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[11px] font-mono font-bold">
-                <Database className="w-3 h-3 text-emerald-400 animate-pulse" />
-                <span>SUPABASE FETCH ACTIVE</span>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-2 max-w-xl">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-medium">
+                <Database className="w-3 h-3 text-emerald-500" />
+                <span>Supabase Live Sync</span>
               </span>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight">
-              {lang === "id" ? (
-                <>PROYEK <span className="text-[#DC2626]">UNGGULAN</span></>
-              ) : (
-                <>FEATURED <span className="text-[#DC2626]">PROJECTS</span></>
-              )}
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+              {lang === "id" ? "Proyek & Eksperimen Sistem" : "Featured Projects & Architecture"}
             </h2>
-            <p className="text-xs sm:text-sm opacity-80 max-w-xl font-sans">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
               {lang === "id"
-                ? "Daftar proyek nyata dan eksperimen arsitektur web yang diambil secara langsung dari Supabase Database."
-                : "Real-world web application projects fetched directly from Supabase Database."}
+                ? "Eksplorasi aplikasi web dan implementasi sistem AI yang dibangun secara nyata."
+                : "Real-world web application projects and AI system implementations."}
             </p>
           </div>
 
@@ -132,201 +123,192 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
               type="button"
               onClick={handleSyncSupabase}
               disabled={isFetching}
-              className="px-4 py-2 rounded-xl bg-current/5 hover:bg-[#DC2626] hover:text-white border border-current/10 text-xs font-mono font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+              className="px-3.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-medium hover:border-[#D32F2F] hover:text-[#D32F2F] transition-all flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? "animate-spin text-[#DC2626]" : ""}`} />
-              <span>{isFetching ? (lang === "id" ? "Sinkronisasi..." : "Syncing...") : (lang === "id" ? "Sinkron Data Live" : "Sync Live Data")}</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? "animate-spin text-[#D32F2F]" : ""}`} />
+              <span>{isFetching ? (lang === "id" ? "Menghubungkan..." : "Syncing...") : (lang === "id" ? "Sinkronkan Data" : "Sync Live Data")}</span>
             </button>
             {lastFetched && (
-              <span className="text-[10px] font-mono opacity-70 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              <span className="text-xs text-slate-500 flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                 <span>{lastFetched}</span>
               </span>
             )}
           </div>
         </div>
 
-        {/* Category Filter Chips / Tabs (Feature 3.2: Edge Scroll Gradient for Mobile Swiping) */}
-        <div className="relative group">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-2 pb-1 pr-6">
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => {
-                    soundFx.playClick();
-                    setSelectedCategory(cat);
-                  }}
-                  className={`px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all cursor-pointer whitespace-nowrap border ${
-                    isActive
-                      ? "bg-[#DC2626] text-white border-[#DC2626] shadow-md shadow-[#DC2626]/30"
-                      : isNight
-                      ? "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-                      : "bg-black/5 border-black/10 text-black/70 hover:bg-black/10 hover:text-black"
-                  }`}
-                >
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-          {/* Right edge fade gradient hint */}
-          <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l ${isNight ? "from-[#0A0A0B]" : "from-white"} to-transparent z-10 sm:hidden`} />
+        {/* Category Filter Chips / Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setSelectedCategory(cat);
+                }}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap border ${
+                  isActive
+                    ? "bg-[#D32F2F] text-white border-[#D32F2F] shadow-xs"
+                    : isNight
+                    ? "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200"
+                    : "bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Feature 2.1: Skeleton Shimmer Loading Cards vs 3D Glassmorphism Cards Grid */}
+        {/* Project Cards Grid */}
         {isFetching ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((n) => (
               <div
                 key={n}
                 className={`rounded-2xl border p-5 space-y-4 animate-pulse ${
-                  isNight ? "bg-[#121214]/60 border-[#26262A]" : "bg-slate-100 border-slate-200"
+                  isNight ? "bg-slate-900/50 border-slate-800" : "bg-slate-100 border-slate-200"
                 }`}
               >
-                <div className="w-full h-48 rounded-xl bg-current/10" />
-                <div className="h-5 w-3/4 bg-current/10 rounded-md" />
+                <div className="w-full h-48 rounded-xl bg-slate-200 dark:bg-slate-800" />
+                <div className="h-5 w-3/4 bg-slate-200 dark:bg-slate-800 rounded-md" />
                 <div className="space-y-2">
-                  <div className="h-3 w-full bg-current/10 rounded-md" />
-                  <div className="h-3 w-5/6 bg-current/10 rounded-md" />
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <div className="h-6 w-16 bg-current/10 rounded-md" />
-                  <div className="h-6 w-16 bg-current/10 rounded-md" />
+                  <div className="h-3 w-full bg-slate-200 dark:bg-slate-800 rounded-md" />
+                  <div className="h-3 w-5/6 bg-slate-200 dark:bg-slate-800 rounded-md" />
                 </div>
               </div>
             ))}
           </div>
         ) : displayProjects.length === 0 ? (
-          <div className={`p-10 rounded-2xl border text-center space-y-3 ${isNight ? "bg-[#121214]/50 border-[#26262A]" : "bg-slate-50 border-slate-200"}`}>
-            <FolderGit2 className="w-10 h-10 text-[#DC2626] mx-auto opacity-70" />
-            <p className="font-mono text-sm font-bold opacity-80">
+          <div className={`p-10 rounded-2xl border text-center space-y-3 ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+            <FolderGit2 className="w-8 h-8 text-slate-400 mx-auto opacity-70" />
+            <p className="text-xs text-slate-500 font-medium">
               {lang === "id" ? "Belum ada proyek untuk kategori ini." : "No projects found in this category."}
             </p>
             <button
               type="button"
               onClick={() => setSelectedCategory(lang === "id" ? "Semua" : "All")}
-              className="text-xs font-mono font-bold text-[#DC2626] hover:underline cursor-pointer"
+              className="text-xs font-medium text-[#D32F2F] hover:underline cursor-pointer"
             >
               {lang === "id" ? "Tampilkan Semua Proyek" : "Show All Projects"}
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayProjects.map((project, idx) => (
-              <ScrollReveal key={project.id} direction="up" delayMs={idx * 120}>
-                <TiltCard
-                  onClick={() => {
-                    soundFx.playClick();
-                    onSelectProject(project);
-                  }}
+            {displayProjects.map((project) => (
+              <TiltCard
+                key={project.id}
+                onClick={() => {
+                  soundFx.playClick();
+                  onSelectProject(project);
+                }}
+              >
+                <div
+                  className={`rounded-2xl border overflow-hidden transition-all duration-200 flex flex-col justify-between group cursor-pointer ${
+                    isNight
+                      ? "bg-[#0E1015] border-slate-800/80 hover:border-slate-700"
+                      : "bg-white border-slate-200 hover:border-slate-300 shadow-xs"
+                  }`}
                 >
-                  <div
-                    className={`rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between group cursor-pointer ${
-                      isNight
-                        ? "bg-[#141416]/90 border-white/10 backdrop-blur-md hover:border-[#DC2626] hover:shadow-2xl hover:shadow-[#DC2626]/20"
-                        : "bg-white border-slate-200/90 hover:border-[#DC2626] hover:shadow-2xl"
-                    }`}
-                  >
-                    {/* Thumbnail Container */}
-                    <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-black/40">
-                      <Image
-                        src={project.thumbnail || "/images/project1.png"}
-                        alt={project.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  {/* Thumbnail Container */}
+                  <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-slate-900">
+                    <Image
+                      src={project.thumbnail || "/images/project1.png"}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60" />
 
-                      {/* Overlay Action Badge */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          soundFx.playClick();
-                          onSelectProject(project);
-                        }}
-                        className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-[#DC2626] text-white font-bold text-xs flex items-center gap-1.5 shadow-lg hover:scale-105 transition-transform"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>{lang === "id" ? "Lihat Case Study" : "View Case Study"}</span>
-                      </button>
+                    {/* Overlay Action Badge */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        soundFx.playClick();
+                        onSelectProject(project);
+                      }}
+                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-slate-900/80 text-white text-xs font-medium flex items-center gap-1.5 backdrop-blur-md border border-white/10 hover:bg-[#D32F2F] transition-colors"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>{lang === "id" ? "Detail Proyek" : "View Case Study"}</span>
+                    </button>
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 leading-snug group-hover:text-[#D32F2F] transition-colors">
+                        {project.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans line-clamp-3">
+                        {project.description}
+                      </p>
                     </div>
 
-                    {/* Card Body */}
-                    <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <h3 className="font-display text-lg font-bold leading-snug group-hover:text-[#DC2626] transition-colors">
-                          {project.title}
-                        </h3>
-                        <p className="text-xs opacity-80 leading-relaxed font-sans line-clamp-3">
-                          {project.description}
-                        </p>
+                    {/* Tech Stack Badges */}
+                    <div className="space-y-3 pt-2">
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.techStack?.map((tech) => (
+                          <span
+                            key={tech}
+                            className={`px-2.5 py-1 rounded-md text-[11px] font-sans border transition-all ${
+                              isNight
+                                ? "bg-slate-900 text-slate-300 border-slate-800"
+                                : "bg-slate-100 text-slate-700 border-slate-200"
+                            }`}
+                          >
+                            {tech}
+                          </span>
+                        ))}
                       </div>
 
-                      {/* Tech Stack Badges */}
-                      <div className="space-y-3 pt-2">
-                        <div className="flex flex-wrap gap-1.5">
-                          {project.techStack?.map((tech) => (
-                            <span
-                              key={tech}
-                              className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold border transition-all ${
-                                isNight
-                                  ? "bg-[#DC2626]/10 text-slate-200 border-[#DC2626]/30 hover:border-[#DC2626] hover:text-white"
-                                  : "bg-slate-100 text-slate-700 border-slate-200 hover:border-[#DC2626]"
-                              }`}
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
+                      {/* Card Bottom Links */}
+                      <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between gap-2 text-xs font-medium">
+                        {project.repository_url && (
+                          <a
+                            href={project.repository_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              soundFx.playClick();
+                            }}
+                            className="text-slate-500 hover:text-[#D32F2F] transition-colors flex items-center gap-1"
+                          >
+                            <Code2 className="w-3.5 h-3.5" />
+                            <span>Source Code</span>
+                          </a>
+                        )}
 
-                        {/* Card Bottom Links */}
-                        <div className="pt-3 border-t border-current/10 flex items-center justify-between gap-2 text-xs font-medium">
-                          {project.repository_url && (
-                            <a
-                              href={project.repository_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                soundFx.playClick();
-                              }}
-                              className="hover:text-[#DC2626] transition-colors flex items-center gap-1 opacity-80 hover:opacity-100"
-                            >
-                              <Code2 className="w-3.5 h-3.5" />
-                              <span>Source Code</span>
-                            </a>
-                          )}
-
-                          {project.demo_url && (
-                            <a
-                              href={project.demo_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                soundFx.playClick();
-                              }}
-                              className="text-[#DC2626] font-bold hover:underline flex items-center gap-1"
-                            >
-                              <span>Live Demo</span>
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </a>
-                          )}
-                        </div>
+                        {project.demo_url && (
+                          <a
+                            href={project.demo_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              soundFx.playClick();
+                            }}
+                            className="text-[#D32F2F] font-medium hover:underline flex items-center gap-1"
+                          >
+                            <span>Live Demo</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
                       </div>
-
                     </div>
 
                   </div>
-                </TiltCard>
-              </ScrollReveal>
+
+                </div>
+              </TiltCard>
             ))}
-        </div>
+          </div>
         )}
 
       </div>

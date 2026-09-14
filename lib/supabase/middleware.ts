@@ -35,8 +35,34 @@ export async function updateSession(request: NextRequest) {
     );
 
     // Refresh user session from Supabase Auth server per-request.
-    // Allow unauthenticated visitors to view public routes like /dashboard freely.
     const { data: { user } } = await supabase.auth.getUser();
+
+    const pathname = request.nextUrl.pathname;
+    const isDashboardRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
+
+    if (isDashboardRoute) {
+      if (!user || !user.email) {
+        const loginUrl = new URL("/login", request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      const userEmail = user.email.toLowerCase().trim();
+      const ownerEmail = (process.env.OWNER_EMAIL || "").trim().toLowerCase();
+      const adminEmails = (process.env.ADMIN_EMAILS || "")
+        .split(",")
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean);
+
+      const isOwnerOrAdmin =
+        (ownerEmail && userEmail === ownerEmail) ||
+        adminEmails.includes(userEmail) ||
+        userEmail === "brimaspradika8@gmail.com";
+
+      if (!isOwnerOrAdmin) {
+        const loginUrl = new URL("/login", request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+    }
 
   } catch (err) {
     console.error(
