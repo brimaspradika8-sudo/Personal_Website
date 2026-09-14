@@ -181,22 +181,25 @@ export default function DashboardClient({
         isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F2F3F4] text-slate-900"
       }`}
     >
-      {/* 1. FLOATING PILL TOP NAVBAR */}
+      {/* 1. FLOATING PILL TOP NAVBAR (Glassmorphism Frosted Glass) */}
       <header className="fixed top-4 sm:top-6 inset-x-0 z-50 px-4 pointer-events-none">
         <div
-          className={`max-w-4xl mx-auto rounded-full border shadow-xl backdrop-blur-md px-6 py-2.5 flex items-center justify-between pointer-events-auto transition-all duration-300 ${
+          className={`max-w-4xl mx-auto rounded-full border px-6 py-2.5 flex items-center justify-between pointer-events-auto transition-all duration-300 backdrop-blur-xl backdrop-saturate-180 shadow-2xl relative overflow-hidden ${
             isNight
-              ? "bg-[#111622]/90 border-slate-800 text-slate-100 shadow-black/40"
-              : "bg-white/95 border-slate-200/90 text-slate-900 shadow-slate-300/40"
+              ? "bg-[#0B0F17]/65 border-white/10 text-slate-100 shadow-black/60 ring-1 ring-white/10"
+              : "bg-white/70 border-slate-200/80 text-slate-900 shadow-slate-400/20 ring-1 ring-black/5"
           }`}
         >
+          {/* Subtle Top Glass Border Reflection */}
+          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 dark:via-white/20 to-transparent pointer-events-none" />
+
           {/* Left: Red Circle B Logo & Brand Text */}
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
             className="flex items-center gap-2.5 group cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-full bg-[#DC2626] text-white flex items-center justify-center font-extrabold text-sm shadow-md shadow-red-500/30 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-full bg-[#DC2626] text-white flex items-center justify-center font-extrabold text-sm shadow-md shadow-red-500/40 group-hover:scale-105 transition-transform">
               B
             </div>
             <span className="font-extrabold text-sm tracking-tight font-sans">
@@ -245,10 +248,10 @@ export default function DashboardClient({
                 soundFx.playClick();
                 toggleLang();
               }}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer backdrop-blur-md ${
                 isNight
-                  ? "border-slate-800 bg-slate-900 text-slate-200 hover:bg-slate-800"
-                  : "border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100"
+                  ? "border-white/10 bg-white/10 text-slate-200 hover:bg-white/20"
+                  : "border-black/5 bg-slate-100/80 text-slate-800 hover:bg-slate-200/80"
               }`}
             >
               {lang.toUpperCase()}
@@ -259,7 +262,7 @@ export default function DashboardClient({
               <Link
                 href="/admin"
                 onClick={() => soundFx.playClick()}
-                className="px-3.5 py-1.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs hover:opacity-90 transition-opacity"
+                className="px-3.5 py-1.5 rounded-full bg-slate-900/90 dark:bg-white text-white dark:text-slate-900 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs hover:opacity-90 transition-opacity backdrop-blur-md"
                 title="Admin Panel"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-[#DC2626]" />
