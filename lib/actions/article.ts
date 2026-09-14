@@ -515,11 +515,16 @@ export async function uploadArticleImage(formData: FormData) {
     return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." };
   }
 
-  if (file.size > 5 * 1024 * 1024) {
-    return { error: "Ukuran file terlalu besar. Maksimal 5MB." };
+  if (file.size > 8 * 1024 * 1024) {
+    return { error: "Ukuran file terlalu besar. Maksimal 8MB." };
   }
 
-  return await uploadFileToSupabaseStorage({ file, folder: "article-images" });
+  try {
+    const res = await uploadFileToSupabaseStorage({ file, folder: "article-images" });
+    return res;
+  } catch (err: unknown) {
+    return { error: (err as Error)?.message || "Gagal mengunggah gambar." };
+  }
 }
 
 // 3. Admin-only: Buat Artikel Baru
@@ -537,11 +542,22 @@ export async function createArticle(data: {
   }
 
   try {
-    const slugFormatted = data.slug
+    let slugFormatted = data.slug
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9 -]/g, "")
       .replace(/\s+/g, "-");
+
+    if (!slugFormatted) {
+      slugFormatted = `artikel-${Date.now()}`;
+    }
+
+    const existingSlug = await prisma.article.findUnique({
+      where: { slug: slugFormatted },
+    });
+    if (existingSlug) {
+      slugFormatted = `${slugFormatted}-${Math.random().toString(36).substring(2, 6)}`;
+    }
 
     const newArt = await prisma.article.create({
       data: {
@@ -553,8 +569,10 @@ export async function createArticle(data: {
     });
 
     revalidatePath("/posts");
+    revalidatePath("/admin/articles");
     return { success: true, article: newArt };
   } catch (err: unknown) {
+    console.error("Error creating article:", err);
     return { error: (err as Error)?.message || "Gagal membuat artikel baru." };
   }
 }
@@ -569,10 +587,15 @@ export async function deleteArticle(articleId: string) {
   }
 
   try {
-    await prisma.article.delete({ where: { id: articleId } });
+    const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
+    if (existingArt) {
+      await prisma.article.delete({ where: { id: articleId } });
+    }
     revalidatePath("/posts");
+    revalidatePath("/admin/articles");
     return { success: true };
   } catch (err: unknown) {
+    console.error("Error deleting article:", err);
     return { error: (err as Error)?.message || "Gagal menghapus artikel." };
   }
 }
@@ -595,26 +618,54 @@ export async function updateArticle(
   }
 
   try {
-    const slugFormatted = data.slug
+    let slugFormatted = data.slug
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9 -]/g, "")
       .replace(/\s+/g, "-");
 
-    const updatedArt = await prisma.article.update({
-      where: { id: articleId },
-      data: {
-        title: data.title.trim(),
-        slug: slugFormatted,
-        content: data.content.trim(),
-        thumbnail: data.thumbnail?.trim() || null,
-      },
+    if (!slugFormatted) {
+      slugFormatted = `artikel-${Date.now()}`;
+    }
+
+    const existingSlug = await prisma.article.findUnique({
+      where: { slug: slugFormatted },
     });
+    if (existingSlug && existingSlug.id !== articleId && !articleId.startsWith("sample-")) {
+      slugFormatted = `${slugFormatted}-${Math.random().toString(36).substring(2, 6)}`;
+    }
+
+    const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
+
+    let updatedArt;
+    if (!existingArt) {
+      // Jika merupakan sample article atau belum ada di database, buat artikel baru di database
+      updatedArt = await prisma.article.create({
+        data: {
+          title: data.title.trim(),
+          slug: slugFormatted,
+          content: data.content.trim(),
+          thumbnail: data.thumbnail?.trim() || null,
+        },
+      });
+    } else {
+      updatedArt = await prisma.article.update({
+        where: { id: articleId },
+        data: {
+          title: data.title.trim(),
+          slug: slugFormatted,
+          content: data.content.trim(),
+          thumbnail: data.thumbnail?.trim() || null,
+        },
+      });
+    }
 
     revalidatePath("/posts");
     revalidatePath(`/posts/${slugFormatted}`);
+    revalidatePath("/admin/articles");
     return { success: true, article: updatedArt };
   } catch (err: unknown) {
+    console.error("Error updating article:", err);
     return { error: (err as Error)?.message || "Gagal memperbarui artikel." };
   }
 }

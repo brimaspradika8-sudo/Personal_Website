@@ -224,6 +224,17 @@ export default function ArticleClient({
   };
 
   const renderContent = (content: string) => {
+    const isHtml = /^\s*<[a-z0-9]+/i.test(content) || content.includes("<p>") || content.includes("<h2>") || content.includes("<h3>") || content.includes("<ul>") || content.includes("<table>");
+    
+    if (isHtml) {
+      return (
+        <div
+          className="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 font-sans leading-relaxed space-y-4 [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-slate-300 [&_table]:dark:border-slate-800 [&_th]:border [&_th]:border-slate-300 [&_th]:dark:border-slate-800 [&_th]:bg-slate-100 [&_th]:dark:bg-slate-900 [&_th]:p-2.5 [&_td]:border [&_td]:border-slate-300 [&_td]:dark:border-slate-800 [&_td]:p-2.5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:border-l-4 [&_blockquote]:border-[#D32F2F] [&_blockquote]:pl-4 [&_blockquote]:italic"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+      );
+    }
+
     const blocks = content.split("```");
     return blocks.map((block, idx) => {
       if (idx % 2 === 1) {

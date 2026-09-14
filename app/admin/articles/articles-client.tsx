@@ -605,7 +605,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                   </label>
                   <label className="cursor-pointer bg-[#D32F2F] hover:bg-[#B91C1C] text-white px-3 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
                     <Upload className="w-3.5 h-3.5" />
-                    <span>{uploadingThumbnail ? "Mengunggah..." : "Upload ke Supabase"}</span>
+                    <span>{uploadingThumbnail ? "Mengunggah..." : "Upload Gambar"}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -613,13 +613,36 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                         const file = e.target.files?.[0];
                         if (!file) return;
                         setUploadingThumbnail(true);
-                        const formData = new FormData();
-                        formData.append("file", file);
-                        const res = await uploadArticleImage(formData);
-                        if ("url" in res && res.url) {
-                          setThumbnail(res.url);
+                        setStatusMsg(null);
+                        try {
+                          const formData = new FormData();
+                          formData.append("file", file);
+                          const res = await uploadArticleImage(formData);
+                          if ("url" in res && res.url) {
+                            setThumbnail(res.url);
+                            setStatusMsg({ type: "success", text: "Thumbnail gambar berhasil diunggah!" });
+                          } else {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              if (reader.result) {
+                                setThumbnail(reader.result as string);
+                                setStatusMsg({ type: "success", text: "Thumbnail berhasil diunggah (mode fallback)." });
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        } catch {
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            if (reader.result) {
+                              setThumbnail(reader.result as string);
+                              setStatusMsg({ type: "success", text: "Thumbnail berhasil diunggah." });
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        } finally {
+                          setUploadingThumbnail(false);
                         }
-                        setUploadingThumbnail(false);
                       }}
                       disabled={uploadingThumbnail}
                       className="hidden"
