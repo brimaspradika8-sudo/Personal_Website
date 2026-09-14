@@ -585,123 +585,205 @@ export default function DashboardClient({
       {/* 4. LATEST ARTICLES & INSIGHTS SECTION (Replaces Tech Stack Matrix) */}
       <section
         id="articles"
-        className="max-w-7xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80"
+        className="max-w-7xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80 text-left"
       >
-        <div className="space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div className="space-y-2 text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
-                <span>LATEST ARTICLES &amp; INSIGHTS</span>
+        <div className="space-y-10">
+          
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/20 text-[11px] font-mono font-bold tracking-widest uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] animate-pulse" />
+                <span>EDITORIAL &amp; INSIGHTS</span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-5xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">
+              <h2 className="font-serif text-3xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
                 ARTIKEL &amp; <span className="text-[#DC2626]">PANDUAN TEKNIS</span>
               </h2>
-              <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 font-sans max-w-2xl">
-                Tulisan teknis, eksperimen pengembangan web, catatan arsitektur sistem, dan panduan backend/frontend.
+              <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 font-sans max-w-xl leading-relaxed">
+                Tulisan teknis, catatan arsitektur perangkat lunak, otomatisasi AI, dan panduan backend/frontend.
               </p>
             </div>
 
             <Link
               href="/posts"
               onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-red-500/20 w-fit cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs uppercase tracking-wider transition-all hover:bg-[#DC2626] dark:hover:bg-[#DC2626] dark:hover:text-white shadow-md w-fit cursor-pointer group shrink-0"
             >
               <span>Lihat Semua Artikel</span>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(initialArticles && initialArticles.length > 0
-              ? initialArticles
-              : [
-                  {
-                    id: "1",
-                    title: "Membangun Arsitektur Web Scalable dengan Next.js App Router & Server Components",
-                    slug: "membangun-arsitektur-web-scalable-nextjs",
-                    category: "Web Architecture",
-                    readTime: "5 min read",
-                    created_at: new Date().toISOString(),
-                    thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
-                  },
-                  {
-                    id: "2",
-                    title: "Implementasi RESTful API & Eloquent Performance Optimization pada Laravel 11",
-                    slug: "restful-api-performance-laravel-11",
-                    category: "Backend Engineering",
-                    readTime: "7 min read",
-                    created_at: new Date().toISOString(),
-                    thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
-                  },
-                  {
-                    id: "3",
-                    title: "Prisma ORM, Docker & PostgreSQL: Trik Query Optimization & Indexing",
-                    slug: "prisma-postgresql-query-optimization",
-                    category: "Database & Systems",
-                    readTime: "6 min read",
-                    created_at: new Date().toISOString(),
-                    thumbnail: "https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1200&q=80",
-                  },
-                ]
-            )
-              .slice(0, 3)
-              .map((art, idx) => (
-                <Link
-                  key={art.id}
-                  href={`/posts/${art.slug}`}
-                  onClick={() => soundFx.playClick()}
-                  className={`p-5 rounded-3xl border text-left flex flex-col justify-between space-y-4 group transition-all duration-300 hover:-translate-y-1.5 ${
-                    isNight
-                      ? "bg-[#0E1015] border-slate-800 hover:border-slate-700 shadow-lg"
-                      : "bg-white border-slate-200 hover:border-slate-300 shadow-md"
-                  }`}
-                >
-                  <div className="space-y-4">
-                    {/* Article Thumbnail Image */}
-                    <div className="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/50 dark:border-slate-800">
-                      <Image
-                        src={art.thumbnail || (art as any).cover_image || `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80`}
-                        alt={art.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
+          {/* Editorial Articles Grid (Featured Big Card + Side Column Stack) */}
+          {(() => {
+            const articlesList =
+              initialArticles && initialArticles.length > 0
+                ? initialArticles
+                : [
+                    {
+                      id: "1",
+                      title: "Transisi Arsitektur Software: Membangun Enterprise AI Agent dan Automation Workflow Berbasis Next.js",
+                      slug: "transisi-arsitektur-software-membangun-enterprise-ai-agent-nextjs",
+                      category: "AI Systems",
+                      readTime: "6 min read",
+                      created_at: new Date().toISOString(),
+                      thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+                      content: "Perkembangan artificial intelligence telah bergeser dari sekadar prompt engineering sederhana menuju Agentic Workflows—sistem di mana AI mampu mengambil keputusan mandiri, memanggil tools, serta mengeksekusi urutan tugas yang kompleks secara otomatis.",
+                    },
+                    {
+                      id: "2",
+                      title: "Implementasi RESTful API & Eloquent Performance Optimization pada Laravel 11",
+                      slug: "restful-api-performance-laravel-11",
+                      category: "Backend Engineering",
+                      readTime: "7 min read",
+                      created_at: new Date().toISOString(),
+                      thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+                      content: "Optimasi kueri basis data dan pengelolaan memori pada arsitektur backend skala besar dengan Laravel 11 dan PostgreSQL.",
+                    },
+                    {
+                      id: "3",
+                      title: "Prisma ORM, Docker & PostgreSQL: Trik Query Optimization & Indexing",
+                      slug: "prisma-postgresql-query-optimization",
+                      category: "Database & Systems",
+                      readTime: "6 min read",
+                      created_at: new Date().toISOString(),
+                      thumbnail: "https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1200&q=80",
+                      content: "Teknik membuat indexing teratur dan optimasi koneksi database relasional dalam lingkungan kontainer Docker.",
+                    },
+                  ];
 
-                    <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-sans">
-                      <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[#DC2626] font-mono font-bold text-[11px] uppercase">
-                        {art.category || "Tutorial"}
-                      </span>
-                      <span className="flex items-center gap-1.5 font-mono text-[11px]">
-                        <Calendar className="w-3.5 h-3.5 text-[#DC2626]" />
-                        {new Date(art.created_at).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </span>
-                    </div>
+            const featured = articlesList[0];
+            const sideArticles = articlesList.slice(1, 3);
 
-                    <h3 className="font-serif font-bold text-lg sm:text-xl text-slate-900 dark:text-slate-100 group-hover:text-[#DC2626] transition-colors leading-snug line-clamp-2">
-                      {art.title}
-                    </h3>
+            return (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                
+                {/* Featured Big Hero Article (7 Cols) */}
+                {featured && (
+                  <div className="lg:col-span-7 flex">
+                    <Link
+                      href={`/posts/${featured.slug}`}
+                      onClick={() => soundFx.playClick()}
+                      className={`w-full p-6 sm:p-8 rounded-3xl border flex flex-col justify-between space-y-6 group transition-all duration-300 hover:-translate-y-1 ${
+                        isNight
+                          ? "bg-[#0E1015] border-slate-800 hover:border-slate-700 shadow-2xl"
+                          : "bg-white border-slate-200 hover:border-slate-300 shadow-xl"
+                      }`}
+                    >
+                      <div className="space-y-6">
+                        {/* Large Featured Image */}
+                        <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/60 dark:border-slate-800">
+                          <Image
+                            src={featured.thumbnail || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"}
+                            alt={featured.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                          />
+                          <div className="absolute top-4 left-4 z-10">
+                            <span className="px-3 py-1 rounded-full bg-[#DC2626] text-white text-[10px] font-mono font-bold tracking-widest uppercase shadow-md">
+                              FEATURED ARTICLE
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Article Metadata */}
+                        <div className="flex items-center gap-3 text-xs text-slate-500 font-sans">
+                          <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-[#DC2626] font-mono font-bold text-[11px] uppercase border border-slate-200 dark:border-slate-700">
+                            {featured.category || "AI Systems"}
+                          </span>
+                          <span className="flex items-center gap-1.5 font-mono text-xs">
+                            <Calendar className="w-3.5 h-3.5 text-[#DC2626]" />
+                            {new Date(featured.created_at).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+
+                        {/* Title & Excerpt */}
+                        <div className="space-y-3">
+                          <h3 className="font-serif font-black text-2xl sm:text-3xl text-slate-950 dark:text-white group-hover:text-[#DC2626] transition-colors leading-tight">
+                            {featured.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-sans leading-relaxed line-clamp-3">
+                            {featured.content?.replace(/<[^>]*>?/gm, "").substring(0, 180)}...
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Footer Read Action */}
+                      <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5 font-mono text-xs text-slate-500">
+                          <Clock className="w-3.5 h-3.5 text-[#DC2626]" />
+                          {featured.readTime || "5 min read"}
+                        </span>
+                        <span className="text-[#DC2626] font-bold text-xs uppercase tracking-wider font-mono flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
+                          <span>Baca Artikel</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </Link>
                   </div>
+                )}
 
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-500 font-sans">
-                    {art.readTime ? (
-                      <span className="flex items-center gap-1.5 font-mono">
-                        <Clock className="w-3.5 h-3.5 text-[#DC2626]" />
-                        {art.readTime}
-                      </span>
-                    ) : (
-                      <span className="font-mono text-[11px]">Artikel Teknis</span>
-                    )}
-                    <span className="text-[#DC2626] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1 font-mono uppercase text-xs">
-                      Baca Artikel <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-          </div>
+                {/* Side Stack Articles (5 Cols) */}
+                <div className="lg:col-span-5 flex flex-col gap-6 justify-between">
+                  {sideArticles.map((art) => (
+                    <Link
+                      key={art.id}
+                      href={`/posts/${art.slug}`}
+                      onClick={() => soundFx.playClick()}
+                      className={`flex-1 p-6 rounded-3xl border flex flex-col justify-between space-y-4 group transition-all duration-300 hover:-translate-y-1 ${
+                        isNight
+                          ? "bg-[#0E1015] border-slate-800 hover:border-slate-700 shadow-lg"
+                          : "bg-white border-slate-200 hover:border-slate-300 shadow-md"
+                      }`}
+                    >
+                      <div className="space-y-4">
+                        <div className="relative w-full h-40 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/50 dark:border-slate-800">
+                          <Image
+                            src={art.thumbnail || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80"}
+                            alt={art.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs text-slate-500 font-sans">
+                          <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[#DC2626] font-mono font-bold text-[10px] uppercase">
+                            {art.category || "Tutorial"}
+                          </span>
+                          <span className="font-mono text-[11px]">
+                            {new Date(art.created_at).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "short",
+                            })}
+                          </span>
+                        </div>
+
+                        <h4 className="font-serif font-bold text-base sm:text-lg text-slate-950 dark:text-white group-hover:text-[#DC2626] transition-colors leading-snug line-clamp-2">
+                          {art.title}
+                        </h4>
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                        <span className="font-mono text-slate-500 text-[11px]">
+                          {art.readTime || "5 min read"}
+                        </span>
+                        <span className="text-[#DC2626] font-bold text-xs uppercase font-mono flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                          <span>Baca</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+              </div>
+            );
+          })()}
+
         </div>
       </section>
 
