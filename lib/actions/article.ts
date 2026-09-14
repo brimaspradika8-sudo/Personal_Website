@@ -949,14 +949,17 @@ export async function getAllAdminComments() {
 // 10. Catat Pembaca (Increment Article Views)
 export async function incrementArticleViews(slug: string) {
   try {
-    const art = await prisma.article.findUnique({ where: { slug } });
+    const art = await prisma.article.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
     if (art) {
       await prisma.article.update({
         where: { id: art.id },
         data: { views: { increment: 1 } },
-      });
+      }).catch(() => {});
     }
   } catch {
-    // Skip if error
+    // Skip silently if views column is missing or schema error
   }
 }

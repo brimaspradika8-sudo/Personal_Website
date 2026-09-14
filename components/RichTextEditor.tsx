@@ -358,7 +358,7 @@ export default function RichTextEditor({
           <div className="flex items-center gap-0.5 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
             <button
               type="button"
-              onClick={() => editor.chain().focus().setTextAlign("left").run()}
+              onClick={() => (editor.chain().focus() as any).setTextAlign("left").run()}
               className={`p-1.5 rounded-lg transition-all ${
                 editor.isActive({ textAlign: "left" })
                   ? "bg-[#D32F2F] text-white"
@@ -371,7 +371,7 @@ export default function RichTextEditor({
 
             <button
               type="button"
-              onClick={() => editor.chain().focus().setTextAlign("center").run()}
+              onClick={() => (editor.chain().focus() as any).setTextAlign("center").run()}
               className={`p-1.5 rounded-lg transition-all ${
                 editor.isActive({ textAlign: "center" })
                   ? "bg-[#D32F2F] text-white"
@@ -384,7 +384,7 @@ export default function RichTextEditor({
 
             <button
               type="button"
-              onClick={() => editor.chain().focus().setTextAlign("right").run()}
+              onClick={() => (editor.chain().focus() as any).setTextAlign("right").run()}
               className={`p-1.5 rounded-lg transition-all ${
                 editor.isActive({ textAlign: "right" })
                   ? "bg-[#D32F2F] text-white"
@@ -397,7 +397,7 @@ export default function RichTextEditor({
 
             <button
               type="button"
-              onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+              onClick={() => (editor.chain().focus() as any).setTextAlign("justify").run()}
               className={`p-1.5 rounded-lg transition-all ${
                 editor.isActive({ textAlign: "justify" })
                   ? "bg-[#D32F2F] text-white"
