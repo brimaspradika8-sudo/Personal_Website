@@ -465,28 +465,33 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
   return null;
 }
 
+const isValidUuid = (str: string) =>
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
+
 // Ambil detail artikel berdasarkan ID (untuk halaman Edit)
 export async function getArticleById(id: string): Promise<ArticleItem | null> {
-  try {
-    const art = await prisma.article.findUnique({
-      where: { id },
-    });
-    if (art) {
-      return {
-        id: art.id,
-        title: art.title,
-        slug: art.slug,
-        content: art.content,
-        thumbnail: art.thumbnail,
-        created_at: art.created_at.toISOString(),
-        updated_at: art.updated_at.toISOString(),
-        likeCount: 0,
-        dislikeCount: 0,
-        commentCount: 0,
-      };
+  if (isValidUuid(id)) {
+    try {
+      const art = await prisma.article.findUnique({
+        where: { id },
+      });
+      if (art) {
+        return {
+          id: art.id,
+          title: art.title,
+          slug: art.slug,
+          content: art.content,
+          thumbnail: art.thumbnail,
+          created_at: art.created_at.toISOString(),
+          updated_at: art.updated_at.toISOString(),
+          likeCount: 0,
+          dislikeCount: 0,
+          commentCount: 0,
+        };
+      }
+    } catch (err) {
+      console.warn("Prisma getArticleById error:", err);
     }
-  } catch (err) {
-    console.warn("Prisma getArticleById error:", err);
   }
 
   const sampleMatch = SAMPLE_ARTICLES.find((s) => s.id === id || s.slug === id);
@@ -587,9 +592,11 @@ export async function deleteArticle(articleId: string) {
   }
 
   try {
-    const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
-    if (existingArt) {
-      await prisma.article.delete({ where: { id: articleId } });
+    if (isValidUuid(articleId)) {
+      const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
+      if (existingArt) {
+        await prisma.article.delete({ where: { id: articleId } });
+      }
     }
     revalidatePath("/posts");
     revalidatePath("/admin/articles");
@@ -628,14 +635,14 @@ export async function updateArticle(
       slugFormatted = `artikel-${Date.now()}`;
     }
 
-    const existingSlug = await prisma.article.findUnique({
-      where: { slug: slugFormatted },
-    });
-    if (existingSlug && existingSlug.id !== articleId && !articleId.startsWith("sample-")) {
-      slugFormatted = `${slugFormatted}-${Math.random().toString(36).substring(2, 6)}`;
+    let existingArt = null;
+    if (isValidUuid(articleId)) {
+      existingArt = await prisma.article.findUnique({ where: { id: articleId } });
     }
 
-    const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
+    if (!existingArt) {
+      existingArt = await prisma.article.findUnique({ where: { slug: slugFormatted } });
+    }
 
     let updatedArt;
     if (!existingArt) {
@@ -650,7 +657,7 @@ export async function updateArticle(
       });
     } else {
       updatedArt = await prisma.article.update({
-        where: { id: articleId },
+        where: { id: existingArt.id },
         data: {
           title: data.title.trim(),
           slug: slugFormatted,
@@ -700,13 +707,18 @@ export async function toggleArticleReaction(
       return { error: "Gagal menemukan profil pengguna." };
     }
 
-    let articleExists = await prisma.article.findUnique({ where: { id: articleId } });
+    let articleExists = null;
+    if (isValidUuid(articleId)) {
+      articleExists = await prisma.article.findUnique({ where: { id: articleId } });
+    }
+    if (!articleExists) {
+      articleExists = await prisma.article.findUnique({ where: { slug: articleId } });
+    }
     if (!articleExists) {
       const sample = SAMPLE_ARTICLES.find((s) => s.id === articleId || s.slug === articleId);
       if (sample) {
         articleExists = await prisma.article.create({
           data: {
-            id: sample.id.startsWith("sample-") ? undefined : sample.id,
             title: sample.title,
             slug: sample.slug,
             content: sample.content,
@@ -789,7 +801,13 @@ export async function addArticleComment(articleId: string, content: string) {
       return { error: "Gagal memverifikasi akun pengguna." };
     }
 
-    let articleExists = await prisma.article.findUnique({ where: { id: articleId } });
+    let articleExists = null;
+    if (isValidUuid(articleId)) {
+      articleExists = await prisma.article.findUnique({ where: { id: articleId } });
+    }
+    if (!articleExists) {
+      articleExists = await prisma.article.findUnique({ where: { slug: articleId } });
+    }
     if (!articleExists) {
       const sample = SAMPLE_ARTICLES.find((s) => s.id === articleId || s.slug === articleId);
       if (sample) {
