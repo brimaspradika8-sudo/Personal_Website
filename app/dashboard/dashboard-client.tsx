@@ -622,7 +622,7 @@ export default function DashboardClient({
                     category: "Web Architecture",
                     readTime: "5 min read",
                     created_at: new Date().toISOString(),
-                    cover_image: "/images/article1.png",
+                    thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
                   },
                   {
                     id: "2",
@@ -631,16 +631,16 @@ export default function DashboardClient({
                     category: "Backend Engineering",
                     readTime: "7 min read",
                     created_at: new Date().toISOString(),
-                    cover_image: "/images/article2.png",
+                    thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
                   },
                   {
                     id: "3",
-                    title: "Prisma ORM & PostgreSQL: Trik Query Optimization & Indexing untuk Production",
+                    title: "Prisma ORM, Docker & PostgreSQL: Trik Query Optimization & Indexing",
                     slug: "prisma-postgresql-query-optimization",
                     category: "Database & Systems",
                     readTime: "6 min read",
                     created_at: new Date().toISOString(),
-                    cover_image: "/images/article3.png",
+                    thumbnail: "https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1200&q=80",
                   },
                 ]
             )
@@ -660,7 +660,7 @@ export default function DashboardClient({
                     {/* Article Thumbnail Image */}
                     <div className="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/50 dark:border-slate-800">
                       <Image
-                        src={(art as any).cover_image || `/images/article${(idx % 3) + 1}.png`}
+                        src={art.thumbnail || (art as any).cover_image || `https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80`}
                         alt={art.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
