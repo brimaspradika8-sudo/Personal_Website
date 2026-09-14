@@ -119,7 +119,7 @@ export default function PostsClient({ initialArticles, isAdmin = false }: PostsC
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans selection:bg-[#D32F2F] selection:text-white pb-20">
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans selection:bg-[#D32F2F] selection:text-white pb-28 sm:pb-20">
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
 

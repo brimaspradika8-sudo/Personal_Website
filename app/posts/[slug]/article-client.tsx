@@ -307,7 +307,7 @@ export default function ArticleClient({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans selection:bg-[#D32F2F] selection:text-white pb-20">
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans selection:bg-[#D32F2F] selection:text-white pb-28 sm:pb-20">
       
       {/* Feature 2.1: Fixed Reading Progress Bar Top Indicator */}
       <div

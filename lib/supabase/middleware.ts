@@ -38,11 +38,12 @@ export async function updateSession(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
 
     const pathname = request.nextUrl.pathname;
-    const isDashboardRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
+    const isAdminRoute = pathname.startsWith("/admin");
 
-    if (isDashboardRoute) {
+    if (isAdminRoute) {
       if (!user || !user.email) {
         const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("redirectedFrom", pathname);
         return NextResponse.redirect(loginUrl);
       }
 
@@ -59,8 +60,8 @@ export async function updateSession(request: NextRequest) {
         userEmail === "brimaspradika8@gmail.com";
 
       if (!isOwnerOrAdmin) {
-        const loginUrl = new URL("/login", request.url);
-        return NextResponse.redirect(loginUrl);
+        const dashboardUrl = new URL("/dashboard", request.url);
+        return NextResponse.redirect(dashboardUrl);
       }
     }
 

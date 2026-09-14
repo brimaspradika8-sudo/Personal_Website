@@ -16,6 +16,8 @@ import {
   AlertCircle,
   Globe,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
 import { ArticleItem, deleteArticle } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
@@ -35,6 +37,7 @@ interface DashboardClientProps {
 export default function DashboardClient({ user, initialArticles }: DashboardClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isNight, setIsNight] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("dashboard_theme") === "night";
@@ -96,8 +99,16 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
   return (
     <div className={`min-h-screen flex transition-colors duration-300 ${isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F8F9FA] text-slate-900"}`}>
       
+      {/* Mobile Drawer Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`w-64 shrink-0 hidden lg:flex lg:flex-col ${isNight ? "bg-[#0E1015] border-r border-slate-800" : "bg-white border-r border-slate-200"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:flex lg:flex-col lg:shrink-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} ${isNight ? "bg-[#0E1015] border-r border-slate-800" : "bg-white border-r border-slate-200"}`}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
             <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-xs shadow-xs">
@@ -107,14 +118,23 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
               Brimas <span className="font-normal text-slate-500 dark:text-slate-400">Dashboard</span>
             </span>
           </Link>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        <nav className="flex-1 px-4 py-8 space-y-2 font-sans">
+        <nav className="flex-1 px-4 py-8 space-y-2 font-sans overflow-y-auto">
           <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Kelola</div>
           
           <Link
             href="/dashboard"
-            onClick={() => soundFx.playClick()}
+            onClick={() => {
+              soundFx.playClick();
+              setSidebarOpen(false);
+            }}
             className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all bg-[#D32F2F] text-white font-bold shadow-xs"
           >
             <FileText className="w-4 h-4" />
@@ -124,7 +144,10 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
           <Link
             href="/posts"
             target="_blank"
-            onClick={() => soundFx.playClick()}
+            onClick={() => {
+              soundFx.playClick();
+              setSidebarOpen(false);
+            }}
             className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-300 hover:bg-slate-900 hover:text-white" : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"}`}
           >
             <div className="flex items-center gap-3">
@@ -167,15 +190,23 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
         {/* Header */}
         <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/90 border-slate-200 shadow-xs"}`}>
           <div className="flex items-center gap-3">
-            <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 cursor-pointer"
+              aria-label="Buka Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-sm sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100 truncate">
               Dashboard Pemilik — Kelola Artikel
             </h1>
           </div>
 
-          <div className="flex items-center gap-2.5 font-sans">
+          <div className="flex items-center gap-2 font-sans shrink-0">
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
+              className="p-2 rounded-full border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
+              title="Ganti Tema"
             >
               {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-800" />}
             </button>
@@ -183,16 +214,16 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
             <Link
               href="/dashboard/artikel/tambah"
               onClick={() => soundFx.playClick()}
-              className="px-4 py-1.5 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>Artikel Baru</span>
+              <span className="hidden xs:inline">Artikel Baru</span>
             </Link>
           </div>
         </header>
 
         {/* Content Container */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 pb-28 sm:pb-8">
           <div className="max-w-6xl mx-auto space-y-6">
             
             {/* Alert Banner */}
@@ -212,7 +243,7 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
                   )}
                   <span>{alertMsg.text}</span>
                 </div>
-                <button onClick={() => setAlertMsg(null)} className="text-xs opacity-70 hover:opacity-100">
+                <button onClick={() => setAlertMsg(null)} className="text-xs opacity-70 hover:opacity-100 cursor-pointer">
                   Dismiss
                 </button>
               </div>
@@ -231,7 +262,7 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
                 />
               </div>
 
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium">
+              <div className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium self-end sm:self-auto">
                 Total Artikel: <span className="font-extrabold text-slate-900 dark:text-slate-100">{filteredArticles.length}</span>
               </div>
             </div>
@@ -266,11 +297,11 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
                                 <Link
                                   href={`/posts/${art.slug}`}
                                   target="_blank"
-                                  className="font-bold text-slate-900 dark:text-slate-100 hover:text-[#D32F2F] transition-colors truncate block max-w-xs sm:max-w-md"
+                                  className="font-bold text-slate-900 dark:text-slate-100 hover:text-[#D32F2F] transition-colors truncate block max-w-[180px] sm:max-w-md"
                                 >
                                   {art.title}
                                 </Link>
-                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">/{art.slug}</span>
+                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono truncate max-w-[180px] sm:max-w-md">/{art.slug}</span>
                               </div>
                             </div>
                           </td>
@@ -303,7 +334,7 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
                                 title="Edit Artikel"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
-                                <span>Edit</span>
+                                <span className="hidden sm:inline">Edit</span>
                               </Link>
 
                               <button

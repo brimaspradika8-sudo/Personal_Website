@@ -455,7 +455,7 @@ export default function Lanyard() {
 
   return (
     <CanvasErrorBoundary fallback={<LanyardFallbackHTML />}>
-      <div className="w-full h-[520px] sm:h-[580px] relative flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none overflow-visible">
+      <div className="w-full h-[420px] sm:h-[580px] relative flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none overflow-visible">
         <Canvas
           camera={{ position: [0, -0.2, 7.5], fov: 42 }}
           dpr={[1, 1.5]}

@@ -126,9 +126,9 @@ function LoginForm() {
       <div className="relative z-10 w-full max-w-4xl bg-white border border-slate-200/80 rounded-3xl overflow-hidden flex flex-col md:flex-row my-auto shadow-[0_20px_60px_-15px_rgba(0,0,0,0.07)]">
         
         {/* Left Rive Teddy Panel (Clean & Bright) */}
-        <div className="w-full md:w-[46%] bg-gradient-to-b from-slate-50 via-slate-100/60 to-slate-50 p-8 flex flex-col justify-center items-center border-b md:border-b-0 md:border-r border-slate-200/60 shrink-0 relative">
+        <div className="w-full md:w-[46%] bg-gradient-to-b from-slate-50 via-slate-100/60 to-slate-50 p-6 sm:p-8 flex flex-col justify-center items-center border-b md:border-b-0 md:border-r border-slate-200/60 shrink-0 relative">
           
-          <div className="w-full max-w-xs h-56 flex items-center justify-center relative">
+          <div className="w-full max-w-xs h-44 sm:h-56 flex items-center justify-center relative">
             <RiveTeddyAnimation
               emailText={emailText}
               isPasswordFocused={isPasswordFocused}
@@ -137,7 +137,7 @@ function LoginForm() {
             />
           </div>
 
-          <div className="text-center mt-4">
+          <div className="text-center mt-3 sm:mt-4">
             <h2 className="font-display text-lg font-black tracking-tight text-slate-900">
               Brimas Pradika Utama
             </h2>
@@ -148,7 +148,7 @@ function LoginForm() {
         </div>
 
         {/* Right Form Panel (Minimalist Text & Clean Inputs) */}
-        <div className="w-full md:w-[54%] p-8 sm:p-11 flex flex-col justify-center bg-white">
+        <div className="w-full md:w-[54%] p-6 sm:p-11 flex flex-col justify-center bg-white">
           <div className="space-y-6 max-w-sm w-full mx-auto">
             
             <div className="text-left space-y-1">
