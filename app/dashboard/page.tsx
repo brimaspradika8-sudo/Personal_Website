@@ -25,7 +25,7 @@ export default async function DashboardPage() {
         where: { email: userEmail },
       });
     } catch {
-      // Ignore DB timeout
+      // Ignore DB connection errors
     }
   }
 

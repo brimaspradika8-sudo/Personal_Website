@@ -4,11 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Search,
-  Sun,
-  Moon,
-  Volume2,
-  VolumeX,
   User,
   MapPin,
   Code,
@@ -16,11 +11,11 @@ import {
   ShieldCheck,
   ArrowRight,
   LogOut,
-  LogIn,
-  BookOpen,
   Calendar,
   Clock,
   ChevronRight,
+  Menu,
+  X,
 } from "lucide-react";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -65,6 +60,25 @@ interface DashboardClientProps {
   isAdmin?: boolean;
 }
 
+const GREETINGS = [
+  "HALO",
+  "HELLO",
+  "BONJOUR",
+  "HALLO",
+  "HOLA",
+  "CIAO",
+  "OLÁ",
+  "こんにちは",
+  "안녕하세요",
+  "你好",
+  "नमस्ते",
+  "สวัสดี",
+  "السلام عليكم",
+  "ПРИВЕТ",
+  "HABARI",
+  "SUGENG RAWUH",
+];
+
 export default function DashboardClient({
   user,
   dbUser,
@@ -75,15 +89,15 @@ export default function DashboardClient({
   const [mode, setMode] = useState<"day" | "night">(() => {
     if (typeof window !== "undefined") {
       const savedMode = localStorage.getItem("landscape_mode");
-      if (savedMode === "day") return "day";
+      if (savedMode === "night") return "night";
     }
-    return "night";
+    return "day";
   });
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
-  const [sfxEnabled, setSfxEnabled] = useState(() => soundFx.getIsEnabled());
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [greetingIndex, setGreetingIndex] = useState(0);
 
   const showToast = (msg: string) => {
     soundFx.playClick();
@@ -105,6 +119,13 @@ export default function DashboardClient({
       window.removeEventListener("open-command-palette", handleOpen);
     };
   }, [mode]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGreetingIndex((prev) => (prev + 1) % GREETINGS.length);
+    }, 2200);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleToggleMode = () => {
     setMode((prev) => {
@@ -128,9 +149,6 @@ export default function DashboardClient({
       return nextMode;
     });
   };
-
-  const ownerName = "BRIMAS PRADIKA UTAMA";
-  const heroAvatarSrc = "/images/avatar.webp";
 
   const navUserName =
     dbUser?.name ||
@@ -159,145 +177,103 @@ export default function DashboardClient({
 
   return (
     <div
-      className={`min-h-screen font-sans antialiased text-left selection:bg-[#D32F2F] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
-        isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F8F9FA] text-slate-900"
+      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
+        isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F2F3F4] text-slate-900"
       }`}
     >
-      {/* 1. TOP NAVIGATION HEADER */}
-      <header
-        className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${
-          isNight
-            ? "bg-[#0B0F17]/90 border-slate-800 text-slate-100"
-            : "bg-white/90 border-slate-200 text-slate-900 shadow-xs"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          
-          {/* Logo & Brand */}
+      {/* 1. FLOATING PILL TOP NAVBAR */}
+      <header className="fixed top-4 sm:top-6 inset-x-0 z-50 px-4 pointer-events-none">
+        <div
+          className={`max-w-4xl mx-auto rounded-full border shadow-xl backdrop-blur-md px-6 py-2.5 flex items-center justify-between pointer-events-auto transition-all duration-300 ${
+            isNight
+              ? "bg-[#111622]/90 border-slate-800 text-slate-100 shadow-black/40"
+              : "bg-white/95 border-slate-200/90 text-slate-900 shadow-slate-300/40"
+          }`}
+        >
+          {/* Left: Red Circle B Logo & Brand Text */}
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="flex items-center gap-2.5 shrink-0 group cursor-pointer"
+            className="flex items-center gap-2.5 group cursor-pointer"
           >
-            <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-black text-xs shadow-xs group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-full bg-[#DC2626] text-white flex items-center justify-center font-extrabold text-sm shadow-md shadow-red-500/30 group-hover:scale-105 transition-transform">
               B
             </div>
-            <span className="font-bold tracking-tight text-sm font-sans">
-              Brimas <span className="font-normal opacity-70">Pradika</span>
+            <span className="font-extrabold text-sm tracking-tight font-sans">
+              Brimas<span className="font-normal opacity-60">Pradika</span>
             </span>
           </Link>
 
-          {/* Search Bar Center */}
-          <div className="hidden md:flex items-center flex-1 max-w-xs relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari proyek atau topik..."
-              className={`w-full py-1.5 pl-8 pr-3 text-xs rounded-full border transition-all outline-none ${
-                isNight
-                  ? "bg-slate-900 border-slate-800 text-slate-200 placeholder:text-slate-500 focus:border-[#D32F2F]"
-                  : "bg-slate-100 border-slate-300 text-slate-800 placeholder:text-slate-400 focus:border-[#D32F2F]"
-              }`}
-            />
-            <Search className="w-3.5 h-3.5 absolute left-2.5 text-slate-400" />
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-medium tracking-wide">
-            {[
-              { label: "Beranda", href: "#hero" },
-              { label: "About", href: "#about" },
-              { label: "Skill Matrix", href: "#skills" },
-              { label: "Project", href: "#projects" },
-              { label: "Artikel", href: "/posts" },
-              { label: "Buku Tamu", href: "#guestbook" },
-            ].map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => soundFx.playClick()}
-                className="transition-colors hover:text-[#D32F2F]"
-              >
-                {item.label}
-              </a>
-            ))}
+          {/* Middle: Navigation Links */}
+          <nav className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-slate-700 dark:text-slate-200">
+            <a
+              href="#hero"
+              onClick={() => soundFx.playClick()}
+              className="hover:text-[#DC2626] dark:hover:text-[#DC2626] transition-colors"
+            >
+              HOME
+            </a>
+            <a
+              href="#about"
+              onClick={() => soundFx.playClick()}
+              className="hover:text-[#DC2626] dark:hover:text-[#DC2626] transition-colors"
+            >
+              ABOUT
+            </a>
+            <a
+              href="#projects"
+              onClick={() => soundFx.playClick()}
+              className="hover:text-[#DC2626] dark:hover:text-[#DC2626] transition-colors"
+            >
+              PROJECTS
+            </a>
+            <a
+              href="/posts"
+              onClick={() => soundFx.playClick()}
+              className="hover:text-[#DC2626] dark:hover:text-[#DC2626] transition-colors"
+            >
+              BLOG
+            </a>
           </nav>
 
-          {/* Right Action Icons & Auth Buttons */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Language & Sound Toggles */}
+          {/* Right: Controls & Auth Buttons */}
+          <div className="flex items-center gap-3">
+            {/* Language Toggle */}
             <button
               type="button"
               onClick={() => {
                 soundFx.playClick();
                 toggleLang();
               }}
-              className="px-2 py-1 rounded-full border border-slate-300 dark:border-slate-800 text-[10px] font-mono hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer ${
+                isNight
+                  ? "border-slate-800 bg-slate-900 text-slate-200 hover:bg-slate-800"
+                  : "border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100"
+              }`}
             >
               {lang.toUpperCase()}
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                const next = soundFx.toggleMute();
-                setSfxEnabled(next);
-                showToast(
-                  next
-                    ? lang === "id"
-                      ? "Suara Aktif"
-                      : "Sound Enabled"
-                    : lang === "id"
-                    ? "Suara Senyap"
-                    : "Sound Muted"
-                );
-              }}
-              className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
-              title={sfxEnabled ? "Mute Sound" : "Enable Sound"}
-            >
-              {sfxEnabled ? (
-                <Volume2 className="w-4 h-4 text-[#D32F2F]" />
-              ) : (
-                <VolumeX className="w-4 h-4 text-slate-400" />
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleToggleMode}
-              aria-label="Toggle Mode"
-              className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
-              title="Ganti Mode Terang/Gelap"
-            >
-              {isNight ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-slate-700" />
-              )}
-            </button>
-
-            {/* Admin Dashboard Badge (Accessible ONLY by Admin) */}
+            {/* Admin Badge */}
             {isAdmin && (
               <Link
                 href="/admin"
                 onClick={() => soundFx.playClick()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#D32F2F] text-white text-xs font-bold hover:bg-[#B91C1C] transition-all shadow-xs cursor-pointer"
-                title="Masuk ke Admin Dashboard"
+                className="px-3.5 py-1.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs hover:opacity-90 transition-opacity"
+                title="Admin Panel"
               >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">Admin Panel</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-[#DC2626]" />
+                <span className="hidden sm:inline">Admin</span>
               </Link>
             )}
 
-            {/* Profile Avatar / Auth Login Button */}
+            {/* Sign In Pill Button / Profile */}
             {isLoggedIn ? (
               <div className="flex items-center gap-2">
                 <Link
                   href="/profile"
                   onClick={() => soundFx.playClick()}
-                  title="Halaman Profil"
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-[#D32F2F] text-white font-bold text-xs shadow-xs hover:scale-105 active:scale-95 transition-transform border border-white/20 cursor-pointer overflow-hidden relative"
+                  className="w-8 h-8 rounded-full bg-[#DC2626] text-white font-bold text-xs flex items-center justify-center shadow-md overflow-hidden relative hover:scale-105 active:scale-95 transition-transform"
                 >
                   {user?.user_metadata?.avatar_url ? (
                     <Image
@@ -316,8 +292,8 @@ export default function DashboardClient({
                     soundFx.playClick();
                     await signOut();
                   }}
-                  className="p-1.5 rounded-full text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
-                  title="Sign Out (Keluar)"
+                  className="p-1 text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
+                  title="Sign Out"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -326,150 +302,181 @@ export default function DashboardClient({
               <Link
                 href="/login"
                 onClick={() => soundFx.playClick()}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
+                className="px-5 py-2 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold shadow-md shadow-red-500/25 transition-all cursor-pointer"
               >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>Masuk</span>
+                Sign In
               </Link>
             )}
+
+            {/* Mobile Menu Icon */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Header Menu Drawer */}
+        {mobileMenuOpen && (
+          <div
+            className={`md:hidden max-w-4xl mx-auto mt-2 p-4 rounded-3xl border shadow-xl backdrop-blur-xl pointer-events-auto space-y-3 ${
+              isNight ? "bg-[#111622] border-slate-800" : "bg-white border-slate-200"
+            }`}
+          >
+            <div className="grid grid-cols-2 gap-2 text-center text-xs font-bold uppercase">
+              <a
+                href="#hero"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800"
+              >
+                HOME
+              </a>
+              <a
+                href="#about"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800"
+              >
+                ABOUT
+              </a>
+              <a
+                href="#projects"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800"
+              >
+                PROJECTS
+              </a>
+              <a
+                href="/posts"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800"
+              >
+                BLOG
+              </a>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* 2. HERO SECTION */}
       <section
         id="hero"
-        className={`relative min-h-[85vh] lg:min-h-[90vh] flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
-          isNight
-            ? "bg-[#0E1015]"
-            : "bg-gradient-to-b from-slate-100 via-slate-50 to-white"
+        className={`relative min-h-[92vh] flex items-center pt-24 sm:pt-32 pb-8 overflow-hidden transition-colors duration-300 ${
+          isNight ? "bg-[#0B0F17]" : "bg-[#F2F3F4]"
         }`}
       >
-        {/* Giant Moving Marquee Typography */}
-        <div className="absolute top-2 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-1 -space-y-4 sm:-space-y-8">
-          <div className="animate-welcome-marquee flex gap-4 whitespace-nowrap">
+        {/* Backdrop Giant Moving Typography ("WELCOME" & "BRIMAS PRADIKA UTAMA") */}
+        <div className="absolute top-10 inset-x-0 flex flex-col pointer-events-none select-none overflow-hidden z-0 pt-4 space-y-[-2vw]">
+          {/* Line 1: Dynamic WELCOME Marquee */}
+          <div className="animate-welcome-marquee flex gap-12 whitespace-nowrap">
             <h1
-              className={`font-display text-[22vw] sm:text-[24vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+              className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
                 isNight ? "text-slate-900/60" : "text-slate-200/80"
               }`}
             >
-              {welcomeMarqueeText} <span className="mx-2 opacity-40">&bull;</span>{" "}
-              {welcomeMarqueeText} <span className="mx-2 opacity-40">&bull;</span>
+              {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull;
+            </h1>
+            <h1
+              className={`font-display text-[16vw] sm:text-[17vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+                isNight ? "text-slate-900/60" : "text-slate-200/80"
+              }`}
+            >
+              {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull; {welcomeMarqueeText} &bull;
             </h1>
           </div>
 
-          <div className="animate-welcome-marquee-reverse flex gap-4 whitespace-nowrap">
+          {/* Line 2: BRIMAS PRADIKA UTAMA Marquee (Moving Reverse) */}
+          <div className="animate-welcome-marquee-reverse flex gap-12 whitespace-nowrap">
             <h1
-              className={`font-display text-[16vw] sm:text-[18vw] font-black uppercase tracking-tighter leading-none transition-colors ${
-                isNight ? "text-slate-900/40" : "text-slate-200/50"
+              className={`font-display text-[12vw] sm:text-[13vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+                isNight ? "text-slate-900/40" : "text-slate-200/60"
               }`}
             >
-              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-40">&bull;</span>{" "}
-              BRIMAS PRADIKA UTAMA <span className="mx-2 opacity-40">&bull;</span>
+              BRIMAS PRADIKA UTAMA &bull; BRIMAS PRADIKA UTAMA &bull;
+            </h1>
+            <h1
+              className={`font-display text-[12vw] sm:text-[13vw] font-black uppercase tracking-tighter leading-none transition-colors ${
+                isNight ? "text-slate-900/40" : "text-slate-200/60"
+              }`}
+            >
+              BRIMAS PRADIKA UTAMA &bull; BRIMAS PRADIKA UTAMA &bull;
             </h1>
           </div>
         </div>
 
-        {/* Hero Content Overlay Grid */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex-1 flex flex-col justify-between pt-6 sm:pt-10 pb-8 sm:pb-14">
-          <div className="relative w-full flex flex-col sm:flex-row items-center justify-center min-h-[50vh] sm:min-h-[55vh] my-auto gap-6 sm:gap-0">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full min-h-[75vh] flex flex-col md:flex-row items-center justify-between relative z-10 gap-8">
+          
+          {/* Left Column Headline & CTAs */}
+          <div className="w-full md:w-7/12 space-y-5 text-left py-4 sm:py-8 z-10">
             
-            {/* Centerpiece Hero Photo Portrait */}
-            <div className="hero-photo-wrapper relative z-20 w-[260px] h-[340px] sm:w-[360px] sm:h-[460px] md:w-[400px] md:h-[500px] max-w-full overflow-hidden rounded-3xl shadow-2xl border-4 border-white dark:border-slate-800 flex items-center justify-center pointer-events-auto group">
+            {/* 3-Line Headline: 1. Giant Multi-language Greeting -> 2. Single Line I'M BRIMAS PRADIKA -> 3. UTAMA */}
+            <h1 className="font-serif font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[76px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-1">
+              <span className="block text-[#DC2626] font-serif font-black transition-all duration-300">
+                {GREETINGS[greetingIndex]}
+              </span>
+              <span className="block whitespace-nowrap">I’M BRIMAS PRADIKA</span>
+              <span className="block text-[#DC2626]">UTAMA</span>
+            </h1>
+
+            {/* 3. Subtitle Paragraph */}
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-lg leading-relaxed font-sans font-medium pt-1">
+              Software &amp; AI Systems Developer focused on modern web architecture, interactive tech experiments, and high-performance digital solutions.
+            </p>
+
+            {/* 4. CTA Buttons */}
+            <div className="flex flex-wrap items-center gap-4 pt-3">
+              <a
+                href="#projects"
+                onClick={() => soundFx.playClick()}
+                className="px-8 py-3.5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-red-500/30 hover:scale-105 transition-all cursor-pointer inline-flex items-center gap-2"
+              >
+                <span>EXPLORE PROJECTS</span>
+              </a>
+
+              <a
+                href="#about"
+                onClick={() => soundFx.playClick()}
+                className="px-8 py-3.5 rounded-full border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer inline-flex items-center gap-2"
+              >
+                <span>ABOUT ME</span>
+              </a>
+            </div>
+
+            {/* 5. Theme Switch Circle N' Button */}
+            <div className="pt-6 sm:pt-10">
+              <button
+                type="button"
+                onClick={handleToggleMode}
+                className="w-11 h-11 rounded-full bg-[#1C1C1E] text-white dark:bg-white dark:text-slate-900 flex items-center justify-center font-serif text-sm font-bold shadow-lg hover:scale-110 transition-transform cursor-pointer"
+                title="Ganti Mode Terang/Gelap"
+              >
+                N′
+              </button>
+            </div>
+          </div>
+
+          {/* Right Column Cutout Portrait Photo of Brimas (Flush at Bottom) */}
+          <div className="w-full md:w-5/12 flex justify-center md:justify-end items-end h-full relative z-10">
+            <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg h-[480px] sm:h-[600px] lg:h-[680px] flex items-end justify-end">
               <Image
-                src={heroAvatarSrc}
-                alt={ownerName}
+                src="/images/avatar.webp"
+                alt="Brimas Pradika Utama"
                 fill
                 priority
                 unoptimized
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-contain object-bottom drop-shadow-2xl"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-60" />
             </div>
-
-            {/* Desktop Headline & CTAs */}
-            <div className="hidden sm:block absolute left-0 bottom-6 sm:bottom-10 z-20 space-y-4 max-w-md text-left drop-shadow-md">
-              <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-widest bg-[#D32F2F]/15 text-[#D32F2F]">
-                Fullstack Web Developer
-              </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-none text-slate-900 dark:text-white">
-                I&apos;M {ownerName}
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-sans max-w-sm">
-                Siswa SMK Bhakti Mulia Pare yang membangun sistem web modern, scalable, dan aplikasi performa tinggi dari arsitektur backend hingga UI elegan.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <a
-                  href="#projects"
-                  onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xs"
-                >
-                  <span>EXPLORE PROJECTS</span>
-                </a>
-
-                <a
-                  href="#about"
-                  onClick={() => soundFx.playClick()}
-                  className="px-6 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider transition-all hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer inline-flex items-center gap-2"
-                >
-                  <span>ABOUT ME</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Mobile Headline & CTAs */}
-            <div className="sm:hidden w-full z-20 space-y-3 text-center px-2 pt-2">
-              <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest bg-[#D32F2F]/15 text-[#D32F2F] inline-block">
-                Fullstack Developer
-              </span>
-              <h1 className="font-display text-3xl font-black uppercase tracking-tight leading-none text-slate-900 dark:text-white">
-                I&apos;M {ownerName}
-              </h1>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans max-w-xs mx-auto">
-                Pengembang web fullstack SMK Bhakti Mulia Pare. Spesialisasi Laravel, Next.js, PostgreSQL, dan Supabase.
-              </p>
-
-              <div className="flex items-center justify-center gap-3 pt-1">
-                <a
-                  href="#projects"
-                  onClick={() => soundFx.playClick()}
-                  className="px-5 py-2 rounded-full bg-[#D32F2F] text-white font-bold text-xs uppercase tracking-wider shadow-xs"
-                >
-                  PROJECTS
-                </a>
-
-                <a
-                  href="#about"
-                  onClick={() => soundFx.playClick()}
-                  className="px-5 py-2 rounded-full border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider"
-                >
-                  ABOUT ME
-                </a>
-              </div>
-            </div>
-
           </div>
-        </div>
 
-        {/* Smooth SVG Wave Divider */}
-        <div className="absolute -bottom-[1px] left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
-          <svg
-            className={`w-full h-16 sm:h-24 md:h-28 block fill-current transition-colors duration-300 ${
-              isNight ? "text-[#0B0F17]" : "text-[#F8F9FA]"
-            }`}
-            viewBox="0 0 1440 120"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,40 C360,110 720,20 1080,90 1260,120 1440,40 1440,40 L1440,120 L0,120 Z" />
-          </svg>
         </div>
       </section>
 
       {/* 3. ABOUT ME & 3D LANYARD SECTION */}
       <section
         id="about"
-        className="max-w-7xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80"
+        className="max-w-7xl mx-auto px-4 sm:px-6 py-20 border-t border-b border-slate-200 dark:border-slate-800/80"
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
@@ -482,16 +489,16 @@ export default function DashboardClient({
 
           {/* Right Column: About Me Bio */}
           <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D32F2F]/15 text-[#D32F2F] text-xs font-mono font-bold tracking-widest uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
               <User className="w-3.5 h-3.5" />
               <span>ABOUT ME</span>
             </div>
 
             <div className="space-y-3">
-              <h2 className="font-display text-3xl sm:text-5xl font-black uppercase tracking-tight leading-none text-slate-900 dark:text-slate-100">
-                BRIMAS <span className="text-[#D32F2F]">PRADIKA UTAMA</span>
+              <h2 className="font-serif text-3xl sm:text-5xl font-black uppercase tracking-tight leading-none text-slate-900 dark:text-slate-100">
+                BRIMAS <span className="text-[#DC2626]">PRADIKA UTAMA</span>
               </h2>
-              <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#D32F2F]">
+              <p className="text-xs sm:text-sm font-mono tracking-wide opacity-80 uppercase text-[#DC2626]">
                 Fullstack Web Developer &bull; SMK Bhakti Mulia Pare
               </p>
               <p className="text-xs sm:text-base opacity-90 leading-relaxed font-sans max-w-xl text-slate-600 dark:text-slate-300">
@@ -510,7 +517,7 @@ export default function DashboardClient({
                     : "bg-white border-slate-200 shadow-xs"
                 }`}
               >
-                <div className="flex items-center gap-1.5 text-[#D32F2F]">
+                <div className="flex items-center gap-1.5 text-[#DC2626]">
                   <MapPin className="w-4 h-4" />
                   <span className="text-[11px] font-mono font-bold uppercase">SCHOOL</span>
                 </div>
@@ -526,7 +533,7 @@ export default function DashboardClient({
                     : "bg-white border-slate-200 shadow-xs"
                 }`}
               >
-                <div className="flex items-center gap-1.5 text-[#D32F2F]">
+                <div className="flex items-center gap-1.5 text-[#DC2626]">
                   <Code className="w-4 h-4" />
                   <span className="text-[11px] font-mono font-bold uppercase">ROLE</span>
                 </div>
@@ -542,7 +549,7 @@ export default function DashboardClient({
                     : "bg-white border-slate-200 shadow-xs"
                 }`}
               >
-                <div className="flex items-center gap-1.5 text-[#D32F2F]">
+                <div className="flex items-center gap-1.5 text-[#DC2626]">
                   <Layers className="w-4 h-4" />
                   <span className="text-[11px] font-mono font-bold uppercase">STACK</span>
                 </div>
@@ -557,7 +564,7 @@ export default function DashboardClient({
               <a
                 href="#projects"
                 onClick={() => soundFx.playClick()}
-                className="px-6 py-3 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xs"
+                className="px-6 py-3 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer inline-flex items-center gap-2 shadow-xs"
               >
                 <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -575,62 +582,98 @@ export default function DashboardClient({
         </div>
       </section>
 
-      {/* 4. TECH STACK MATRIX SECTION */}
-      <TechStackMatrix isNight={isNight} lang={lang} />
-
-      {/* 5. PORTFOLIO PROJECTS SHOWCASE SECTION */}
-      <ProjectShowcase
-        isNight={isNight}
-        lang={lang}
-        onSelectProject={(proj) => setSelectedProject(proj)}
-      />
-
-      {/* 6. EXPERIENCE & JOURNEY TIMELINE SECTION */}
-      <ExperienceTimeline isNight={isNight} lang={lang} />
-
-      {/* 7. LATEST ARTICLES SECTION */}
-      {initialArticles.length > 0 && (
-        <section id="articles" className="max-w-6xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80">
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1 text-left">
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                  Artikel & Wawasan Terbaru
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-sans">
-                  Tulisan teknis, catatan riset web development, dan panduan arsitektur.
-                </p>
+      {/* 4. LATEST ARTICLES & INSIGHTS SECTION (Replaces Tech Stack Matrix) */}
+      <section
+        id="articles"
+        className="max-w-7xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80"
+      >
+        <div className="space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="space-y-2 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DC2626]/15 text-[#DC2626] text-xs font-mono font-bold tracking-widest uppercase">
+                <span>LATEST ARTICLES &amp; INSIGHTS</span>
               </div>
-
-              <Link
-                href="/posts"
-                onClick={() => soundFx.playClick()}
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#D32F2F] hover:underline cursor-pointer"
-              >
-                <span>Lihat Semua Artikel</span>
-                <ChevronRight className="w-4 h-4" />
-              </Link>
+              <h2 className="font-serif text-3xl sm:text-5xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">
+                ARTIKEL &amp; <span className="text-[#DC2626]">PANDUAN TEKNIS</span>
+              </h2>
+              <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 font-sans max-w-2xl">
+                Tulisan teknis, eksperimen pengembangan web, catatan arsitektur sistem, dan panduan backend/frontend.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {initialArticles.slice(0, 3).map((art) => (
+            <Link
+              href="/posts"
+              onClick={() => soundFx.playClick()}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-md shadow-red-500/20 w-fit cursor-pointer"
+            >
+              <span>Lihat Semua Artikel</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {(initialArticles && initialArticles.length > 0
+              ? initialArticles
+              : [
+                  {
+                    id: "1",
+                    title: "Membangun Arsitektur Web Scalable dengan Next.js App Router & Server Components",
+                    slug: "membangun-arsitektur-web-scalable-nextjs",
+                    category: "Web Architecture",
+                    readTime: "5 min read",
+                    created_at: new Date().toISOString(),
+                    cover_image: "/images/article1.png",
+                  },
+                  {
+                    id: "2",
+                    title: "Implementasi RESTful API & Eloquent Performance Optimization pada Laravel 11",
+                    slug: "restful-api-performance-laravel-11",
+                    category: "Backend Engineering",
+                    readTime: "7 min read",
+                    created_at: new Date().toISOString(),
+                    cover_image: "/images/article2.png",
+                  },
+                  {
+                    id: "3",
+                    title: "Prisma ORM & PostgreSQL: Trik Query Optimization & Indexing untuk Production",
+                    slug: "prisma-postgresql-query-optimization",
+                    category: "Database & Systems",
+                    readTime: "6 min read",
+                    created_at: new Date().toISOString(),
+                    cover_image: "/images/article3.png",
+                  },
+                ]
+            )
+              .slice(0, 3)
+              .map((art, idx) => (
                 <Link
                   key={art.id}
                   href={`/posts/${art.slug}`}
                   onClick={() => soundFx.playClick()}
-                  className={`p-5 rounded-2xl border text-left flex flex-col justify-between space-y-4 group transition-all duration-200 ${
+                  className={`p-5 rounded-3xl border text-left flex flex-col justify-between space-y-4 group transition-all duration-300 hover:-translate-y-1.5 ${
                     isNight
-                      ? "bg-[#0E1015] border-slate-800 hover:border-slate-700"
-                      : "bg-white border-slate-200 hover:border-slate-300 shadow-xs"
+                      ? "bg-[#0E1015] border-slate-800 hover:border-slate-700 shadow-lg"
+                      : "bg-white border-slate-200 hover:border-slate-300 shadow-md"
                   }`}
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-sans">
-                      <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 font-medium">
+                  <div className="space-y-4">
+                    {/* Article Thumbnail Image */}
+                    <div className="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/50 dark:border-slate-800">
+                      <Image
+                        src={(art as any).cover_image || `/images/article${(idx % 3) + 1}.png`}
+                        alt={art.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-sans">
+                      <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[#DC2626] font-mono font-bold text-[11px] uppercase">
                         {art.category || "Tutorial"}
                       </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-[#D32F2F]" />
+                      <span className="flex items-center gap-1.5 font-mono text-[11px]">
+                        <Calendar className="w-3.5 h-3.5 text-[#DC2626]" />
                         {new Date(art.created_at).toLocaleDateString("id-ID", {
                           day: "numeric",
                           month: "short",
@@ -638,35 +681,46 @@ export default function DashboardClient({
                       </span>
                     </div>
 
-                    <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors leading-snug line-clamp-2">
+                    <h3 className="font-serif font-bold text-lg sm:text-xl text-slate-900 dark:text-slate-100 group-hover:text-[#DC2626] transition-colors leading-snug line-clamp-2">
                       {art.title}
                     </h3>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-500 font-sans">
-                    {art.readTime && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-[#D32F2F]" />
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-500 font-sans">
+                    {art.readTime ? (
+                      <span className="flex items-center gap-1.5 font-mono">
+                        <Clock className="w-3.5 h-3.5 text-[#DC2626]" />
                         {art.readTime}
                       </span>
+                    ) : (
+                      <span className="font-mono text-[11px]">Artikel Teknis</span>
                     )}
-                    <span className="text-[#D32F2F] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
-                      Baca <ChevronRight className="w-3 h-3" />
+                    <span className="text-[#DC2626] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1 font-mono uppercase text-xs">
+                      Baca Artikel <ChevronRight className="w-4 h-4" />
                     </span>
                   </div>
                 </Link>
               ))}
-            </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
+
+      {/* 5. PORTFOLIO PROJECTS SHOWCASE SECTION */}
+      <ProjectShowcase
+        isNight={isNight}
+        lang={lang}
+        onSelectProject={(proj) => setSelectedProject(null)}
+      />
+
+      {/* 6. EXPERIENCE & JOURNEY TIMELINE SECTION */}
+      <ExperienceTimeline isNight={isNight} lang={lang} />
 
       {/* 8. COMMUNITY GUESTBOOK SECTION */}
       <GuestbookSection user={user} isNight={isNight} />
 
       {/* Toast Notification */}
       {toastMsg && (
-        <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#D32F2F] text-white font-bold text-xs font-mono shadow-xl">
+        <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#DC2626] text-white font-bold text-xs font-mono shadow-xl">
           {toastMsg}
         </div>
       )}
