@@ -86,7 +86,7 @@ export async function GET(request: Request) {
         finalResponse.cookies.set(c.name, c.value, {
           path: c.path ?? "/",
           domain: c.domain,
-          sameSite: c.sameSite as any,
+          sameSite: c.sameSite as "lax" | "strict" | "none" | undefined,
           secure: c.secure,
           httpOnly: c.httpOnly,
           maxAge: c.maxAge,

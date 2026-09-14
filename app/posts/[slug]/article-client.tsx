@@ -17,7 +17,6 @@ import {
   BookOpen,
   Copy,
   List,
-  ExternalLink,
 } from "lucide-react";
 
 import {
@@ -61,25 +60,9 @@ export default function ArticleClient({
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Feature 2.3: Table of Contents State
-  const [toc, setToc] = useState<TocItem[]>([]);
-
-  // Feature 2.1: Calculate Reading Scroll Progress
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        const progress = (window.scrollY / totalHeight) * 100;
-        setScrollProgress(Math.min(100, Math.max(0, progress)));
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Feature 2.3: Parse Headings for Table of Contents
-  useEffect(() => {
-    if (!article.content) return;
-    const lines = article.content.split("\n");
+  const [toc] = useState<TocItem[]>(() => {
+    if (!initialArticle.content) return [];
+    const lines = initialArticle.content.split("\n");
     const items: TocItem[] = [];
 
     lines.forEach((line) => {
@@ -95,8 +78,21 @@ export default function ArticleClient({
       }
     });
 
-    setToc(items);
-  }, [article.content]);
+    return items;
+  });
+
+  // Feature 2.1: Calculate Reading Scroll Progress
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(Math.min(100, Math.max(0, progress)));
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const showToast = (msg: string) => {
     try {
@@ -388,10 +384,12 @@ export default function ArticleClient({
         {/* 3. HERO THUMBNAIL IMAGE */}
         {article.thumbnail && (
           <div className="relative w-full h-64 sm:h-96 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 shadow-xs">
-            <img
+            <Image
               src={article.thumbnail}
               alt={article.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              unoptimized
             />
           </div>
         )}
@@ -614,9 +612,9 @@ export default function ArticleClient({
                   onClick={() => soundFx.playClick()}
                   className="p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] hover:border-slate-300 dark:hover:border-slate-700 transition-all flex gap-3 items-center group shadow-xs cursor-pointer"
                 >
-                  <div className="w-20 h-16 rounded-lg bg-slate-100 dark:bg-slate-900 overflow-hidden shrink-0">
+                  <div className="relative w-20 h-16 rounded-lg bg-slate-100 dark:bg-slate-900 overflow-hidden shrink-0">
                     {rel.thumbnail ? (
-                      <img src={rel.thumbnail} alt={rel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                      <Image src={rel.thumbnail} alt={rel.title} fill className="object-cover group-hover:scale-105 transition-transform" unoptimized />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-900">
                         <BookOpen className="w-5 h-5 text-slate-400" />

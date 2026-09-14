@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -39,8 +39,9 @@ export default function RegisterPage() {
         setSuccess(true);
         setTimeout(() => router.push("/login"), 1500);
       }
-    } catch (err: any) {
-      setError(err?.message || "Terjadi kesalahan saat mendaftar.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat mendaftar.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -58,8 +59,9 @@ export default function RegisterPage() {
         window.location.href = result.url;
         return;
       }
-    } catch (err: any) {
-      setError(err?.message || "Gagal menghubungkan ke Google.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menghubungkan ke Google.";
+      setError(msg);
     } finally {
       setGoogleLoading(false);
     }
@@ -77,8 +79,9 @@ export default function RegisterPage() {
         window.location.href = result.url;
         return;
       }
-    } catch (err: any) {
-      setError(err?.message || "Gagal menghubungkan ke GitHub.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menghubungkan ke GitHub.";
+      setError(msg);
     } finally {
       setGithubLoading(false);
     }

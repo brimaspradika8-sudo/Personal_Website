@@ -9,7 +9,6 @@ import {
   Upload,
   CheckCircle2,
   AlertCircle,
-  FileText,
   Save,
 } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";

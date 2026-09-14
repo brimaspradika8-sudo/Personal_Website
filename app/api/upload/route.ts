@@ -71,9 +71,10 @@ export async function POST(request: NextRequest) {
       bucket: targetBucket,
       path: fileName,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Terjadi kesalahan internal server.";
     return NextResponse.json(
-      { error: error?.message || "Terjadi kesalahan internal server." },
+      { error: message },
       { status: 500 }
     );
   }

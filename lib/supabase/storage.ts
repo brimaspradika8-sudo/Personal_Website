@@ -44,7 +44,7 @@ export async function uploadFileToSupabaseStorage({
   const fileBuffer = Buffer.from(arrayBuffer);
 
   // Upload file ke Supabase Storage Bucket
-  let { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from(targetBucket)
     .upload(fileName, fileBuffer, {
       contentType: file.type,

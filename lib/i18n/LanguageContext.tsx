@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import idDict from "./dictionaries/id.json";
 import enDict from "./dictionaries/en.json";
 
@@ -17,16 +17,15 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Language>("id");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("landscape_lang");
-    if (saved === "en" || saved === "id") {
-      setLangState(saved);
+  const [lang, setLangState] = useState<Language>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("landscape_lang");
+      if (saved === "en" || saved === "id") {
+        return saved;
+      }
     }
-    setMounted(true);
-  }, []);
+    return "id";
+  });
 
   const setLang = (newLang: Language) => {
     setLangState(newLang);

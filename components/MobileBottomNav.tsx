@@ -8,10 +8,18 @@ import { useRouter, usePathname } from "next/navigation";
 import { soundFx } from "@/lib/audio/sound";
 
 export default function MobileBottomNav() {
-  const { lang, dict } = useLanguage();
+  const { lang } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("home");
+  const [clickedTab, setClickedTab] = useState<string | null>(null);
+
+  const activeTab = clickedTab ?? (
+    pathname === "/profile" || pathname?.startsWith("/profile/")
+      ? "profile"
+      : pathname === "/dashboard" || pathname === "/"
+      ? "home"
+      : ""
+  );
 
   const navItems = [
     { id: "home", label: lang === "id" ? "Beranda" : "Home", href: "#hero", Icon: Compass },
@@ -23,25 +31,17 @@ export default function MobileBottomNav() {
 
   useEffect(() => {
     router.prefetch("/profile");
-
-    if (pathname === "/profile" || pathname?.startsWith("/profile/")) {
-      setActiveTab("profile");
-    } else if (pathname === "/dashboard" || pathname === "/") {
-      setActiveTab("home");
-    } else {
-      setActiveTab("");
-    }
-  }, [pathname, router]);
+  }, [router]);
 
   const handleNav = (tabId: string, href: string) => {
     soundFx.playClick();
-    setActiveTab(tabId);
+    setClickedTab(tabId);
 
     if (href.startsWith("#")) {
       if (pathname !== "/dashboard" && pathname !== "/") {
         router.push(`/dashboard${href}`);
       } else {
-        window.location.href = href;
+        window.location.assign(href);
       }
     } else {
       router.push(href);

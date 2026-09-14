@@ -24,9 +24,8 @@ export default function CommandPalette({
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      setQuery("");
+      const timer = setTimeout(() => inputRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -116,7 +115,7 @@ export default function CommandPalette({
     if (item.action) {
       item.action();
     } else if (item.href) {
-      window.location.href = item.href;
+      window.location.assign(item.href);
       onClose();
     }
   };

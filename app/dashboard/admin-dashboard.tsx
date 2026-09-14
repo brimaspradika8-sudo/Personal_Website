@@ -21,6 +21,7 @@ import {
   Globe,
   ExternalLink,
 } from "lucide-react";
+import { User } from "@supabase/supabase-js";
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
 
@@ -31,12 +32,26 @@ interface DashboardStats {
   commentsCount: number;
 }
 
+interface ProjectRecord {
+  id: string;
+  title: string;
+  thumbnail?: string | null;
+  created_at: string | Date;
+}
+
+interface ArticleRecord {
+  id: string;
+  title: string;
+  slug: string;
+  created_at: string | Date;
+}
+
 interface AdminDashboardProps {
-  user: any;
-  dbUser: any;
+  user: User | null;
+  dbUser: { name?: string; avatar?: string | null } | null;
   stats: DashboardStats;
-  recentProjects: any[];
-  recentArticles: any[];
+  recentProjects: ProjectRecord[];
+  recentArticles: ArticleRecord[];
 }
 
 export default function AdminDashboard({
@@ -47,19 +62,22 @@ export default function AdminDashboard({
   recentArticles,
 }: AdminDashboardProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isNight, setIsNight] = useState(false);
+  const [isNight, setIsNight] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("dashboard_theme") === "night";
+    }
+    return false;
+  });
 
   useEffect(() => {
-    const saved = localStorage.getItem("dashboard_theme");
-    if (saved === "night") {
-      setIsNight(true);
+    if (isNight) {
       document.documentElement.classList.add("dark");
+      localStorage.setItem("dashboard_theme", "night");
     } else {
-      setIsNight(false);
       document.documentElement.classList.remove("dark");
       localStorage.setItem("dashboard_theme", "day");
     }
-  }, []);
+  }, [isNight]);
 
   const toggleTheme = () => {
     soundFx.playClick();

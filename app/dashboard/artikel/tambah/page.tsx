@@ -9,7 +9,6 @@ import {
   Upload,
   CheckCircle2,
   AlertCircle,
-  FileText,
   Save,
   Trash2,
   Sparkles,
@@ -32,21 +31,19 @@ export default function TambahArtikelPage() {
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   
   // Feature 1.1: Auto-save draft indicator state
-  const [hasDraft, setHasDraft] = useState(false);
-  const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
-
-  // Check draft on mount (Feature 1.1)
-  useEffect(() => {
-    try {
-      const savedDraft = localStorage.getItem(DRAFT_KEY);
-      if (savedDraft) {
-        const parsed = JSON.parse(savedDraft);
-        if (parsed.title || parsed.content) {
-          setHasDraft(true);
+  const [hasDraft, setHasDraft] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const savedDraft = localStorage.getItem(DRAFT_KEY);
+        if (savedDraft) {
+          const parsed = JSON.parse(savedDraft);
+          return Boolean(parsed.title || parsed.content);
         }
-      }
-    } catch {}
-  }, []);
+      } catch {}
+    }
+    return false;
+  });
+  const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
 
   // Save to localStorage automatically on state change (Feature 1.1)
   useEffect(() => {

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   BookOpen,
@@ -49,15 +50,17 @@ function ArticleThumbnail({ src, title }: { src?: string | null; title: string }
           <BookOpen className="w-6 h-6 text-slate-400" />
         </div>
       )}
-      <img
+      <Image
         src={src}
         alt={title}
+        fill
+        unoptimized
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
           setHasError(true);
         }}
-        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
+        className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
           isLoading ? "opacity-0" : "opacity-100"
         }`}
       />
@@ -65,8 +68,8 @@ function ArticleThumbnail({ src, title }: { src?: string | null; title: string }
   );
 }
 
-export default function PostsClient({ initialArticles, user, isAdmin = false }: PostsClientProps) {
-  const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
+export default function PostsClient({ initialArticles, isAdmin = false }: PostsClientProps) {
+  const [articles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState<"latest" | "oldest" | "popular">("latest");
@@ -184,7 +187,7 @@ export default function PostsClient({ initialArticles, user, isAdmin = false }: 
               <SlidersHorizontal className="w-4 h-4 text-slate-400 hidden sm:block" />
               <select
                 value={sortBy}
-                onChange={(e: any) => setSortBy(e.target.value)}
+                onChange={(e) => setSortBy(e.target.value as "latest" | "oldest" | "popular")}
                 className="w-full sm:w-auto px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs font-sans focus:outline-none focus:border-[#D32F2F] cursor-pointer"
               >
                 <option value="latest">Urutkan: Terbaru</option>

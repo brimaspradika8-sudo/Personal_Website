@@ -34,6 +34,21 @@ export interface CommentItem {
   };
 }
 
+export interface AdminCommentItem {
+  id: string;
+  content: string;
+  created_at: string;
+  user: {
+    name: string;
+    avatar: string | null;
+    email: string;
+  };
+  article: {
+    title: string;
+    slug: string;
+  };
+}
+
 export interface ArticleDetail extends ArticleItem {
   comments: CommentItem[];
   userReaction: "LIKE" | "DISLIKE" | null;
@@ -539,8 +554,8 @@ export async function createArticle(data: {
 
     revalidatePath("/posts");
     return { success: true, article: newArt };
-  } catch (err: any) {
-    return { error: err?.message || "Gagal membuat artikel baru." };
+  } catch (err: unknown) {
+    return { error: (err as Error)?.message || "Gagal membuat artikel baru." };
   }
 }
 
@@ -557,8 +572,8 @@ export async function deleteArticle(articleId: string) {
     await prisma.article.delete({ where: { id: articleId } });
     revalidatePath("/posts");
     return { success: true };
-  } catch (err: any) {
-    return { error: err?.message || "Gagal menghapus artikel." };
+  } catch (err: unknown) {
+    return { error: (err as Error)?.message || "Gagal menghapus artikel." };
   }
 }
 
@@ -599,8 +614,8 @@ export async function updateArticle(
     revalidatePath("/posts");
     revalidatePath(`/posts/${slugFormatted}`);
     return { success: true, article: updatedArt };
-  } catch (err: any) {
-    return { error: err?.message || "Gagal memperbarui artikel." };
+  } catch (err: unknown) {
+    return { error: (err as Error)?.message || "Gagal memperbarui artikel." };
   }
 }
 
@@ -686,9 +701,9 @@ export async function toggleArticleReaction(
     revalidatePath("/posts");
 
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error in toggleArticleReaction:", err);
-    return { error: err?.message || "Gagal memproses reaksi artikel." };
+    return { error: (err as Error)?.message || "Gagal memproses reaksi artikel." };
   }
 }
 
@@ -770,9 +785,9 @@ export async function addArticleComment(articleId: string, content: string) {
         },
       },
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error adding comment:", err);
-    return { error: err?.message || "Gagal menambahkan komentar." };
+    return { error: (err as Error)?.message || "Gagal menambahkan komentar." };
   }
 }
 
@@ -806,9 +821,9 @@ export async function deleteArticleComment(commentId: string) {
 
     revalidatePath("/posts");
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error deleting comment:", err);
-    return { error: err?.message || "Gagal menghapus komentar." };
+    return { error: (err as Error)?.message || "Gagal menghapus komentar." };
   }
 }
 
@@ -885,13 +900,12 @@ export async function incrementArticleViews(slug: string) {
   try {
     const art = await prisma.article.findUnique({ where: { slug } });
     if (art) {
-      // @ts-ignore
       await prisma.article.update({
         where: { id: art.id },
         data: { views: { increment: 1 } },
       });
     }
-  } catch (err) {
-    // Skip if views column is pending migration
+  } catch {
+    // Skip if error
   }
 }

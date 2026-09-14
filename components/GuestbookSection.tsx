@@ -8,7 +8,11 @@ import { GuestbookEntry, getGuestbookEntries, createGuestbookEntry, deleteGuestb
 import { soundFx } from "@/lib/audio/sound";
 
 interface GuestbookSectionProps {
-  user: any;
+  user: {
+    id: string;
+    email?: string;
+    user_metadata?: { full_name?: string; avatar_url?: string };
+  } | null;
   isNight?: boolean;
 }
 

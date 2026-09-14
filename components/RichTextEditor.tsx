@@ -8,7 +8,6 @@ import {
   Bold,
   Italic,
   Strikethrough,
-  Heading1,
   Heading2,
   Heading3,
   List,
@@ -34,7 +33,6 @@ interface RichTextEditorProps {
 export default function RichTextEditor({
   content,
   onChange,
-  placeholder = "Tulis konten artikel di sini...",
 }: RichTextEditorProps) {
   const [showImageUrlModal, setShowImageUrlModal] = useState(false);
   const [imageUrlInput, setImageUrlInput] = useState("");

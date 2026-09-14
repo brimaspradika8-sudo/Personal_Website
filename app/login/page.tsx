@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
@@ -16,20 +16,19 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const urlError = searchParams.get("error");
 
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (urlError) {
-      let msg = decodeURIComponent(urlError);
+  const [error, setError] = useState<string | null>(() => {
+    if (typeof window !== "undefined" && urlError) {
+      const msg = decodeURIComponent(urlError);
       const lower = msg.toLowerCase();
       if (lower.includes("invalid api key") || lower.includes("invalid_api_key")) {
-        msg = "API Key Supabase tidak valid atau belum di-set.";
+        return "API Key Supabase tidak valid atau belum di-set.";
       } else if (lower.includes("auth_callback_failed") || lower.includes("invalid_grant") || lower.includes("code verifier")) {
-        msg = "Gagal autentikasi OAuth. Silakan coba lagi.";
+        return "Gagal autentikasi OAuth. Silakan coba lagi.";
       }
-      setError(msg);
+      return msg;
     }
-  }, [urlError]);
+    return null;
+  });
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -54,8 +53,9 @@ function LoginForm() {
         window.location.href = result.targetPath;
         return;
       }
-    } catch (err: any) {
-      setError(err?.message || "Terjadi kesalahan saat masuk.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat masuk.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -73,8 +73,9 @@ function LoginForm() {
         window.location.href = result.url;
         return;
       }
-    } catch (err: any) {
-      setError(err?.message || "Gagal menghubungkan ke Google.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menghubungkan ke Google.";
+      setError(msg);
     } finally {
       setGoogleLoading(false);
     }
@@ -92,8 +93,9 @@ function LoginForm() {
         window.location.href = result.url;
         return;
       }
-    } catch (err: any) {
-      setError(err?.message || "Gagal menghubungkan ke GitHub.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menghubungkan ke GitHub.";
+      setError(msg);
     } finally {
       setGithubLoading(false);
     }

@@ -57,7 +57,7 @@ class CanvasErrorBoundary extends Component<
     return { hasError: true };
   }
 
-  componentDidCatch(err: any) {
+  componentDidCatch(err: unknown) {
     console.warn("Lanyard 3D Canvas error caught:", err);
   }
 
@@ -126,7 +126,7 @@ const CardFrontPhoto = React.memo(function CardFrontPhoto() {
 });
 
 // Realistic 2-Strand V-Neck Lanyard Strap Mesh
-const DoubleStrapRibbon = React.memo(function DoubleStrapRibbon({ cardPos }: { cardPos: THREE.Vector3 }) {
+const DoubleStrapRibbon = React.memo(function DoubleStrapRibbon({ cardPosRef }: { cardPosRef: React.RefObject<THREE.Vector3> }) {
   const strapTexture = useMemo(() => {
     if (typeof window === 'undefined') return null;
     const canvas = document.createElement('canvas');
@@ -230,13 +230,14 @@ const DoubleStrapRibbon = React.memo(function DoubleStrapRibbon({ cardPos }: { c
     return geo;
   };
 
-  const leftGeo = useMemo(createRibbonGeo, []);
-  const rightGeo = useMemo(createRibbonGeo, []);
+  const leftGeo = useMemo(() => createRibbonGeo(), []);
+  const rightGeo = useMemo(() => createRibbonGeo(), []);
 
   useFrame(() => {
-    const attachX = cardPos.x;
-    const attachY = cardPos.y + 1.48;
-    const attachZ = cardPos.z;
+    const pos = cardPosRef.current || new THREE.Vector3();
+    const attachX = pos.x;
+    const attachY = pos.y + 1.48;
+    const attachZ = pos.z;
 
     // Update Left Ribbon Curve
     leftCurve.points[0].set(-0.08, 2.3, -0.01);
@@ -363,7 +364,7 @@ function LanyardCard3D() {
 
   return (
     <>
-      <DoubleStrapRibbon cardPos={currentPos.current} />
+      <DoubleStrapRibbon cardPosRef={currentPos} />
 
       {/* Anchor Ring at Ceiling */}
       <group position={[0, 2.3, 0]}>
@@ -446,11 +447,7 @@ function LanyardCard3D() {
 }
 
 export default function Lanyard() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [mounted, setMounted] = useState<boolean>(() => typeof window !== "undefined");
 
   if (!mounted) {
     return <LanyardFallbackHTML />;

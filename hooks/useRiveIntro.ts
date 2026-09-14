@@ -28,9 +28,25 @@ export function useRiveIntro({
   sessionKey = "hasSeenRiveIntro",
   exitDurationMs = 700,
 }: UseRiveIntroOptions = {}) {
-  const [mounted, setMounted] = useState(false);
-  const [shouldShow, setShouldShow] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [mounted] = useState<boolean>(() => typeof window !== "undefined");
+  const [shouldShow, setShouldShow] = useState<boolean | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const hasSeen = sessionStorage.getItem(sessionKey);
+        if (hasSeen === "true") return false;
+      } catch {}
+    }
+    return true;
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const hasSeen = sessionStorage.getItem(sessionKey);
+        if (hasSeen === "true") return false;
+      } catch {}
+    }
+    return true;
+  });
   const [isExiting, setIsExiting] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
   const [isLaunched, setIsLaunched] = useState(false);
@@ -49,22 +65,6 @@ export function useRiveIntro({
   ];
   const [currentPathIndex, setCurrentPathIndex] = useState(0);
   const activeSrc = FALLBACK_PATHS[currentPathIndex] || src;
-
-  // 1. Session Storage check & Mounted state
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const hasSeen = sessionStorage.getItem(sessionKey);
-      if (hasSeen === "true") {
-        setShouldShow(false);
-        setIsLoading(false);
-      } else {
-        setShouldShow(true);
-      }
-    } catch {
-      setShouldShow(true);
-    }
-  }, [sessionKey]);
 
   // Clean up timer on unmount
   useEffect(() => {

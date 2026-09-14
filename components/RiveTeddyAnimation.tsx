@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useRive } from "@rive-app/react-canvas";
 
 interface RiveTeddyProps {
@@ -35,38 +35,45 @@ export default function RiveTeddyAnimation({
 
   const activeStateMachineName = rive?.stateMachineNames?.[0] || STATE_MACHINE_NAME;
 
-  const inputs = rive ? rive.stateMachineInputs(activeStateMachineName) : [];
-  const isFocusInput = inputs?.find((i) => i.name === "isFocus");
-  const numLookInput = inputs?.find((i) => i.name === "numLook");
-  const isPrivateFieldInput = inputs?.find((i) => i.name === "isPrivateField");
-  const isPrivateFieldShowInput = inputs?.find((i) => i.name === "isPrivateFieldShow");
-  const successTriggerInput = inputs?.find((i) => i.name === "successTrigger");
-  const failTriggerInput = inputs?.find((i) => i.name === "failTrigger");
-
   // Sync focus & password visibility state
   useEffect(() => {
-    if (isPrivateFieldInput) isPrivateFieldInput.value = isPasswordFocused;
-    if (isPrivateFieldShowInput) isPrivateFieldShowInput.value = showPassword;
-    if (isFocusInput) isFocusInput.value = !isPasswordFocused;
-  }, [isPasswordFocused, showPassword, isPrivateFieldInput, isPrivateFieldShowInput, isFocusInput]);
+    if (!rive) return;
+    const inputsList = rive.stateMachineInputs(activeStateMachineName);
+    const isPrivateField = inputsList?.find((i) => i.name === "isPrivateField");
+    const isPrivateFieldShow = inputsList?.find((i) => i.name === "isPrivateFieldShow");
+    const isFocus = inputsList?.find((i) => i.name === "isFocus");
+
+    if (isPrivateField) isPrivateField.value = isPasswordFocused;
+    if (isPrivateFieldShow) isPrivateFieldShow.value = showPassword;
+    if (isFocus) isFocus.value = !isPasswordFocused;
+  }, [rive, activeStateMachineName, isPasswordFocused, showPassword]);
 
   // Sync error & success triggers
   useEffect(() => {
-    if (error && failTriggerInput) failTriggerInput.fire();
-  }, [error, failTriggerInput]);
+    if (!rive || !error) return;
+    const inputsList = rive.stateMachineInputs(activeStateMachineName);
+    const failTrigger = inputsList?.find((i) => i.name === "failTrigger");
+    failTrigger?.fire();
+  }, [rive, activeStateMachineName, error]);
 
   useEffect(() => {
-    if (success && successTriggerInput) successTriggerInput.fire();
-  }, [success, successTriggerInput]);
+    if (!rive || !success) return;
+    const inputsList = rive.stateMachineInputs(activeStateMachineName);
+    const successTrigger = inputsList?.find((i) => i.name === "successTrigger");
+    successTrigger?.fire();
+  }, [rive, activeStateMachineName, success]);
 
   // Sync eye look movement when typing
   useEffect(() => {
-    if (!isPasswordFocused && numLookInput) {
+    if (!rive || isPasswordFocused) return;
+    const inputsList = rive.stateMachineInputs(activeStateMachineName);
+    const numLook = inputsList?.find((i) => i.name === "numLook");
+    if (numLook) {
       const activeText = nameText || emailText;
       const targetLook = Math.min(Math.max((activeText.length > 0 ? activeText.length : 15) * 3.3, 0), 100);
-      numLookInput.value = targetLook;
+      numLook.value = targetLook;
     }
-  }, [nameText, emailText, isPasswordFocused, numLookInput]);
+  }, [rive, activeStateMachineName, nameText, emailText, isPasswordFocused]);
 
   return <RiveComponent className="w-full h-full min-w-[220px] min-h-[220px]" />;
 }

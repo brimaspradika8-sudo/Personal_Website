@@ -10,29 +10,34 @@ import {
   Sun,
   Moon
 } from "lucide-react";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 import { soundFx } from "@/lib/audio/sound";
 
 interface UserDashboardProps {
-  user: any;
-  dbUser: any;
+  user: SupabaseUser | null;
+  dbUser: { name?: string } | null;
 }
 
 export default function UserDashboard({
   user,
   dbUser,
 }: UserDashboardProps) {
-  const [isNight, setIsNight] = useState(true);
+  const [isNight, setIsNight] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("dashboard_theme") !== "day";
+    }
+    return true;
+  });
 
   useEffect(() => {
-    const saved = localStorage.getItem("dashboard_theme");
-    if (saved === "day") {
-      setIsNight(false);
-      document.documentElement.classList.remove("dark");
-    } else {
-      setIsNight(true);
+    if (isNight) {
       document.documentElement.classList.add("dark");
+      localStorage.setItem("dashboard_theme", "night");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("dashboard_theme", "day");
     }
-  }, []);
+  }, [isNight]);
 
   const toggleTheme = () => {
     soundFx.playClick();

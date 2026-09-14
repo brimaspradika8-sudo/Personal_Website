@@ -42,11 +42,11 @@ interface ProjectShowcaseProps {
   isNight: boolean;
   lang: "id" | "en";
   onSelectProject: (project: ProjectData) => void;
-  fetchedProjects?: any[];
+  fetchedProjects?: Record<string, unknown>[];
 }
 
 export default function ProjectShowcase({ isNight, lang, onSelectProject, fetchedProjects }: ProjectShowcaseProps) {
-  const [liveData, setLiveData] = useState<any[] | null>(fetchedProjects || null);
+  const [liveData, setLiveData] = useState<Record<string, unknown>[] | null>(fetchedProjects || null);
   const [isFetching, setIsFetching] = useState(false);
   const [lastFetched, setLastFetched] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("Semua");
@@ -76,13 +76,13 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
 
   const rawProjects: ProjectData[] = projectsToUse
     ? projectsToUse.map((fp, i) => ({
-        id: fp.id || `supa-${i}`,
-        title: fp.title || "Untitled Project",
-        description: fp.description || "No description provided.",
-        thumbnail: fp.thumbnail || `/images/project${(i % 3) + 1}.png`,
-        demo_url: fp.demo_url || "#",
-        repository_url: fp.repository_url || "#",
-        techStack: Array.isArray(fp.techStack) ? fp.techStack : ["Supabase", "Next.js", "TypeScript"],
+        id: String(fp.id || `supa-${i}`),
+        title: String(fp.title || "Untitled Project"),
+        description: String(fp.description || "No description provided."),
+        thumbnail: String(fp.thumbnail || `/images/project${(i % 3) + 1}.png`),
+        demo_url: String(fp.demo_url || "#"),
+        repository_url: String(fp.repository_url || "#"),
+        techStack: Array.isArray(fp.techStack) ? (fp.techStack as string[]) : ["Supabase", "Next.js", "TypeScript"],
       }))
     : showcaseProjects;
 

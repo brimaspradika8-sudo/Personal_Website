@@ -2,11 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  Terminal,
-  Code2,
-  Database,
-  Layers,
-  Cpu,
   Copy,
   Check,
 } from "lucide-react";
@@ -179,7 +174,7 @@ export default function TechStackMatrix({ isNight, lang }: TechStackMatrixProps)
                 type="button"
                 onClick={() => {
                   soundFx.playClick();
-                  setActiveTab(tab.id as any);
+                  setActiveTab(tab.id as "all" | "backend" | "frontend" | "database");
                 }}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === tab.id

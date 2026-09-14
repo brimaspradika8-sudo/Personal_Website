@@ -90,20 +90,21 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const [sfxEnabled, setSfxEnabled] = useState(soundFx.getIsEnabled());
-  const [mode, setMode] = useState<"day" | "night">("day");
-
-  useEffect(() => {
+  const [mode, setMode] = useState<"day" | "night">(() => {
     if (typeof window !== "undefined") {
       const savedMode = localStorage.getItem("landscape_mode") as "day" | "night";
-      if (savedMode === "night") {
-        setMode("night");
-        document.documentElement.classList.add("dark");
-      } else {
-        setMode("day");
-        document.documentElement.classList.remove("dark");
-      }
+      if (savedMode === "night") return "night";
     }
-  }, []);
+    return "day";
+  });
+
+  useEffect(() => {
+    if (mode === "night") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [mode]);
 
   const handleToggleMode = () => {
     const nextMode = mode === "day" ? "night" : "day";
@@ -120,26 +121,6 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   };
 
   const isNight = mode === "night";
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      const effectiveAvatar = dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
-      setAvatarUrl(effectiveAvatar);
-
-      const effectiveName = dbUser?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || "";
-      if (effectiveName) {
-        setName(effectiveName);
-      }
-    }
-  }, [
-    isAuthenticated,
-    dbUser?.avatar,
-    dbUser?.name,
-    user?.user_metadata?.avatar_url,
-    user?.user_metadata?.picture,
-    user?.user_metadata?.full_name,
-    user?.user_metadata?.name,
-  ]);
 
   const initialLetter = isAuthenticated && userName ? userName.charAt(0).toUpperCase() : "G";
   const avatarSrc = avatarUrl;
@@ -410,7 +391,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 key={tab.id}
                 onClick={() => {
                   soundFx.playClick();
-                  setActiveTab(tab.id as any);
+                  setActiveTab(tab.id as "info" | "edit" | "settings" | "help");
                 }}
                 className={`flex items-center gap-2 pb-3 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap cursor-pointer border-b-2 -mb-px ${
                   isActive

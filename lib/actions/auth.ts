@@ -187,9 +187,9 @@ export async function signInWithGoogle() {
     }
 
     return { error: "Gagal mendapatkan URL autentikasi Google." };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error during signInWithGoogle:", err);
-    return { error: formatAuthError(err?.message || "Gagal melakukan autentikasi Google.") };
+    return { error: formatAuthError((err as Error)?.message || "Gagal melakukan autentikasi Google.") };
   }
 }
 
@@ -221,9 +221,9 @@ export async function signInWithGithub() {
     }
 
     return { error: "Gagal mendapatkan URL autentikasi GitHub." };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error during signInWithGithub:", err);
-    return { error: formatAuthError(err?.message || "Gagal melakukan autentikasi GitHub.") };
+    return { error: formatAuthError((err as Error)?.message || "Gagal melakukan autentikasi GitHub.") };
   }
 }
 
@@ -271,9 +271,9 @@ export async function signInWithPassword(formData: FormData) {
     revalidatePath("/", "layout");
 
     return { success: true, targetPath };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error during signInWithPassword:", err);
-    return { error: formatAuthError(err?.message || "Gagal melakukan proses masuk.") };
+    return { error: formatAuthError((err as Error)?.message || "Gagal melakukan proses masuk.") };
   }
 }
 
@@ -387,7 +387,7 @@ export async function uploadAvatarFile(formData: FormData) {
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
 
-    let { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from("avatars")
       .upload(fileName, fileBuffer, {
         contentType: file.type,
@@ -453,8 +453,8 @@ export async function uploadAvatarFile(formData: FormData) {
     }
 
     return { success: true, avatarUrl: publicUrl };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Unexpected error in uploadAvatarFile:", err);
-    return { error: err?.message || "Terjadi kesalahan saat mengunggah foto profil." };
+    return { error: (err as Error)?.message || "Terjadi kesalahan saat mengunggah foto profil." };
   }
 }

@@ -22,20 +22,36 @@ import {
   Globe,
   LogOut,
 } from "lucide-react";
-import { ArticleItem, createArticle, updateArticle, deleteArticle, uploadArticleImage } from "@/lib/actions/article";
-import { getAllAdminComments, deleteArticleComment, AdminCommentItem } from "@/lib/actions/comment";
+import { User } from "@supabase/supabase-js";
+import {
+  ArticleItem,
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  uploadArticleImage,
+  getAllAdminComments,
+  deleteArticleComment,
+  AdminCommentItem,
+} from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
 import RichTextEditor from "@/components/RichTextEditor";
 
 interface ArticlesClientProps {
   initialArticles: ArticleItem[];
+  user?: User | null;
+  dbUser?: Record<string, unknown> | null;
 }
 
 export default function AdminArticlesClient({ initialArticles }: ArticlesClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isNight, setIsNight] = useState(false);
+  const [isNight, setIsNight] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("dashboard_theme") === "night";
+    }
+    return false;
+  });
 
   // Modal State (Create / Edit)
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,16 +73,14 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
   const [loadingComments, setLoadingComments] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("dashboard_theme");
-    if (saved === "night") {
-      setIsNight(true);
+    if (isNight) {
       document.documentElement.classList.add("dark");
+      localStorage.setItem("dashboard_theme", "night");
     } else {
-      setIsNight(false);
       document.documentElement.classList.remove("dark");
       localStorage.setItem("dashboard_theme", "day");
     }
-  }, []);
+  }, [isNight]);
 
   const toggleTheme = () => {
     soundFx.playClick();

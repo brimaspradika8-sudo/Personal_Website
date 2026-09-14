@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://brimas.vercel.app";
@@ -33,11 +33,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let articleRoutes: MetadataRoute.Sitemap = [];
   try {
-    const supabase = await createClient();
-    const { data: posts } = await supabase
-      .from("Post")
-      .select("slug, updated_at, created_at")
-      .eq("published", true);
+    const posts = await prisma.article.findMany({
+      select: { slug: true, updated_at: true, created_at: true },
+    });
 
     if (posts && posts.length > 0) {
       articleRoutes = posts.map((post) => ({
@@ -48,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }));
     }
   } catch (err) {
-    console.warn("Sitemap Supabase fetch error:", err);
+    console.warn("Sitemap fetch error:", err);
   }
 
   if (articleRoutes.length === 0) {

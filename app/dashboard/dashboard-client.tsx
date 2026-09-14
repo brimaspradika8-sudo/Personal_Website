@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  LayoutDashboard,
   FileText,
   Plus,
   Search,
@@ -15,7 +14,6 @@ import {
   Moon,
   CheckCircle2,
   AlertCircle,
-  X,
   Globe,
   LogOut,
 } from "lucide-react";
@@ -24,31 +22,36 @@ import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
 
 interface DashboardClientProps {
-  user: {
+  user?: {
     id: string;
     email?: string;
     user_metadata?: { full_name?: string; avatar_url?: string };
-  };
+  } | null;
+  dbUser?: Record<string, unknown> | null;
   initialArticles: ArticleItem[];
+  isAdmin?: boolean;
 }
 
 export default function DashboardClient({ user, initialArticles }: DashboardClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isNight, setIsNight] = useState(false);
+  const [isNight, setIsNight] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("dashboard_theme") === "night";
+    }
+    return false;
+  });
   const [alertMsg, setAlertMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("dashboard_theme");
-    if (saved === "night") {
-      setIsNight(true);
+    if (isNight) {
       document.documentElement.classList.add("dark");
+      localStorage.setItem("dashboard_theme", "night");
     } else {
-      setIsNight(false);
       document.documentElement.classList.remove("dark");
       localStorage.setItem("dashboard_theme", "day");
     }
-  }, []);
+  }, [isNight]);
 
   const toggleTheme = () => {
     soundFx.playClick();
@@ -86,8 +89,8 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
       a.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const displayName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Pemilik";
-  const avatarSrc = user.user_metadata?.avatar_url || "";
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Pemilik";
+  const avatarSrc = user?.user_metadata?.avatar_url || "";
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
@@ -140,7 +143,7 @@ export default function DashboardClient({ user, initialArticles }: DashboardClie
               </div>
               <div className="truncate">
                 <p className="text-xs font-bold truncate text-slate-900 dark:text-slate-100">{displayName}</p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-sans">{user.email}</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-sans">{user?.email}</p>
               </div>
             </div>
           </div>

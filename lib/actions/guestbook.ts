@@ -42,7 +42,6 @@ const SAMPLE_GUESTBOOK: GuestbookEntry[] = [
 
 export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
   try {
-    // @ts-ignore
     const entries = await prisma.guestbook.findMany({
       orderBy: { created_at: "desc" },
       take: 50,
@@ -55,7 +54,7 @@ export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
       return SAMPLE_GUESTBOOK;
     }
 
-    return entries.map((e: any) => ({
+    return entries.map((e) => ({
       id: e.id,
       message: e.message,
       created_at: e.created_at.toISOString(),
@@ -106,7 +105,6 @@ export async function createGuestbookEntry(message: string) {
       return { error: "Profil pengguna tidak ditemukan." };
     }
 
-    // @ts-ignore
     const newEntry = await prisma.guestbook.create({
       data: {
         user_id: dbUser.id,
@@ -133,9 +131,9 @@ export async function createGuestbookEntry(message: string) {
         },
       },
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error creating guestbook entry:", err);
-    return { error: err?.message || "Gagal menyimpan pesan di Buku Tamu." };
+    return { error: (err as Error)?.message || "Gagal menyimpan pesan di Buku Tamu." };
   }
 }
 
@@ -155,7 +153,6 @@ export async function deleteGuestbookEntry(id: string) {
       return { error: "User tidak ditemukan." };
     }
 
-    // @ts-ignore
     const entry = await prisma.guestbook.findUnique({ where: { id } });
     if (!entry) {
       return { error: "Entri pesan tidak ditemukan." };
@@ -166,14 +163,13 @@ export async function deleteGuestbookEntry(id: string) {
       return { error: "Anda tidak memiliki akses untuk menghapus pesan ini." };
     }
 
-    // @ts-ignore
     await prisma.guestbook.delete({ where: { id } });
 
     revalidatePath("/dashboard");
     revalidatePath("/guestbook");
 
     return { success: true };
-  } catch (err: any) {
-    return { error: err?.message || "Gagal menghapus pesan." };
+  } catch (err: unknown) {
+    return { error: (err as Error)?.message || "Gagal menghapus pesan." };
   }
 }
