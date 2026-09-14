@@ -102,9 +102,9 @@ export default function RichTextEditor({
 
     const res = await uploadArticleImage(formData);
 
-    if (res.error) {
+    if ("error" in res && res.error) {
       setUploadError(res.error);
-    } else if (res.url) {
+    } else if ("url" in res && res.url) {
       editor.chain().focus().setImage({ src: res.url }).run();
     }
 
@@ -321,6 +321,16 @@ export default function RichTextEditor({
 
       {/* Main Canvas Editor */}
       <EditorContent editor={editor} />
+
+      {/* Feature 1.2: Word Count & Estimated Read Time Counter Bar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-950/40 border-t border-slate-200 dark:border-slate-800/80 text-[11px] font-mono text-slate-500 font-medium">
+        <div>
+          <span>{editor.getText().trim().split(/\s+/).filter(Boolean).length} Kata</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span>~{Math.max(1, Math.ceil(editor.getText().trim().split(/\s+/).filter(Boolean).length / 200))} mnt waktu baca</span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --animate-welcome-marquee: welcomeMarquee 25s linear infinite;
   --animate-welcome-marquee-reverse: welcomeMarqueeReverse 30s linear infinite;
@@ -23,13 +25,24 @@
   }
 }
 
-html {
-  color-scheme: dark;
-  background-color: #0A0A0B;
-  color: #F1EFE9;
+/* Light Theme Variables (Default) */
+:root {
+  --bg: #F8F9FA;
+  --surface: #FFFFFF;
+  --surface-hover: #F1F5F9;
+  --primary: #D32F2F;
+  --accent: #D32F2F;
+  --accent-hover: #B91C1C;
+  --text-primary: #0F172A;
+  --text-muted: #475569;
+  --border: #E2E8F0;
+  --danger-muted: #FEE2E2;
+  --accent-glow: #D32F2F;
 }
 
-:root {
+/* Dark Theme Variables */
+html.dark {
+  color-scheme: dark;
   --bg: #0A0A0B;
   --surface: #121214;
   --surface-hover: #1A1A1E;
@@ -44,8 +57,12 @@ html {
 }
 
 @layer base {
-  html, body {
+  html {
     scroll-behavior: smooth;
+    background-color: var(--bg);
+    color: var(--text-primary);
+  }
+  body {
     background-color: var(--bg);
     color: var(--text-primary);
   }

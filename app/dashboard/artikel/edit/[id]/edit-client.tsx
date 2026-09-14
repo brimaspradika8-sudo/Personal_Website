@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   AlertCircle,
   FileText,
+  Save,
 } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
 import { ArticleItem, updateArticle, uploadArticleImage } from "@/lib/actions/article";
@@ -47,9 +48,9 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
 
     const res = await uploadArticleImage(formData);
 
-    if (res.error) {
+    if ("error" in res && res.error) {
       setStatusMsg({ type: "error", text: res.error });
-    } else if (res.url) {
+    } else if ("url" in res && res.url) {
       setThumbnail(res.url);
       setStatusMsg({ type: "success", text: "Gambar thumbnail berhasil diperbarui ke Supabase Storage!" });
     }
@@ -57,8 +58,8 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
     setUploadingThumbnail(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setStatusMsg(null);
 
     if (!title.trim() || !slug.trim() || !content.trim()) {
@@ -86,10 +87,22 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
         router.refresh();
       }, 1000);
     }
-  };
+  }, [article.id, title, slug, content, thumbnail, router]);
+
+  // Feature 1.3: Keyboard Shortcut (Ctrl+S / Cmd+S)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        handleSubmit();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleSubmit]);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 pb-20 sm:pb-8">
       
       {/* Top Header */}
       <header className="h-16 sticky top-0 z-30 backdrop-blur-md bg-white/80 dark:bg-[#0B0F17]/80 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-8 flex items-center justify-between">
@@ -101,9 +114,14 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="text-base sm:text-lg font-bold tracking-tight">
-            Edit Artikel — &quot;{article.title}&quot;
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-base sm:text-lg font-bold tracking-tight truncate max-w-xs sm:max-w-md">
+              Edit Artikel — &quot;{article.title}&quot;
+            </h1>
+            <span className="hidden md:inline-block text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 shrink-0">
+              Tekan Ctrl+S untuk simpan
+            </span>
+          </div>
         </div>
       </header>
 
@@ -210,8 +228,8 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
 
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-2">
+          {/* Feature 1.4: Mobile Sticky Action Bar */}
+          <div className="fixed bottom-0 inset-x-0 sm:static bg-white/95 dark:bg-[#0B0F17]/95 backdrop-blur-md p-4 sm:p-0 border-t border-slate-200 dark:border-slate-800 sm:border-0 z-40 sm:z-auto flex items-center justify-end gap-3 shadow-lg sm:shadow-none">
             <Link
               href="/dashboard"
               className="px-6 py-3 rounded-2xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
@@ -222,9 +240,10 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
             <button
               type="submit"
               disabled={loading}
-              className="px-8 py-3 rounded-2xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md disabled:opacity-50 cursor-pointer"
+              className="px-8 py-3 rounded-2xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
-              {loading ? "Menyimpan..." : "Simpan Perubahan"}
+              <Save className="w-4 h-4" />
+              <span>{loading ? "Menyimpan..." : "Simpan Perubahan"}</span>
             </button>
           </div>
 

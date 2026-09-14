@@ -103,8 +103,8 @@ export default function AdminDashboard({
             <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-xs shadow-xs">
               B
             </div>
-            <span className="font-semibold text-sm tracking-tight font-sans">
-              Brimas <span className="font-normal text-slate-500">Admin</span>
+            <span className="font-bold text-sm tracking-tight font-sans text-slate-900 dark:text-slate-100">
+              Brimas <span className="font-normal text-slate-500 dark:text-slate-400">Admin</span>
             </span>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100">
@@ -113,33 +113,39 @@ export default function AdminDashboard({
         </div>
 
         <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto font-sans">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Utama</div>
+          <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Utama</div>
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.label}
               href={item.href}
               target={item.external ? "_blank" : undefined}
               onClick={() => soundFx.playClick()}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${item.active ? "bg-[#D32F2F] text-white font-medium shadow-xs" : (isNight ? "text-slate-400 hover:bg-slate-900 hover:text-slate-100" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900")}`}
+              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
+                item.active
+                  ? "bg-[#D32F2F] text-white font-bold shadow-xs"
+                  : isNight
+                  ? "text-slate-300 hover:bg-slate-900 hover:text-white"
+                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+              }`}
             >
               <div className="flex items-center gap-3">
                 <item.icon className="w-4 h-4" />
-                <span className="text-xs font-medium">{item.label}</span>
+                <span className="text-xs font-semibold">{item.label}</span>
               </div>
-              {item.external && <ExternalLink className="w-3.5 h-3.5 opacity-50" />}
+              {item.external && <ExternalLink className="w-3.5 h-3.5 opacity-60" />}
             </Link>
           ))}
         </nav>
 
         <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 font-sans">
-          <div className={`p-3 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-slate-900 border border-slate-800" : "bg-slate-50 border border-slate-200"}`}>
+          <div className={`p-3 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-slate-900 border border-slate-800" : "bg-slate-100/80 border border-slate-200"}`}>
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-8 h-8 rounded-full bg-[#D32F2F] flex shrink-0 items-center justify-center text-white font-bold text-xs shadow-xs overflow-hidden relative">
                 {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
               </div>
               <div className="truncate">
-                <p className="text-xs font-semibold truncate text-slate-900 dark:text-slate-100">{displayName}</p>
-                <p className="text-[11px] text-slate-500 truncate font-sans">Administrator</p>
+                <p className="text-xs font-bold truncate text-slate-900 dark:text-slate-100">{displayName}</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-sans">Administrator</p>
               </div>
             </div>
           </div>
@@ -149,7 +155,7 @@ export default function AdminDashboard({
               soundFx.playClick();
               await signOut();
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-medium transition-colors border border-red-500/20 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-400 text-xs font-bold transition-colors border border-red-500/20 cursor-pointer"
             title="Keluar dari Akun Admin"
           >
             <LogOut className="w-4 h-4" />
@@ -161,7 +167,7 @@ export default function AdminDashboard({
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
-        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/80 border-slate-200 shadow-xs"}`}>
+        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/90 border-slate-200 shadow-xs"}`}>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -169,7 +175,7 @@ export default function AdminDashboard({
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
               Dashboard Overview
             </h1>
           </div>
@@ -179,7 +185,7 @@ export default function AdminDashboard({
               href="/dashboard"
               target="_blank"
               onClick={() => soundFx.playClick()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-slate-400 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
               title="Buka Website Publik"
             >
               <Globe className="w-3.5 h-3.5 text-[#D32F2F]" />
@@ -189,9 +195,10 @@ export default function AdminDashboard({
 
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
+              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
+              title="Ganti Tema"
             >
-              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-800" />}
             </button>
           </div>
         </header>
@@ -202,8 +209,8 @@ export default function AdminDashboard({
             {/* Header Welcome */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div className="space-y-1">
-                <p className="text-xs text-slate-500 font-sans">Selamat datang kembali,</p>
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-sans font-medium">Selamat datang kembali,</p>
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
                   {displayName}
                 </h2>
               </div>
@@ -217,7 +224,7 @@ export default function AdminDashboard({
                     } catch {}
                     alert("Animasi Rive Intro berhasil di-reset!");
                   }}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 text-xs font-medium transition-colors cursor-pointer flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors cursor-pointer flex items-center gap-2"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#D32F2F]" />
                   <span>Reset Intro Rive</span>
@@ -226,7 +233,7 @@ export default function AdminDashboard({
                 <Link
                   href="/admin/articles"
                   onClick={() => soundFx.playClick()}
-                  className="px-4 py-2 rounded-xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-medium transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Kelola Artikel</span>
@@ -244,11 +251,11 @@ export default function AdminDashboard({
               ].map((stat, idx) => (
                 <div key={idx} className={`p-5 rounded-2xl border ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
                   <div className="flex items-center justify-between mb-3 text-slate-400">
-                    <stat.icon className="w-4 h-4 text-[#D32F2F]" />
+                    <stat.icon className="w-5 h-5 text-[#D32F2F]" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{stat.value}</h3>
-                    <p className="text-xs text-slate-500 font-sans mt-0.5">{stat.label}</p>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{stat.value}</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium mt-1">{stat.label}</p>
                   </div>
                 </div>
               ))}
@@ -260,7 +267,7 @@ export default function AdminDashboard({
               {/* Recent Projects */}
               <div className={`rounded-2xl border flex flex-col ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
                 <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                  <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     <FolderKanban className="w-4 h-4 text-[#D32F2F]" />
                     <span>Proyek Terbaru</span>
                   </h3>
@@ -270,7 +277,7 @@ export default function AdminDashboard({
                     <div key={p.id} className="flex items-center gap-3 group">
                       <div className="w-10 h-10 rounded-lg border flex-shrink-0 bg-cover bg-center bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800" style={{ backgroundImage: `url(${p.thumbnail || '/placeholder.png'})` }} />
                       <div className="flex-1 min-w-0">
-                        <Link href={`#projects`} className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors truncate block">
+                        <Link href={`#projects`} className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors truncate block">
                           {p.title}
                         </Link>
                         <p className="text-[11px] text-slate-500 font-sans mt-0.5">
@@ -280,7 +287,7 @@ export default function AdminDashboard({
                       <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#D32F2F] transition-colors" />
                     </div>
                   )) : (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-xs font-sans py-8">
+                    <div className="h-full flex items-center justify-center text-slate-500 dark:text-slate-400 text-xs font-semibold font-sans py-8">
                       Belum ada proyek
                     </div>
                   )}
@@ -290,11 +297,11 @@ export default function AdminDashboard({
               {/* Recent Articles */}
               <div className={`rounded-2xl border flex flex-col ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
                 <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                  <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     <FileText className="w-4 h-4 text-[#D32F2F]" />
                     <span>Artikel Terbaru</span>
                   </h3>
-                  <Link href="/admin/articles" className="text-xs text-[#D32F2F] font-medium hover:underline flex items-center gap-1">
+                  <Link href="/admin/articles" className="text-xs text-[#D32F2F] font-bold hover:underline flex items-center gap-1">
                     <span>Kelola</span>
                     <ArrowRight className="w-3 h-3" />
                   </Link>
@@ -303,10 +310,10 @@ export default function AdminDashboard({
                   {recentArticles.length > 0 ? recentArticles.map((a) => (
                     <div key={a.id} className="flex items-center gap-3 group">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center border shrink-0 bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400">
-                        <FileText className="w-4 h-4" />
+                        <FileText className="w-4 h-4 text-[#D32F2F]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <Link href={`/posts/${a.slug}`} className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors truncate block">
+                        <Link href={`/posts/${a.slug}`} className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors truncate block">
                           {a.title}
                         </Link>
                         <p className="text-[11px] text-slate-500 font-sans mt-0.5">
@@ -316,7 +323,7 @@ export default function AdminDashboard({
                       <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#D32F2F] transition-colors" />
                     </div>
                   )) : (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-xs font-sans py-8">
+                    <div className="h-full flex items-center justify-center text-slate-500 dark:text-slate-400 text-xs font-semibold font-sans py-8">
                       Belum ada artikel
                     </div>
                   )}

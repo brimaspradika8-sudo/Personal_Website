@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -16,6 +16,8 @@ import {
   Trash2,
   BookOpen,
   Copy,
+  List,
+  ExternalLink,
 } from "lucide-react";
 
 import {
@@ -26,6 +28,12 @@ import {
   deleteArticleComment,
 } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
+
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+}
 
 interface ArticleClientProps {
   article: ArticleDetail;
@@ -48,6 +56,47 @@ export default function ArticleClient({
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Feature 2.1: Reading Progress Bar State
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Feature 2.3: Table of Contents State
+  const [toc, setToc] = useState<TocItem[]>([]);
+
+  // Feature 2.1: Calculate Reading Scroll Progress
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(Math.min(100, Math.max(0, progress)));
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Feature 2.3: Parse Headings for Table of Contents
+  useEffect(() => {
+    if (!article.content) return;
+    const lines = article.content.split("\n");
+    const items: TocItem[] = [];
+
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith("## ")) {
+        const text = trimmed.replace("## ", "");
+        const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+        items.push({ id, text, level: 2 });
+      } else if (trimmed.startsWith("### ")) {
+        const text = trimmed.replace("### ", "");
+        const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+        items.push({ id, text, level: 3 });
+      }
+    });
+
+    setToc(items);
+  }, [article.content]);
 
   const showToast = (msg: string) => {
     try {
@@ -143,13 +192,29 @@ export default function ArticleClient({
     });
   };
 
+  // Feature 2.2: Copy Link Handler
   const handleShare = () => {
     const url = window.location.href;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       setIsCopied(true);
-      showToast("Link artikel berhasil disalin ke clipboard!");
+      showToast("Tautan artikel berhasil disalin ke clipboard!");
       setTimeout(() => setIsCopied(false), 2000);
+    }
+  };
+
+  // Feature 2.2: Social Media Share Links
+  const handleSocialShare = (platform: "wa" | "tw" | "li") => {
+    const url = encodeURIComponent(window.location.href);
+    const titleText = encodeURIComponent(article.title);
+
+    let shareUrl = "";
+    if (platform === "wa") shareUrl = `https://api.whatsapp.com/send?text=${titleText}%20${url}`;
+    if (platform === "tw") shareUrl = `https://twitter.com/intent/tweet?text=${titleText}&url=${url}`;
+    if (platform === "li") shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+
+    if (shareUrl) {
+      window.open(shareUrl, "_blank");
     }
   };
 
@@ -173,7 +238,7 @@ export default function ArticleClient({
         return (
           <div key={idx} className="my-6 rounded-xl border border-slate-800 bg-[#0B0F17] text-slate-100 overflow-hidden shadow-xs">
             <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between font-mono text-xs text-slate-400">
-              <span className="font-mono text-amber-500">{lang || "code"}</span>
+              <span className="font-mono text-[#D32F2F]">{lang || "code"}</span>
               <button
                 onClick={() => handleCopyCode(code, idx)}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer text-xs font-mono"
@@ -206,16 +271,20 @@ export default function ArticleClient({
             if (!trimmed) return null;
 
             if (trimmed.startsWith("## ")) {
+              const text = trimmed.replace("## ", "");
+              const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
               return (
-                <h2 key={lIdx} className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 pt-6 border-b border-slate-200 dark:border-slate-800/80 pb-2">
-                  {trimmed.replace("## ", "")}
+                <h2 key={lIdx} id={id} className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 pt-6 border-b border-slate-200 dark:border-slate-800/80 pb-2 scroll-mt-20">
+                  {text}
                 </h2>
               );
             }
             if (trimmed.startsWith("### ")) {
+              const text = trimmed.replace("### ", "");
+              const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
               return (
-                <h3 key={lIdx} className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 pt-4">
-                  {trimmed.replace("### ", "")}
+                <h3 key={lIdx} id={id} className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 pt-4 scroll-mt-20">
+                  {text}
                 </h3>
               );
             }
@@ -244,7 +313,13 @@ export default function ArticleClient({
   return (
     <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans selection:bg-[#D32F2F] selection:text-white pb-20">
       
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
+      {/* Feature 2.1: Fixed Reading Progress Bar Top Indicator */}
+      <div
+        style={{ width: `${scrollProgress}%` }}
+        className="fixed top-0 left-0 h-1 bg-[#D32F2F] z-50 transition-all duration-75 ease-out shadow-xs"
+      />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
         
         {/* 1. TOP NAV BREADCRUMB */}
         <div className="flex items-center justify-between">
@@ -261,7 +336,7 @@ export default function ArticleClient({
             <button
               onClick={handleShare}
               className="p-2 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer shadow-xs"
-              title="Bagikan Artikel"
+              title="Salin Link Artikel"
             >
               {isCopied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
             </button>
@@ -321,12 +396,49 @@ export default function ArticleClient({
           </div>
         )}
 
-        {/* 4. ARTICLE BODY CONTENT */}
-        <article className="p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] shadow-xs space-y-6">
-          {renderContent(article.content)}
-        </article>
+        {/* 4. MAIN ARTICLE CONTENT WITH SIDEBAR TABLE OF CONTENTS */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          
+          {/* Feature 2.3: Interactive Table of Contents Sidebar */}
+          {toc.length > 0 && (
+            <aside className="lg:col-span-1 order-2 lg:order-1">
+              <div className="sticky top-24 p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] space-y-3 shadow-xs">
+                <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-slate-100 pb-2 border-b border-slate-200 dark:border-slate-800">
+                  <List className="w-4 h-4 text-[#D32F2F]" />
+                  <span>Daftar Isi</span>
+                </div>
+                <nav className="space-y-1.5 text-xs font-sans">
+                  {toc.map((item) => (
+                    <a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const el = document.getElementById(item.id);
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className={`block py-1 px-2 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-[#D32F2F] ${
+                        item.level === 3 ? "pl-4 text-[11px]" : "font-medium text-xs"
+                      }`}
+                    >
+                      {item.text}
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            </aside>
+          )}
 
-        {/* 5. REACTION & SHARE BAR */}
+          {/* Article Text Content */}
+          <main className={`${toc.length > 0 ? "lg:col-span-3 order-1 lg:order-2" : "col-span-4"}`}>
+            <article className="p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] shadow-xs space-y-6">
+              {renderContent(article.content)}
+            </article>
+          </main>
+
+        </div>
+
+        {/* 5. REACTION & Feature 2.2 SOCIAL SHARE BAR */}
         <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] flex flex-wrap items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3">
             <button
@@ -356,13 +468,40 @@ export default function ArticleClient({
             </button>
           </div>
 
+          {/* Feature 2.2: Social Media Share Buttons */}
           <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 hidden sm:inline">Bagikan:</span>
+            
+            <button
+              onClick={() => handleSocialShare("wa")}
+              className="px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-all cursor-pointer shadow-xs"
+              title="Bagikan ke WhatsApp"
+            >
+              WhatsApp
+            </button>
+
+            <button
+              onClick={() => handleSocialShare("tw")}
+              className="px-3 py-1.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium transition-all cursor-pointer shadow-xs"
+              title="Bagikan ke X (Twitter)"
+            >
+              X / Twitter
+            </button>
+
+            <button
+              onClick={() => handleSocialShare("li")}
+              className="px-3 py-1.5 rounded-full bg-blue-700 hover:bg-blue-800 text-white text-xs font-medium transition-all cursor-pointer shadow-xs"
+              title="Bagikan ke LinkedIn"
+            >
+              LinkedIn
+            </button>
+
             <button
               onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-medium transition-all cursor-pointer shadow-xs"
+              className="p-2 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer shadow-xs"
+              title="Salin Tautan"
             >
               <Share2 className="w-4 h-4" />
-              <span>Bagikan</span>
             </button>
           </div>
         </div>

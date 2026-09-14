@@ -3,45 +3,39 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
+  LayoutDashboard,
   FileText,
   Plus,
-  Trash2,
-  Edit3,
   Search,
-  LogOut,
+  Edit3,
+  Trash2,
+  ExternalLink,
   Sun,
   Moon,
-  ExternalLink,
-  Globe,
-  LayoutDashboard,
-  MessageSquare,
-  AlertCircle,
   CheckCircle2,
+  AlertCircle,
+  X,
+  Globe,
+  LogOut,
 } from "lucide-react";
 import { ArticleItem, deleteArticle } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
 
 interface DashboardClientProps {
-  user: any;
-  dbUser: any;
+  user: {
+    id: string;
+    email?: string;
+    user_metadata?: { full_name?: string; avatar_url?: string };
+  };
   initialArticles: ArticleItem[];
-  isAdmin: boolean;
 }
 
-export default function DashboardClient({
-  user,
-  dbUser,
-  initialArticles,
-  isAdmin,
-}: DashboardClientProps) {
-  const router = useRouter();
+export default function DashboardClient({ user, initialArticles }: DashboardClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const [isNight, setIsNight] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [alertMsg, setAlertMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
@@ -71,24 +65,18 @@ export default function DashboardClient({
     });
   };
 
-  // Subtask 9: Hapus artikel dengan konfirmasi & refresh list
-  const handleDeleteArticle = async (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string) => {
     soundFx.playClick();
-    const confirmed = window.confirm(`Apakah Anda yakin ingin menghapus artikel "${title}"?`);
-    if (!confirmed) return;
-
-    setDeletingId(id);
-    setAlertMsg(null);
+    if (!confirm(`Apakah Anda yakin ingin menghapus artikel "${title}"?`)) {
+      return;
+    }
 
     const res = await deleteArticle(id);
-    setDeletingId(null);
-
     if (res.error) {
       setAlertMsg({ type: "error", text: res.error });
     } else {
-      setAlertMsg({ type: "success", text: `Artikel "${title}" berhasil dihapus!` });
+      setAlertMsg({ type: "success", text: "Artikel berhasil dihapus." });
       setArticles((prev) => prev.filter((a) => a.id !== id));
-      router.refresh();
     }
   };
 
@@ -98,8 +86,12 @@ export default function DashboardClient({
       a.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const displayName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Pemilik";
+  const avatarSrc = user.user_metadata?.avatar_url || "";
+  const initial = displayName.charAt(0).toUpperCase();
+
   return (
-    <div className={`min-h-screen flex font-sans transition-colors duration-300 ${isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F8F9FA] text-slate-900"}`}>
+    <div className={`min-h-screen flex transition-colors duration-300 ${isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F8F9FA] text-slate-900"}`}>
       
       {/* Sidebar */}
       <aside className={`w-64 shrink-0 hidden lg:flex lg:flex-col ${isNight ? "bg-[#0E1015] border-r border-slate-800" : "bg-white border-r border-slate-200"}`}>
@@ -108,58 +100,57 @@ export default function DashboardClient({
             <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-xs shadow-xs">
               B
             </div>
-            <span className="font-semibold text-sm tracking-tight font-sans">
-              Pemilik <span className="font-normal text-slate-500">Dashboard</span>
+            <span className="font-bold text-sm tracking-tight font-sans text-slate-900 dark:text-slate-100">
+              Brimas <span className="font-normal text-slate-500 dark:text-slate-400">Dashboard</span>
             </span>
           </Link>
         </div>
 
-        <nav className="flex-1 px-4 py-8 space-y-2">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Utama</div>
+        <nav className="flex-1 px-4 py-8 space-y-2 font-sans">
+          <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Kelola</div>
           
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all bg-[#D32F2F] text-white font-medium shadow-xs"
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all bg-[#D32F2F] text-white font-bold shadow-xs"
           >
             <FileText className="w-4 h-4" />
-            <span className="text-xs font-medium">Daftar Artikel</span>
-          </Link>
-
-          {/* Subtask 5 Link */}
-          <Link
-            href="/dashboard/artikel/tambah"
-            onClick={() => soundFx.playClick()}
-            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-400 hover:bg-slate-900 hover:text-slate-100" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}
-          >
-            <Plus className="w-4 h-4 text-[#D32F2F]" />
-            <span className="text-xs font-medium">Tambah Artikel Baru</span>
+            <span className="text-xs font-semibold">Artikel Saya</span>
           </Link>
 
           <Link
             href="/posts"
             target="_blank"
             onClick={() => soundFx.playClick()}
-            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-400 hover:bg-slate-900 hover:text-slate-100" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-300 hover:bg-slate-900 hover:text-white" : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"}`}
           >
             <div className="flex items-center gap-3">
               <Globe className="w-4 h-4 text-emerald-500" />
-              <span className="text-xs font-medium">Lihat Blog Publik</span>
+              <span className="text-xs font-semibold">Lihat Blog Publik</span>
             </div>
-            <ExternalLink className="w-3.5 h-3.5 opacity-50" />
+            <ExternalLink className="w-3.5 h-3.5 opacity-60" />
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
-          <div className="px-2 py-1.5 text-xs text-slate-500 truncate">
-            Owner: <span className="font-semibold text-slate-700 dark:text-slate-300">{user?.email}</span>
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 font-sans">
+          <div className={`p-3 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-slate-900 border border-slate-800" : "bg-slate-100/80 border border-slate-200"}`}>
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-8 h-8 rounded-full bg-[#D32F2F] flex shrink-0 items-center justify-center text-white font-bold text-xs shadow-xs overflow-hidden relative">
+                {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
+              </div>
+              <div className="truncate">
+                <p className="text-xs font-bold truncate text-slate-900 dark:text-slate-100">{displayName}</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-sans">{user.email}</p>
+              </div>
+            </div>
           </div>
+
           <button
             onClick={async () => {
               soundFx.playClick();
               await signOut();
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-medium transition-colors border border-red-500/20 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-400 text-xs font-bold transition-colors border border-red-500/20 cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Keluar (Logout)</span>
@@ -171,26 +162,25 @@ export default function DashboardClient({
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         {/* Header */}
-        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/80 border-slate-200 shadow-xs"}`}>
+        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/90 border-slate-200 shadow-xs"}`}>
           <div className="flex items-center gap-3">
-            <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
               Dashboard Pemilik — Kelola Artikel
             </h1>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 font-sans">
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
+              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
             >
-              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-800" />}
             </button>
 
-            {/* Subtask 5: Button Tambah Artikel */}
             <Link
               href="/dashboard/artikel/tambah"
               onClick={() => soundFx.playClick()}
-              className="px-4 py-1.5 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-medium transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-1.5 rounded-full bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Artikel Baru</span>
@@ -226,7 +216,7 @@ export default function DashboardClient({
             )}
 
             {/* Search & Stats Bar */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between font-sans">
               <div className="relative w-full sm:w-80">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
@@ -234,24 +224,24 @@ export default function DashboardClient({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari judul artikel atau slug..."
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-sans focus:outline-none focus:border-[#D32F2F] transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-sans focus:outline-none focus:border-[#D32F2F] transition-all shadow-xs"
                 />
               </div>
 
-              <div className="text-xs text-slate-500 font-sans">
-                Total Artikel: <span className="font-semibold text-slate-900 dark:text-slate-100">{filteredArticles.length}</span>
+              <div className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium">
+                Total Artikel: <span className="font-extrabold text-slate-900 dark:text-slate-100">{filteredArticles.length}</span>
               </div>
             </div>
 
-            {/* Subtask 3: Tabel Articles (Judul, Tanggal Dibuat, Edit & Hapus) */}
+            {/* Articles Table */}
             <div className={`rounded-2xl border overflow-hidden ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse font-sans">
                   <thead>
-                    <tr className={`border-b text-xs font-semibold uppercase tracking-wider ${isNight ? "border-slate-800 text-slate-400 bg-slate-900/50" : "border-slate-200 text-slate-500 bg-slate-50"}`}>
-                      <th className="py-3.5 px-4">Judul Artikel</th>
-                      <th className="py-3.5 px-4">Tanggal Dibuat</th>
-                      <th className="py-3.5 px-4 text-right">Aksi</th>
+                    <tr className={`border-b text-xs font-bold uppercase tracking-wider ${isNight ? "border-slate-800 text-slate-300 bg-slate-900/80" : "border-slate-200 text-slate-700 bg-slate-100/80"}`}>
+                      <th className="py-4 px-4">Judul Artikel</th>
+                      <th className="py-4 px-4">Tanggal Dibuat</th>
+                      <th className="py-4 px-4 text-right">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 text-xs">
@@ -273,17 +263,17 @@ export default function DashboardClient({
                                 <Link
                                   href={`/posts/${art.slug}`}
                                   target="_blank"
-                                  className="font-semibold text-slate-900 dark:text-slate-100 hover:text-[#D32F2F] transition-colors truncate block max-w-xs sm:max-w-md"
+                                  className="font-bold text-slate-900 dark:text-slate-100 hover:text-[#D32F2F] transition-colors truncate block max-w-xs sm:max-w-md"
                                 >
                                   {art.title}
                                 </Link>
-                                <span className="text-[11px] text-slate-500 block font-mono">/{art.slug}</span>
+                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">/{art.slug}</span>
                               </div>
                             </div>
                           </td>
 
                           {/* Column 2: Tanggal Dibuat */}
-                          <td className="py-4 px-4 text-xs text-slate-500 whitespace-nowrap">
+                          <td className="py-4 px-4 text-xs text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">
                             {new Date(art.created_at).toLocaleDateString("id-ID", {
                               day: "numeric",
                               month: "long",
@@ -294,8 +284,6 @@ export default function DashboardClient({
                           {/* Column 3: Tombol Edit & Hapus */}
                           <td className="py-4 px-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-2">
-                              
-                              {/* External View Link */}
                               <Link
                                 href={`/posts/${art.slug}`}
                                 target="_blank"
@@ -305,36 +293,32 @@ export default function DashboardClient({
                                 <ExternalLink className="w-4 h-4" />
                               </Link>
 
-                              {/* Subtask 8: Tombol Edit -> /dashboard/artikel/edit/[id] */}
                               <Link
                                 href={`/dashboard/artikel/edit/${art.id}`}
                                 onClick={() => soundFx.playClick()}
-                                className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-400 transition-all font-medium text-xs flex items-center gap-1.5 cursor-pointer"
+                                className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-400 transition-all font-bold text-xs flex items-center gap-1.5 cursor-pointer"
                                 title="Edit Artikel"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
                                 <span>Edit</span>
                               </Link>
 
-                              {/* Subtask 9: Tombol Hapus artikel dengan konfirmasi & refresh */}
                               <button
-                                onClick={() => handleDeleteArticle(art.id, art.title)}
-                                disabled={deletingId === art.id}
-                                className="px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all font-medium text-xs flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                                onClick={() => handleDelete(art.id, art.title)}
+                                className="p-2 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors cursor-pointer"
                                 title="Hapus Artikel"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
-                                <span>{deletingId === art.id ? "Menghapus..." : "Hapus"}</span>
+                                <Trash2 className="w-4 h-4" />
                               </button>
-
                             </div>
                           </td>
+
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={3} className="py-12 text-center text-slate-500 text-xs font-sans">
-                          Belum ada artikel ditemukan. Klik &quot;Artikel Baru&quot; untuk membuat artikel pertama Anda.
+                        <td colSpan={3} className="py-8 text-center text-slate-500 font-medium text-xs">
+                          {searchQuery ? "Tidak ada artikel yang cocok dengan pencarian." : "Belum ada artikel."}
                         </td>
                       </tr>
                     )}
@@ -345,7 +329,6 @@ export default function DashboardClient({
 
           </div>
         </div>
-
       </main>
 
     </div>
