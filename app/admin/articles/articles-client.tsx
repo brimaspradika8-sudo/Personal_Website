@@ -744,25 +744,12 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                             const res = await uploadArticleImage(formData);
                             if ("url" in res && res.url) {
                               setThumbnail(res.url);
-                              setStatusMsg({ type: "success", text: "Thumbnail gambar berhasil diunggah!" });
-                            } else {
-                              const reader = new FileReader();
-                              reader.onload = () => {
-                                if (reader.result) {
-                                  setThumbnail(reader.result as string);
-                                  setStatusMsg({ type: "success", text: "Thumbnail dimasukkan (fallback lokal)." });
-                                }
-                              };
-                              reader.readAsDataURL(file);
+                              setStatusMsg({ type: "success", text: "Thumbnail gambar berhasil diunggah ke Supabase Storage!" });
+                            } else if ("error" in res && res.error) {
+                              setStatusMsg({ type: "error", text: res.error });
                             }
-                          } catch {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              if (reader.result) {
-                                setThumbnail(reader.result as string);
-                              }
-                            };
-                            reader.readAsDataURL(file);
+                          } catch (err: unknown) {
+                            setStatusMsg({ type: "error", text: (err as Error)?.message || "Gagal mengunggah thumbnail." });
                           } finally {
                             setUploadingThumbnail(false);
                           }

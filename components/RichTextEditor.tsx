@@ -201,29 +201,11 @@ export default function RichTextEditor({
       if ("url" in res && res.url) {
         editor.chain().focus().setImage({ src: res.url }).run();
         setUploadStatus({ type: "success", msg: "Gambar berhasil diunggah ke Supabase Storage!" });
-      } else {
-        // Fallback: Gunakan FileReader Base64 Data URL jika Supabase error / bucket belum siap
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64Url = reader.result as string;
-          if (base64Url) {
-            editor.chain().focus().setImage({ src: base64Url }).run();
-            setUploadStatus({ type: "success", msg: "Gambar dimasukkan (menggunakan mode fallback lokal)." });
-          }
-        };
-        reader.readAsDataURL(file);
+      } else if ("error" in res && res.error) {
+        setUploadStatus({ type: "error", msg: res.error });
       }
-    } catch {
-      // Emergency Base64 Fallback
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64Url = reader.result as string;
-        if (base64Url) {
-          editor.chain().focus().setImage({ src: base64Url }).run();
-          setUploadStatus({ type: "success", msg: "Gambar berhasil dimasukkan." });
-        }
-      };
-      reader.readAsDataURL(file);
+    } catch (err: unknown) {
+      setUploadStatus({ type: "error", msg: (err as Error)?.message || "Gagal mengunggah gambar." });
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
