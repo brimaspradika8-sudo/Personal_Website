@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
 
 export interface GuestbookEntry {
   id: string;
@@ -11,48 +10,19 @@ export interface GuestbookEntry {
   user: {
     id: string;
     name: string;
-    avatar: string | null;
     email?: string;
+    avatar: string | null;
   };
 }
-
-// Data sampel awal jika database belum berisikan entri
-const SAMPLE_GUESTBOOK: GuestbookEntry[] = [
-  {
-    id: "sample-g1",
-    message: "Keren sekali arsitektur website dan AI Agent portfolio-nya! Sukses selalu mas Brimas 🚀",
-    created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-    user: {
-      id: "u-sample-1",
-      name: "Alex Dev",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    },
-  },
-  {
-    id: "sample-g2",
-    message: "Tampilan minimalist & magazine stylenya sangat elegan. Suka banget animasi teddy dan Rive loader-nya!",
-    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-    user: {
-      id: "u-sample-2",
-      name: "Sarah Wijaya",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
-    },
-  },
-];
 
 export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
   try {
     const entries = await prisma.guestbook.findMany({
       orderBy: { created_at: "desc" },
-      take: 50,
       include: {
-        user: { select: { id: true, name: true, avatar: true, email: true } },
+        user: { select: { id: true, name: true, email: true, avatar: true } },
       },
     });
-
-    if (!entries || entries.length === 0) {
-      return SAMPLE_GUESTBOOK;
-    }
 
     return entries.map((e) => ({
       id: e.id,
@@ -61,32 +31,26 @@ export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
       user: {
         id: e.user.id,
         name: e.user.name,
-        avatar: e.user.avatar,
         email: e.user.email,
+        avatar: e.user.avatar,
       },
     }));
   } catch (err) {
-    console.warn("Guestbook database fetch failed, returning sample fallback:", err);
-    return SAMPLE_GUESTBOOK;
+    console.warn("getGuestbookEntries error:", err);
+    return [];
   }
 }
 
 export async function createGuestbookEntry(message: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: "Harus login terlebih dahulu untuk menulis di Buku Tamu." };
-  }
-
   if (!message || message.trim().length === 0) {
     return { error: "Pesan tidak boleh kosong." };
   }
 
-  if (message.trim().length > 300) {
-    return { error: "Pesan maksimal 300 karakter." };
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Harus login terlebih dahulu untuk menulis di Buku Tamu." };
   }
 
   try {
@@ -102,74 +66,64 @@ export async function createGuestbookEntry(message: string) {
     }
 
     if (!dbUser) {
-      return { error: "Profil pengguna tidak ditemukan." };
+      return { error: "Akun pengguna tidak ditemukan." };
     }
 
-    const newEntry = await prisma.guestbook.create({
+    const entry = await prisma.guestbook.create({
       data: {
         user_id: dbUser.id,
         message: message.trim(),
       },
       include: {
-        user: { select: { id: true, name: true, avatar: true } },
+        user: { select: { id: true, name: true, email: true, avatar: true } },
       },
     });
-
-    revalidatePath("/dashboard");
-    revalidatePath("/guestbook");
 
     return {
       success: true,
       entry: {
-        id: newEntry.id,
-        message: newEntry.message,
-        created_at: newEntry.created_at.toISOString(),
+        id: entry.id,
+        message: entry.message,
+        created_at: entry.created_at.toISOString(),
         user: {
-          id: newEntry.user.id,
-          name: newEntry.user.name,
-          avatar: newEntry.user.avatar,
+          id: entry.user.id,
+          name: entry.user.name,
+          email: entry.user.email,
+          avatar: entry.user.avatar,
         },
       },
     };
   } catch (err: unknown) {
-    console.error("Error creating guestbook entry:", err);
-    return { error: (err as Error)?.message || "Gagal menyimpan pesan di Buku Tamu." };
+    console.error("createGuestbookEntry error:", err);
+    return { error: (err as Error)?.message || "Gagal membuat pesan buku tamu." };
   }
 }
 
 export async function deleteGuestbookEntry(id: string) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Harus login terlebih dahulu." };
+    return { error: "Harus login untuk menghapus pesan." };
   }
 
   try {
     const dbUser = await prisma.user.findUnique({ where: { email: user.email! } });
-    if (!dbUser) {
-      return { error: "User tidak ditemukan." };
-    }
+    const existing = await prisma.guestbook.findUnique({ where: { id } });
 
-    const entry = await prisma.guestbook.findUnique({ where: { id } });
-    if (!entry) {
-      return { error: "Entri pesan tidak ditemukan." };
+    if (!existing) {
+      return { error: "Pesan tidak ditemukan." };
     }
 
     const isAdmin = user.email?.toLowerCase().trim() === "brimaspradika8@gmail.com";
-    if (entry.user_id !== dbUser.id && !isAdmin) {
-      return { error: "Anda tidak memiliki akses untuk menghapus pesan ini." };
+    if (existing.user_id !== dbUser?.id && !isAdmin) {
+      return { error: "Anda tidak memiliki izin menghapus pesan ini." };
     }
 
     await prisma.guestbook.delete({ where: { id } });
-
-    revalidatePath("/dashboard");
-    revalidatePath("/guestbook");
-
     return { success: true };
   } catch (err: unknown) {
-    return { error: (err as Error)?.message || "Gagal menghapus pesan." };
+    console.error("deleteGuestbookEntry error:", err);
+    return { error: (err as Error)?.message || "Gagal menghapus pesan buku tamu." };
   }
 }

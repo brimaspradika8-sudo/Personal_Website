@@ -1,41 +1,45 @@
 export default function GlobalLoading() {
   return (
-    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200 pb-20">
-      {/* Top Floating Navbar Skeleton */}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
-        <div className="h-14 rounded-full border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-6 flex items-center justify-between shadow-xs animate-pulse">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800" />
-            <div className="w-28 h-4 rounded bg-slate-200 dark:bg-slate-800" />
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F17] text-slate-950 dark:text-white font-mono antialiased transition-colors duration-200 pb-20">
+      {/* Top Navbar Skeleton */}
+      <div className="fixed top-0 left-0 right-0 z-50 border-b-3 border-slate-900 dark:border-white bg-white/90 dark:bg-[#0E121D]/90 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 animate-pulse">
+            <div className="w-8 h-8 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-28 h-5 rounded-lg bg-slate-300 dark:bg-slate-700 border border-slate-900 dark:border-white" />
           </div>
-          <div className="hidden sm:flex items-center gap-6">
-            <div className="w-16 h-3 rounded bg-slate-200 dark:bg-slate-800" />
-            <div className="w-16 h-3 rounded bg-slate-200 dark:bg-slate-800" />
-            <div className="w-16 h-3 rounded bg-slate-200 dark:bg-slate-800" />
+          <div className="hidden md:flex items-center gap-3 animate-pulse">
+            <div className="w-20 h-8 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white" />
+            <div className="w-20 h-8 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white" />
+            <div className="w-20 h-8 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white" />
           </div>
-          <div className="w-20 h-8 rounded-full bg-slate-200 dark:bg-slate-800" />
+          <div className="flex items-center gap-2 animate-pulse">
+            <div className="w-10 h-8 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white" />
+            <div className="w-10 h-8 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white" />
+            <div className="w-20 h-8 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white" />
+          </div>
         </div>
       </div>
 
       {/* Main Container Skeleton */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 space-y-10 relative z-10">
         {/* Hero Banner Skeleton */}
-        <div className="p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0E1015] shadow-xs space-y-6 animate-pulse">
-          <div className="w-32 h-6 rounded-full bg-slate-200 dark:bg-slate-800" />
+        <div className="p-8 sm:p-12 rounded-3xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-6 animate-pulse">
+          <div className="w-40 h-6 rounded-lg bg-amber-300 dark:bg-amber-600 border-2 border-slate-900" />
           <div className="space-y-3">
-            <div className="w-3/4 h-10 sm:h-12 rounded-2xl bg-slate-200 dark:bg-slate-800" />
-            <div className="w-1/2 h-10 sm:h-12 rounded-2xl bg-slate-200 dark:bg-slate-800" />
+            <div className="w-3/4 h-12 rounded-2xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900" />
+            <div className="w-1/2 h-12 rounded-2xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900" />
           </div>
-          <div className="w-5/6 h-4 rounded bg-slate-200 dark:bg-slate-800" />
+          <div className="w-5/6 h-5 rounded-lg bg-slate-200 dark:bg-slate-800" />
           <div className="flex items-center gap-4 pt-4">
-            <div className="w-36 h-10 rounded-full bg-slate-200 dark:bg-slate-800" />
-            <div className="w-28 h-10 rounded-full bg-slate-200 dark:bg-slate-800" />
+            <div className="w-40 h-10 rounded-xl bg-[#DC2626] border-2 border-slate-900" />
+            <div className="w-32 h-10 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900" />
           </div>
         </div>
 
         {/* Content Section Title Skeleton */}
         <div className="space-y-2 animate-pulse">
-          <div className="w-48 h-7 rounded-lg bg-slate-200 dark:bg-slate-800" />
+          <div className="w-48 h-8 rounded-lg bg-slate-300 dark:bg-slate-700 border-2 border-slate-900" />
           <div className="w-72 h-4 rounded bg-slate-200 dark:bg-slate-800" />
         </div>
 
@@ -44,17 +48,17 @@ export default function GlobalLoading() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E1015] overflow-hidden space-y-4 p-4 shadow-xs animate-pulse"
+              className="rounded-2xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] p-5 space-y-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] animate-pulse"
             >
-              <div className="w-full h-44 rounded-xl bg-slate-200 dark:bg-slate-800" />
+              <div className="w-full h-44 rounded-xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900" />
               <div className="space-y-2">
-                <div className="w-full h-5 rounded bg-slate-200 dark:bg-slate-800" />
-                <div className="w-3/4 h-5 rounded bg-slate-200 dark:bg-slate-800" />
+                <div className="w-full h-6 rounded bg-slate-300 dark:bg-slate-700" />
+                <div className="w-3/4 h-6 rounded bg-slate-300 dark:bg-slate-700" />
               </div>
-              <div className="w-full h-3 rounded bg-slate-200 dark:bg-slate-800" />
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                <div className="w-24 h-3 rounded bg-slate-200 dark:bg-slate-800" />
-                <div className="w-16 h-3 rounded bg-slate-200 dark:bg-slate-800" />
+              <div className="w-full h-4 rounded bg-slate-200 dark:bg-slate-800" />
+              <div className="pt-3 border-t-2 border-slate-900 dark:border-white flex justify-between items-center">
+                <div className="w-24 h-4 rounded bg-slate-300 dark:bg-slate-700" />
+                <div className="w-16 h-4 rounded bg-slate-300 dark:bg-slate-700" />
               </div>
             </div>
           ))}
@@ -63,3 +67,4 @@ export default function GlobalLoading() {
     </div>
   );
 }
+

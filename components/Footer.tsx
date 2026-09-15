@@ -90,16 +90,16 @@ export default function Footer({ isNight = true }: FooterProps) {
 
   return (
     <footer
-      className={`relative pt-16 pb-20 md:pb-12 border-t transition-colors duration-300 ${
+      className={`relative pt-10 sm:pt-16 pb-20 md:pb-12 border-t-4 border-black dark:border-white transition-colors duration-300 ${
         isNight
-          ? "bg-[#0B0F17] border-slate-800 text-slate-400"
-          : "bg-white border-slate-200 text-slate-600"
+          ? "bg-[#000000] text-white"
+          : "bg-[#FFFFFF] text-black"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         
         {/* Top Footer Section */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-start">
           
           {/* Brand Column */}
           <div className="md:col-span-5 space-y-4">
@@ -108,27 +108,27 @@ export default function Footer({ isNight = true }: FooterProps) {
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-sm shadow-xs">
+              <div className="w-8 h-8 rounded-none bg-[#FF0000] border-2 border-black dark:border-white flex items-center justify-center text-white font-mono font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 B
               </div>
               <div>
-                <h3 className={`text-base font-semibold ${isNight ? "text-slate-100" : "text-slate-900"}`}>
+                <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">
                   Brimas Pradika Utama
                 </h3>
-                <p className="text-xs text-slate-500 font-sans">AI Systems & Fullstack Developer</p>
+                <p className="text-xs font-mono font-black text-[#FF0000] uppercase">[ AI Systems &amp; Fullstack Developer ]</p>
               </div>
             </Link>
 
-            <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400 max-w-sm font-sans">
+            <p className="text-xs leading-relaxed max-w-sm font-mono font-bold text-black dark:text-white">
               Membangun aplikasi web generasi terbaru, sistem berbasis kecerdasan buatan, serta antarmuka digital performa tinggi.
             </p>
 
             <div className="flex items-center gap-2 pt-1">
               <a
                 href="mailto:brimaspradika8@gmail.com"
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-md border text-xs font-sans text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 hover:border-[#D32F2F] hover:text-[#D32F2F] transition-all"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none border-2 border-black dark:border-white text-xs font-mono font-black bg-[#FFFF00] text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
               >
-                <Mail className="w-3.5 h-3.5 text-[#D32F2F]" />
+                <Mail className="w-3.5 h-3.5 text-black" />
                 <span>brimaspradika8@gmail.com</span>
               </a>
             </div>
@@ -136,44 +136,39 @@ export default function Footer({ isNight = true }: FooterProps) {
 
           {/* Quick Navigation Links Column */}
           <div className="md:col-span-3 space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-              Navigasi Cepat
+            <h4 className="text-xs font-mono font-black uppercase tracking-wider text-black dark:text-white border-b-3 border-black dark:border-white pb-1 inline-block">
+              NAVIGASI CEPAT
             </h4>
-            <ul className="space-y-2 text-xs font-medium">
+            <ul className="space-y-2 text-xs font-mono font-black">
               <li>
-                <a href="#hero" className="hover:text-[#D32F2F] transition-colors">
-                  Beranda
+                <a href="#hero" className="hover:text-[#FF0000] transition-colors">
+                  [ BERANDA ]
                 </a>
               </li>
               <li>
-                <a href="#skills" className="hover:text-[#D32F2F] transition-colors">
-                  Teknologi & Stack
+                <a href="#skills" className="hover:text-[#FF0000] transition-colors">
+                  [ TEKNOLOGI &amp; STACK ]
                 </a>
               </li>
               <li>
-                <a href="#projects" className="hover:text-[#D32F2F] transition-colors">
-                  Proyek Unggulan
+                <a href="#projects" className="hover:text-[#FF0000] transition-colors">
+                  [ PROYEK UNGGULAN ]
                 </a>
               </li>
               <li>
-                <Link href="/posts" className="hover:text-[#D32F2F] transition-colors">
-                  Artikel & Tutorial
+                <Link href="/artikel" className="hover:text-[#FF0000] transition-colors">
+                  [ ARTIKEL &amp; TUTORIAL ]
                 </Link>
-              </li>
-              <li>
-                <a href="#guestbook" className="hover:text-[#D32F2F] transition-colors">
-                  Buku Tamu
-                </a>
               </li>
             </ul>
           </div>
 
           {/* Social Media Column */}
           <div className="md:col-span-4 space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-              Media Sosial
+            <h4 className="text-xs font-mono font-black uppercase tracking-wider text-black dark:text-white border-b-3 border-black dark:border-white pb-1 inline-block">
+              MEDIA SOSIAL
             </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
+            <p className="text-xs leading-relaxed font-mono font-bold text-black dark:text-white">
               Hubungi saya atau ikuti pembaruan proyek terbaru melalui saluran media sosial berikut.
             </p>
 
@@ -186,15 +181,11 @@ export default function Footer({ isNight = true }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => soundFx.playClick()}
-                  className={`p-2.5 rounded-lg border transition-all flex items-center justify-center cursor-pointer ${
-                    isNight
-                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
-                      : "bg-slate-100 border-slate-200 text-slate-700 hover:border-slate-300 hover:text-slate-900"
-                  }`}
+                  className="p-2.5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black text-black dark:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center"
                   title={s.name}
                   aria-label={s.name}
                 >
-                  <s.icon className="w-4 h-4 shrink-0" />
+                  <s.icon className="w-4 h-4 shrink-0 text-black dark:text-white" />
                 </a>
               ))}
             </div>
@@ -203,20 +194,20 @@ export default function Footer({ isNight = true }: FooterProps) {
         </div>
 
         {/* Bottom Footer Border & Copyright */}
-        <div className="pt-8 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p className="flex items-center gap-1.5 font-sans">
-            <span>© {new Date().getFullYear()} Brimas Pradika Utama. Made with</span>
-            <Heart className="w-3.5 h-3.5 text-[#D32F2F] fill-[#D32F2F]" />
-            <span>in Indonesia.</span>
+        <div className="pt-8 border-t-3 border-black dark:border-white flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono font-black text-black dark:text-white uppercase">
+          <p className="flex items-center gap-1.5 font-mono">
+            <span>© {new Date().getFullYear()} BRIMAS PRADIKA UTAMA. MADE WITH</span>
+            <Heart className="w-3.5 h-3.5 text-[#FF0000] fill-[#FF0000]" />
+            <span>IN INDONESIA.</span>
           </p>
 
-          <div className="flex items-center gap-4 font-sans">
-            <span className="hidden sm:inline">Built with Next.js 16 & Supabase</span>
+          <div className="flex items-center gap-4">
+            <span className="hidden sm:inline">BUILT WITH NEXT.JS 16 &amp; PURE BRUTALISM</span>
             <button
               onClick={scrollToTop}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300 dark:border-slate-800 hover:border-[#D32F2F] hover:text-[#D32F2F] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-none border-2 border-black dark:border-white bg-[#FF0000] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
             >
-              <span>Kembali ke Atas</span>
+              <span>KEMBALI KE ATAS</span>
               <ArrowUp className="w-3.5 h-3.5" />
             </button>
           </div>

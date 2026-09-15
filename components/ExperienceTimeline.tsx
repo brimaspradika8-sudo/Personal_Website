@@ -50,53 +50,57 @@ interface ExperienceTimelineProps {
 
 export default function ExperienceTimeline({ isNight, lang }: ExperienceTimelineProps) {
   return (
-    <section id="experience" className="scroll-mt-20 max-w-6xl mx-auto px-4 sm:px-6 py-20 border-b border-slate-200 dark:border-slate-800/80">
-      <div className="space-y-10 text-left">
+    <section id="experience" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 border-b-4 border-black dark:border-white">
+      <div className="space-y-6 sm:space-y-10 text-left">
         
         {/* Header */}
-        <div className="space-y-2 max-w-xl">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            {lang === "id" ? "Pengalaman & Tahap Belajar" : "Experience & Learning Journey"}
+        <div className="space-y-3 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-black tracking-widest uppercase">
+            <GraduationCap className="w-3.5 h-3.5 text-white" />
+            <span>[ LEARNING TIMELINE ]</span>
+          </div>
+          <h2 className="font-mono text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
+            PENGALAMAN &amp; <span className="bg-[#FFFF00] text-black px-2 py-0.5 border-3 border-black">REKAM JEJAK</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
+          <p className="text-xs sm:text-base text-black dark:text-white leading-relaxed font-mono font-bold">
             {lang === "id"
               ? "Perjalanan pengembangan kemampuan teknis sebagai siswa SMK Bhakti Mulia Pare dalam bidang AI Systems & Software Engineering."
               : "Timeline of technical learning and development as an AI Systems Developer student."}
           </p>
         </div>
 
-        {/* Vertical Clean Timeline */}
-        <div className="relative pl-6 sm:pl-8 border-l border-slate-200 dark:border-slate-800 space-y-10">
+        {/* Vertical Pure Brutalist Timeline */}
+        <div className="relative pl-6 sm:pl-10 border-l-4 border-black dark:border-white space-y-6 sm:space-y-10">
           {timelineData.map((item) => {
             const IconComponent = item.icon;
             return (
               <div key={item.id} className="relative group">
                 
                 {/* Node Marker */}
-                <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center justify-center font-bold shadow-xs">
-                  <IconComponent className="w-3 h-3 text-[#D32F2F]" />
+                <div className="absolute -left-[38px] sm:-left-[54px] top-2 w-8 h-8 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white flex items-center justify-center font-mono font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                  <IconComponent className="w-4 h-4 text-white" />
                 </div>
 
                 {/* Content Area */}
-                <div className={`p-6 rounded-2xl border transition-all duration-200 ${
+                <div className={`p-4 sm:p-6 rounded-none border-4 border-black dark:border-white transition-all duration-150 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] ${
                   isNight
-                    ? "bg-[#0E1015] border-slate-800/80"
-                    : "bg-white border-slate-200 shadow-xs"
+                    ? "bg-black"
+                    : "bg-white"
                 }`}>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                     <div>
-                      <span className="text-xs font-mono text-[#D32F2F] flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        <span>{item.year}</span>
+                      <span className="text-xs font-mono font-black text-[#FF0000] flex items-center gap-1 uppercase">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>[{item.year}]</span>
                       </span>
-                      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{item.title}</h3>
+                      <h3 className="text-lg font-mono font-black uppercase text-black dark:text-white mt-0.5">{item.title}</h3>
                     </div>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-800 self-start sm:self-auto font-sans">
+                    <span className="text-xs font-mono font-black text-black bg-[#FFFF00] px-3 py-1 rounded-none border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] self-start sm:self-auto uppercase">
                       {item.organization}
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-sans mt-2">
+                  <p className="text-xs sm:text-sm text-black dark:text-white font-mono font-bold leading-relaxed mt-2">
                     {item.description}
                   </p>
 
@@ -104,7 +108,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
                     {item.highlights.map((badge) => (
                       <span
                         key={badge}
-                        className="px-2.5 py-1 rounded-md text-[11px] font-sans bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800"
+                        className="px-2.5 py-1 rounded-none text-[10px] font-mono font-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] uppercase"
                       >
                         {badge}
                       </span>

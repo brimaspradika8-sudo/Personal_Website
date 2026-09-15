@@ -54,167 +54,12 @@ export interface ArticleDetail extends ArticleItem {
   userReaction: "LIKE" | "DISLIKE" | null;
 }
 
-// Data sampel berkualitas jika database masih kosong / belum di-seed
-const SAMPLE_ARTICLES: ArticleItem[] = [
-  {
-    id: "sample-1",
-    title: "Membangun AI Agent & Automation Workflow dengan Next.js dan Supabase",
-    slug: "membangun-ai-agent-automation-nextjs-supabase",
-    category: "AI Systems",
-    readTime: "6 min read",
-    thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
-    content: `## Pengenalan AI Agentic System
 
-Perkembangan artificial intelligence (AI) telah bergeser dari sekadar *prompt engineering* sederhana menuju **Agentic Workflows**—sistem di mana AI mampu mengambil keputusan mandiri, memanggil tools (function calling), serta mengeksekusi urutan tugas yang kompleks.
+const SAMPLE_ARTICLES: ArticleItem[] = [];
 
-Pada artikel ini, kita akan membahas arsitektur integrasi sistem AI dengan framework **Next.js 16** dan **Supabase**.
-
----
-
-### Key Components dalam Agentic Architecture
-
-1. **LLM Engine**: Model kecerdasan seperti GPT-4o, Claude 3.5 Sonnet, atau Llama 3 yang memproses penalaran.
-2. **Tool Execution Engine**: Kemampuan AI untuk mengeksekusi function calls (misal: fetching API, database query, pembuatan file).
-3. **Persistent Memory Store**: Penyimpanan riwayat interaksi dan pengetahuan dalam database relasional (Supabase PostgreSQL / Vector store).
-4. **State Machine**: Mengelola transisi alur kerja dari input user hingga respon akhir.
-
-\`\`\`typescript
-// Contoh implementasi function tool call sederhana
-export async function executeToolCall(toolName: string, args: Record<string, any>) {
-  switch (toolName) {
-    case "queryDatabase":
-      return await supabase.from(args.table).select(args.query);
-    case "generateArtifact":
-      return await createBuildArtifact(args.type, args.payload);
-    default:
-      throw new Error(\`Tool \${toolName} tidak ditemukan.\`);
-  }
-}
-\`\`\`
-
----
-
-### Alur Kerja Sistem AI Agent
-
-Berikut adalah tahapan siklus eksekusi agent yang aman dan reliable:
-
-- **Perencanaan (Planning)**: Agent memecah permintaan user menjadi langkah-langkah terstruktur.
-- **Validasi Tool**: Agent memastikan parameter tool valid sebelum mengeksekusi command.
-- **Eksekusi & Evaluasi**: Hasil eksekusi diperiksa kembali oleh agent untuk memastikan output sesuai kebutuhan.
-- **Penyimpanan Memory**: Riwayat eksekusi disimpan ke tabel database untuk pembelajaran konteks selanjutnya.
-
----
-
-### Kesimpulan
-
-Integrasi Agentic AI membawa aplikasi web ke tingkat otomatisasi yang jauh lebih responsif. Dengan memadukan Next.js App Router dan Supabase, kita dapat membangun sistem AI modern yang scalable dan efisien.`,
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-    likeCount: 24,
-    dislikeCount: 0,
-    commentCount: 5,
-    authorName: "Brimas Pradika Utama",
-    authorAvatar: "/images/avatar.webp",
-  },
-  {
-    id: "sample-2",
-    title: "Optimasi Performa Web Modern: Dari Server Components Hingga Edge Caching",
-    slug: "optimasi-performa-web-modern-server-components-edge-caching",
-    category: "Web Dev",
-    readTime: "4 min read",
-    thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
-    content: `## Mengapa Performa Web Sangat Penting?
-
-Waktu muat halaman (*load time*) secara langsung mempengaruhi pengalaman pengguna (*User Experience*) dan pemeringkatan SEO. Setiap detik penundaan dalam merender komponen dapat menurunkan tingkat konversi hingga 20%.
-
----
-
-### Strategi Optimasi Utama
-
-1. **React Server Components (RSC)**: Memindahkan logika rendering berat ke server sehingga mengurangi ukuran bundle JavaScript yang dikirim ke browser.
-2. **Dynamic Image Optimization**: Menggunakan format Next.js Image (\`webp\` / \`avif\`) dengan teknik blur placeholder.
-3. **Edge Caching & Middleware**: Menyiapkan layer caching di lokasi paling dekat dengan pengguna melalui jaringan CDN global.
-
-\`\`\`tsx
-// Penggunaan Server Component dengan Caching Strategy
-export const revalidate = 3600; // revalidate setiap 1 jam
-
-export default async function DataWidget() {
-  const data = await fetch('https://api.example.com/stats', { next: { revalidate: 3600 } });
-  const result = await data.json();
-  
-  return <div className="p-4 rounded-xl bg-[#0F172A] text-[#ffffff]">{result.title}</div>;
-}
-\`\`\`
-
----
-
-### Checklist Performa
-
-- [x] Kurangi ukuran font pihak ketiga dengan \`next/font\`
-- [x] Hilangkan komponen JavaScript unused
-- [x] Aktifkan Brotli compression & HTTP/3
-- [x] Manfaatkan Web Vitals monitoring
-
-Performa tinggi bukan sekadar fitur tambahan, melainkan pondasi utama arsitektur web berkualitas profesional.`,
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    likeCount: 18,
-    dislikeCount: 1,
-    commentCount: 3,
-    authorName: "Brimas Pradika Utama",
-    authorAvatar: "/images/avatar.webp",
-  },
-  {
-    id: "sample-3",
-    title: "Panduan Lengkap Arsitektur Database Supabase & Prisma ORM",
-    slug: "panduan-lengkap-arsitektur-database-supabase-prisma-orm",
-    category: "Database",
-    readTime: "7 min read",
-    thumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80",
-    content: `## Memadukan Supabase PostgreSQL dan Prisma ORM
-
-Supabase memberikan infrastruktur PostgreSQL terkelola yang handal, lengkap dengan **Row Level Security (RLS)** dan autentikasi instan. Ketika digabungkan dengan **Prisma ORM**, pengembang mendapatkan proteksi *type-safety* end-to-end yang sangat kuat saat mengembangkan aplikasi Next.js.
-
----
-
-### Langkah Konfigurasi Schema Prisma
-
-Berikut adalah contoh skema Prisma relasional untuk sistem artikel, komentar, dan reaksi pengguna:
-
-\`\`\`prisma
-model Article {
-  id         String     @id @default(uuid()) @db.Uuid
-  title      String
-  slug       String     @unique
-  content    String
-  thumbnail  String?
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  reactions  Reaction[]
-  comments   Comment[]
-}
-\`\`\`
-
----
-
-### Keuntungan Pendekatan Ini
-
-- **Type Safety Autocomplete**: Mencegah typo nama kolom dan kesalahan tipe data saat querying.
-- **Migrasi Terstruktur**: Prisma Migrations memudahkan pelacakan perubahan struktur tabel database secara berkelanjutan.
-- **Integrasi Supabase Auth**: Menggabungkan user Supabase Auth ke tabel internal untuk relasi data yang rapi.
-
-Dengan kombinasi ini, siklus pengembangan backend menjadi jauh lebih cepat, aman, dan mudah di-maintain.`,
-    created_at: new Date(Date.now() - 86400000 * 9).toISOString(),
-    likeCount: 31,
-    dislikeCount: 0,
-    commentCount: 8,
-    authorName: "Brimas Pradika Utama",
-    authorAvatar: "/images/avatar.webp",
-  }
-];
-
-// Helper: hitung estimated read time
 function calculateReadTime(content: string): string {
-  const words = content.trim().split(/\s+/).length;
+  if (!content) return "1 min read";
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 180));
   return `${minutes} min read`;
 }
@@ -435,30 +280,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
     return {
       ...sampleMatch,
       userReaction: null,
-      comments: [
-        {
-          id: "comment-1",
-          content: "Penjelasan yang sangat lengkap dan tajam! Sangat bermanfaat untuk workflow Next.js.",
-          created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-          user_id: "user-demo-1",
-          user: {
-            id: "user-demo-1",
-            name: "Alex Pratama",
-            avatar: null,
-          },
-        },
-        {
-          id: "comment-2",
-          content: "Mantap mas Brimas, ditunggu kelanjutan implementasi Supabase RLS-nya!",
-          created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-          user_id: "user-demo-2",
-          user: {
-            id: "user-demo-2",
-            name: "Rian Hidayat",
-            avatar: null,
-          },
-        },
-      ],
+      comments: [],
     };
   }
 
@@ -502,7 +324,6 @@ export async function getArticleById(id: string): Promise<ArticleItem | null> {
 
 import { uploadFileToSupabaseStorage } from "@/lib/supabase/storage";
 
-// Upload gambar artikel (Thumbnail atau Embed Content) ke Supabase Storage (Membaca ENV)
 export async function uploadArticleImage(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -535,7 +356,7 @@ export async function uploadArticleImage(formData: FormData) {
 // 3. Admin-only: Buat Artikel Baru
 export async function createArticle(data: {
   title: string;
-  slug: string;
+  slug?: string;
   content: string;
   thumbnail?: string;
 }) {
@@ -547,11 +368,13 @@ export async function createArticle(data: {
   }
 
   try {
-    let slugFormatted = data.slug
+    const rawSlug = (data.slug && data.slug.trim()) ? data.slug : data.title;
+    let slugFormatted = rawSlug
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9 -]/g, "")
-      .replace(/\s+/g, "-");
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
 
     if (!slugFormatted) {
       slugFormatted = `artikel-${Date.now()}`;
@@ -573,8 +396,8 @@ export async function createArticle(data: {
       },
     });
 
-    revalidatePath("/posts");
-    revalidatePath("/admin/articles");
+    revalidatePath("/artikel");
+    revalidatePath("/admin/artikel");
     return { success: true, article: newArt };
   } catch (err: unknown) {
     console.error("Error creating article:", err);
@@ -598,8 +421,8 @@ export async function deleteArticle(articleId: string) {
         await prisma.article.delete({ where: { id: articleId } });
       }
     }
-    revalidatePath("/posts");
-    revalidatePath("/admin/articles");
+    revalidatePath("/artikel");
+    revalidatePath("/admin/artikel");
     return { success: true };
   } catch (err: unknown) {
     console.error("Error deleting article:", err);
@@ -612,7 +435,7 @@ export async function updateArticle(
   articleId: string,
   data: {
     title: string;
-    slug: string;
+    slug?: string;
     content: string;
     thumbnail?: string;
   }
@@ -625,11 +448,13 @@ export async function updateArticle(
   }
 
   try {
-    let slugFormatted = data.slug
+    const rawSlug = (data.slug && data.slug.trim()) ? data.slug : data.title;
+    let slugFormatted = rawSlug
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9 -]/g, "")
-      .replace(/\s+/g, "-");
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
 
     if (!slugFormatted) {
       slugFormatted = `artikel-${Date.now()}`;
@@ -667,9 +492,9 @@ export async function updateArticle(
       });
     }
 
-    revalidatePath("/posts");
-    revalidatePath(`/posts/${slugFormatted}`);
-    revalidatePath("/admin/articles");
+    revalidatePath("/artikel");
+    revalidatePath(`/artikel/${slugFormatted}`);
+    revalidatePath("/admin/artikel");
     return { success: true, article: updatedArt };
   } catch (err: unknown) {
     console.error("Error updating article:", err);
@@ -760,8 +585,8 @@ export async function toggleArticleReaction(
       });
     }
 
-    revalidatePath(`/posts/${articleExists.slug}`);
-    revalidatePath("/posts");
+    revalidatePath(`/artikel/${articleExists.slug}`);
+    revalidatePath("/artikel");
 
     return { success: true };
   } catch (err: unknown) {
@@ -837,8 +662,8 @@ export async function addArticleComment(articleId: string, content: string) {
       },
     });
 
-    revalidatePath(`/posts/${articleExists.slug}`);
-    revalidatePath("/posts");
+    revalidatePath(`/artikel/${articleExists.slug}`);
+    revalidatePath("/artikel");
 
     return {
       success: true,
@@ -888,7 +713,7 @@ export async function deleteArticleComment(commentId: string) {
 
     await prisma.comment.delete({ where: { id: commentId } });
 
-    revalidatePath("/posts");
+    revalidatePath("/artikel");
     return { success: true };
   } catch (err: unknown) {
     console.error("Error deleting comment:", err);

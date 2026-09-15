@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/posts`,
+      url: `${baseUrl}/artikel`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.8,
@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (posts && posts.length > 0) {
       articleRoutes = posts.map((post) => ({
-        url: `${baseUrl}/posts/${post.slug}`,
+        url: `${baseUrl}/artikel/${post.slug}`,
         lastModified: new Date(post.updated_at || post.created_at || Date.now()),
         changeFrequency: "weekly",
         priority: 0.7,
@@ -57,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
 
     articleRoutes = fallbackSlugs.map((slug) => ({
-      url: `${baseUrl}/posts/${slug}`,
+      url: `${baseUrl}/artikel/${slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,

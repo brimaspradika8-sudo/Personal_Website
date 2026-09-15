@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Cinzel } from "next/font/google";
+import { Plus_Jakarta_Sans, Cinzel, Press_Start_2P, Silkscreen } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
@@ -13,6 +13,20 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 const cinzel = Cinzel({
   subsets: ["latin"],
   variable: "--font-serif",
+  display: "swap",
+});
+
+const pressStart2P = Press_Start_2P({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-press-start",
+  display: "swap",
+});
+
+const silkscreen = Silkscreen({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-pixel",
   display: "swap",
 });
 
@@ -88,8 +102,24 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="id" className={`${plusJakartaSans.variable} ${cinzel.variable}`}>
+    <html lang="id" className={`${plusJakartaSans.variable} ${cinzel.variable} ${pressStart2P.variable} ${silkscreen.variable}`}>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var mode = localStorage.getItem("theme_mode") || localStorage.getItem("landscape_mode") || localStorage.getItem("dashboard_theme");
+                  if (mode === "night" || mode === "dark") {
+                    document.documentElement.classList.add("dark");
+                  } else {
+                    document.documentElement.classList.remove("dark");
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

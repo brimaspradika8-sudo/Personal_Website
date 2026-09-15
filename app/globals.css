@@ -72,6 +72,51 @@ html.dark {
   font-family: var(--font-serif), Georgia, 'Times New Roman', serif;
 }
 
+.font-pixel {
+  font-family: var(--font-pixel), 'Silkscreen', monospace;
+}
+
+.font-press-start {
+  font-family: var(--font-press-start), 'Press Start 2P', monospace;
+}
+
+/* Pixel Art Box & Border Utilities */
+.pixel-border-sm {
+  box-shadow: 
+    2px 0 0 0 currentColor,
+    -2px 0 0 0 currentColor,
+    0 -2px 0 0 currentColor,
+    0 2px 0 0 currentColor;
+}
+
+.pixel-border-md {
+  box-shadow: 
+    4px 0 0 0 currentColor,
+    -4px 0 0 0 currentColor,
+    0 -4px 0 0 currentColor,
+    0 4px 0 0 currentColor;
+}
+
+.pixel-shadow-yellow {
+  box-shadow: 4px 4px 0px 0px #FFE600;
+}
+
+.pixel-shadow-cyan {
+  box-shadow: 4px 4px 0px 0px #00F0FF;
+}
+
+.pixel-shadow-pink {
+  box-shadow: 4px 4px 0px 0px #FF0075;
+}
+
+.pixel-shadow-green {
+  box-shadow: 4px 4px 0px 0px #00FF66;
+}
+
+.pixel-shadow-dark {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
 /* Hide native browser password reveal button in Edge/Internet Explorer */
 input::-ms-reveal,
 input::-ms-clear {
@@ -122,7 +167,8 @@ input::-ms-clear {
   }
 }
 
-.animate-welcome-marquee {
+.animate-welcome-marquee,
+.animate-marquee {
   display: flex !important;
   width: max-content !important;
   will-change: transform;
