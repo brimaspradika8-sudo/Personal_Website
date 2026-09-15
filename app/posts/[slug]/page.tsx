@@ -14,26 +14,39 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
 
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://brimas.vercel.app").replace(/\/$/, "");
+
   if (!article) {
     return {
+      metadataBase: new URL(siteUrl),
       title: "Artikel Tidak Ditemukan | Brimas Pradika Utama",
     };
   }
 
   const cleanDescription = article.content
-    .slice(0, 160)
+    .replace(/<[^>]*>?/gm, "")
     .replace(/[#*`_]/g, "")
-    .trim();
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 160);
 
-  const ogImageUrl = article.thumbnail || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80";
+  let ogImageUrl = (article.thumbnail || "").trim();
+  if (!ogImageUrl) {
+    ogImageUrl = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80";
+  } else if (ogImageUrl.startsWith("/")) {
+    ogImageUrl = `${siteUrl}${ogImageUrl}`;
+  }
+
+  const articleUrl = `${siteUrl}/posts/${article.slug}`;
 
   return {
+    metadataBase: new URL(siteUrl),
     title: `${article.title} | Brimas Pradika Utama`,
     description: cleanDescription,
     openGraph: {
       title: article.title,
       description: cleanDescription,
-      url: `https://brimaspradika.com/posts/${article.slug}`,
+      url: articleUrl,
       siteName: "Brimas Pradika Utama Portfolio",
       images: [
         {
