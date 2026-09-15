@@ -6,6 +6,7 @@ import Link from "next/link";
 import { MessageSquare, Send, Trash2, UserCheck } from "lucide-react";
 import { GuestbookEntry, getGuestbookEntries, createGuestbookEntry, deleteGuestbookEntry } from "@/lib/actions/guestbook";
 import { soundFx } from "@/lib/audio/sound";
+import ConfirmModal from "@/components/ConfirmModal";
 
 interface GuestbookSectionProps {
   user: {
@@ -21,6 +22,16 @@ export default function GuestbookSection({ user, isNight = true }: GuestbookSect
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const [confirmModalState, setConfirmModalState] = useState<{
+    isOpen: boolean;
+    entryId: string | null;
+    isLoading: boolean;
+  }>({
+    isOpen: false,
+    entryId: null,
+    isLoading: false,
+  });
 
   useEffect(() => {
     async function loadData() {
@@ -60,15 +71,22 @@ export default function GuestbookSection({ user, isNight = true }: GuestbookSect
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     soundFx.playClick();
-    if (!confirm("Apakah Anda yakin ingin menghapus pesan ini?")) return;
+    setConfirmModalState({ isOpen: true, entryId: id, isLoading: false });
+  };
 
-    const res = await deleteGuestbookEntry(id);
+  const confirmDeleteEntry = async () => {
+    if (!confirmModalState.entryId) return;
+    setConfirmModalState((prev) => ({ ...prev, isLoading: true }));
+
+    const res = await deleteGuestbookEntry(confirmModalState.entryId);
     if (res.error) {
       alert(res.error);
+      setConfirmModalState((prev) => ({ ...prev, isLoading: false }));
     } else {
-      setEntries((prev) => prev.filter((e) => e.id !== id));
+      setEntries((prev) => prev.filter((e) => e.id !== confirmModalState.entryId));
+      setConfirmModalState({ isOpen: false, entryId: null, isLoading: false });
     }
   };
 
@@ -234,6 +252,17 @@ export default function GuestbookSection({ user, isNight = true }: GuestbookSect
         </div>
 
       </div>
+
+      {/* Modern Custom Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalState.isOpen}
+        title="Hapus Pesan Buku Tamu?"
+        description="Apakah Anda yakin ingin menghapus pesan ini secara permanen dari buku tamu?"
+        isLoading={confirmModalState.isLoading}
+        onConfirm={confirmDeleteEntry}
+        onCancel={() => setConfirmModalState({ isOpen: false, entryId: null, isLoading: false })}
+        isNight={isNight}
+      />
     </section>
   );
 }

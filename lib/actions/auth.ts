@@ -36,11 +36,6 @@ export async function checkIsAdmin(email?: string | null): Promise<boolean> {
   if (!email) return false;
   const normalizedEmail = email.toLowerCase().trim();
 
-  const ownerEmail = (process.env.OWNER_EMAIL || "").trim().toLowerCase();
-  if (ownerEmail && normalizedEmail === ownerEmail) {
-    return true;
-  }
-
   const envAdminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((e) => e.trim().toLowerCase())

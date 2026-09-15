@@ -24,6 +24,7 @@ import {
   Save,
 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
+import ConfirmModal from "@/components/ConfirmModal";
 import {
   ArticleItem,
   createArticle,
@@ -129,15 +130,40 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
     setLoadingComments(false);
   };
 
-  const handleDeleteComment = async (commentId: string) => {
+  // Confirm Modal State
+  const [confirmModalState, setConfirmModalState] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    isLoading: boolean;
+    onConfirm: () => Promise<void>;
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    isLoading: false,
+    onConfirm: async () => {},
+  });
+
+  const handleDeleteComment = (commentId: string) => {
     soundFx.playClick();
-    if (!confirm("Apakah Anda yakin ingin menghapus komentar ini?")) return;
-    const res = await deleteArticleComment(commentId);
-    if (res.error) {
-      alert(`Gagal menghapus komentar: ${res.error}`);
-    } else {
-      setAdminComments((prev) => prev.filter((c) => c.id !== commentId));
-    }
+    setConfirmModalState({
+      isOpen: true,
+      title: "Hapus Komentar?",
+      description: "Apakah Anda yakin ingin menghapus komentar ini secara permanen?",
+      isLoading: false,
+      onConfirm: async () => {
+        setConfirmModalState((prev) => ({ ...prev, isLoading: true }));
+        const res = await deleteArticleComment(commentId);
+        if (res.error) {
+          alert(`Gagal menghapus komentar: ${res.error}`);
+          setConfirmModalState((prev) => ({ ...prev, isLoading: false }));
+        } else {
+          setAdminComments((prev) => prev.filter((c) => c.id !== commentId));
+          setConfirmModalState((prev) => ({ ...prev, isOpen: false, isLoading: false }));
+        }
+      },
+    });
   };
 
   const handleTitleChange = (val: string) => {
@@ -225,18 +251,25 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
     setLoading(false);
   };
 
-  const handleDelete = async (id: string, title: string) => {
+  const handleDelete = (id: string, title: string) => {
     soundFx.playClick();
-    if (!confirm(`Apakah Anda yakin ingin menghapus artikel "${title}"?`)) {
-      return;
-    }
-
-    const res = await deleteArticle(id);
-    if (res.error) {
-      alert(`Gagal menghapus: ${res.error}`);
-    } else {
-      setArticles((prev) => prev.filter((a) => a.id !== id));
-    }
+    setConfirmModalState({
+      isOpen: true,
+      title: "Hapus Artikel?",
+      description: `Apakah Anda yakin ingin menghapus artikel "${title}"? Tindakan ini permanen dan tidak dapat dibatalkan.`,
+      isLoading: false,
+      onConfirm: async () => {
+        setConfirmModalState((prev) => ({ ...prev, isLoading: true }));
+        const res = await deleteArticle(id);
+        if (res.error) {
+          alert(`Gagal menghapus: ${res.error}`);
+          setConfirmModalState((prev) => ({ ...prev, isLoading: false }));
+        } else {
+          setArticles((prev) => prev.filter((a) => a.id !== id));
+          setConfirmModalState((prev) => ({ ...prev, isOpen: false, isLoading: false }));
+        }
+      },
+    });
   };
 
   const filteredArticles = articles.filter(
@@ -800,6 +833,17 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
         </div>
       )}
+
+      {/* Modern Custom Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModalState.isOpen}
+        title={confirmModalState.title}
+        description={confirmModalState.description}
+        isLoading={confirmModalState.isLoading}
+        onConfirm={confirmModalState.onConfirm}
+        onCancel={() => setConfirmModalState((prev) => ({ ...prev, isOpen: false }))}
+        isNight={isNight}
+      />
 
     </div>
   );
