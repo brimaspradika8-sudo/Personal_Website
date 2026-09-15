@@ -46,14 +46,19 @@ export default function UserDashboard({
   dbUser,
   articles = [],
 }: UserDashboardProps) {
-  const [isNight, setIsNight] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("dashboard_theme") !== "day";
-    }
-    return true;
-  });
+  const [isNight, setIsNight] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("dashboard_theme");
+    if (saved === "day") {
+      setIsNight(false);
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   useEffect(() => {
     if (isNight) {

@@ -86,13 +86,14 @@ export default function DashboardClient({
   isAdmin = false,
 }: DashboardClientProps) {
   const { lang, toggleLang } = useLanguage();
-  const [mode, setMode] = useState<"day" | "night">(() => {
-    if (typeof window !== "undefined") {
-      const savedMode = localStorage.getItem("landscape_mode");
-      if (savedMode === "night") return "night";
+  const [mode, setMode] = useState<"day" | "night">("day");
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("landscape_mode");
+    if (savedMode === "night") {
+      setMode("night");
     }
-    return "day";
-  });
+  }, []);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);

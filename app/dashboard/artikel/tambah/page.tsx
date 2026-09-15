@@ -15,9 +15,19 @@ import {
   Plus,
   X,
 } from "lucide-react";
-import RichTextEditor from "@/components/RichTextEditor";
+import dynamic from "next/dynamic";
 import { createArticle, uploadArticleImage } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
+
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-72 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center text-xs text-slate-400 gap-2">
+      <div className="w-6 h-6 border-2 border-[#D32F2F] border-t-transparent rounded-full animate-spin" />
+      <span>Memuat Editor Artikel...</span>
+    </div>
+  ),
+});
 
 const DRAFT_KEY = "article_draft_new";
 
@@ -32,20 +42,21 @@ export default function TambahArtikelPage() {
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Auto-save draft indicator state
-  const [hasDraft, setHasDraft] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const savedDraft = localStorage.getItem(DRAFT_KEY);
-        if (savedDraft) {
-          const parsed = JSON.parse(savedDraft);
-          return Boolean(parsed.title || parsed.content);
-        }
-      } catch {}
-    }
-    return false;
-  });
+  // Auto-save draft indicator state (dikelola via useEffect agar bebas hydration mismatch)
+  const [hasDraft, setHasDraft] = useState<boolean>(false);
   const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem(DRAFT_KEY);
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed.title || parsed.content) {
+          setHasDraft(true);
+        }
+      }
+    } catch {}
+  }, []);
 
   // Save to localStorage automatically on state change
   useEffect(() => {

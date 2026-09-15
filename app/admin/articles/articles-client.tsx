@@ -37,7 +37,17 @@ import {
 } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
-import RichTextEditor from "@/components/RichTextEditor";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-72 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center text-xs text-slate-400 gap-2">
+      <div className="w-6 h-6 border-2 border-[#D32F2F] border-t-transparent rounded-full animate-spin" />
+      <span>Memuat Editor Artikel...</span>
+    </div>
+  ),
+});
 
 interface ArticlesClientProps {
   initialArticles: ArticleItem[];
@@ -48,12 +58,15 @@ interface ArticlesClientProps {
 export default function AdminArticlesClient({ initialArticles }: ArticlesClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isNight, setIsNight] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("dashboard_theme") === "night";
+  const [isNight, setIsNight] = useState<boolean>(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("dashboard_theme");
+    if (savedTheme === "night") {
+      setIsNight(true);
+      document.documentElement.classList.add("dark");
     }
-    return false;
-  });
+  }, []);
 
   // Modal State (Create / Edit)
   const [isModalOpen, setIsModalOpen] = useState(false);

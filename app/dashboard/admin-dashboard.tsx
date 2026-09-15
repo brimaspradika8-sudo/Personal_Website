@@ -62,12 +62,15 @@ export default function AdminDashboard({
   recentArticles,
 }: AdminDashboardProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isNight, setIsNight] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("dashboard_theme") === "night";
+  const [isNight, setIsNight] = useState<boolean>(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("dashboard_theme");
+    if (savedTheme === "night") {
+      setIsNight(true);
+      document.documentElement.classList.add("dark");
     }
-    return false;
-  });
+  }, []);
 
   useEffect(() => {
     if (isNight) {
