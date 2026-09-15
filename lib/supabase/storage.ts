@@ -30,7 +30,6 @@ export async function uploadFileToSupabaseStorage({
   bucketName,
   folder = "article-images",
 }: UploadFileOptions) {
-  const supabase = await createClient();
   const { articleBucket } = getStorageBucketConfig();
 
   // Gunakan bucket khusus atau fallback ke variabel env NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET
@@ -42,6 +41,17 @@ export async function uploadFileToSupabaseStorage({
 
   const arrayBuffer = await file.arrayBuffer();
   const fileBuffer = Buffer.from(arrayBuffer);
+
+  let supabase = await createClient();
+
+  // Jika terdapat SUPABASE_SERVICE_ROLE_KEY di .env, gunakan Service Role Client untuk bypass RLS di Server Action
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+
+  if (serviceKey && serviceKey.includes("service_role") && supabaseUrl) {
+    const { createClient: createSupabaseJsClient } = await import("@supabase/supabase-js");
+    supabase = createSupabaseJsClient(supabaseUrl, serviceKey) as unknown as typeof supabase;
+  }
 
   // Upload file ke Supabase Storage Bucket
   const { error: uploadError } = await supabase.storage
@@ -76,10 +86,15 @@ export async function uploadFileToSupabaseStorage({
       }
     } else {
       return {
-        error: `Bucket Storage '${targetBucket}' belum ada. Silakan atur env NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET=${targetBucket} dan buat bucket di Supabase.`,
+        error: `Bucket Storage '${targetBucket}' belum ada. Silakan buat bucket '${targetBucket}' berstatus Public di Dashboard Supabase Storage.`,
       };
     }
   } else if (uploadError) {
+    if (uploadError.message.includes("row-level security")) {
+      return {
+        error: `Gagal upload karena izin RLS Supabase Storage. Silakan jalankan Policy SQL atau izinkan akses INSERT di Dashboard Supabase Storage > Policies.`,
+      };
+    }
     return { error: `Gagal mengunggah ke Supabase Storage: ${uploadError.message}` };
   }
 
