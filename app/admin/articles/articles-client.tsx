@@ -21,6 +21,7 @@ import {
   MessageSquare,
   Globe,
   LogOut,
+  Save,
 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import {
@@ -531,36 +532,36 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
         </div>
       )}
 
-      {/* Full-Page Overlay Editor Form Create / Edit Artikel (Image 1 Structure) */}
+      {/* Full-Page Overlay Editor Form Create / Edit Artikel (Image 1 Structure - Light Theme) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-[#0B0F17] text-slate-100 overflow-y-auto font-sans p-4 sm:p-6 lg:p-10 space-y-8">
+        <div className="fixed inset-0 z-50 bg-[#F8F9FA] text-slate-900 overflow-y-auto font-sans p-4 sm:p-6 lg:p-10 space-y-8">
           
           {/* Top Bar Navigation */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-4 max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-xl border border-slate-800 hover:bg-slate-900 transition-all text-slate-400 hover:text-white"
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 transition-all text-slate-600 hover:text-slate-900"
                 title="Tutup Editor"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 EDITOR / {editingArticle ? "EDIT ENTRY" : "NEW ENTRY"}
               </span>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-sans text-amber-400">
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-sans text-amber-800 font-medium">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
                 <span>{editingArticle ? "Mengedit artikel" : "Draft baru (belum terbit)"}</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-xl hover:bg-slate-900 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -569,10 +570,10 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
           {/* Page Heading & Sub-text */}
           <div className="space-y-2 max-w-7xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               {editingArticle ? "Edit Artikel" : "Tulis Artikel Baru"}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 font-sans max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-2xl leading-relaxed">
               Tuangkan pemikiran, dokumentasikan insight baru, atau bagikan eksperimen teknis kamu.
             </p>
           </div>
@@ -583,8 +584,8 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
               <div
                 className={`p-4 rounded-2xl border text-xs font-medium flex items-center gap-2.5 ${
                   statusMsg.type === "success"
-                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-                    : "bg-red-500/10 border-red-500/20 text-red-400"
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                    : "bg-red-50 border-red-200 text-red-700"
                 }`}
               >
                 {statusMsg.type === "success" ? (
@@ -613,7 +614,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                     value={title}
                     onChange={(e) => handleTitleChange(e.target.value)}
                     placeholder="Ketik judul artikel..."
-                    className="w-full bg-transparent text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all py-1 border-b border-transparent focus:border-slate-800"
+                    className="w-full bg-transparent text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all py-1 border-b border-transparent focus:border-slate-300"
                   />
                   <p className="text-xs text-slate-500 font-sans leading-relaxed">
                     Tulis dengan gaya bahasa dan perspektif personalmu. Ide sederhana seringkali jadi tulisan terbaik.
@@ -622,7 +623,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
                 {/* Field URL Slug */}
                 <div className="space-y-1.5 pt-2">
-                  <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                  <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-600">
                     URL Slug <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -631,13 +632,13 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
                     placeholder="membangun-ai-agent-dengan-nextjs-supabase"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-200 text-xs font-mono focus:outline-none focus:border-[#D32F2F] transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs font-mono focus:outline-none focus:border-[#D32F2F] shadow-xs transition-all"
                   />
                 </div>
 
                 {/* Field Konten Artikel dengan Rich Text Editor */}
                 <div className="space-y-2 pt-2">
-                  <div className="rounded-2xl border border-slate-800 bg-[#0E1015] overflow-hidden p-1 shadow-sm">
+                  <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden p-1 shadow-sm">
                     <RichTextEditor
                       content={content}
                       onChange={setContent}
@@ -652,18 +653,18 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
               <div className="lg:col-span-4 space-y-6">
                 
                 {/* Section 01: COVER IMAGE */}
-                <div className="p-5 sm:p-6 rounded-2xl border border-slate-800 bg-[#0E1015] space-y-4">
-                  <div className="text-[11px] font-bold text-slate-400 font-mono tracking-wider">
+                <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white space-y-4 shadow-xs">
+                  <div className="text-[11px] font-bold text-slate-500 font-mono tracking-wider">
                     01 COVER IMAGE
                   </div>
 
                   {/* Box Upload Gambar Cover (Dashed Style) */}
                   <div className="space-y-3">
-                    <label className="relative border-2 border-dashed border-slate-800 hover:border-slate-700 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-900/30 hover:bg-slate-900/50 group min-h-[160px]">
+                    <label className="relative border-2 border-dashed border-slate-300 hover:border-slate-400 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-50 hover:bg-slate-100/80 group min-h-[160px]">
                       {thumbnail ? (
-                        <div className="relative w-full h-36 rounded-lg overflow-hidden border border-slate-800">
+                        <div className="relative w-full h-36 rounded-lg overflow-hidden border border-slate-200">
                           <Image src={thumbnail} alt="Cover preview" fill className="object-cover" />
-                          <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                             <span className="text-xs font-medium text-white bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-700">
                               Ganti Gambar
                             </span>
@@ -671,10 +672,10 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                         </div>
                       ) : (
                         <>
-                          <div className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors mb-2">
+                          <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 group-hover:text-slate-900 shadow-xs transition-colors mb-2">
                             <Plus className="w-5 h-5" />
                           </div>
-                          <span className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
+                          <span className="text-xs font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
                             {uploadingThumbnail ? "Mengunggah..." : "Unggah gambar cover"}
                           </span>
                           <span className="text-[10px] text-slate-500 font-mono mt-1">
@@ -703,7 +704,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                               reader.onload = () => {
                                 if (reader.result) {
                                   setThumbnail(reader.result as string);
-                                  setStatusMsg({ type: "success", text: "Thumbnail berhasil diunggah (mode fallback)." });
+                                  setStatusMsg({ type: "success", text: "Thumbnail dimasukkan (fallback lokal)." });
                                 }
                               };
                               reader.readAsDataURL(file);
@@ -713,7 +714,6 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                             reader.onload = () => {
                               if (reader.result) {
                                 setThumbnail(reader.result as string);
-                                setStatusMsg({ type: "success", text: "Thumbnail berhasil diunggah." });
                               }
                             };
                             reader.readAsDataURL(file);
@@ -732,14 +732,14 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                       value={thumbnail}
                       onChange={(e) => setThumbnail(e.target.value)}
                       placeholder="Atau tempel URL gambar di sini..."
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-300 placeholder:text-slate-600 text-xs focus:outline-none focus:border-[#D32F2F] transition-all"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:border-[#D32F2F] transition-all"
                     />
 
                     {thumbnail && (
                       <button
                         type="button"
                         onClick={() => setThumbnail("")}
-                        className="text-[11px] text-red-400 hover:text-red-300 font-medium inline-flex items-center gap-1"
+                        className="text-[11px] text-red-600 hover:text-red-700 font-medium inline-flex items-center gap-1"
                       >
                         <X className="w-3 h-3" /> Hapus Gambar Cover
                       </button>
@@ -752,40 +752,40 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                 </div>
 
                 {/* Section 02: PUBLIKASI */}
-                <div className="p-5 sm:p-6 rounded-2xl border border-slate-800 bg-[#0E1015] space-y-4">
-                  <div className="text-[11px] font-bold text-slate-400 font-mono tracking-wider">
+                <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white space-y-4 shadow-xs">
+                  <div className="text-[11px] font-bold text-slate-500 font-mono tracking-wider">
                     02 PUBLIKASI
                   </div>
 
                   <div className="space-y-3 font-sans text-xs">
-                    <div className="flex items-center justify-between py-1 border-b border-slate-800/60">
-                      <span className="text-slate-400">Status</span>
-                      <span className="font-medium text-emerald-400 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <div className="flex items-center justify-between py-1 border-b border-slate-100">
+                      <span className="text-slate-500">Status</span>
+                      <span className="font-medium text-emerald-600 flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         Live saat disimpan
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-slate-400">Format</span>
-                      <span className="font-medium text-slate-200">Artikel / Jurnal</span>
+                      <span className="text-slate-500">Format</span>
+                      <span className="font-medium text-slate-900">Artikel / Jurnal</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-slate-800/80 pt-4 space-y-2">
+                  <div className="border-t border-slate-100 pt-4 space-y-2">
                     <button
                       type="submit"
                       disabled={loading}
                       className="w-full py-3 rounded-xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                     >
-                      <Upload className="w-4 h-4" />
+                      <Save className="w-4 h-4" />
                       <span>{loading ? "Menyimpan..." : editingArticle ? "Simpan Perubahan" : "Terbitkan Artikel"}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
-                      className="w-full py-2.5 text-center rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
+                      className="block w-full py-2.5 text-center rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
                     >
                       Batal
                     </button>
