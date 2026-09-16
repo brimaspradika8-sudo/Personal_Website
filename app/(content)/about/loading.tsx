@@ -1,51 +1,58 @@
-import React from "react";
-
 export default function AboutLoading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-black pb-28 sm:pb-20">
-      {/* 1. Sticky Header Skeleton */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b-4 border-black dark:border-white px-4 sm:px-8 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 animate-pulse">
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="w-9 h-9 rounded-none bg-[#EAB308] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
-            <div className="w-32 sm:w-40 h-5 rounded-none bg-black dark:bg-white" />
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <div className="w-20 h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
-            <div className="w-20 h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
-            <div className="w-20 h-5 rounded-none bg-[#16A34A]" />
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="w-24 h-9 rounded-none bg-[#EAB308] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono antialiased pb-24 selection:bg-[#FF0000] selection:text-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 space-y-10 animate-pulse">
+        {/* Top Hero Banner & Profile Header Skeleton */}
+        <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
+          <div className="w-full h-44 sm:h-64 bg-black border-b-4 border-black dark:border-white" />
+          <div className="p-6 sm:p-10 space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 -mt-16 sm:-mt-24">
+              <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-[#FF0000] border-4 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0" />
+              <div className="flex gap-3">
+                <div className="w-36 h-10 rounded-none bg-[#FFFF00] border-3 border-black" />
+                <div className="w-32 h-10 rounded-none bg-[#FF0000] border-3 border-black" />
+              </div>
+            </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 space-y-12">
-        {/* 2. Hero Skeleton */}
-        <div className="p-6 sm:p-10 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-6 animate-pulse">
-          <div className="w-48 h-8 rounded-none bg-[#EAB308] border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
-          <div className="space-y-3">
-            <div className="w-3/4 max-w-2xl h-12 rounded-none bg-neutral-300 dark:bg-neutral-800 border-2 border-black dark:border-white" />
-            <div className="w-1/2 max-w-lg h-6 rounded-none bg-[#16A34A] border-2 border-black" />
-          </div>
-          <div className="w-full max-w-xl h-16 rounded-none bg-neutral-200 dark:bg-neutral-900 border-2 border-black dark:border-white" />
-          
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
-            <div className="h-16 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white" />
-            <div className="h-16 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white" />
-            <div className="h-16 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white" />
-            <div className="h-16 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white" />
+            <div className="space-y-3 pt-2">
+              <div className="w-72 sm:w-96 h-10 rounded-none bg-black dark:bg-white" />
+              <div className="w-full max-w-2xl h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+              <div className="w-3/4 max-w-xl h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+            </div>
           </div>
         </div>
 
-        {/* 3. Content Grid Skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-pulse">
-          <div className="lg:col-span-5 h-[400px] rounded-none border-4 border-black dark:border-white bg-neutral-200 dark:bg-neutral-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]" />
-          <div className="lg:col-span-7 space-y-4">
-            <div className="w-40 h-8 rounded-none bg-[#16A34A] border-2 border-black" />
-            <div className="w-full h-32 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white" />
-            <div className="w-full h-32 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white" />
+        {/* Quick Metrics Grid Skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="p-5 rounded-none border-3 border-black dark:border-white bg-white dark:bg-black space-y-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
+            >
+              <div className="w-20 h-8 rounded-none bg-[#FFFF00] border border-black" />
+              <div className="w-28 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+            </div>
+          ))}
+        </div>
+
+        {/* Bio Section & Skills Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 p-8 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <div className="w-48 h-8 rounded-none bg-[#FF0000]" />
+            <div className="space-y-3">
+              <div className="w-full h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+              <div className="w-full h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+              <div className="w-4/5 h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+            </div>
+          </div>
+
+          <div className="p-8 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <div className="w-40 h-8 rounded-none bg-[#FFFF00]" />
+            <div className="space-y-2">
+              <div className="w-full h-8 rounded-none bg-neutral-200 dark:bg-neutral-900 border border-black" />
+              <div className="w-full h-8 rounded-none bg-neutral-200 dark:bg-neutral-900 border border-black" />
+              <div className="w-full h-8 rounded-none bg-neutral-200 dark:bg-neutral-900 border border-black" />
+            </div>
           </div>
         </div>
       </div>

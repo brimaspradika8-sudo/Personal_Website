@@ -3,10 +3,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { MEMBERSHIP_PLANS, getEffectiveUserTier } from "@/lib/membership";
-import { createXenditInvoice } from "@/lib/xendit";
+import { createXenditInvoice, getXenditInvoice } from "@/lib/xendit";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { MembershipTier } from "@prisma/client";
+
 
 async function getAppBaseUrl(): Promise<string> {
   if (process.env.NEXT_PUBLIC_APP_URL) {
@@ -121,6 +122,103 @@ export async function createMembershipInvoice(
   }
 }
 
+/**
+ * Memeriksa transaksi pembayaran yang masih PENDING milik user di Xendit API.
+ * Jika invoice Xendit sudah PAID / SETTLED, otomatis perbarui status Payment dan Tier User di database.
+ * Fungsi ini bertindak sebagai fail-safe otomatis jika webhook Xendit tidak terjangkau (misal saat dev/testing).
+ */
+export async function verifyLatestUserPayment() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user || !user.email) return { success: false, error: "Not logged in" };
+
+    const dbUser = await prisma.user.findUnique({
+      where: { email: user.email },
+    });
+
+    if (!dbUser) return { success: false, error: "User not found" };
+
+    // Cari payment PENDING milik user ini
+    const pendingPayments = await prisma.payment.findMany({
+      where: {
+        user_id: dbUser.id,
+        status: "PENDING",
+      },
+      orderBy: { created_at: "desc" },
+      take: 5,
+    });
+
+    let updatedCount = 0;
+
+    for (const payment of pendingPayments) {
+      if (!payment.xendit_invoice_id) continue;
+
+      try {
+        const xenditInvoice = await getXenditInvoice(payment.xendit_invoice_id);
+
+        if (xenditInvoice && (xenditInvoice.status === "PAID" || xenditInvoice.status === "SETTLED")) {
+          const now = new Date();
+          const periodStart = now;
+          const periodEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 Hari
+
+          // 1. Update Payment status
+          await prisma.payment.update({
+            where: { id: payment.id },
+            data: {
+              status: "PAID",
+              paid_at: now,
+              period_start: periodStart,
+              period_end: periodEnd,
+            },
+          });
+
+          // 2. Update User Membership Tier
+          let targetTier = payment.tier;
+          if (dbUser.tier === "SAHABAT_BRIMAS" && payment.tier === "KAWAN_BRIMAS") {
+            if (dbUser.tier_expires_at && dbUser.tier_expires_at > now) {
+              targetTier = "SAHABAT_BRIMAS";
+            }
+          }
+
+          await prisma.user.update({
+            where: { id: dbUser.id },
+            data: {
+              tier: targetTier,
+              tier_expires_at: periodEnd,
+            },
+          });
+
+          updatedCount++;
+          console.log(`Auto-Verified Xendit Payment Success: User ${dbUser.id} upgraded to ${targetTier}`);
+        } else if (xenditInvoice && xenditInvoice.status === "EXPIRED") {
+          await prisma.payment.update({
+            where: { id: payment.id },
+            data: { status: "EXPIRED" },
+          });
+        }
+      } catch (err) {
+        console.error(`Error verifying Xendit invoice ${payment.xendit_invoice_id}:`, err);
+      }
+    }
+
+    if (updatedCount > 0) {
+      revalidatePath("/upgrade");
+      revalidatePath("/profile");
+      revalidatePath("/dashboard");
+      revalidatePath("/admin");
+    }
+
+    return { success: true, updatedCount };
+  } catch (err: unknown) {
+    console.error("Error verifying user payment:", err);
+    return { success: false, error: (err as Error)?.message || "Gagal verifikasi pembayaran." };
+  }
+}
+
 export interface UserMembershipStatus {
   tier: MembershipTier;
   tierExpiresAt: string | null;
@@ -131,9 +229,10 @@ export interface UserMembershipStatus {
 }
 
 /**
- * Mengambil status membership aktif pengguna saat ini
+ * Mengambil status membership aktif pengguna saat ini (dengan verifikasi pembayaran otomatis)
  */
 export async function getMyMembershipStatus(): Promise<UserMembershipStatus | null> {
+
   try {
     const supabase = await createClient();
     const {
@@ -141,6 +240,9 @@ export async function getMyMembershipStatus(): Promise<UserMembershipStatus | nu
     } = await supabase.auth.getUser();
 
     if (!user || !user.email) return null;
+
+    // Jalankan verifikasi fail-safe pembayaran pending ke Xendit API
+    await verifyLatestUserPayment().catch(() => {});
 
     const dbUser = await prisma.user.findUnique({
       where: { email: user.email },
@@ -183,3 +285,4 @@ export async function getMyMembershipStatus(): Promise<UserMembershipStatus | nu
     return null;
   }
 }
+
