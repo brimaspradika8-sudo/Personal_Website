@@ -1,14 +1,14 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title") || "Brimas Pradika Utama";
     const subtitle = searchParams.get("subtitle") || "AI Systems Developer";
-    const badge = searchParams.get("badge") || "🌲 BRIMAS PERSONAL RETREAT & PORTFOLIO";
-    const tagline = searchParams.get("tagline") || "Membangun platform web berskala tinggi, solusi arsitektur AI modern, dan pengalaman antarmuka bergaya lanskap alam.";
+    const badge = searchParams.get("badge") || "⚡ BRIMAS PRADIKA UTAMA · AI SYSTEMS DEVELOPER";
+    const tagline = searchParams.get("tagline") || "Membangun sistem backend terdistribusi, platform AI modern, dan antarmuka web presisi performa tinggi.";
 
     return new ImageResponse(
       (
