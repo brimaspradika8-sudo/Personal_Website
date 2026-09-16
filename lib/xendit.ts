@@ -67,10 +67,13 @@ export async function createXenditInvoice(
   const responseData = await response.json();
 
   if (!response.ok) {
-    const errorMsg =
-      responseData.message ||
-      responseData.error_code ||
-      `Xendit API Error (${response.status})`;
+    const rawMsg = responseData.message || responseData.error_code || "";
+    let errorMsg = rawMsg || `Xendit API Error (${response.status})`;
+
+    if (response.status === 403 || rawMsg.toLowerCase().includes("forbidden") || rawMsg.toLowerCase().includes("permission")) {
+      errorMsg = "API Key Xendit belum memiliki izin Write untuk produk Invoice. Buka Dashboard Xendit -> Settings -> API Keys, lalu beri izin Write pada opsi 'Invoices' (Money In).";
+    }
+
     console.error("Xendit createInvoice failed:", responseData);
     throw new Error(`Gagal membuat invoice Xendit: ${errorMsg}`);
   }
