@@ -14,9 +14,10 @@ import {
   ChevronRight,
   RefreshCw,
   SlidersHorizontal,
-  Plus,
-  LayoutDashboard,
   Bookmark,
+  LayoutDashboard,
+  Sparkles,
+  Tag,
 } from "lucide-react";
 
 import { ArticleItem, seedSampleArticlesIfEmpty } from "@/lib/actions/article";
@@ -34,99 +35,99 @@ function BookmarkCardButton({ article }: { article: ArticleItem }) {
     });
   }, [article.id, article.slug]);
 
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      soundFx.playClick();
+    } catch {}
+    toggleBookmark({
+      id: article.id,
+      slug: article.slug,
+      title: article.title,
+      thumbnail: article.thumbnail,
+      created_at: article.created_at,
+    });
+  };
+
   return (
     <button
       type="button"
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleBookmark({
-          id: article.id,
-          title: article.title,
-          slug: article.slug,
-          thumbnail: article.thumbnail,
-          created_at: article.created_at,
-        });
-      }}
-      className={`p-2 rounded-none border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
-        saved ? "bg-[#FFFF00] text-black" : "bg-white text-black hover:bg-[#FF0000] hover:text-white"
+      onClick={handleToggle}
+      className={`p-2 rounded-xl border-2 border-slate-900 text-xs font-bold transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer flex items-center justify-center ${
+        saved
+          ? "bg-[#EAB308] text-slate-950 hover:bg-amber-400"
+          : "bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white hover:bg-[#166534] hover:text-white"
       }`}
-      title={saved ? "Tersimpan di Profil" : "Simpan Artikel"}
+      title={saved ? "Hapus dari Simpanan" : "Simpan Artikel"}
     >
-      <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-black" : ""}`} />
+      <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-slate-950 text-slate-950" : ""}`} />
     </button>
   );
 }
 
+function ArticleThumbnail({ src, title }: { src: string | null; title: string }) {
+  const [err, setErr] = useState(false);
 
-interface ArtikelClientProps {
-  initialArticles: ArticleItem[];
-  user: {
-    id: string;
-    email?: string;
-    user_metadata?: { full_name?: string; avatar_url?: string };
-  } | null;
-  userTier?: string;
-  isAdmin?: boolean;
-}
-
-function ArticleThumbnail({ src, title }: { src?: string | null; title: string }) {
-  const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  if (!src || hasError) {
+  if (src && !err) {
     return (
-      <div className="w-full h-full bg-black border-b-3 border-black dark:border-white flex items-center justify-center">
-        <BookOpen className="w-10 h-10 text-[#FFFF00]" />
-      </div>
-    );
-  }
-
-  return (
-    <>
-      {isLoading && (
-        <div className="absolute inset-0 bg-black border-b-3 border-black dark:border-white animate-pulse flex items-center justify-center z-10">
-          <BookOpen className="w-6 h-6 text-[#FFFF00]" />
-        </div>
-      )}
       <Image
         src={src}
         alt={title}
         fill
-        unoptimized
-        onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setIsLoading(false);
-          setHasError(true);
-        }}
-        className={`object-cover group-hover:scale-105 transition-transform duration-500 ease-out ${
-          isLoading ? "opacity-0" : "opacity-100"
-        }`}
+        className="object-cover group-hover:scale-105 transition-transform duration-300"
+        onError={() => setErr(true)}
       />
-    </>
+    );
+  }
+
+  return (
+    <div className="w-full h-full bg-[#166534] flex flex-col items-center justify-center p-4 text-center">
+      <BookOpen className="w-10 h-10 text-[#EAB308] mb-2" />
+      <span className="text-white font-mono font-bold text-xs uppercase line-clamp-1">
+        {title}
+      </span>
+    </div>
   );
 }
 
-export default function ArtikelClient({ initialArticles, isAdmin = false }: ArtikelClientProps) {
-  const [articles] = useState<ArticleItem[]>(initialArticles);
+interface ArtikelClientProps {
+  initialArticles: ArticleItem[];
+  user?: any;
+  userTier?: string;
+  isAdmin?: boolean;
+}
+
+export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClientProps) {
+  const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"latest" | "oldest" | "popular">("latest");
   const [isPending, startTransition] = useTransition();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const showToast = (msg: string) => {
-    try {
-      soundFx.playClick();
-    } catch {}
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 3000);
+  const handleSeedArticles = () => {
+    soundFx.playClick();
+    startTransition(async () => {
+      const res = await seedSampleArticlesIfEmpty();
+      if (res.seeded) {
+        setToastMsg(`Berhasil menambahkan artikel sampel ke database!`);
+        window.location.reload();
+      } else if (res.error) {
+        setToastMsg(res.error);
+      } else {
+        setToastMsg("Database sudah terisi artikel.");
+      }
+      setTimeout(() => setToastMsg(null), 3500);
+    });
   };
 
   const filteredArticles = articles
     .filter((article) => {
+      const q = searchQuery.toLowerCase();
       return (
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.content.toLowerCase().includes(searchQuery.toLowerCase())
+        article.title.toLowerCase().includes(q) ||
+        article.content.toLowerCase().includes(q) ||
+        (article.category && article.category.toLowerCase().includes(q))
       );
     })
     .sort((a, b) => {
@@ -139,42 +140,30 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
-  const handleSeedArticles = () => {
-    startTransition(async () => {
-      const res = await seedSampleArticlesIfEmpty();
-      if (res.seeded) {
-        showToast(`Berhasil menambahkan ${res.count} artikel sampel ke database!`);
-        window.location.reload();
-      } else {
-        showToast("Database sudah memiliki data artikel.");
-      }
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#FF0000] selection:text-white pb-28 sm:pb-20">
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0A0D14] text-slate-900 dark:text-white font-sans selection:bg-[#EAB308] selection:text-slate-950 pb-28 sm:pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 space-y-8">
 
-        {/* 1. TOP NAV & BREADCRUMB (Pure Brutalism Sharp Button) */}
+        {/* 1. TOP NAV & ACTIONS BAR */}
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap font-mono">
             <Link
               href="/dashboard"
               onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#166534] text-white border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-emerald-800"
             >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#FF0000]" />
+              <ArrowLeft className="w-4 h-4 text-[#EAB308]" />
               <span>BERANDA</span>
             </Link>
 
             <Link
               href="/admin/artikel"
               onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none bg-[#FF0000] border-3 border-black dark:border-white text-white text-xs font-mono font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-amber-400"
               title="Dashboard Kelola Artikel (Tambah, Edit, & Hapus - Khusus Member)"
             >
-              <LayoutDashboard className="w-4 h-4 text-white" />
+              <LayoutDashboard className="w-4 h-4 text-slate-950" />
               <span>DASHBOARD ARTIKEL</span>
             </Link>
           </div>
@@ -183,10 +172,10 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
             <button
               onClick={handleSeedArticles}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none bg-[#FFFF00] border-3 border-black text-black text-xs font-mono font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-50 uppercase"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-900 text-slate-950 dark:text-white border-2 border-slate-900 dark:border-white text-xs font-mono font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-50 uppercase"
               title="Isi sampel artikel ke database jika kosong"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-[#166534] ${isPending ? "animate-spin" : ""}`} />
               <span>{isPending ? "PROSES..." : "SEED ARTIKEL"}</span>
             </button>
           )}
@@ -194,32 +183,38 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
 
         {/* 2. HERO TITLE SECTION */}
         <div className="space-y-3 text-left">
-          <h1 className="font-mono text-3xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
-            ARTIKEL 
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-mono font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <Sparkles className="w-3.5 h-3.5 text-slate-950" />
+            <span>JURNAL & INSIGHT ARTIKEL</span>
+          </div>
+
+          <h1 className="font-serif font-black text-3xl sm:text-5xl uppercase tracking-tight text-slate-950 dark:text-white leading-none">
+            EKSPLORASI ARTIKEL & ARSITEKTUR WEB
           </h1>
-          <p className="text-xs sm:text-base text-black dark:text-white font-mono font-bold max-w-2xl leading-relaxed">
-            Tulisan teknis, catatan riset AI Systems, serta panduan arsitektur web modern oleh Brimas Pradika Utama.
+
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans font-medium max-w-2xl leading-relaxed">
+            Tulisan teknis, catatan riset AI Systems, serta panduan pengembangan web modern oleh <span className="font-bold text-[#166534] dark:text-[#EAB308]">Brimas Pradika Utama</span>.
           </p>
         </div>
 
         {/* 3. SEARCH & SORT BAR */}
-        <div className="p-4 sm:p-6 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
+        <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
           <div className="flex flex-col sm:flex-row items-center gap-3">
             
             {/* Search Bar Input */}
             <div className="relative w-full flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black dark:text-white" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
               <input
                 type="text"
-                placeholder="CARI JUDUL ARTIKEL ATAU TOPIK..."
+                placeholder="Cari judul artikel, topik, atau kata kunci..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-xs font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-[#FF0000] transition-all"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white placeholder:text-slate-400 text-xs font-mono font-bold focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-black text-[#FF0000] hover:underline cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-[#166534] dark:text-[#EAB308] hover:underline cursor-pointer"
                 >
                   CLEAR
                 </button>
@@ -227,12 +222,12 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
             </div>
 
             {/* Sort Selector Dropdown */}
-            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-              <SlidersHorizontal className="w-4 h-4 text-black dark:text-white hidden sm:block" />
+            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 font-mono">
+              <SlidersHorizontal className="w-4 h-4 text-slate-700 dark:text-slate-300 hidden sm:block" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as "latest" | "oldest" | "popular")}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-none bg-[#FFFF00] text-black border-3 border-black dark:border-white text-xs font-mono font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:outline-none cursor-pointer uppercase"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:outline-none cursor-pointer uppercase"
               >
                 <option value="latest">URUTKAN: TERBARU</option>
                 <option value="popular">URUTKAN: TERPOPULER</option>
@@ -244,16 +239,16 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
 
         {/* 4. ARTICLES GRID LIST */}
         {filteredArticles.length === 0 ? (
-          <div className="py-16 text-center space-y-3 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
-            <BookOpen className="w-8 h-8 text-[#FF0000] mx-auto" />
-            <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">TIDAK ADA ARTIKEL DITEMUKAN</h3>
-            <p className="text-xs text-black dark:text-white font-mono font-bold">
-              Coba kata kunci pencarian lain.
+          <div className="py-16 text-center space-y-3 rounded-2xl sm:rounded-3xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+            <BookOpen className="w-10 h-10 text-[#166534] dark:text-[#EAB308] mx-auto" />
+            <h3 className="text-base font-serif font-black uppercase text-slate-950 dark:text-white">TIDAK ADA ARTIKEL DITEMUKAN</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium">
+              Coba kata kunci pencarian atau kategori lain.
             </p>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="px-5 py-2.5 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white text-xs font-mono font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase"
+                className="px-5 py-2.5 rounded-xl bg-[#166534] text-white border-2 border-slate-900 text-xs font-mono font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase"
               >
                 RESET PENCARIAN
               </button>
@@ -266,10 +261,10 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
                 key={article.id}
                 href={`/artikel/${article.slug}`}
                 onClick={() => soundFx.playClick()}
-                className="group flex flex-col rounded-none border-4 border-black dark:border-white bg-white dark:bg-black overflow-hidden transition-all duration-150 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(255,0,0,1)] cursor-pointer"
+                className="group flex flex-col rounded-3xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] overflow-hidden transition-all duration-200 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(22,101,52,1)] dark:hover:shadow-[8px_8px_0px_0px_rgba(234,179,8,1)] cursor-pointer"
               >
                 {/* Thumbnail Header */}
-                <div className="relative w-full h-48 bg-black border-b-4 border-black dark:border-white overflow-hidden shrink-0">
+                <div className="relative w-full h-48 bg-slate-900 border-b-3 border-slate-900 dark:border-white overflow-hidden shrink-0">
                   <ArticleThumbnail src={article.thumbnail} title={article.title} />
 
                   {/* Bookmark Button Top Left */}
@@ -277,44 +272,49 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
                     <BookmarkCardButton article={article} />
                   </div>
 
-                  {/* Estimated Read Time Badge */}
+                  {/* Category Pill Badge Top Right */}
+                  <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded-xl bg-[#166534] text-white border-2 border-slate-900 text-[10px] font-mono font-bold flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <Tag className="w-3 h-3 text-[#EAB308]" />
+                    <span>{article.category || "Tutorial"}</span>
+                  </div>
+
+                  {/* Estimated Read Time Badge Bottom Right */}
                   {article.readTime && (
-                    <div className="absolute bottom-3 right-3 px-3 py-1 rounded-none bg-[#FFFF00] text-black border-2 border-black text-[10px] font-mono font-black flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <Clock className="w-3 h-3 text-black" />
+                    <div className="absolute bottom-3 right-3 px-3 py-1 rounded-xl bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-[10px] font-mono font-bold flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <Clock className="w-3 h-3 text-slate-950" />
                       <span>{article.readTime}</span>
                     </div>
                   )}
                 </div>
 
-
                 {/* Body Content */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <h3 className="font-mono font-black uppercase text-lg sm:text-xl leading-snug text-black dark:text-white group-hover:text-[#FF0000] transition-colors line-clamp-2">
+                    <h3 className="font-serif font-black uppercase text-lg sm:text-xl leading-snug text-slate-950 dark:text-white group-hover:text-[#166534] dark:group-hover:text-[#EAB308] transition-colors line-clamp-2">
                       {article.title}
                     </h3>
-                    <p className="text-xs text-black dark:text-white line-clamp-3 leading-relaxed font-mono font-bold">
+                    <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed font-sans font-medium">
                       {article.content.replace(/[#*`]/g, "").slice(0, 140)}...
                     </p>
                   </div>
 
                   {/* Footer Meta Details */}
-                  <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between text-xs font-mono font-black text-black dark:text-white uppercase">
+                  <div className="pt-3 border-t-2 border-slate-900 dark:border-white flex items-center justify-between text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
                     <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-[#FF0000]" />
+                      <Calendar className="w-3.5 h-3.5 text-[#166534] dark:text-[#EAB308]" />
                       <span>{new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1">
-                        <Heart className="w-3.5 h-3.5 text-[#FF0000] fill-[#FF0000]" />
+                        <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
                         <span>{article.likeCount}</span>
                       </span>
                       <span className="flex items-center gap-1">
-                        <MessageSquare className="w-3.5 h-3.5 text-black dark:text-white" />
+                        <MessageSquare className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
                         <span>{article.commentCount}</span>
                       </span>
-                      <ChevronRight className="w-4 h-4 text-black dark:text-white group-hover:translate-x-1 group-hover:text-[#FF0000] transition-all" />
+                      <ChevronRight className="w-4 h-4 text-slate-950 dark:text-white group-hover:translate-x-1 group-hover:text-[#166534] dark:group-hover:text-[#EAB308] transition-all" />
                     </div>
                   </div>
                 </div>
@@ -327,7 +327,7 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
 
       {/* Toast popup notification */}
       {toastMsg && (
-        <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-none bg-[#FF0000] text-white border-3 border-black font-mono font-black text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase">
+        <div className="fixed bottom-24 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#166534] text-white border-2 border-slate-900 font-mono font-bold text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase">
           {toastMsg}
         </div>
       )}

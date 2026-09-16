@@ -89,8 +89,41 @@ export default function ArticleClient({
   const [audioSpeed, setAudioSpeed] = useState<number>(1);
   const [activeLineKey, setActiveLineKey] = useState<string | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const elevenLabsAudioRef = useRef<HTMLAudioElement | null>(null);
   const [aiSummary, setAiSummary] = useState<string[] | null>(null);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>("");
+  const [useElevenLabs, setUseElevenLabs] = useState<boolean>(true);
+  const [isLoadingElevenLabs, setIsLoadingElevenLabs] = useState<boolean>(false);
+
+  // Load browser voices (prioritizing Indonesian and Natural voices)
+  useEffect(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
+
+      const idVoices = voices.filter(
+        (v) => v.lang.startsWith("id") || v.lang.includes("ID") || v.name.toLowerCase().includes("indonesia")
+      );
+      const list = idVoices.length > 0 ? idVoices : voices;
+
+      setAvailableVoices(list);
+
+      setSelectedVoiceURI((prev) => {
+        if (prev && list.some((v) => v.voiceURI === prev)) return prev;
+        const best =
+          list.find((v) => v.name.includes("Natural") || v.name.includes("Online") || v.name.includes("Google")) ||
+          list[0];
+        return best ? best.voiceURI : "";
+      });
+    };
+
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }, []);
 
   // Calculate word count & accurate reading time
   const wordCount = article.content ? article.content.split(/\s+/).filter(Boolean).length : 0;
@@ -118,11 +151,15 @@ export default function ArticleClient({
     return items;
   });
 
-  // Cleanup speech synthesis on unmount
+  // Cleanup speech synthesis & audio elements on unmount
   useEffect(() => {
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
+      }
+      if (elevenLabsAudioRef.current) {
+        elevenLabsAudioRef.current.pause();
+        elevenLabsAudioRef.current = null;
       }
     };
   }, []);
@@ -209,6 +246,20 @@ export default function ArticleClient({
     utterance.rate = rate;
     utterance.lang = "id-ID";
 
+    if (selectedVoiceURI && availableVoices.length > 0) {
+      const matched = availableVoices.find((v) => v.voiceURI === selectedVoiceURI);
+      if (matched) {
+        utterance.voice = matched;
+      }
+    } else {
+      const voices = window.speechSynthesis.getVoices();
+      const best =
+        voices.find(
+          (v) => (v.lang.startsWith("id") || v.lang.includes("ID")) && (v.name.includes("Natural") || v.name.includes("Google") || v.name.includes("Online"))
+        ) || voices.find((v) => v.lang.startsWith("id") || v.lang.includes("ID"));
+      if (best) utterance.voice = best;
+    }
+
     utterance.onboundary = (event) => {
       if (event.name === "word" || event.charIndex !== undefined) {
         const charIdx = event.charIndex;
@@ -238,28 +289,87 @@ export default function ArticleClient({
     setIsPlayingAudio(true);
   };
 
-  const handleToggleAudio = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      showToast("Browser Anda tidak mendukung Suara Teks (Web Speech API).");
-      return;
-    }
+  const playElevenLabsAudio = async () => {
+    setIsLoadingElevenLabs(true);
+    showToast("Mengisi suara AI ElevenLabs...");
 
-    if (isPlayingAudio) {
-      window.speechSynthesis.cancel();
+    try {
+      const textToSpeak = `${article.title}. ${cleanTextForSpeech(article.content)}`;
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: textToSpeak,
+          voiceId: "1k39YpzqXZn52BgyLyGO",
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        showToast("ELEVENLABS_API_KEY belum dipasang di .env. Mengalihkan ke suara browser...");
+        startSpeech(audioSpeed);
+        setIsLoadingElevenLabs(false);
+        return;
+      }
+
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      audio.playbackRate = audioSpeed;
+      elevenLabsAudioRef.current = audio;
+
+      audio.onended = () => {
+        setIsPlayingAudio(false);
+        setActiveLineKey(null);
+      };
+
+      audio.onerror = () => {
+        setIsPlayingAudio(false);
+        startSpeech(audioSpeed);
+      };
+
+      await audio.play();
+      setIsPlayingAudio(true);
+      showToast("Memutar narasi ElevenLabs AI!");
+    } catch (e) {
+      console.error("ElevenLabs Audio Error:", e);
+      startSpeech(audioSpeed);
+    } finally {
+      setIsLoadingElevenLabs(false);
+    }
+  };
+
+  const handleToggleAudio = () => {
+    if (isPlayingAudio || isLoadingElevenLabs) {
+      if (elevenLabsAudioRef.current) {
+        elevenLabsAudioRef.current.pause();
+        elevenLabsAudioRef.current = null;
+      }
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
       setIsPlayingAudio(false);
+      setIsLoadingElevenLabs(false);
       setActiveLineKey(null);
       showToast("Pembacaan audio dihentikan.");
       return;
     }
 
-    startSpeech(audioSpeed);
-    showToast("Memulai pembacaan suara artikel...");
+    if (useElevenLabs) {
+      playElevenLabsAudio();
+    } else {
+      startSpeech(audioSpeed);
+      showToast("Memulai pembacaan suara browser...");
+    }
   };
 
   const handleSpeedChange = (speed: number) => {
     try { soundFx.playClick(); } catch {}
     setAudioSpeed(speed);
-    if (isPlayingAudio && typeof window !== "undefined" && "speechSynthesis" in window) {
+    if (elevenLabsAudioRef.current) {
+      elevenLabsAudioRef.current.playbackRate = speed;
+    }
+    if (isPlayingAudio && !elevenLabsAudioRef.current && typeof window !== "undefined" && "speechSynthesis" in window) {
       startSpeech(speed);
     }
   };
@@ -713,23 +823,49 @@ export default function ArticleClient({
             </div>
           </div>
 
-          {/* Audio Speed Selector */}
-          <div className="flex items-center gap-1.5 shrink-0 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
-            <span className="px-2 text-[10px] font-bold text-amber-400 uppercase">KECEPATAN:</span>
-            {[0.75, 1, 1.25, 1.5, 2].map((spd) => (
-              <button
-                key={spd}
-                type="button"
-                onClick={() => handleSpeedChange(spd)}
-                className={`px-2 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                  audioSpeed === spd
-                    ? "bg-amber-400 text-slate-950 border border-slate-900"
-                    : "text-slate-300 hover:text-white"
-                }`}
-              >
-                {spd}x
-              </button>
-            ))}
+          {/* Audio Controls (Voice & Speed Selectors) */}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {/* Voice Picker Dropdown */}
+            {availableVoices.length > 0 && (
+              <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
+                <span className="px-1.5 text-[10px] font-bold text-emerald-400 uppercase">VOICE:</span>
+                <select
+                  value={selectedVoiceURI}
+                  onChange={(e) => {
+                    setSelectedVoiceURI(e.target.value);
+                    if (isPlayingAudio && typeof window !== "undefined" && "speechSynthesis" in window) {
+                      startSpeech(audioSpeed);
+                    }
+                  }}
+                  className="bg-slate-900 text-white text-[11px] font-mono font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer max-w-[140px] truncate"
+                >
+                  {availableVoices.map((v) => (
+                    <option key={v.voiceURI} value={v.voiceURI}>
+                      {v.name.replace(/Microsoft|Google|Indonesian|Indonesia|\(.*?\)/gi, "").trim() || v.name} {v.name.includes("Natural") || v.name.includes("Online") ? "✨" : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Audio Speed Selector */}
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
+              <span className="px-1.5 text-[10px] font-bold text-amber-400 uppercase">KECEPATAN:</span>
+              {[0.75, 1, 1.25, 1.5, 2].map((spd) => (
+                <button
+                  key={spd}
+                  type="button"
+                  onClick={() => handleSpeedChange(spd)}
+                  className={`px-2 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                    audioSpeed === spd
+                      ? "bg-amber-400 text-slate-950 border border-slate-900"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  {spd}x
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
