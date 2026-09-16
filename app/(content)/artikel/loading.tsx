@@ -1,46 +1,56 @@
 export default function ArticlesLoading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono antialiased pb-24 selection:bg-[#FF0000] selection:text-white">
-      {/* Top Breadcrumb & Header Header Skeleton */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-6 space-y-6 animate-pulse">
-        <div className="flex items-center justify-between">
-          <div className="w-48 h-8 rounded-none bg-[#FF0000] border-2 border-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
-          <div className="w-32 h-8 rounded-none bg-[#FFFF00] border-2 border-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#FF0000] selection:text-white pb-28 sm:pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 space-y-8 animate-pulse">
+        {/* 1. TOP NAV & BREADCRUMB SKELETON */}
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="w-28 h-9 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]" />
+            <div className="w-36 h-9 rounded-none bg-[#FF0000] border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]" />
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <div className="w-80 sm:w-[500px] h-12 rounded-none bg-[#FFFF00] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]" />
-          <div className="w-full max-w-xl h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+        {/* 2. HERO TITLE SECTION SKELETON */}
+        <div className="space-y-3 text-left">
+          <div className="w-48 h-12 rounded-none bg-black dark:bg-white" />
+          <div className="w-full max-w-xl h-5 rounded-none bg-neutral-300 dark:bg-neutral-700" />
         </div>
 
-        {/* Filter & Search Controls Bar Skeleton */}
-        <div className="p-4 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="w-full md:w-96 h-12 rounded-none bg-neutral-200 dark:bg-neutral-900 border-3 border-black dark:border-white" />
-          <div className="w-full md:w-56 h-12 rounded-none bg-neutral-200 dark:bg-neutral-900 border-3 border-black dark:border-white" />
+        {/* 3. SEARCH & SORT BAR SKELETON */}
+        <div className="p-4 sm:p-6 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="w-full flex-1 h-11 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white" />
+            <div className="w-full sm:w-48 h-11 rounded-none bg-[#FFFF00] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] shrink-0" />
+          </div>
         </div>
 
-        {/* Articles Grid Skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+        {/* 4. ARTICLES GRID LIST SKELETON */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4 p-5 flex flex-col justify-between"
+              className="flex flex-col rounded-none border-4 border-black dark:border-white bg-white dark:bg-black overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
             >
-              <div className="w-full h-48 rounded-none bg-black border-2 border-black dark:border-white relative">
-                <div className="absolute top-3 left-3 w-8 h-8 rounded-none bg-[#FFFF00] border border-black" />
-                <div className="absolute bottom-3 right-3 w-20 h-6 rounded-none bg-[#FFFF00] border border-black" />
+              {/* Thumbnail Header Full Bleed */}
+              <div className="relative w-full h-48 bg-neutral-900 border-b-4 border-black dark:border-white overflow-hidden shrink-0">
+                <div className="absolute top-3 left-3 w-8 h-8 rounded-none bg-[#FFFF00] border-2 border-black" />
+                <div className="absolute bottom-3 right-3 w-20 h-6 rounded-none bg-[#FFFF00] border-2 border-black" />
               </div>
 
-              <div className="space-y-3 flex-1">
-                <div className="w-full h-6 rounded-none bg-neutral-300 dark:bg-neutral-800" />
-                <div className="w-4/5 h-6 rounded-none bg-neutral-300 dark:bg-neutral-800" />
-                <div className="w-full h-4 rounded-none bg-neutral-200 dark:bg-neutral-900" />
-                <div className="w-2/3 h-4 rounded-none bg-neutral-200 dark:bg-neutral-900" />
-              </div>
+              {/* Body Content */}
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <div className="w-full h-6 rounded-none bg-black dark:bg-white" />
+                  <div className="w-3/4 h-6 rounded-none bg-black dark:bg-white" />
+                  <div className="w-full h-4 rounded-none bg-neutral-300 dark:bg-neutral-700" />
+                  <div className="w-4/5 h-4 rounded-none bg-neutral-300 dark:bg-neutral-700" />
+                </div>
 
-              <div className="pt-3 border-t-3 border-black dark:border-white flex justify-between items-center text-xs">
-                <div className="w-24 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
-                <div className="w-20 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+                {/* Footer Meta Details */}
+                <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between">
+                  <div className="w-24 h-4 rounded-none bg-neutral-300 dark:bg-neutral-700" />
+                  <div className="w-20 h-4 rounded-none bg-neutral-300 dark:bg-neutral-700" />
+                </div>
               </div>
             </div>
           ))}

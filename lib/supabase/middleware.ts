@@ -39,6 +39,7 @@ export async function updateSession(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname;
     const isAdminRoute = pathname.startsWith("/admin");
+    const isOwnerAdminOnlyRoute = pathname === "/admin" || pathname.startsWith("/admin/projects") || pathname.startsWith("/admin/users");
 
     if (isAdminRoute) {
       if (!user || !user.email) {
@@ -47,23 +48,27 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
 
-      const userEmail = user.email.toLowerCase().trim();
-      const ownerEmail = (process.env.OWNER_EMAIL || "").trim().toLowerCase();
-      const adminEmails = (process.env.ADMIN_EMAILS || "")
-        .split(",")
-        .map((e) => e.trim().toLowerCase())
-        .filter(Boolean);
+      // Khusus route super-admin (seperti /admin overview & /admin/projects) hanya untuk Admin utama
+      if (isOwnerAdminOnlyRoute) {
+        const userEmail = user.email.toLowerCase().trim();
+        const ownerEmail = (process.env.OWNER_EMAIL || "").trim().toLowerCase();
+        const adminEmails = (process.env.ADMIN_EMAILS || "")
+          .split(",")
+          .map((e) => e.trim().toLowerCase())
+          .filter(Boolean);
 
-      const isOwnerOrAdmin =
-        (ownerEmail && userEmail === ownerEmail) ||
-        adminEmails.includes(userEmail) ||
-        userEmail === "brimaspradika8@gmail.com";
+        const isOwnerOrAdmin =
+          (ownerEmail && userEmail === ownerEmail) ||
+          adminEmails.includes(userEmail) ||
+          userEmail === "brimaspradika8@gmail.com";
 
-      if (!isOwnerOrAdmin) {
-        const dashboardUrl = new URL("/dashboard", request.url);
-        return NextResponse.redirect(dashboardUrl);
+        if (!isOwnerOrAdmin) {
+          const dashboardUrl = new URL("/dashboard", request.url);
+          return NextResponse.redirect(dashboardUrl);
+        }
       }
     }
+
 
   } catch (err) {
     console.error(
