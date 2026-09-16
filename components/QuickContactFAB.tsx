@@ -13,7 +13,12 @@ export default function QuickContactFAB() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const handleCopyEmail = () => {
-    soundFx.playClick();
+    try {
+      if (typeof window !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate(12);
+      }
+      soundFx.playClick();
+    } catch {}
     navigator.clipboard.writeText("brimaspradika08@gmail.com");
     setCopiedEmail(true);
     setToastMsg(lang === "id" ? "Email berhasil disalin!" : "Email copied successfully!");
@@ -24,7 +29,12 @@ export default function QuickContactFAB() {
   };
 
   const toggleOpen = () => {
-    soundFx.playClick();
+    try {
+      if (typeof window !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate(10);
+      }
+      soundFx.playClick();
+    } catch {}
     setIsOpen(!isOpen);
   };
 
@@ -52,17 +62,24 @@ export default function QuickContactFAB() {
         </motion.button>
       </div>
 
-      {/* Quick Contact Modal / Popup Card */}
+      {/* Quick Contact Modal / Bottom Sheet Popup */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-xs">
+          <div
+            onClick={toggleOpen}
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-slate-950/60 backdrop-blur-xs"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className="w-full max-w-md bg-white dark:bg-[#0E121D] border-3 border-slate-900 dark:border-white rounded-2xl p-5 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-5 text-left relative"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="w-full max-w-md bg-white dark:bg-[#0E121D] border-t-3 sm:border-3 border-slate-900 dark:border-white rounded-t-3xl sm:rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-5 text-left relative max-h-[85vh] overflow-y-auto"
             >
+              {/* Mobile Bottom Sheet Drag Bar Pill */}
+              <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto sm:hidden -mt-1 mb-2" />
+
               {/* Close Button */}
               <button
                 onClick={toggleOpen}
@@ -91,7 +108,7 @@ export default function QuickContactFAB() {
               <div className="space-y-3 pt-1">
                 {/* WhatsApp Action */}
                 <a
-                  href="https://wa.me/628123456789?text=Halo%20Brimas,%20saya%20tertarik%20untuk%20berdiskusi%20proyek."
+                  href="https://wa.me/6283830718168?text=Halo%20Brimas."
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => soundFx.playClick()}
@@ -116,7 +133,7 @@ export default function QuickContactFAB() {
                     <Mail className="w-4 h-4" />
                     <span>DIRECT EMAIL</span>
                   </div>
-                  <span className="text-[11px] font-sans font-semibold">gmail.com</span>
+                  <span className="text-[11px] font-sans font-semibold">Brimaspradika8@gmail.com</span>
                 </a>
 
                 {/* Copy Email Button */}
@@ -129,7 +146,7 @@ export default function QuickContactFAB() {
                     {copiedEmail ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                     <span>{lang === "id" ? "SALIN EMAIL" : "COPY EMAIL"}</span>
                   </div>
-                  <span className="text-[11px] font-mono text-slate-500 lowercase">brimaspradika08@gmail.com</span>
+                  <span className="text-[11px] font-mono text-slate-500 lowercase">brimaspradika8@gmail.com</span>
                 </button>
               </div>
 

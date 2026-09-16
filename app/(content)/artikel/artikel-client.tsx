@@ -31,7 +31,6 @@ interface ArtikelClientProps {
   isAdmin?: boolean;
 }
 
-const CATEGORIES = ["Semua", "AI Systems", "Web Dev", "Database", "Tutorial"];
 
 function ArticleThumbnail({ src, title }: { src?: string | null; title: string }) {
   const [hasError, setHasError] = useState(false);
@@ -73,7 +72,6 @@ function ArticleThumbnail({ src, title }: { src?: string | null; title: string }
 export default function ArtikelClient({ initialArticles, isAdmin = false }: ArtikelClientProps) {
   const [articles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState<"latest" | "oldest" | "popular">("latest");
   const [isPending, startTransition] = useTransition();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -88,15 +86,10 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
 
   const filteredArticles = articles
     .filter((article) => {
-      const matchSearch =
+      return (
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.content.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchCategory =
-        selectedCategory === "Semua" ||
-        article.category?.toLowerCase() === selectedCategory.toLowerCase();
-
-      return matchSearch && matchCategory;
+        article.content.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     })
     .sort((a, b) => {
       if (sortBy === "oldest") {
@@ -151,19 +144,15 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
 
         {/* 2. HERO TITLE SECTION */}
         <div className="space-y-3 text-left">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-black tracking-widest uppercase">
-            <Layers className="w-3.5 h-3.5 text-white" />
-            <span>[ KNOWLEDGE HUB &amp; ARTICLES ]</span>
-          </div>
           <h1 className="font-mono text-3xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
-            ARTIKEL &amp; <span className="bg-[#FFFF00] text-black px-2 py-0.5 border-3 border-black">PANDUAN TEKNIS</span>
+            ARTIKEL 
           </h1>
           <p className="text-xs sm:text-base text-black dark:text-white font-mono font-bold max-w-2xl leading-relaxed">
             Tulisan teknis, catatan riset AI Systems, serta panduan arsitektur web modern oleh Brimas Pradika Utama.
           </p>
         </div>
 
-        {/* 3. SEARCH & PURE BRUTALISM CATEGORY TAB BAR */}
+        {/* 3. SEARCH & SORT BAR */}
         <div className="p-4 sm:p-6 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
           <div className="flex flex-col sm:flex-row items-center gap-3">
             
@@ -201,29 +190,6 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
               </select>
             </div>
           </div>
-
-          {/* Pure Brutalism Category Tab Bar */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
-            {CATEGORIES.map((cat) => {
-              const isActive = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    soundFx.playClick();
-                    setSelectedCategory(cat);
-                  }}
-                  className={`px-4 py-2 rounded-none text-xs font-mono font-black transition-all shrink-0 cursor-pointer border-3 border-black dark:border-white uppercase ${
-                    isActive
-                      ? "bg-[#FF0000] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
-                      : "bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white hover:bg-neutral-200 dark:hover:bg-neutral-800"
-                  }`}
-                >
-                  [{cat.toUpperCase()}]
-                </button>
-              );
-            })}
-          </div>
         </div>
 
         {/* 4. ARTICLES GRID LIST */}
@@ -232,17 +198,14 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
             <BookOpen className="w-8 h-8 text-[#FF0000] mx-auto" />
             <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">TIDAK ADA ARTIKEL DITEMUKAN</h3>
             <p className="text-xs text-black dark:text-white font-mono font-bold">
-              Coba kata kunci pencarian lain atau pilih kategori yang berbeda.
+              Coba kata kunci pencarian lain.
             </p>
-            {(searchQuery || selectedCategory !== "Semua") && (
+            {searchQuery && (
               <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("Semua");
-                }}
+                onClick={() => setSearchQuery("")}
                 className="px-5 py-2.5 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white text-xs font-mono font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase"
               >
-                RESET FILTER
+                RESET PENCARIAN
               </button>
             )}
           </div>
@@ -258,11 +221,6 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
                 {/* Thumbnail Header */}
                 <div className="relative w-full h-48 bg-black border-b-4 border-black dark:border-white overflow-hidden shrink-0">
                   <ArticleThumbnail src={article.thumbnail} title={article.title} />
-
-                  {/* Category Badge */}
-                  <div className="absolute top-3 left-3 px-3 py-1 rounded-none bg-[#FF0000] text-white border-2 border-black text-[10px] font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    {article.category || "TUTORIAL"}
-                  </div>
 
                   {/* Estimated Read Time Badge */}
                   {article.readTime && (

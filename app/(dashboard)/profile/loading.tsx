@@ -1,65 +1,54 @@
 export default function ProfileLoading() {
   return (
-    <div className="relative min-h-[100dvh] w-full font-sans antialiased bg-[#F8F9FA] dark:bg-[#0A0A0B] text-slate-900 dark:text-[#F1EFE9] pb-32 sm:pb-24">
-      {/* Header Skeleton */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#0A0A0B]/80 h-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
-          <div className="w-36 h-4 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
-          <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/10 animate-pulse" />
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono antialiased pb-20">
+      {/* 1. Header Nav Skeleton */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b-4 border-black dark:border-white px-4 sm:px-8 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 animate-pulse">
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="w-9 h-9 rounded-none bg-[#FF0000] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-32 sm:w-40 h-5 rounded-none bg-black dark:bg-white" />
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-24 h-9 rounded-none bg-[#FF0000] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
+          </div>
         </div>
       </header>
 
       {/* Main Container Skeleton */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-24 space-y-10 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 space-y-8 relative z-10">
         
-        {/* Profile Header Block Skeleton */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 pb-2 animate-pulse">
-          <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 text-center sm:text-left w-full sm:w-auto">
-            {/* Avatar */}
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-slate-200 dark:bg-white/10 shrink-0" />
+        {/* Profile Header Card Skeleton */}
+        <div className="p-6 sm:p-8 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] animate-pulse flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+            {/* Avatar Circle */}
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-none bg-[#FF0000] border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0" />
             
-            {/* Name & Info */}
-            <div className="space-y-2 flex-1 w-full flex flex-col items-center sm:items-start">
-              <div className="w-20 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-              <div className="w-48 h-8 bg-slate-200 dark:bg-white/10 rounded" />
-              <div className="w-36 h-4 bg-slate-200 dark:bg-white/10 rounded" />
+            {/* User Info */}
+            <div className="space-y-2.5 flex-1 flex flex-col items-center sm:items-start">
+              <div className="w-28 h-6 rounded-none bg-[#FFFF00] border-2 border-black" />
+              <div className="w-48 sm:w-64 h-8 rounded-none bg-neutral-300 dark:bg-neutral-800 border-2 border-black dark:border-white" />
+              <div className="w-40 h-5 rounded-none bg-neutral-200 dark:bg-neutral-900" />
             </div>
           </div>
 
-          {/* Action Button Skeleton */}
-          <div className="w-28 h-9 bg-slate-200 dark:bg-white/10 rounded-xl shrink-0" />
+          <div className="w-32 h-10 rounded-none bg-[#FF0000] border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] shrink-0" />
         </div>
 
-        {/* Divider */}
-        <div className="border-b border-slate-200 dark:border-white/10" />
-
-        {/* Tab Navigation Skeleton */}
-        <div className="flex items-center gap-6 border-b border-slate-200 dark:border-white/10 pb-3 overflow-x-auto animate-pulse">
-          <div className="w-20 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-          <div className="w-24 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-          <div className="w-24 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-          <div className="w-20 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-        </div>
-
-        {/* Tab Content Box Skeleton */}
-        <div className="border border-slate-200 dark:border-white/10 rounded-2xl p-8 sm:p-10 bg-white dark:bg-[#121214] shadow-sm animate-pulse space-y-6">
-          <div className="space-y-2 border-b border-slate-200 dark:border-white/10 pb-4">
-            <div className="w-40 h-6 bg-slate-200 dark:bg-white/10 rounded" />
-            <div className="w-56 h-4 bg-slate-200 dark:bg-white/10 rounded" />
+        {/* Settings Box Skeleton */}
+        <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 sm:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-6 animate-pulse">
+          <div className="space-y-2 border-b-3 border-black dark:border-white pb-4">
+            <div className="w-44 h-7 rounded-none bg-neutral-300 dark:bg-neutral-800 border-2 border-black" />
+            <div className="w-64 h-4 rounded-none bg-neutral-200 dark:bg-neutral-900" />
           </div>
 
-          <div className="divide-y divide-slate-200 dark:divide-white/10">
-            <div className="py-4 flex justify-between items-center">
-              <div className="w-24 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-              <div className="w-32 h-4 bg-slate-200 dark:bg-white/10 rounded" />
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="w-28 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+              <div className="w-full h-11 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white" />
             </div>
-            <div className="py-4 flex justify-between items-center">
-              <div className="w-28 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-              <div className="w-24 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-            </div>
-            <div className="py-4 flex justify-between items-center">
-              <div className="w-32 h-4 bg-slate-200 dark:bg-white/10 rounded" />
-              <div className="w-40 h-4 bg-slate-200 dark:bg-white/10 rounded" />
+            <div className="space-y-2">
+              <div className="w-28 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
+              <div className="w-full h-11 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white" />
             </div>
           </div>
         </div>

@@ -91,7 +91,7 @@ export default function DashboardClient({
   isAdmin = false,
 }: DashboardClientProps) {
   const { lang, toggleLang, dict } = useLanguage();
-  const [mode, setMode] = useState<"day" | "night">("night");
+  const [mode, setMode] = useState<"day" | "night">("day");
 
   useEffect(() => {
     setMode(getSavedTheme());
@@ -112,11 +112,13 @@ export default function DashboardClient({
     const handleOpen = () => setCmdPaletteOpen(true);
     window.addEventListener("open-command-palette", handleOpen);
 
-    saveTheme(mode);
-
     return () => {
       window.removeEventListener("open-command-palette", handleOpen);
     };
+  }, []);
+
+  useEffect(() => {
+    saveTheme(mode);
   }, [mode]);
 
   useEffect(() => {
@@ -141,19 +143,24 @@ export default function DashboardClient({
     );
   };
 
-  const navUserName =
-    dbUser?.name ||
-    user?.user_metadata?.full_name ||
-    user?.user_metadata?.name ||
-    user?.email?.split("@")[0] ||
-    "Guest User";
-
   const isLoggedIn = !!user;
 
+  const navUserName = isLoggedIn
+    ? dbUser?.name ||
+      user?.user_metadata?.full_name ||
+      user?.user_metadata?.name ||
+      user?.email?.split("@")[0] ||
+      "User"
+    : "Visitor";
+
+  const welcomeGreeting = isLoggedIn
+    ? `WELCOME ${navUserName.toUpperCase()}`
+    : "WELCOME VISITOR";
+
   const initialLetter =
-    navUserName && navUserName !== "Guest User"
+    isLoggedIn && navUserName !== "Visitor"
       ? navUserName.charAt(0).toUpperCase()
-      : "G";
+      : "V";
   const isNight = mode === "night";
 
   return (
@@ -164,57 +171,58 @@ export default function DashboardClient({
     >
       {/* Scroll Reading Progress Bar */}
       <ReadingProgressBar />
-      {/* 1. TOP NAVBAR (Sleek Neo-Brutalist Header) */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b-3 border-slate-900 dark:border-white bg-white/95 dark:bg-[#0E121D]/95 backdrop-blur-md transition-colors duration-300 font-mono">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          {/* Left: Brand Logo & Icon */}
+
+      {/* 1. TOP NAVBAR (Capsule Floating Pill Header) */}
+      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-6xl rounded-full border-2 sm:border-3 border-slate-900 dark:border-white bg-white/90 dark:bg-[#0E121D]/90 backdrop-blur-md transition-all duration-300 font-mono shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-3.5 sm:px-6 py-2 sm:py-2.5">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
+          {/* Left: Brand Logo & Capsule Icon */}
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="flex items-center gap-2.5 group cursor-pointer"
+            className="flex items-center gap-2 group cursor-pointer shrink-0"
           >
-            <div className="w-9 h-9 rounded-xl bg-[#DC2626] border-2 border-slate-900 dark:border-white text-white flex items-center justify-center font-mono font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform">
-              B
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#DC2626] border-2 border-slate-900 dark:border-white text-white flex items-center justify-center font-mono font-black text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] group-hover:scale-105 transition-transform">
+
             </div>
-            <span className="font-serif font-black text-base sm:text-lg tracking-tight uppercase text-slate-950 dark:text-white">
-              BRIMAS<span className="text-[#DC2626]">.DEV</span>
+            <span className="font-serif font-black text-xs sm:text-base tracking-tight uppercase text-slate-950 dark:text-white">
+              BRIMAS<span className="text-[#DC2626]"> Pradika</span>
             </span>
           </Link>
 
-          {/* Middle: Clean Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-2">
+          {/* Middle: Capsule Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-1.5 sm:gap-2 bg-slate-100/80 dark:bg-slate-900/80 px-3 py-1 rounded-full border border-slate-900/20 dark:border-white/20">
             <a
               href="#hero"
               onClick={() => soundFx.playClick()}
-              className="px-3.5 py-1.5 rounded-xl font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white border-2 border-transparent hover:border-slate-900 dark:hover:border-white hover:bg-amber-400 hover:text-slate-950 transition-all"
+              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#DC2626] hover:text-white transition-all"
             >
               {dict.nav.home.toUpperCase()}
             </a>
             <a
               href="#about"
               onClick={() => soundFx.playClick()}
-              className="px-3.5 py-1.5 rounded-xl font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white border-2 border-transparent hover:border-slate-900 dark:hover:border-white hover:bg-amber-400 hover:text-slate-950 transition-all"
+              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#DC2626] hover:text-white transition-all"
             >
               {dict.nav.about.toUpperCase()}
             </a>
             <a
               href="#projects"
               onClick={() => soundFx.playClick()}
-              className="px-3.5 py-1.5 rounded-xl font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white border-2 border-transparent hover:border-slate-900 dark:hover:border-white hover:bg-amber-400 hover:text-slate-950 transition-all"
+              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#DC2626] hover:text-white transition-all"
             >
               {dict.nav.projects.toUpperCase()}
             </a>
             <Link
               href="/artikel"
               onClick={() => soundFx.playClick()}
-              className="px-3.5 py-1.5 rounded-xl font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white border-2 border-transparent hover:border-slate-900 dark:hover:border-white hover:bg-amber-400 hover:text-slate-950 transition-all"
+              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#DC2626] hover:text-white transition-all"
             >
               {dict.nav.articles.toUpperCase()}
             </Link>
           </nav>
 
           {/* Right: Controls & Auth Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* Language Toggle */}
             <button
               type="button"
@@ -222,7 +230,7 @@ export default function DashboardClient({
                 soundFx.playClick();
                 toggleLang();
               }}
-              className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold border-2 border-slate-900 dark:border-white bg-amber-400 text-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+              className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-mono font-bold border-2 border-slate-900 dark:border-white bg-amber-400 text-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
             >
               {lang.toUpperCase()}
             </button>
@@ -231,10 +239,10 @@ export default function DashboardClient({
             <button
               type="button"
               onClick={handleToggleMode}
-              className="p-2 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 text-slate-950 dark:text-amber-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center"
+              className="p-1.5 sm:p-2 rounded-full border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 text-slate-950 dark:text-amber-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center"
               title={isNight ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-950" />}
+              {isNight ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />}
             </button>
 
             {/* Admin Badge */}
@@ -242,7 +250,7 @@ export default function DashboardClient({
               <Link
                 href="/admin"
                 onClick={() => soundFx.playClick()}
-                className="px-3 py-1.5 rounded-xl bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                className="px-2.5 sm:px-3 py-1 rounded-full bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white text-xs font-mono font-bold flex items-center gap-1 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
                 title="Admin Panel"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-white" />
@@ -250,24 +258,30 @@ export default function DashboardClient({
               </Link>
             )}
 
-            {/* Sign In / Profile */}
+            {/* Sign In / Profile Capsule */}
             {isLoggedIn ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <Link
                   href="/profile"
                   onClick={() => soundFx.playClick()}
-                  className="w-9 h-9 rounded-xl bg-[#DC2626] border-2 border-slate-900 dark:border-white text-white font-mono font-bold text-xs flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] overflow-hidden relative active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                  className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border-2 border-slate-900 dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  title="Profil Saya"
                 >
-                  {user?.user_metadata?.avatar_url ? (
-                    <Image
-                      src={user.user_metadata.avatar_url}
-                      alt={navUserName}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    initialLetter
-                  )}
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#DC2626] text-white font-mono font-bold text-xs flex items-center justify-center overflow-hidden relative border border-slate-900 dark:border-white">
+                    {user?.user_metadata?.avatar_url || dbUser?.avatar ? (
+                      <Image
+                        src={user?.user_metadata?.avatar_url || dbUser?.avatar || ""}
+                        alt={navUserName}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      initialLetter
+                    )}
+                  </div>
+                  <span className="hidden lg:inline text-xs font-mono font-bold truncate max-w-[100px] text-slate-950 dark:text-white">
+                    {navUserName}
+                  </span>
                 </Link>
 
                 <button
@@ -275,8 +289,8 @@ export default function DashboardClient({
                     soundFx.playClick();
                     await signOut();
                   }}
-                  className="p-1.5 text-slate-950 dark:text-white hover:text-[#DC2626] transition-colors cursor-pointer"
-                  title="Sign Out"
+                  className="p-1.5 rounded-full hover:bg-red-500/10 text-slate-950 dark:text-white hover:text-[#DC2626] transition-colors cursor-pointer"
+                  title="Sign Out (Logout)"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -285,7 +299,7 @@ export default function DashboardClient({
               <Link
                 href="/login"
                 onClick={() => soundFx.playClick()}
-                className="px-4 py-1.5 rounded-xl bg-[#DC2626] border-2 border-slate-900 dark:border-white text-white text-xs font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                className="px-3.5 sm:px-4 py-1 rounded-full bg-[#DC2626] border-2 border-slate-900 dark:border-white text-white text-xs font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
               >
                 {dict.nav.login.toUpperCase()}
               </Link>
@@ -294,9 +308,9 @@ export default function DashboardClient({
             {/* Mobile Menu Icon */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 rounded-xl border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white"
+              className="md:hidden p-1.5 rounded-full border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </div>
@@ -304,7 +318,7 @@ export default function DashboardClient({
         {/* Mobile Header Menu Drawer */}
         {mobileMenuOpen && (
           <div
-            className={`md:hidden p-4 border-t-2 border-slate-900 dark:border-white space-y-3 ${
+            className={`md:hidden mt-3 p-3 rounded-2xl border-2 border-slate-900 dark:border-white space-y-2 ${
               isNight ? "bg-[#0E121D]" : "bg-white"
             }`}
           >
@@ -312,28 +326,28 @@ export default function DashboardClient({
               <a
                 href="#hero"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
               >
                 {dict.nav.home.toUpperCase()}
               </a>
               <a
                 href="#about"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
               >
                 {dict.nav.about.toUpperCase()}
               </a>
               <a
                 href="#projects"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
               >
                 {dict.nav.projects.toUpperCase()}
               </a>
               <a
                 href="/artikel"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
               >
                 {dict.nav.articles.toUpperCase()}
               </a>
@@ -347,8 +361,10 @@ export default function DashboardClient({
         {/* Background Ticker / Running Text (Neo-Brutalist Marquee Bar - Hidden on mobile, active on desktop) */}
         <div className="hidden sm:block absolute top-24 sm:top-28 inset-x-0 overflow-hidden py-2.5 bg-amber-400 border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-mono font-bold text-xs sm:text-sm tracking-widest uppercase">
           <div className="whitespace-nowrap animate-marquee flex items-center gap-8">
-            <span>⚡ WELCOME VISITOR, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; FULLSTACK &amp; AI SYSTEMS DEVELOPER &bull; SMK BHAKTI MULIA PARE ⚡</span>
-            <span>⚡ WELCOME VISITOR, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; FULLSTACK &amp; AI SYSTEMS DEVELOPER &bull; SMK BHAKTI MULIA PARE ⚡</span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
           </div>
         </div>
 
@@ -378,11 +394,13 @@ export default function DashboardClient({
             <span className="block text-[#DC2626] underline decoration-4 underline-offset-4">UTAMA</span>
           </h1>
 
-          {/* Subtitle Paragraph */}
+          {/* Subtitle Paragraph with Marker Highlighter Effect */}
           <p className="text-xs sm:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-sans font-medium pt-1">
-            {lang === "id"
-              ? "Software & AI Systems Developer berfokus pada arsitektur web modern, integrasi AI agent, dan solusi digital performa tinggi."
-              : "Software & AI Systems Developer focused on modern web architecture, AI agent integration, and high-performance digital solutions."}
+            Software &amp;{" "}
+            <span className="bg-[#FFFF00] text-slate-950 px-2 py-0.5 border-2 border-slate-900 font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              AI SYSTEMS
+            </span>{" "}
+            Developer berfokus pada arsitektur web modern, integrasi AI agent, dan solusi digital performa tinggi.
           </p>
 
           {/* Neo-Brutalist CTA Buttons */}
@@ -448,7 +466,7 @@ export default function DashboardClient({
                 BRIMAS <span className="text-[#DC2626]">PRADIKA UTAMA</span>
               </h2>
               <p className="text-xs sm:text-sm font-mono font-bold tracking-wide uppercase text-[#DC2626]">
-                Fullstack Web Developer &bull; SMK Bhakti Mulia Pare
+                Junior Developer &bull; SMK Bhakti Mulia Pare
               </p>
               <p className="text-xs sm:text-base font-sans font-medium leading-relaxed max-w-xl text-slate-800 dark:text-slate-200">
                 {lang === "id"
@@ -475,7 +493,7 @@ export default function DashboardClient({
                   <span className="text-[11px] font-mono font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
                 </div>
                 <p className="text-xs font-sans font-bold truncate text-slate-950 dark:text-white">
-                  Fullstack Developer
+                  Junior Developer
                 </p>
               </div>
 
@@ -528,7 +546,6 @@ export default function DashboardClient({
             <div className="space-y-2 sm:space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-bold tracking-widest uppercase">
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                <span>EDITORIAL &amp; INSIGHTS</span>
               </div>
               <h2 className="font-serif text-2xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
                 {lang === "id" ? (
@@ -628,9 +645,6 @@ export default function DashboardClient({
 
                         {/* Article Metadata */}
                         <div className="flex items-center gap-3 text-xs text-slate-800 dark:text-slate-200 font-mono">
-                          <span className="px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-black text-[11px] uppercase border-2 border-slate-900 dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                            {featured.category || "AI Systems"}
-                          </span>
                           <span className="flex items-center gap-1.5 font-bold text-xs">
                             <Calendar className="w-3.5 h-3.5 text-[#DC2626]" />
                             {new Date(featured.created_at).toLocaleDateString("id-ID", {
@@ -690,10 +704,7 @@ export default function DashboardClient({
                           />
                         </div>
 
-                        <div className="flex items-center justify-between text-xs font-mono">
-                          <span className="px-2.5 py-0.5 rounded-lg bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white font-black text-[10px] uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                            {art.category || "Tutorial"}
-                          </span>
+                        <div className="flex items-center justify-end text-xs font-mono">
                           <span className="font-bold text-[11px] text-slate-800 dark:text-slate-200">
                             {art.readTime || "5 min read"}
                           </span>

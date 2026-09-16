@@ -92,7 +92,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const [sfxEnabled, setSfxEnabled] = useState(soundFx.getIsEnabled());
-  const [mode, setMode] = useState<"day" | "night">("night");
+  const [mode, setMode] = useState<"day" | "night">("day");
 
   useEffect(() => {
     setMode(getSavedTheme());
@@ -220,16 +220,16 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* Single Subtle Ambient Orb */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[#DC2626]/5 rounded-full filter blur-[140px] pointer-events-none" />
 
-      {/* Header / Sticky Top Navbar (Neo-Brutalist Floating Bar) */}
-      <header className={`fixed top-3 sm:top-5 left-3 sm:left-6 right-3 sm:right-6 z-50 transition-colors duration-300 pointer-events-none`}>
-        <div className={`max-w-4xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4 rounded-2xl border-2 sm:border-3 border-slate-900 dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] pointer-events-auto ${
+      {/* Header / Sticky Top Navbar (Neo-Brutalist Floating Capsule Bar) */}
+      <header className={`fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-4xl transition-colors duration-300 pointer-events-none`}>
+        <div className={`px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4 rounded-full border-2 sm:border-3 border-slate-900 dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] pointer-events-auto ${
           isNight ? "bg-[#0E121D]/90 backdrop-blur-md text-white" : "bg-white/90 backdrop-blur-md text-slate-950"
         }`}>
           <Link
             href="/dashboard"
             prefetch={false}
             onClick={() => soundFx.playClick()}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 border-slate-900 dark:border-white bg-slate-100 dark:bg-slate-800 text-xs font-mono font-bold text-slate-950 dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-[#DC2626] hover:text-white transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border-2 border-slate-900 dark:border-white bg-slate-100 dark:bg-slate-800 text-xs font-mono font-bold text-slate-950 dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-[#DC2626] hover:text-white transition-all cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 text-[#DC2626] group-hover:text-white" />
             <span>{lang === "id" ? "KEMBALI KE BERANDA" : "BACK TO HOME"}</span>
@@ -237,7 +237,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
           <button
             onClick={handleToggleMode}
-            className={`p-2 rounded-xl border-2 border-slate-900 dark:border-white transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] ${
+            className={`p-2 rounded-full border-2 border-slate-900 dark:border-white transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] ${
               isNight
                 ? "bg-amber-400 text-slate-950"
                 : "bg-slate-900 text-white"

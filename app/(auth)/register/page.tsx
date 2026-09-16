@@ -139,11 +139,11 @@ function RegisterForm() {
 
         {/* Right Form Panel */}
         <div className="w-full md:w-[54%] p-6 sm:p-10 flex flex-col justify-center bg-white dark:bg-[#0E121D]">
-          <div className="space-y-5 max-w-sm w-full mx-auto text-left">
+          <div className="space-y-6 max-w-sm w-full mx-auto text-left">
             
             <div className="text-left space-y-1">
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                JOIN COMMUNITY
+                REGISTER SYSTEM
               </span>
               <h1 className="font-mono text-2xl sm:text-3xl font-black tracking-tight text-slate-950 dark:text-white uppercase pt-1">
                 DAFTAR AKUN
@@ -173,9 +173,9 @@ function RegisterForm() {
                 handleSubmit(formData);
               }}
               action={handleSubmit}
-              className="space-y-3.5"
+              className="space-y-4"
             >
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <label htmlFor="name" className="block text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                   NAMA LENGKAP
                 </label>
@@ -194,7 +194,7 @@ function RegisterForm() {
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <label htmlFor="email" className="block text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                   ALAMAT EMAIL
                 </label>
@@ -213,7 +213,7 @@ function RegisterForm() {
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <label htmlFor="password" className="block text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                   KATA SANDI
                 </label>

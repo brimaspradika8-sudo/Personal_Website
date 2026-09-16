@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Cinzel, Press_Start_2P, Silkscreen } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import CustomCursor from "@/components/CustomCursor";
+import BackToTop from "@/components/BackToTop";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -127,7 +129,9 @@ export default function RootLayout({
       </head>
       <body className={`${plusJakartaSans.className} antialiased min-h-screen bg-[var(--bg)] text-[var(--text-primary)] transition-colors duration-500 overflow-x-hidden`}>
         <LanguageProvider>
+          <CustomCursor />
           {children}
+          <BackToTop />
         </LanguageProvider>
         <Analytics />
       </body>

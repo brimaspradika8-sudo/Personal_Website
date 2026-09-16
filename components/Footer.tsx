@@ -73,12 +73,12 @@ export default function Footer({ isNight = true }: FooterProps) {
     },
     {
       name: "Instagram",
-      href: "https://instagram.com/brimaspradika",
+      href: "https://instagram.com/Kluweks02",
       icon: InstagramIcon,
     },
     {
       name: "WhatsApp",
-      href: "https://wa.me/6281234567890",
+      href: "https://wa.me/6283830718168",
       icon: WhatsAppIcon,
     },
     {
@@ -141,23 +141,23 @@ export default function Footer({ isNight = true }: FooterProps) {
             </h4>
             <ul className="space-y-2 text-xs font-mono font-black">
               <li>
-                <a href="#hero" className="hover:text-[#FF0000] transition-colors">
+                <Link href="/dashboard" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
                   [ BERANDA ]
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#skills" className="hover:text-[#FF0000] transition-colors">
-                  [ TEKNOLOGI &amp; STACK ]
-                </a>
-              </li>
-              <li>
-                <a href="#projects" className="hover:text-[#FF0000] transition-colors">
+                <Link href="/dashboard#projects" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
                   [ PROYEK UNGGULAN ]
-                </a>
+                </Link>
               </li>
               <li>
-                <Link href="/artikel" className="hover:text-[#FF0000] transition-colors">
+                <Link href="/artikel" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
                   [ ARTIKEL &amp; TUTORIAL ]
+                </Link>
+              </li>
+              <li>
+                <Link href="/profile" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
+                  [ PROFIL SAYA ]
                 </Link>
               </li>
             </ul>
