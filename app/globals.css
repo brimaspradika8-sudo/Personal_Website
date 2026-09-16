@@ -29,31 +29,15 @@
 :root {
   --bg: #F8F9FA;
   --surface: #FFFFFF;
-  --surface-hover: #F0F9FF;
-  --primary: #0284C7;
-  --accent: #0284C7;
-  --accent-hover: #0369A1;
+  --surface-hover: #FEF9C3;
+  --primary: #EAB308;
+  --accent: #166534;
+  --accent-hover: #14532D;
   --text-primary: #0F172A;
   --text-muted: #475569;
   --border: #E2E8F0;
-  --danger-muted: #E0F2FE;
-  --accent-glow: #0284C7;
-}
-
-/* Dark Theme Variables */
-html.dark {
-  color-scheme: dark;
-  --bg: #0A0A0B;
-  --surface: #121214;
-  --surface-hover: #1A1A1E;
-  --primary: #0284C7;
-  --accent: #0284C7;
-  --accent-hover: #0369A1;
-  --text-primary: #F1EFE9;
-  --text-muted: #A8A79C;
-  --border: #26262A;
-  --danger-muted: #1E3A8A;
-  --accent-glow: #0284C7;
+  --danger-muted: #DCFCE7;
+  --accent-glow: #166534;
 }
 
 @layer base {
@@ -98,7 +82,11 @@ html.dark {
 }
 
 .pixel-shadow-yellow {
-  box-shadow: 4px 4px 0px 0px #38BDF8;
+  box-shadow: 4px 4px 0px 0px #EAB308;
+}
+
+.pixel-shadow-green {
+  box-shadow: 4px 4px 0px 0px #166534;
 }
 
 .pixel-shadow-blue {
@@ -111,10 +99,6 @@ html.dark {
 
 .pixel-shadow-pink {
   box-shadow: 4px 4px 0px 0px #FF0075;
-}
-
-.pixel-shadow-green {
-  box-shadow: 4px 4px 0px 0px #00FF66;
 }
 
 .pixel-shadow-dark {

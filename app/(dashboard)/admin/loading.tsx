@@ -4,7 +4,7 @@ export default function AdminLoading() {
       {/* Sidebar Skeleton */}
       <aside className="hidden lg:flex w-64 flex-col border-r-4 border-black dark:border-white bg-white dark:bg-black p-5 space-y-6 shrink-0">
         <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-white animate-pulse">
-          <div className="w-8 h-8 rounded-none bg-[#FF0000] border-2 border-black" />
+          <div className="w-8 h-8 rounded-none bg-[#EAB308] border-2 border-black" />
           <div className="w-32 h-5 rounded-none bg-black dark:bg-white" />
         </div>
         <div className="space-y-3 flex-1 animate-pulse">
@@ -19,12 +19,12 @@ export default function AdminLoading() {
         {/* Top Header Bar Skeleton */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b-4 border-black dark:border-white animate-pulse">
           <div className="space-y-2">
-            <div className="w-56 h-8 rounded-none bg-[#FFFF00] border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-56 h-8 rounded-none bg-[#EAB308] border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
             <div className="w-72 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-28 h-10 rounded-none bg-[#FFFF00] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
-            <div className="w-32 h-10 rounded-none bg-[#FF0000] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-28 h-10 rounded-none bg-[#16A34A] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-32 h-10 rounded-none bg-[#EAB308] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
           </div>
         </div>
 
@@ -37,7 +37,7 @@ export default function AdminLoading() {
             >
               <div className="flex items-center justify-between">
                 <div className="w-24 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
-                <div className="w-8 h-8 rounded-none bg-[#FFFF00] border-2 border-black" />
+                <div className="w-8 h-8 rounded-none bg-[#16A34A] border-2 border-black" />
               </div>
               <div className="w-16 h-8 rounded-none bg-neutral-300 dark:bg-neutral-800 border-2 border-black" />
             </div>
@@ -59,7 +59,7 @@ export default function AdminLoading() {
                       <div className="w-3/4 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
                       <div className="w-1/2 h-3 rounded-none bg-neutral-200 dark:bg-neutral-900" />
                     </div>
-                    <div className="w-16 h-6 rounded-none bg-[#FFFF00] border border-black" />
+                    <div className="w-16 h-6 rounded-none bg-[#EAB308] border border-black" />
                   </div>
                 ))}
               </div>

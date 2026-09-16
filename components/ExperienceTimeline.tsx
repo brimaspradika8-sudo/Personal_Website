@@ -57,10 +57,9 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
         <div className="space-y-3 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-black tracking-widest uppercase">
             <GraduationCap className="w-3.5 h-3.5 text-white" />
-            <span>[ LEARNING TIMELINE ]</span>
           </div>
           <h2 className="font-mono text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
-            PENGALAMAN &amp; <span className="bg-[#FFFF00] text-black px-2 py-0.5 border-3 border-black">REKAM JEJAK</span>
+            PENGALAMAN
           </h2>
           <p className="text-xs sm:text-base text-black dark:text-white leading-relaxed font-mono font-bold">
             {lang === "id"

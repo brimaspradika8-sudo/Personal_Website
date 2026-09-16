@@ -21,7 +21,7 @@ export default function ReadingProgressBar() {
   return (
     <div className="fixed top-0 inset-x-0 z-[100] h-2 bg-slate-900/10 dark:bg-white/10 pointer-events-none">
       <div
-        className="h-full bg-[#DC2626] border-r-2 border-slate-900 dark:border-white transition-all duration-75 ease-out shadow-[0_2px_4px_rgba(220,38,38,0.5)]"
+        className="h-full bg-[#166534] border-r-2 border-slate-900 dark:border-white transition-all duration-75 ease-out shadow-[0_2px_4px_rgba(22,101,52,0.5)]"
         style={{ width: `${scrollProgress}%` }}
       />
     </div>

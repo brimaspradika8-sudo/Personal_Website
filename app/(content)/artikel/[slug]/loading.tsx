@@ -5,11 +5,11 @@ export default function ArticleDetailLoading() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b-4 border-black dark:border-white px-4 sm:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 animate-pulse">
           <div className="flex items-center gap-3 shrink-0">
-            <div className="w-9 h-9 rounded-none bg-[#FF0000] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-9 h-9 rounded-none bg-[#EAB308] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
             <div className="w-32 sm:w-40 h-5 rounded-none bg-black dark:bg-white" />
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-24 h-9 rounded-none bg-[#FF0000] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-24 h-9 rounded-none bg-[#16A34A] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
           </div>
         </div>
       </header>
@@ -19,7 +19,7 @@ export default function ArticleDetailLoading() {
         {/* 2. ARTICLE HEADER META SKELETON */}
         <div className="space-y-4 text-left animate-pulse">
           <div className="flex items-center gap-3">
-            <div className="w-28 h-7 rounded-none bg-[#FFFF00] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-28 h-7 rounded-none bg-[#EAB308] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
             <div className="w-28 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
           </div>
 
@@ -30,7 +30,7 @@ export default function ArticleDetailLoading() {
 
           {/* Author Card Skeleton */}
           <div className="flex items-center gap-3.5 pt-3 pb-5 border-b-4 border-black dark:border-white">
-            <div className="w-12 h-12 rounded-none bg-[#FF0000] border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] shrink-0" />
+            <div className="w-12 h-12 rounded-none bg-[#16A34A] border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] shrink-0" />
             <div className="space-y-1.5 flex-1">
               <div className="w-40 h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
               <div className="w-56 h-3.5 rounded-none bg-neutral-200 dark:bg-neutral-900" />
@@ -47,7 +47,7 @@ export default function ArticleDetailLoading() {
           {/* Table of Contents Sidebar Skeleton */}
           <aside className="lg:col-span-1 order-2 lg:order-1">
             <div className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] animate-pulse">
-              <div className="w-24 h-5 rounded-none bg-[#FF0000] border-2 border-black" />
+              <div className="w-24 h-5 rounded-none bg-[#EAB308] border-2 border-black" />
               <div className="space-y-2.5 pt-2">
                 <div className="w-full h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
                 <div className="w-5/6 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
@@ -64,7 +64,7 @@ export default function ArticleDetailLoading() {
               <div className="w-5/6 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
               <div className="w-full h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
               
-              <div className="w-56 h-7 rounded-none bg-[#FFFF00] border-2 border-black my-6" />
+              <div className="w-56 h-7 rounded-none bg-[#16A34A] border-2 border-black my-6" />
               <div className="w-full h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
               <div className="w-full h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
               <div className="w-4/5 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />

@@ -6,7 +6,7 @@ export default function GlobalLoading() {
         <div className="flex items-center justify-between gap-2 sm:gap-4 animate-pulse">
           {/* Left Brand Capsule */}
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#DC2626] border-2 border-slate-900 dark:border-white" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#EAB308] border-2 border-slate-900 dark:border-white" />
             <div className="w-24 sm:w-32 h-4 sm:h-5 rounded-lg bg-slate-300 dark:bg-slate-700" />
           </div>
 
@@ -20,9 +20,9 @@ export default function GlobalLoading() {
 
           {/* Right Controls */}
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-7 rounded-full bg-amber-400 border-2 border-slate-900" />
+            <div className="w-9 h-7 rounded-full bg-[#16A34A] border-2 border-slate-900" />
             <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-slate-700 border-2 border-slate-900 dark:border-white" />
-            <div className="w-20 sm:w-24 h-8 rounded-full bg-[#DC2626] border-2 border-slate-900 dark:border-white" />
+            <div className="w-20 sm:w-24 h-8 rounded-full bg-[#EAB308] border-2 border-slate-900 dark:border-white" />
           </div>
         </div>
       </header>
@@ -31,15 +31,15 @@ export default function GlobalLoading() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 space-y-10 relative z-10">
         {/* Hero Card Skeleton */}
         <div className="p-8 sm:p-12 rounded-3xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-6 animate-pulse">
-          <div className="w-40 h-6 rounded-lg bg-amber-400 border-2 border-slate-900" />
+          <div className="w-40 h-6 rounded-lg bg-[#16A34A] border-2 border-slate-900 text-white" />
           <div className="space-y-3">
             <div className="w-3/4 h-12 rounded-2xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900" />
             <div className="w-1/2 h-12 rounded-2xl bg-slate-300 dark:bg-slate-700 border-2 border-slate-900" />
           </div>
           <div className="w-5/6 h-5 rounded-lg bg-slate-200 dark:bg-slate-800" />
           <div className="flex items-center gap-4 pt-4">
-            <div className="w-40 h-10 rounded-xl bg-[#DC2626] border-2 border-slate-900" />
-            <div className="w-32 h-10 rounded-xl bg-amber-400 border-2 border-slate-900" />
+            <div className="w-40 h-10 rounded-xl bg-[#EAB308] border-2 border-slate-900" />
+            <div className="w-32 h-10 rounded-xl bg-[#16A34A] border-2 border-slate-900" />
           </div>
         </div>
 

@@ -88,15 +88,15 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                   soundFx.playClick();
                   onClose();
                 }}
-                className="absolute top-3.5 right-3.5 p-2 rounded-full bg-black/60 hover:bg-[#DC2626] text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                className="absolute top-3.5 right-3.5 p-2 rounded-full bg-black/60 hover:bg-[#166534] text-white hover:text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
                 title="Close"
               >
                 <X className="w-4 h-4" />
               </button>
 
               {/* Tag / Category Badge */}
-              <div className="absolute bottom-3 left-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DC2626]/20 border border-[#DC2626]/40 text-[#DC2626] text-[11px] font-mono font-bold uppercase tracking-wider backdrop-blur-md">
-                <Layers className="w-3 h-3" />
+              <div className="absolute bottom-3 left-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAB308] text-slate-950 text-[11px] font-mono font-bold uppercase tracking-wider backdrop-blur-md shadow-md">
+                <Layers className="w-3 h-3 text-slate-950" />
                 <span>Case Study & Architecture</span>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 <h2 className="font-display text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-snug">
                   {project.title}
                 </h2>
-                <p className="text-xs font-mono text-[#DC2626] uppercase font-bold tracking-wider">
+                <p className="text-xs font-mono text-[#166534] uppercase font-bold tracking-wider">
                   {lang === "id" ? "Proyek Software System" : "Software System Project"}
                 </p>
               </div>
@@ -133,7 +133,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                       key={tech}
                       className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#141416] text-white/90 border border-white/10 flex items-center gap-2 shadow-sm"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#DC2626]" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#166534]" />
                       <span>{tech}</span>
                     </span>
                   ))}
@@ -163,7 +163,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => soundFx.playClick()}
-                    className="w-full sm:w-auto px-6 py-3 rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C] hover:from-[#B91C1C] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#DC2626]/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer"
+                    className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#EAB308] hover:bg-[#166534] text-slate-950 hover:text-white font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     <span>{lang === "id" ? "Buka Live Demo" : "Open Live Demo"}</span>
                     <ExternalLink className="w-4 h-4" />
