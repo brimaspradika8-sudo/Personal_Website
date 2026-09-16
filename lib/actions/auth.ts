@@ -31,8 +31,9 @@ function formatAuthError(errorMsg: string): string {
 }
 
 import { revalidatePath } from "next/cache";
+import { cache } from "react";
 
-export async function checkIsAdmin(email?: string | null): Promise<boolean> {
+const checkIsAdminMemoized = cache(async (email?: string | null): Promise<boolean> => {
   if (!email) return false;
   const normalizedEmail = email.toLowerCase().trim();
 
@@ -60,6 +61,10 @@ export async function checkIsAdmin(email?: string | null): Promise<boolean> {
   } catch {}
 
   return false;
+});
+
+export async function checkIsAdmin(email?: string | null): Promise<boolean> {
+  return checkIsAdminMemoized(email);
 }
 
 export async function checkIsOwner(email?: string | null): Promise<boolean> {
@@ -349,7 +354,75 @@ export async function sendForgotPasswordOtp(email: string) {
   }
 }
 
-// --- Verify OTP Token & Reset Password ---
+// --- Verify OTP Token Only (Step 2) ---
+export async function verifyOtpOnly(email: string, token: string) {
+  try {
+    const normalizedEmail = email.toLowerCase().trim();
+    const sanitizedToken = token.trim();
+
+    if (!normalizedEmail || !sanitizedToken) {
+      return { error: "Email dan kode OTP 6-digit wajib diisi." };
+    }
+
+    const { isConfigured } = getSupabaseEnv();
+    if (!isConfigured) {
+      return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+    }
+
+    const supabase = await createClient();
+
+    let verifyRes = await supabase.auth.verifyOtp({
+      email: normalizedEmail,
+      token: sanitizedToken,
+      type: "recovery",
+    });
+
+    if (verifyRes.error) {
+      verifyRes = await supabase.auth.verifyOtp({
+        email: normalizedEmail,
+        token: sanitizedToken,
+        type: "email",
+      });
+    }
+
+    if (verifyRes.error) {
+      return { error: "Kode OTP tidak valid atau sudah kadaluarsa. Silakan periksa kembali email Anda." };
+    }
+
+    return { success: true };
+  } catch (err: unknown) {
+    console.error("Error verifying OTP only:", err);
+    return { error: (err as Error)?.message || "Gagal memverifikasi kode OTP." };
+  }
+}
+
+// --- Update Password After OTP Verified (Step 3) ---
+export async function updatePasswordWithSession(newPassword: string) {
+  try {
+    if (!newPassword || newPassword.length < 6) {
+      return { error: "Kata sandi baru minimal 6 karakter." };
+    }
+
+    const supabase = await createClient();
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (updateError) {
+      return { error: formatAuthError(updateError.message) };
+    }
+
+    revalidatePath("/dashboard");
+    revalidatePath("/profile");
+
+    return { success: true };
+  } catch (err: unknown) {
+    console.error("Error updating password:", err);
+    return { error: (err as Error)?.message || "Gagal memperbarui kata sandi." };
+  }
+}
+
+// --- Verify OTP Token & Reset Password (Combined Fallback) ---
 export async function verifyOtpAndResetPassword(email: string, token: string, newPassword: string) {
   try {
     const normalizedEmail = email.toLowerCase().trim();
@@ -370,7 +443,6 @@ export async function verifyOtpAndResetPassword(email: string, token: string, ne
 
     const supabase = await createClient();
 
-    // Verifikasi kode OTP dengan type recovery
     let verifyRes = await supabase.auth.verifyOtp({
       email: normalizedEmail,
       token: sanitizedToken,
@@ -378,7 +450,6 @@ export async function verifyOtpAndResetPassword(email: string, token: string, ne
     });
 
     if (verifyRes.error) {
-      // Fallback verifikasi type email jika recovery tidak sesuai
       verifyRes = await supabase.auth.verifyOtp({
         email: normalizedEmail,
         token: sanitizedToken,
@@ -390,7 +461,6 @@ export async function verifyOtpAndResetPassword(email: string, token: string, ne
       return { error: "Kode OTP tidak valid atau sudah kadaluarsa. Silakan periksa email Anda atau minta kode baru." };
     }
 
-    // Perbarui kata sandi pengguna
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,
     });

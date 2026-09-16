@@ -228,6 +228,10 @@ export default function ArticleClient({
       return;
     }
 
+    // Play click sound effect instantly
+    soundFx.playClick();
+
+    // Synchronous optimistic state update
     setArticle((prev) => {
       const current = prev.userReaction;
       let newLikeCount = prev.likeCount;
@@ -254,12 +258,10 @@ export default function ArticleClient({
       };
     });
 
-    startTransition(async () => {
-      const res = await toggleArticleReaction(article.id, type);
-      if (res.error) {
+    // Non-blocking background sync with database
+    toggleArticleReaction(article.id, type).then((res) => {
+      if (res?.error) {
         showToast(res.error);
-      } else {
-        soundFx.playClick();
       }
     });
   };

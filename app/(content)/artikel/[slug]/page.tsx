@@ -72,22 +72,23 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
 
-  // Track pembaca (Increment view count)
-  try {
-    await incrementArticleViews(slug);
-  } catch {}
+  const supabase = await createClient();
 
-  const article = await getArticleBySlug(slug);
+  // Run view count increment asynchronously in background without blocking initial HTML render
+  incrementArticleViews(slug).catch(() => {});
+
+  // Parallelize data fetching to eliminate waterfall latency
+  const [article, allArticles, { data: { user } }] = await Promise.all([
+    getArticleBySlug(slug),
+    getArticles(),
+    supabase.auth.getUser(),
+  ]);
 
   if (!article) {
     notFound();
   }
 
-  const allArticles = await getArticles();
   const relatedArticles = allArticles.filter((a) => a.slug !== slug);
-
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <ArticleClient

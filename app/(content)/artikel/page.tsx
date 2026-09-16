@@ -9,8 +9,10 @@ export default async function ArtikelPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const isAdmin = await checkIsAdmin(user?.email);
-  const articles = await getArticles();
+  const [isAdmin, articles] = await Promise.all([
+    checkIsAdmin(user?.email),
+    getArticles(),
+  ]);
 
   return <ArtikelClient initialArticles={articles} user={user} isAdmin={isAdmin} />;
 }

@@ -322,14 +322,14 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       )}
 
       {/* Main Responsive Wrapper */}
-      <div className="max-w-md sm:max-w-xl mx-auto px-4 pt-4 sm:pt-8 space-y-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-8 space-y-6 sm:space-y-8">
         
         {/* 1. TOP HEADER BANNER CARD (Neo-Brutalist Cover Photo + Overlapping Avatar) */}
-        <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] overflow-hidden relative">
+        <div className="rounded-none border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative">
           
           {/* Cover Header Image/Gradient Background */}
           <div
-            className={`h-48 sm:h-56 w-full relative flex items-start justify-between p-4 border-b-4 border-black dark:border-white ${
+            className={`h-48 sm:h-64 w-full relative flex items-start justify-between p-4 border-b-4 border-black ${
               !isCustomBannerUrl ? (bannerUrl || BANNER_PRESETS[0].style) : "bg-black"
             }`}
           >
@@ -354,10 +354,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               className="relative z-10 px-3 py-1.5 rounded-none bg-white text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] transition-all cursor-pointer flex items-center gap-1.5"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>BERANDA</span>
+              <span>{lang === "id" ? "BERANDA" : "HOME"}</span>
             </Link>
 
-            {/* Upper Right Action Buttons: Edit Banner & Theme Toggle */}
+            {/* Upper Right Action Buttons: Edit Banner */}
             <div className="relative z-10 flex items-center gap-2">
               {isAuthenticated && (
                 <button
@@ -366,26 +366,18 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     soundFx.playClick();
                     setActiveModal("banner");
                   }}
-                  className="px-3 py-1.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
                   title="Edit Gambar & Tema Cover Banner"
                 >
                   <Camera className="w-4 h-4" />
-                  <span className="hidden sm:inline">EDIT BANNER</span>
+                  <span>{lang === "id" ? "EDIT BANNER" : "EDIT BANNER"}</span>
                 </button>
               )}
-
-              <button
-                onClick={handleToggleMode}
-                className="p-1.5 sm:p-2 rounded-none bg-black text-white dark:bg-white dark:text-black border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer"
-                title={isNight ? "Ganti ke Mode Siang" : "Ganti ke Mode Malam"}
-              >
-                {isNight ? <Sun className="w-4 h-4 text-[#FFFF00]" /> : <Moon className="w-4 h-4 text-white" />}
-              </button>
             </div>
           </div>
 
           {/* Overlapping Avatar Profile Picture */}
-          <div className="relative -mt-16 sm:-mt-20 flex flex-col items-center text-center px-4 pb-6">
+          <div className="relative -mt-16 sm:-mt-20 flex flex-col items-center text-center px-4 pb-6 sm:pb-8">
             <div className="relative z-20">
               {isAuthenticated ? (
                 <button
@@ -394,7 +386,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     soundFx.playClick();
                     avatarFileInputRef.current?.click();
                   }}
-                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative group cursor-pointer bg-white dark:bg-black flex items-center justify-center"
+                  className="w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative group cursor-pointer bg-white flex items-center justify-center"
                   title="Klik untuk mengganti foto profil"
                 >
                   {avatarSrc ? (
@@ -406,7 +398,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       unoptimized
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-[#FF0000] flex items-center justify-center text-4xl font-mono font-black text-white">
+                    <div className="w-full h-full rounded-full bg-[#FF0000] flex items-center justify-center text-4xl sm:text-5xl font-mono font-black text-white">
                       {initialLetter}
                     </div>
                   )}
@@ -416,32 +408,32 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   </div>
                 </button>
               ) : (
-                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden bg-[#FFFF00] text-black flex items-center justify-center">
-                  <UserIcon className="w-14 h-14" />
+                <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden bg-[#FFFF00] text-black flex items-center justify-center">
+                  <UserIcon className="w-14 h-14 sm:w-16 sm:h-16" />
                 </div>
               )}
 
               {/* Verified Badge */}
-              <div className="absolute bottom-1 right-1 bg-[#00FF66] border-2 border-black p-1 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Check className="w-3.5 h-3.5 text-black stroke-[3]" />
+              <div className="absolute bottom-1 right-1 bg-[#00FF66] border-2 border-black p-1 sm:p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Check className="w-4 h-4 text-black stroke-[3]" />
               </div>
             </div>
 
             {/* Profile Name & Tagline Quote */}
-            <div className="mt-3 space-y-1.5 w-full">
-              <h1 className="text-xl sm:text-2xl font-mono font-black uppercase tracking-tight text-black dark:text-white">
+            <div className="mt-4 space-y-2 w-full max-w-lg">
+              <h1 className="text-2xl sm:text-3xl font-mono font-black uppercase tracking-tight text-black">
                 {userName}
               </h1>
 
-              <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-300 max-w-sm mx-auto leading-relaxed flex items-center justify-center gap-1">
-                <Quote className="w-3 h-3 text-[#FF0000] shrink-0 inline" />
+              <p className="text-xs sm:text-sm font-mono font-bold text-neutral-700 max-w-md mx-auto leading-relaxed flex items-center justify-center gap-1.5">
+                <Quote className="w-4 h-4 text-[#FF0000] shrink-0 inline" />
                 <span>Work hard in silence. Let your success be the noise.</span>
               </p>
 
               <div className="pt-2 flex items-center justify-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black dark:border-white bg-[#FFFF00] text-black font-mono text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <span className="w-2 h-2 rounded-full bg-black animate-ping" />
-                  <span>{isAuthenticated ? "MEMBER AKTIF" : "GUEST SESSION"}</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-[#FFFF00] text-black font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-black animate-ping" />
+                  <span>{isAuthenticated ? (lang === "id" ? "MEMBER AKTIF" : "ACTIVE MEMBER") : (lang === "id" ? "GUEST SESSION" : "GUEST SESSION")}</span>
                 </span>
               </div>
             </div>
@@ -449,244 +441,239 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           </div>
         </div>
 
-        {/* 2. GROUP 1: PROFIL & AKUN (Account & Info Group Card) */}
-        {isAuthenticated ? (
-          <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] divide-y-3 divide-black dark:divide-white">
-            
-            {/* Item 1: Detail Status Akun */}
-            <button
-              onClick={() => {
-                soundFx.playClick();
-                setActiveModal("info");
-              }}
-              className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all cursor-pointer group"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-none bg-[#FFFF00] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                  <ShieldCheck className="w-5 h-5 text-black" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white group-hover:text-[#FF0000] transition-colors">
-                    Detail Status Akun
-                  </h3>
-                  <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
-                    {userEmail}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-black dark:text-white group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            {/* Item 2: Edit Nama & Foto Profil */}
-            <button
-              onClick={() => {
-                soundFx.playClick();
-                setActiveModal("edit");
-              }}
-              className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all cursor-pointer group"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-none bg-[#FF0000] border-2 border-black flex items-center justify-center text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                  <Edit3 className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white group-hover:text-[#FF0000] transition-colors">
-                    Edit Nama &amp; Foto Profil
-                  </h3>
-                  <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
-                    Perbarui nama tampilan &amp; foto profil kustom
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-black dark:text-white group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            {/* Item 3: Edit Cover Banner Header */}
-            <button
-              onClick={() => {
-                soundFx.playClick();
-                setActiveModal("banner");
-              }}
-              className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all cursor-pointer group"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-none bg-sky-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                  <ImageIcon className="w-5 h-5 text-black" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white group-hover:text-[#FF0000] transition-colors">
-                    Edit Cover Banner
-                  </h3>
-                  <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
-                    Unggah gambar kustom atau pilih tema banner
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-black dark:text-white group-hover:translate-x-1 transition-transform" />
-            </button>
-
-          </div>
-        ) : (
-          /* Unauthenticated Prompt Box */
-          <div className="p-5 rounded-none border-4 border-black dark:border-white bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4 font-mono">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-none bg-[#FF0000] border-2 border-black flex items-center justify-center text-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Lock className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-black uppercase">MASUK ATAU DAFTAR AKUN</h3>
-                <p className="text-[11px] font-bold">
-                  Silakan masuk atau mendaftar untuk mengakses status akun, mengedit profil, dan mengubah banner Anda.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <Link
-                href="/login"
-                onClick={() => soundFx.playClick()}
-                className="flex-1 min-w-[120px] py-2.5 px-4 text-center rounded-none bg-[#FF0000] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all cursor-pointer"
-              >
-                MASUK / LOGIN
-              </Link>
-              <Link
-                href="/register"
-                onClick={() => soundFx.playClick()}
-                className="flex-1 min-w-[120px] py-2.5 px-4 text-center rounded-none bg-white text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-all cursor-pointer"
-              >
-                DAFTAR AKUN
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* 3. GROUP 2: PENGATURAN & PREFERENSI (Settings & Preferences Group Card) */}
-        <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] divide-y-3 divide-black dark:divide-white">
+        {/* 2. DESKTOP 2-COLUMN GRID (Account Settings & Preferences Side-by-Side) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* Item 1: Mode Tampilan (Day / Night Theme) */}
-          <div className="p-4 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-none bg-[#FFFF00] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                {isNight ? <Moon className="w-5 h-5 text-black" /> : <Sun className="w-5 h-5 text-black" />}
-              </div>
+          {/* LEFT COLUMN: INFORMASI AKUN & PROFIL */}
+          {isAuthenticated ? (
+            <div className="rounded-none border-4 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] divide-y-3 divide-black flex flex-col justify-between">
               <div>
-                <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white">
-                  Mode Tampilan (Theme)
-                </h3>
-                <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
-                  {isNight ? "Malam Hari (Dark Mode)" : "Siang Hari (Light Mode)"}
-                </p>
+                <div className="p-4 bg-[#FFFF00] border-b-3 border-black text-black font-mono font-black text-xs uppercase flex items-center gap-2">
+                  <UserIcon className="w-4 h-4 stroke-[3]" />
+                  <span>{lang === "id" ? "MANAJEMEN AKUN & PROFIL" : "ACCOUNT & PROFILE MANAGEMENT"}</span>
+                </div>
+
+                {/* Item 1: Detail Status Akun */}
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    setActiveModal("info");
+                  }}
+                  className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-none bg-[#FFFF00] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                      <ShieldCheck className="w-5 h-5 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                        {lang === "id" ? "Detail Status Akun" : "Account Status Details"}
+                      </h3>
+                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                        {userEmail}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                {/* Item 2: Edit Nama & Foto Profil */}
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    setActiveModal("edit");
+                  }}
+                  className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-none bg-[#FF0000] border-2 border-black flex items-center justify-center text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                      <Edit3 className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                        {lang === "id" ? "Edit Nama & Foto Profil" : "Edit Name & Profile Photo"}
+                      </h3>
+                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                        {lang === "id" ? "Perbarui nama tampilan & foto profil" : "Update display name & custom avatar"}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                {/* Item 3: Edit Cover Banner Header */}
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    setActiveModal("banner");
+                  }}
+                  className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-none bg-sky-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                      <ImageIcon className="w-5 h-5 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                        {lang === "id" ? "Edit Cover Banner" : "Edit Cover Banner"}
+                      </h3>
+                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                        {lang === "id" ? "Unggah gambar kustom atau tema banner" : "Upload custom photo or select theme preset"}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
             </div>
+          ) : (
+            /* Unauthenticated Prompt Box */
+            <div className="p-6 rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-5 font-mono flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-none bg-[#FF0000] border-2 border-black flex items-center justify-center text-white shrink-0 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    <Lock className="w-6 h-6 stroke-[3]" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black uppercase">{lang === "id" ? "MASUK ATAU DAFTAR AKUN" : "SIGN IN OR REGISTER"}</h3>
+                    <p className="text-xs font-bold leading-relaxed">
+                      {lang === "id" 
+                        ? "Silakan masuk atau mendaftar untuk mengakses status akun, mengedit profil, dan mengubah banner Anda."
+                        : "Please sign in or register to access account status, edit profile details, and customize your banner."}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            <button
-              onClick={handleToggleMode}
-              className="px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase bg-[#FFFF00] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-            >
-              {isNight ? "LIGHT" : "DARK"}
-            </button>
+              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                <Link
+                  href="/login"
+                  onClick={() => soundFx.playClick()}
+                  className="w-full py-3 px-4 text-center rounded-none bg-[#FF0000] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all cursor-pointer"
+                >
+                  {lang === "id" ? "MASUK / LOGIN" : "SIGN IN"}
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => soundFx.playClick()}
+                  className="w-full py-3 px-4 text-center rounded-none bg-white text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-all cursor-pointer"
+                >
+                  {lang === "id" ? "DAFTAR AKUN" : "REGISTER"}
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* RIGHT COLUMN: PREFERENSI & ANTARMUKA */}
+          <div className="rounded-none border-4 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] divide-y-3 divide-black flex flex-col justify-between">
+            <div>
+              <div className="p-4 bg-[#00FF66] border-b-3 border-black text-black font-mono font-black text-xs uppercase flex items-center gap-2">
+                <Globe className="w-4 h-4 stroke-[3]" />
+                <span>{lang === "id" ? "PREFERENSI & SISTEM" : "PREFERENCES & SYSTEM"}</span>
+              </div>
+
+              {/* Item 1: Efek Suara (Ambient SFX) */}
+              <div className="p-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-none bg-[#00FF66] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                    {sfxEnabled ? <Volume2 className="w-5 h-5 text-black" /> : <VolumeX className="w-5 h-5 text-black" />}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-mono font-black uppercase text-black">
+                      {lang === "id" ? "Efek Suara (SFX)" : "Sound Effects (SFX)"}
+                    </h3>
+                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      {sfxEnabled ? (lang === "id" ? "Efek Suara Aktif" : "Sound Enabled") : (lang === "id" ? "Efek Suara Dibisukan" : "Sound Muted")}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleToggleSfxLocal}
+                  className={`px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer ${
+                    sfxEnabled ? "bg-[#00FF66] text-black" : "bg-neutral-300 text-black"
+                  }`}
+                >
+                  {sfxEnabled ? "ON" : "OFF"}
+                </button>
+              </div>
+
+              {/* Item 2: Bahasa Antarmuka (Language ID/EN) */}
+              <div className="p-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-none bg-sky-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                    <Globe className="w-5 h-5 text-black" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-mono font-black uppercase text-black">
+                      {lang === "id" ? "Bahasa Antarmuka" : "Interface Language"}
+                    </h3>
+                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      {lang === "id" ? "Bahasa Indonesia" : "English (US)"}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    toggleLang();
+                  }}
+                  className="px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase bg-sky-400 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                >
+                  {lang.toUpperCase()}
+                </button>
+              </div>
+
+              {/* Item 3: Pusat Bantuan & FAQ */}
+              <button
+                onClick={() => {
+                  soundFx.playClick();
+                  setActiveModal("help");
+                }}
+                className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-none bg-purple-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                    <HelpCircle className="w-5 h-5 text-black" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                      {lang === "id" ? "Pusat Bantuan & FAQ" : "Help Center & FAQ"}
+                    </h3>
+                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      {lang === "id" ? "Panduan penggunaan & pertanyaan umum" : "Usage guide & common questions"}
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
-
-          {/* Item 2: Efek Suara (Ambient SFX) */}
-          <div className="p-4 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-none bg-[#00FF66] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                {sfxEnabled ? <Volume2 className="w-5 h-5 text-black" /> : <VolumeX className="w-5 h-5 text-black" />}
-              </div>
-              <div>
-                <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white">
-                  Efek Suara (SFX)
-                </h3>
-                <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
-                  {sfxEnabled ? "Efek Suara Aktif" : "Efek Suara Dibisukan"}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleToggleSfxLocal}
-              className={`px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer ${
-                sfxEnabled ? "bg-[#00FF66] text-black" : "bg-neutral-300 text-black"
-              }`}
-            >
-              {sfxEnabled ? "ON" : "OFF"}
-            </button>
-          </div>
-
-          {/* Item 3: Bahasa Antarmuka (Language ID/EN) */}
-          <div className="p-4 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-none bg-sky-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                <Globe className="w-5 h-5 text-black" />
-              </div>
-              <div>
-                <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white">
-                  Bahasa Antarmuka
-                </h3>
-                <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
-                  {lang === "id" ? "Bahasa Indonesia" : "English (US)"}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                soundFx.playClick();
-                toggleLang();
-              }}
-              className="px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase bg-sky-400 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-            >
-              {lang.toUpperCase()}
-            </button>
-          </div>
-
-          {/* Item 4: Pusat Bantuan & FAQ */}
-          <button
-            onClick={() => {
-              soundFx.playClick();
-              setActiveModal("help");
-            }}
-            className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all cursor-pointer group"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-none bg-purple-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                <HelpCircle className="w-5 h-5 text-black" />
-              </div>
-              <div>
-                <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white group-hover:text-[#FF0000] transition-colors">
-                  Pusat Bantuan &amp; FAQ
-                </h3>
-                <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
-                  Panduan penggunaan &amp; pertanyaan umum
-                </p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 text-black dark:text-white group-hover:translate-x-1 transition-transform" />
-          </button>
 
         </div>
 
-        {/* 4. GROUP 3: SIGN OUT / LOGIN ACTION BUTTON */}
+        {/* 3. SIGN OUT / LOGIN ACTION BUTTON */}
         <div className="pt-2">
           {isAuthenticated ? (
             <form action={signOut}>
               <button
                 type="submit"
                 onClick={() => soundFx.playClick()}
-                className="w-full py-4 rounded-none border-4 border-black dark:border-white bg-[#FF0000] text-white font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-none border-4 border-black bg-[#FF0000] text-white font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <LogOut className="w-5 h-5" />
-                <span>KELUAR DARI AKUN (SIGN OUT)</span>
+                <span>{lang === "id" ? "KELUAR DARI AKUN (SIGN OUT)" : "SIGN OUT FROM ACCOUNT"}</span>
               </button>
             </form>
           ) : (
             <Link
               href="/login"
               onClick={() => soundFx.playClick()}
-              className="w-full py-4 rounded-none border-4 border-black dark:border-white bg-[#FFFF00] text-black font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-none border-4 border-black bg-[#FFFF00] text-black font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <LogIn className="w-5 h-5" />
-              <span>MASUK / LOGIN KE AKUN</span>
+              <span>{lang === "id" ? "MASUK / LOGIN KE AKUN" : "SIGN IN / LOGIN TO ACCOUNT"}</span>
             </Link>
           )}
         </div>

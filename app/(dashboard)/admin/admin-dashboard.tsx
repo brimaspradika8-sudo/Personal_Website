@@ -65,37 +65,9 @@ export default function AdminDashboard({
   const [isNight, setIsNight] = useState<boolean>(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("dashboard_theme");
-    if (savedTheme === "night") {
-      setIsNight(true);
-      document.documentElement.classList.add("dark");
-    }
+    document.documentElement.classList.remove("dark");
+    localStorage.setItem("dashboard_theme", "day");
   }, []);
-
-  useEffect(() => {
-    if (isNight) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("dashboard_theme", "night");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("dashboard_theme", "day");
-    }
-  }, [isNight]);
-
-  const toggleTheme = () => {
-    soundFx.playClick();
-    setIsNight((prev) => {
-      const next = !prev;
-      if (next) {
-        document.documentElement.classList.add("dark");
-        localStorage.setItem("dashboard_theme", "night");
-      } else {
-        document.documentElement.classList.remove("dark");
-        localStorage.setItem("dashboard_theme", "day");
-      }
-      return next;
-    });
-  };
 
   const displayName = dbUser?.name || user?.user_metadata?.full_name || "Admin";
   const avatarSrc = dbUser?.avatar || user?.user_metadata?.avatar_url || "";
@@ -214,13 +186,6 @@ export default function AdminDashboard({
               <ExternalLink className="w-3 h-3 opacity-60" />
             </Link>
 
-            <button
-              onClick={toggleTheme}
-              className="p-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
-              title="Ganti Tema"
-            >
-              {isNight ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-800" />}
-            </button>
           </div>
         </header>
 

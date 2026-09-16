@@ -25,8 +25,8 @@ import {
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
-import CommandPalette from "@/components/CommandPalette";
-import ProjectModal, { ProjectData } from "@/components/ProjectModal";
+import dynamic from "next/dynamic";
+import type { ProjectData } from "@/components/ProjectModal";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
 import TechStackBento from "@/components/TechStackBento";
@@ -35,7 +35,16 @@ import { signOut } from "@/lib/actions/auth";
 import { ArticleItem } from "@/lib/actions/article";
 import { getSavedTheme, saveTheme } from "@/lib/theme";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
-import QuickContactFAB from "@/components/QuickContactFAB";
+
+const CommandPalette = dynamic(() => import("@/components/CommandPalette"), {
+  ssr: false,
+});
+const ProjectModal = dynamic(() => import("@/components/ProjectModal"), {
+  ssr: false,
+});
+const QuickContactFAB = dynamic(() => import("@/components/QuickContactFAB"), {
+  ssr: false,
+});
 
 interface DashboardClientProps {
   user: {

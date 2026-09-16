@@ -67,12 +67,14 @@ function calculateReadTime(content: string): string {
 import { checkIsAdmin } from "./auth";
 export { checkIsAdmin };
 
+import { cache } from "react";
+
 // 1. Ambil daftar artikel dengan filter search, kategori, dan sort
-export async function getArticles(params?: {
+const getArticlesMemoized = cache(async (params?: {
   query?: string;
   category?: string;
   sort?: "latest" | "oldest" | "popular";
-}): Promise<ArticleItem[]> {
+}): Promise<ArticleItem[]> => {
   try {
     // Fetch dari database via Prisma
     const dbArticles = await prisma.article.findMany({
@@ -197,10 +199,20 @@ export async function getArticles(params?: {
   }
 
   return filtered;
+});
+
+export async function getArticles(params?: {
+  query?: string;
+  category?: string;
+  sort?: "latest" | "oldest" | "popular";
+}): Promise<ArticleItem[]> {
+  return getArticlesMemoized(params);
 }
 
 // 2. Ambil detail artikel berdasarkan Slug
-export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
+const getArticleBySlugMemoized = cache(async (
+  slug: string
+): Promise<ArticleDetail | null> => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -285,6 +297,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
   }
 
   return null;
+});
+
+export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
+  return getArticleBySlugMemoized(slug);
 }
 
 const isValidUuid = (str: string) =>
@@ -584,9 +600,6 @@ export async function toggleArticleReaction(
         },
       });
     }
-
-    revalidatePath(`/artikel/${articleExists.slug}`);
-    revalidatePath("/artikel");
 
     return { success: true };
   } catch (err: unknown) {

@@ -80,18 +80,6 @@ export default function CommandPalette({
       href: "/profile",
     },
     {
-      id: "theme",
-      title: lang === "id" 
-        ? `Ganti Tema Mode (${isNight ? "Siang Hari" : "Malam Hari"})` 
-        : `Switch Theme Mode (${isNight ? "Day Mode" : "Night Mode"})`,
-      category: lang === "id" ? "Tampilan" : "Appearance",
-      icon: isNight ? Sun : Moon,
-      action: () => {
-        onToggleTheme();
-        onClose();
-      },
-    },
-    {
       id: "lang",
       title: lang === "id"
         ? `Ganti Bahasa (Sekarang: Bahasa Indonesia)`

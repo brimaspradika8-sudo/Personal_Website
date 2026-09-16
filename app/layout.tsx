@@ -111,12 +111,10 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var mode = localStorage.getItem("theme_mode") || localStorage.getItem("landscape_mode") || localStorage.getItem("dashboard_theme");
-                  if (mode === "night" || mode === "dark") {
-                    document.documentElement.classList.add("dark");
-                  } else {
-                    document.documentElement.classList.remove("dark");
-                  }
+                  localStorage.setItem("theme_mode", "day");
+                  localStorage.setItem("landscape_mode", "day");
+                  localStorage.setItem("dashboard_theme", "day");
+                  document.documentElement.classList.remove("dark");
                 } catch (e) {}
               })();
             `,
