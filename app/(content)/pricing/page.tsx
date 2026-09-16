@@ -1,10 +1,5 @@
-import PricingClient from "./pricing-client";
-
-export const metadata = {
-  title: "Paket Layanan & Pricing | Brimas Pradika Utama - AI Systems & Software Developer",
-  description: "Penawaran harga transparan untuk pembuatan website modern, sistem fullstack Next.js, integrasi AI Agent, dan arsitektur backend.",
-};
+import { redirect } from "next/navigation";
 
 export default function PricingPage() {
-  return <PricingClient />;
+  redirect("/upgrade");
 }

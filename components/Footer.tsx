@@ -151,8 +151,8 @@ export default function Footer({ isNight = true }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
-                  [ PAKET HARGA &amp; PRICING ]
+                <Link href="/upgrade" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                  [ MEMBERSHIP BRIMAS ]
                 </Link>
               </li>
               <li>

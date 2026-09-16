@@ -229,18 +229,11 @@ export default function DashboardClient({
               {dict.nav.articles.toUpperCase()}
             </Link>
             <Link
-              href="/pricing"
-              onClick={() => soundFx.playClick()}
-              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
-            >
-              {dict.nav.pricing ? dict.nav.pricing.toUpperCase() : "PRICING"}
-            </Link>
-            <Link
               href="/upgrade"
               onClick={() => soundFx.playClick()}
               className="px-3.5 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider bg-[#EAB308] text-slate-950 border border-slate-950 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
             >
-              MEMBERSHIP
+              {dict.nav.membership ? dict.nav.membership.toUpperCase() : "MEMBERSHIP"}
             </Link>
           </nav>
 
@@ -375,11 +368,11 @@ export default function DashboardClient({
                 {dict.nav.articles.toUpperCase()}
               </Link>
               <Link
-                href="/pricing"
+                href="/upgrade"
                 onClick={() => setMobileMenuOpen(false)}
-                className="col-span-2 p-2 rounded-xl bg-[#166534] text-white border-2 border-slate-900 dark:border-white"
+                className="col-span-2 p-2 rounded-xl bg-[#EAB308] text-slate-950 font-bold border-2 border-slate-900 dark:border-white"
               >
-                {dict.nav.pricing ? dict.nav.pricing.toUpperCase() : "PRICING"}
+                MEMBERSHIP BRIMAS
               </Link>
             </div>
           </div>
