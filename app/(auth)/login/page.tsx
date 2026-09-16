@@ -227,6 +227,14 @@ function LoginForm() {
                     )}
                   </button>
                 </div>
+                <div className="flex justify-end pt-1">
+                  <Link
+                    href="/forgot-password"
+                    className="text-[11px] font-mono font-bold text-[#DC2626] hover:underline uppercase"
+                  >
+                    LUPA KATA SANDI?
+                  </Link>
+                </div>
               </div>
 
               <div className="pt-2">

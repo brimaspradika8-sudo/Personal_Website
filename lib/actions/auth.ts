@@ -295,11 +295,6 @@ export async function signUpWithPassword(formData: FormData) {
     },
   });
 
-  if (error) {
-    return { error: formatAuthError(error.message) };
-  }
-
-  // Jika email confirmation di Supabase dimatikan, session langsung aktif
   if (data.user?.email) {
     await syncUserToDatabase(data.user.email, name);
   }
@@ -315,141 +310,105 @@ export async function signOut() {
   redirect("/dashboard");
 }
 
-// --- Update Profile (Nama & Avatar) ---
-export async function updateUserProfile(name: string, avatarUrl?: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return { error: "Harus login terlebih dahulu untuk mengubah profil." };
-  }
-
-  const { error } = await supabase.auth.updateUser({
-    data: {
-      full_name: name,
-      name: name,
-      ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
-    },
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  if (user.email) {
-    await syncUserToDatabase(user.email, name, avatarUrl);
-  }
-
-  revalidatePath("/dashboard");
-  revalidatePath("/profile");
-
-  return { success: true };
-}
-
-// --- Upload Avatar File ke Supabase Storage & Database ---
-export async function uploadAvatarFile(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return { error: "Harus login terlebih dahulu untuk mengunggah foto profil." };
-  }
-
-  const file = formData.get("avatarFile") as File | null;
-  if (!file || file.size === 0) {
-    return { error: "Silakan pilih file gambar avatar terlebih dahulu." };
-  }
-
-  if (!file.type.startsWith("image/")) {
-    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." };
-  }
-
-  if (file.size > 5 * 1024 * 1024) {
-    return { error: "Ukuran file terlalu besar. Maksimal 5MB." };
-  }
-
+// --- Send Forgot Password OTP to Email ---
+export async function sendForgotPasswordOtp(email: string) {
   try {
-    const fileExt = file.name.split(".").pop() || "png";
-    const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
-    const fileName = `${user.id}/${Date.now()}.${sanitizedExt}`;
-
-    const arrayBuffer = await file.arrayBuffer();
-    const fileBuffer = Buffer.from(arrayBuffer);
-
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(fileName, fileBuffer, {
-        contentType: file.type,
-        upsert: true,
-      });
-
-    if (uploadError) {
-      console.warn("Upload to 'avatars' bucket failed, attempting fallback:", uploadError.message);
-
-      if (
-        uploadError.message.includes("Bucket not found") ||
-        uploadError.message.includes("not_found") ||
-        uploadError.message.includes("does not exist")
-      ) {
-        const { error: createBucketError } = await supabase.storage.createBucket("avatars", {
-          public: true,
-        });
-
-        if (!createBucketError) {
-          const { error: retryError } = await supabase.storage
-            .from("avatars")
-            .upload(fileName, fileBuffer, {
-              contentType: file.type,
-              upsert: true,
-            });
-
-          if (retryError) {
-            return { error: `Gagal mengunggah foto ke Storage: ${retryError.message}` };
-          }
-        } else {
-          return { error: "Bucket Storage 'avatars' belum ada di Supabase. Silakan buat bucket 'avatars' di Supabase Dashboard -> Storage." };
-        }
-      } else {
-        return { error: `Gagal mengunggah foto ke Supabase Storage: ${uploadError.message}` };
-      }
+    const normalizedEmail = email.toLowerCase().trim();
+    if (!normalizedEmail) {
+      return { error: "Silakan masukkan alamat email Anda." };
     }
 
-    const { data: publicUrlData } = supabase.storage
-      .from("avatars")
-      .getPublicUrl(fileName, {
-        transform: {
-          width: 250,
-          quality: 80,
-        },
-      });
-
-    const publicUrl = publicUrlData?.publicUrl;
-
-    if (!publicUrl) {
-      return { error: "Gagal mendapatkan Public URL foto profil dari Supabase Storage." };
+    const { isConfigured } = getSupabaseEnv();
+    if (!isConfigured) {
+      return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
     }
 
-    const currentName =
-      user.user_metadata?.full_name ||
-      user.user_metadata?.name ||
-      user.email?.split("@")[0] ||
-      "User";
+    // Validasi apakah email sudah terdaftar di database kita
+    const existingUser = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: { id: true, email: true },
+    });
 
-    const updateRes = await updateUserProfile(currentName, publicUrl);
-
-    if (updateRes.error) {
-      return { error: updateRes.error };
+    if (!existingUser) {
+      return { error: "Email ini tidak terdaftar di sistem kami. Silakan periksa kembali atau daftar akun baru." };
     }
 
-    return { success: true, avatarUrl: publicUrl };
+    const supabase = await createClient();
+
+    // Mengirimkan kode OTP / link reset password dari Supabase
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail);
+
+    if (error) {
+      return { error: formatAuthError(error.message) };
+    }
+
+    return { success: true, email: normalizedEmail };
   } catch (err: unknown) {
-    console.error("Unexpected error in uploadAvatarFile:", err);
-    return { error: (err as Error)?.message || "Terjadi kesalahan saat mengunggah foto profil." };
+    console.error("Error sending forgot password OTP:", err);
+    return { error: (err as Error)?.message || "Gagal mengirimkan kode OTP reset password." };
   }
 }
+
+// --- Verify OTP Token & Reset Password ---
+export async function verifyOtpAndResetPassword(email: string, token: string, newPassword: string) {
+  try {
+    const normalizedEmail = email.toLowerCase().trim();
+    const sanitizedToken = token.trim();
+
+    if (!normalizedEmail || !sanitizedToken || !newPassword) {
+      return { error: "Email, kode OTP 6-digit, dan kata sandi baru wajib diisi." };
+    }
+
+    if (newPassword.length < 6) {
+      return { error: "Kata sandi baru minimal 6 karakter." };
+    }
+
+    const { isConfigured } = getSupabaseEnv();
+    if (!isConfigured) {
+      return { error: "API Key Supabase (NEXT_PUBLIC_SUPABASE_ANON_KEY) belum di-set di Dashboard Vercel." };
+    }
+
+    const supabase = await createClient();
+
+    // Verifikasi kode OTP dengan type recovery
+    let verifyRes = await supabase.auth.verifyOtp({
+      email: normalizedEmail,
+      token: sanitizedToken,
+      type: "recovery",
+    });
+
+    if (verifyRes.error) {
+      // Fallback verifikasi type email jika recovery tidak sesuai
+      verifyRes = await supabase.auth.verifyOtp({
+        email: normalizedEmail,
+        token: sanitizedToken,
+        type: "email",
+      });
+    }
+
+    if (verifyRes.error) {
+      return { error: "Kode OTP tidak valid atau sudah kadaluarsa. Silakan periksa email Anda atau minta kode baru." };
+    }
+
+    // Perbarui kata sandi pengguna
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (updateError) {
+      return { error: formatAuthError(updateError.message) };
+    }
+
+    revalidatePath("/dashboard");
+    revalidatePath("/profile");
+
+    return { success: true };
+  } catch (err: unknown) {
+    console.error("Error verifying OTP and resetting password:", err);
+    return { error: (err as Error)?.message || "Gagal memperbarui kata sandi." };
+  }
+}
+
+// --- End of Auth Server Actions ---
+
+

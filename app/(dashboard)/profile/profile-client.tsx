@@ -6,13 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   User as UserIcon,
-  Mail,
   ShieldCheck,
-  Calendar,
   ArrowLeft,
   LogOut,
   LogIn,
-  Settings,
   HelpCircle,
   Edit3,
   Lock,
@@ -22,15 +19,22 @@ import {
   VolumeX,
   Save,
   Check,
-  AlertCircle,
   Camera,
   ChevronRight,
   Globe,
   X,
-  Sparkles,
   Quote,
+  ImageIcon,
+  Sparkles,
+  Palette,
 } from "lucide-react";
-import { signOut, updateUserProfile, uploadAvatarFile } from "@/lib/actions/auth";
+import { signOut } from "@/lib/actions/auth";
+import {
+  updateUserProfile,
+  uploadAvatarFile,
+  uploadBannerFile,
+  updateBannerPreset,
+} from "@/lib/actions/profile";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
@@ -48,6 +52,7 @@ interface ProfileClientProps {
     user_metadata?: {
       full_name?: string;
       avatar_url?: string;
+      banner_url?: string;
       name?: string;
       picture?: string;
     };
@@ -61,12 +66,38 @@ interface ProfileClientProps {
   } | null;
 }
 
+// Preset banner gradients / patterns for quick customization
+const BANNER_PRESETS = [
+  {
+    id: "preset-1",
+    name: "CYBER YELLOW RED",
+    style: "bg-gradient-to-r from-[#FF0000] via-[#FFFF00] to-amber-500",
+  },
+  {
+    id: "preset-2",
+    name: "NEON ACID GREEN",
+    style: "bg-gradient-to-r from-[#00FF66] via-emerald-400 to-cyan-500",
+  },
+  {
+    id: "preset-3",
+    name: "RETRO EMERALD CODE",
+    style: "bg-gradient-to-r from-teal-600 via-indigo-600 to-purple-600",
+  },
+  {
+    id: "preset-4",
+    name: "MIDNIGHT HYPER PUNK",
+    style: "bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600",
+  },
+];
+
 export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const { lang, toggleLang } = useLanguage();
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const avatarFileInputRef = useRef<HTMLInputElement>(null);
+  const bannerFileInputRef = useRef<HTMLInputElement>(null);
 
-  const [activeModal, setActiveModal] = useState<"none" | "info" | "edit" | "help">("none");
+  const [activeModal, setActiveModal] = useState<"none" | "info" | "edit" | "banner" | "help">("none");
 
   const isAuthenticated = !!user;
 
@@ -87,11 +118,18 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     ? dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || ""
     : "";
 
+  const defaultBanner = isAuthenticated
+    ? user?.user_metadata?.banner_url || ""
+    : "";
+
   const [name, setName] = useState(isAuthenticated ? userName : "");
   const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [bannerUrl, setBannerUrl] = useState(defaultBanner);
+
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const [sfxEnabled, setSfxEnabled] = useState(soundFx.getIsEnabled());
@@ -124,7 +162,8 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       })
     : "-";
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle Avatar Image File Upload
+  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
@@ -140,14 +179,14 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
     const localPreview = URL.createObjectURL(file);
     setAvatarUrl(localPreview);
-    setUploading(true);
+    setUploadingAvatar(true);
     soundFx.playClick();
 
     const formData = new FormData();
     formData.append("avatarFile", file);
 
     const uploadRes = await uploadAvatarFile(formData);
-    setUploading(false);
+    setUploadingAvatar(false);
 
     if (uploadRes.error) {
       setMessage({ type: "error", text: uploadRes.error });
@@ -167,6 +206,64 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     }
   };
 
+  // Handle Banner Image File Upload
+  const handleBannerFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      setMessage({ type: "error", text: "File harus berupa gambar (JPG, PNG, WEBP, GIF)." });
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      setMessage({ type: "error", text: "Ukuran file banner terlalu besar (Maksimal 8MB)." });
+      return;
+    }
+
+    const localPreview = URL.createObjectURL(file);
+    setBannerUrl(localPreview);
+    setUploadingBanner(true);
+    soundFx.playClick();
+
+    const formData = new FormData();
+    formData.append("bannerFile", file);
+
+    const uploadRes = await uploadBannerFile(formData);
+    setUploadingBanner(false);
+
+    if (uploadRes.error) {
+      setMessage({ type: "error", text: uploadRes.error });
+      return;
+    }
+
+    if (uploadRes.bannerUrl) {
+      setBannerUrl(uploadRes.bannerUrl);
+      setMessage({ type: "success", text: "Gambar Cover Banner berhasil diperbarui!" });
+      router.refresh();
+    }
+  };
+
+  // Select Preset Banner Gradient
+  const handleSelectPresetBanner = async (presetStyle: string) => {
+    if (!user) return;
+    setBannerUrl(presetStyle);
+    soundFx.playClick();
+
+    const res = await updateBannerPreset(presetStyle);
+    if (res.error) {
+      setMessage({ type: "error", text: res.error });
+    } else {
+      setMessage({ type: "success", text: "Tema Cover Banner berhasil diperbarui!" });
+      router.refresh();
+      setTimeout(() => {
+        setMessage(null);
+        setActiveModal("none");
+      }, 1500);
+    }
+  };
+
+  // Save Name & Profile Details
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -174,30 +271,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     setMessage(null);
 
     soundFx.playClick();
-    let finalAvatarUrl = avatarUrl;
-
-    if (selectedFile) {
-      setUploading(true);
-      const formData = new FormData();
-      formData.append("avatarFile", selectedFile);
-
-      const uploadRes = await uploadAvatarFile(formData);
-      setUploading(false);
-
-      if (uploadRes.error) {
-        setSaving(false);
-        setMessage({ type: "error", text: uploadRes.error });
-        return;
-      }
-
-      if (uploadRes.avatarUrl) {
-        finalAvatarUrl = uploadRes.avatarUrl;
-        setAvatarUrl(finalAvatarUrl);
-        setSelectedFile(null);
-      }
-    }
-
-    const res = await updateUserProfile(name, finalAvatarUrl);
+    const res = await updateUserProfile(name, avatarUrl);
     setSaving(false);
 
     if (res.error) {
@@ -218,21 +292,33 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     if (newState) soundFx.playClick();
   };
 
+  // Render logic for banner background: custom URL vs CSS gradient preset
+  const isCustomBannerUrl = bannerUrl.startsWith("http://") || bannerUrl.startsWith("https://") || bannerUrl.startsWith("blob:");
+
   return (
     <div
       className={`relative min-h-[100dvh] w-full font-mono antialiased pb-32 sm:pb-24 transition-colors duration-300 ${
         isNight ? "bg-black text-white" : "bg-[#F4F4F0] text-black"
       }`}
     >
-      {/* Hidden File Input for Avatar */}
+      {/* Hidden File Inputs for Avatar & Banner */}
       {isAuthenticated && (
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileSelect}
-        />
+        <>
+          <input
+            ref={avatarFileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleAvatarFileSelect}
+          />
+          <input
+            ref={bannerFileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleBannerFileSelect}
+          />
+        </>
       )}
 
       {/* Main Responsive Wrapper */}
@@ -241,10 +327,25 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         {/* 1. TOP HEADER BANNER CARD (Neo-Brutalist Cover Photo + Overlapping Avatar) */}
         <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] overflow-hidden relative">
           
-          {/* Cover Header Image Background */}
-          <div className="h-44 sm:h-52 w-full bg-gradient-to-r from-[#FF0000] via-[#FFFF00] to-amber-500 relative flex items-start justify-between p-4 border-b-4 border-black dark:border-white">
-            {/* Pattern Overlay */}
-            <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#000_2px,transparent_2px)] [background-size:16px_16px]" />
+          {/* Cover Header Image/Gradient Background */}
+          <div
+            className={`h-48 sm:h-56 w-full relative flex items-start justify-between p-4 border-b-4 border-black dark:border-white ${
+              !isCustomBannerUrl ? (bannerUrl || BANNER_PRESETS[0].style) : "bg-black"
+            }`}
+          >
+            {/* Custom Background Image if Uploaded */}
+            {isCustomBannerUrl && (
+              <Image
+                src={bannerUrl}
+                alt="Profile Cover Banner"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            )}
+
+            {/* Retro Grid Pattern Overlay */}
+            <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#000_2px,transparent_2px)] [background-size:16px_16px] pointer-events-none" />
             
             {/* Navigation Back Button */}
             <Link
@@ -256,14 +357,31 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               <span>BERANDA</span>
             </Link>
 
-            {/* Theme Toggle Button */}
-            <button
-              onClick={handleToggleMode}
-              className="relative z-10 p-2 rounded-none bg-black text-white dark:bg-white dark:text-black border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer"
-              title={isNight ? "Ganti ke Mode Siang" : "Ganti ke Mode Malam"}
-            >
-              {isNight ? <Sun className="w-4 h-4 text-[#FFFF00]" /> : <Moon className="w-4 h-4 text-white" />}
-            </button>
+            {/* Upper Right Action Buttons: Edit Banner & Theme Toggle */}
+            <div className="relative z-10 flex items-center gap-2">
+              {isAuthenticated && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundFx.playClick();
+                    setActiveModal("banner");
+                  }}
+                  className="px-3 py-1.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
+                  title="Edit Gambar & Tema Cover Banner"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span className="hidden sm:inline">EDIT BANNER</span>
+                </button>
+              )}
+
+              <button
+                onClick={handleToggleMode}
+                className="p-1.5 sm:p-2 rounded-none bg-black text-white dark:bg-white dark:text-black border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer"
+                title={isNight ? "Ganti ke Mode Siang" : "Ganti ke Mode Malam"}
+              >
+                {isNight ? <Sun className="w-4 h-4 text-[#FFFF00]" /> : <Moon className="w-4 h-4 text-white" />}
+              </button>
+            </div>
           </div>
 
           {/* Overlapping Avatar Profile Picture */}
@@ -274,7 +392,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   type="button"
                   onClick={() => {
                     soundFx.playClick();
-                    fileInputRef.current?.click();
+                    avatarFileInputRef.current?.click();
                   }}
                   className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative group cursor-pointer bg-white dark:bg-black flex items-center justify-center"
                   title="Klik untuk mengganti foto profil"
@@ -383,6 +501,30 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               <ChevronRight className="w-5 h-5 text-black dark:text-white group-hover:translate-x-1 transition-transform" />
             </button>
 
+            {/* Item 3: Edit Cover Banner Header */}
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                setActiveModal("banner");
+              }}
+              className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-none bg-sky-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                  <ImageIcon className="w-5 h-5 text-black" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-mono font-black uppercase text-black dark:text-white group-hover:text-[#FF0000] transition-colors">
+                    Edit Cover Banner
+                  </h3>
+                  <p className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400">
+                    Unggah gambar kustom atau pilih tema banner
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-black dark:text-white group-hover:translate-x-1 transition-transform" />
+            </button>
+
           </div>
         ) : (
           /* Unauthenticated Prompt Box */
@@ -394,7 +536,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               <div>
                 <h3 className="text-sm font-black uppercase">MASUK ATAU DAFTAR AKUN</h3>
                 <p className="text-[11px] font-bold">
-                  Silakan masuk atau mendaftar untuk mengakses status akun dan mengedit profil Anda.
+                  Silakan masuk atau mendaftar untuk mengakses status akun, mengedit profil, dan mengubah banner Anda.
                 </p>
               </div>
             </div>
@@ -587,21 +729,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   <span className="text-black dark:text-white">{createdAt}</span>
                 </div>
               </div>
-            ) : (
-              <div className="text-center py-6 space-y-4">
-                <p className="text-xs text-neutral-600 dark:text-neutral-300">
-                  Anda sedang dalam mode Tamu Publik. Silakan masuk untuk melihat informasi profil lengkap.
-                </p>
-                <Link
-                  href="/login"
-                  onClick={() => setActiveModal("none")}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#FF0000] text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>LOGIN SEKARANG</span>
-                </Link>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}
@@ -613,7 +741,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-[#FF0000]" />
-                <span>EDIT PROFIL &amp; FOTO</span>
+                <span>EDIT NAMA &amp; FOTO PROFIL</span>
               </h3>
               <button
                 onClick={() => setActiveModal("none")}
@@ -623,66 +751,128 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               </button>
             </div>
 
-            {!isAuthenticated ? (
-              <div className="text-center py-6 space-y-4">
-                <Lock className="w-10 h-10 text-[#FF0000] mx-auto" />
-                <p className="text-xs text-neutral-600 dark:text-neutral-300">
-                  Fitur ini memerlukan autentikasi login. Silakan masuk ke akun Anda terlebih dahulu.
-                </p>
-                <Link
-                  href="/login"
-                  onClick={() => setActiveModal("none")}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#FF0000] text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              {message && (
+                <div
+                  className={`p-3 rounded-none text-xs font-black uppercase border-2 ${
+                    message.type === "success"
+                      ? "bg-[#00FF66] border-black text-black"
+                      : "bg-[#FF0000] border-black text-white"
+                  }`}
                 >
-                  <LogIn className="w-4 h-4" />
-                  <span>LOGIN SEKARANG</span>
-                </Link>
+                  {message.text}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase text-black dark:text-white block">
+                  NAMA TAMPILAN PROFIL
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Masukkan nama lengkap..."
+                  required
+                  className="w-full px-4 py-3 rounded-none border-3 border-black dark:border-white bg-neutral-100 dark:bg-neutral-900 text-xs font-black text-black dark:text-white focus:outline-none"
+                />
               </div>
-            ) : (
-              <form onSubmit={handleSaveProfile} className="space-y-4">
-                {message && (
-                  <div
-                    className={`p-3 rounded-none text-xs font-black uppercase border-2 ${
-                      message.type === "success"
-                        ? "bg-[#00FF66] border-black text-black"
-                        : "bg-[#FF0000] border-black text-white"
-                    }`}
-                  >
-                    {message.text}
-                  </div>
-                )}
 
-                <div className="space-y-2">
-                  <label className="text-xs font-black uppercase text-black dark:text-white block">
-                    NAMA TAMPILAN PROFIL
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Masukkan nama lengkap..."
-                    required
-                    className="w-full px-4 py-3 rounded-none border-3 border-black dark:border-white bg-neutral-100 dark:bg-neutral-900 text-xs font-black text-black dark:text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={saving || uploading}
-                    className="w-full py-3.5 rounded-none bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>{uploading ? "MENGUNGGAH..." : saving ? "MENSIMPAN..." : "SIMPAN PERUBAHAN"}</span>
-                  </button>
-                </div>
-              </form>
-            )}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={saving || uploadingAvatar}
+                  className="w-full py-3.5 rounded-none bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{uploadingAvatar ? "MENGUNGGAH..." : saving ? "MENSIMPAN..." : "SIMPAN PERUBAHAN"}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
-      {/* MODAL 3: BANTUAN & FAQ */}
+      {/* MODAL 3: EDIT COVER BANNER (UPLOAD FILE & PRESETS) */}
+      {activeModal === "banner" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
+              <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-sky-400" />
+                <span>EDIT COVER BANNER</span>
+              </h3>
+              <button
+                onClick={() => setActiveModal("none")}
+                className="p-1 rounded-none border-2 border-black bg-[#FF0000] text-white hover:bg-black transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {message && (
+              <div
+                className={`p-3 rounded-none text-xs font-black uppercase border-2 ${
+                  message.type === "success"
+                    ? "bg-[#00FF66] border-black text-black"
+                    : "bg-[#FF0000] border-black text-white"
+                }`}
+              >
+                {message.text}
+              </div>
+            )}
+
+            {/* Option A: Upload Custom Banner Image */}
+            <div className="space-y-3 p-4 bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white">
+              <h4 className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
+                <Camera className="w-4 h-4 text-[#FF0000]" />
+                <span>1. UNGGAH GAMBAR BANNER KUSTOM</span>
+              </h4>
+              <p className="text-[11px] text-neutral-600 dark:text-neutral-400">
+                Pilih berkas foto dari komputer/HP Anda (Maksimal 8MB).
+              </p>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  bannerFileInputRef.current?.click();
+                }}
+                disabled={uploadingBanner}
+                className="w-full py-3 rounded-none bg-[#FFFF00] text-black border-2 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <ImageIcon className="w-4 h-4" />
+                <span>{uploadingBanner ? "MENGUNGGAH BANNER..." : "PILIH BERKAS BANNER"}</span>
+              </button>
+            </div>
+
+            {/* Option B: Choose Preset Gradients */}
+            <div className="space-y-3 pt-2">
+              <h4 className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
+                <Palette className="w-4 h-4 text-[#00FF66]" />
+                <span>2. ATAU PILIH TEMA GRADIENT PRESET</span>
+              </h4>
+
+              <div className="grid grid-cols-2 gap-3">
+                {BANNER_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() => handleSelectPresetBanner(preset.style)}
+                    className={`h-16 rounded-none border-3 border-black relative overflow-hidden shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-all cursor-pointer ${preset.style} flex items-end p-2`}
+                  >
+                    <span className="text-[9px] font-black text-white bg-black/70 px-1.5 py-0.5 rounded-none border border-black truncate max-w-full">
+                      {preset.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: BANTUAN & FAQ */}
       {activeModal === "help" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
           <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative max-h-[80vh] overflow-y-auto">
@@ -700,6 +890,13 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             </div>
 
             <div className="space-y-4 text-xs font-mono">
+              <div className="p-3.5 bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white space-y-1.5">
+                <h4 className="font-black text-black dark:text-white uppercase">Bagaimana cara ganti Cover Banner?</h4>
+                <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                  Klik tombol &quot;EDIT BANNER&quot; di sudut kanan atas cover photo atau buka menu &quot;Edit Cover Banner&quot; di bawah profil untuk mengunggah gambar kustom atau memilih preset warna.
+                </p>
+              </div>
+
               <div className="p-3.5 bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white space-y-1.5">
                 <h4 className="font-black text-black dark:text-white uppercase">Bagaimana cara ganti foto profil?</h4>
                 <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">

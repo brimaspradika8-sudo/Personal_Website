@@ -23,7 +23,7 @@ export default function MobileBottomNav() {
       : ""
   );
 
-  // Exact order requested: Project -> Artikel -> Home (Center Floating) -> About -> Profile
+  // Exact order: Project -> Artikel -> Home (Center Floating) -> About -> Profile
   const navItems = [
     { id: "projects", label: lang === "id" ? "PROYEK" : "PROJECT", href: "#projects", Icon: FolderGit2, isCenter: false },
     { id: "artikel", label: lang === "id" ? "ARTIKEL" : "ARTIKEL", href: "/artikel", Icon: BookOpen, isCenter: false },
@@ -60,22 +60,23 @@ export default function MobileBottomNav() {
 
   return (
     <div className="md:hidden fixed bottom-4 inset-x-3 z-50 pointer-events-auto">
-      <div className="max-w-md mx-auto bg-black dark:bg-black border-4 border-black dark:border-white rounded-none shadow-[6px_6px_0px_0px_rgba(255,255,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] px-2 py-1.5 flex items-center justify-between relative overflow-visible">
+      {/* Curved Floating Capsule Bar Container */}
+      <div className="max-w-md mx-auto bg-black/90 dark:bg-black/90 backdrop-blur-xl border-3 sm:border-4 border-black dark:border-white rounded-full shadow-[0px_10px_30px_rgba(0,0,0,0.4),5px_5px_0px_0px_rgba(255,255,0,1)] dark:shadow-[0px_10px_30px_rgba(0,0,0,0.8),5px_5px_0px_0px_rgba(255,255,255,1)] px-3 py-1.5 flex items-center justify-between relative overflow-visible">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           const IconComponent = item.Icon;
 
-          // Prominent Floating Center Action Button (HOME)
+          // Elevated Center Action Button (HOME)
           if (item.isCenter) {
             return (
-              <div key={item.id} className="relative -top-5 flex-1 flex justify-center z-20">
+              <div key={item.id} className="relative -top-6 flex-1 flex justify-center z-30">
                 <button
                   type="button"
                   onClick={() => handleNav(item.id, item.href)}
-                  className={`w-14 h-14 rounded-full border-4 border-black dark:border-white flex flex-col items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all cursor-pointer ${
+                  className={`w-14 h-14 rounded-full border-4 border-black dark:border-white flex flex-col items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all cursor-pointer ${
                     isActive
-                      ? "bg-[#FFFF00] text-black scale-110 ring-4 ring-red-600"
-                      : "bg-[#FFFF00] text-black hover:bg-white"
+                      ? "bg-[#FFFF00] text-black scale-110 ring-4 ring-[#FF0000]"
+                      : "bg-[#FFFF00] text-black hover:bg-white hover:scale-105"
                   }`}
                   title={item.label}
                 >
@@ -88,22 +89,22 @@ export default function MobileBottomNav() {
             );
           }
 
-          // Side Navigation Items (Project, Artikel, About, Profile)
+          // Side Items (Project, Artikel, About, Profile)
           return (
             <button
               key={item.id}
               type="button"
               onClick={() => handleNav(item.id, item.href)}
-              className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-none transition-all duration-150 relative ${
+              className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-200 relative ${
                 isActive ? "text-white font-black" : "text-neutral-400 hover:text-white"
               }`}
             >
-              {/* Pure Brutalism Active Tab Highlight Badge */}
+              {/* Smooth Pill Active Tab Highlight Badge */}
               {isActive && (
                 <motion.div
                   layoutId="activeMobileBottomTab"
                   transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  className="absolute inset-0 bg-[#FF0000] border-2 border-black dark:border-white rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-0"
+                  className="absolute inset-0 bg-[#FF0000] border-2 border-black dark:border-white rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-0"
                 />
               )}
               
