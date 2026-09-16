@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { MembershipTier } from "@prisma/client";
+export { type MembershipTier };
+
+
 
 export interface MembershipPlanConfig {
   key: MembershipTier;
@@ -160,3 +163,19 @@ export async function hasAdminDashboardAccess(
   const effectiveTier = await getEffectiveUserTier(userId);
   return effectiveTier === "SAHABAT_BRIMAS";
 }
+
+/**
+ * Memeriksa apakah pengguna memiliki hak akses untuk mengelola/membuat artikel.
+ * Diizinkan jika merupakan Admin Asli ATAU berlangganan tier KAWAN_BRIMAS / SAHABAT_BRIMAS.
+ */
+export async function hasArticleManagementAccess(
+  userId: string | null | undefined,
+  isAdmin: boolean
+): Promise<boolean> {
+  if (isAdmin) return true;
+  if (!userId) return false;
+
+  const effectiveTier = await getEffectiveUserTier(userId);
+  return effectiveTier === "KAWAN_BRIMAS" || effectiveTier === "SAHABAT_BRIMAS";
+}
+

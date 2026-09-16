@@ -21,6 +21,8 @@ export default async function ProfilePage() {
         email: true,
         name: true,
         avatar: true,
+        tier: true,
+        tier_expires_at: true,
         created_at: true,
       },
     }).catch((e) => {

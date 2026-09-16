@@ -2,67 +2,36 @@ import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://brimas.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://brimaspradika.com";
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/dashboard`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/artikel`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/profile`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-  ];
+  // Static routes
+  const routes = ["", "/dashboard", "/about", "/artikel", "/profile", "/upgrade"].map(
+    (route) => ({
+      url: `${baseUrl}${route}`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "daily" as const,
+      priority: route === "" ? 1.0 : 0.8,
+    })
+  );
 
-  let articleRoutes: MetadataRoute.Sitemap = [];
+  // Dynamic article routes from database
   try {
-    const posts = await prisma.article.findMany({
-      select: { slug: true, updated_at: true, created_at: true },
+    const articles = await prisma.article.findMany({
+      select: {
+        slug: true,
+        updated_at: true,
+      },
     });
 
-    if (posts && posts.length > 0) {
-      articleRoutes = posts.map((post) => ({
-        url: `${baseUrl}/artikel/${post.slug}`,
-        lastModified: new Date(post.updated_at || post.created_at || Date.now()),
-        changeFrequency: "weekly",
-        priority: 0.7,
-      }));
-    }
-  } catch (err) {
-    console.warn("Sitemap fetch error:", err);
-  }
-
-  if (articleRoutes.length === 0) {
-    const fallbackSlugs = [
-      "membangun-ai-agent-automation-nextjs-supabase",
-      "optimasi-performa-web-modern-server-components-edge-caching",
-      "panduan-lengkap-arsitektur-database-supabase-prisma-orm",
-    ];
-
-    articleRoutes = fallbackSlugs.map((slug) => ({
-      url: `${baseUrl}/artikel/${slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
+    const articleRoutes = articles.map((art) => ({
+      url: `${baseUrl}/artikel/${art.slug}`,
+      lastModified: art.updated_at.toISOString(),
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
-  }
 
-  return [...staticRoutes, ...articleRoutes];
+    return [...routes, ...articleRoutes];
+  } catch {
+    return routes;
+  }
 }

@@ -5,16 +5,18 @@ export default function DashboardLoading() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b-4 border-black dark:border-white px-4 sm:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 animate-pulse">
           <div className="flex items-center gap-3 shrink-0">
-            <div className="w-9 h-9 rounded-none bg-[#EAB308] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
-            <div className="w-32 sm:w-40 h-5 rounded-none bg-black dark:bg-white" />
+            <div className="w-9 h-9 rounded-none bg-[#FF0000] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-white font-black flex items-center justify-center">
+              B
+            </div>
+            <div className="w-36 sm:w-48 h-5 rounded-none bg-black dark:bg-white" />
           </div>
           <div className="hidden md:flex items-center gap-3">
             <div className="w-20 h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
             <div className="w-20 h-5 rounded-none bg-neutral-300 dark:bg-neutral-800" />
-            <div className="w-20 h-5 rounded-none bg-[#16A34A]" />
+            <div className="w-20 h-5 rounded-none bg-[#FFFF00]" />
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-24 h-9 rounded-none bg-[#EAB308] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-24 h-9 rounded-none bg-[#FFFF00] border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
           </div>
         </div>
       </header>
@@ -23,20 +25,23 @@ export default function DashboardLoading() {
       <section className="relative min-h-[85vh] sm:min-h-[92vh] flex items-center justify-center pt-24 sm:pt-28 pb-12 overflow-hidden text-center">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 py-8 sm:py-12 space-y-6 animate-pulse">
           
+          {/* Greeting Pill Skeleton */}
+          <div className="w-48 h-7 rounded-none bg-[#FF0000] border-2 border-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
+
           {/* Headline Skeleton */}
           <div className="space-y-4 w-full flex flex-col items-center">
-            <div className="w-64 sm:w-96 h-12 sm:h-16 rounded-none bg-[#EAB308] border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-64 sm:w-96 h-12 sm:h-16 rounded-none bg-[#FFFF00] border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]" />
             <div className="w-3/4 max-w-xl h-12 sm:h-16 rounded-none bg-neutral-300 dark:bg-neutral-800 border-3 border-black dark:border-white" />
             <div className="w-1/2 max-w-md h-12 sm:h-16 rounded-none bg-neutral-300 dark:bg-neutral-800 border-3 border-black dark:border-white" />
           </div>
 
           {/* Subtitle Paragraph Skeleton */}
-          <div className="w-5/6 max-w-xl h-6 rounded-none bg-neutral-300 dark:bg-neutral-800 pt-2" />
+          <div className="w-5/6 max-w-xl h-6 rounded-none bg-neutral-300 dark:bg-neutral-800" />
 
           {/* CTA Buttons Skeleton */}
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <div className="w-44 h-12 rounded-none bg-[#EAB308] border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
-            <div className="w-40 h-12 rounded-none bg-[#16A34A] border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" />
+            <div className="w-44 h-12 rounded-none bg-[#FF0000] border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]" />
+            <div className="w-40 h-12 rounded-none bg-[#FFFF00] border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]" />
           </div>
         </div>
       </section>
@@ -44,7 +49,7 @@ export default function DashboardLoading() {
       {/* 3. Latest Articles Section Skeleton */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-8 animate-pulse">
         <div className="space-y-2 text-left">
-          <div className="w-64 h-8 rounded-none bg-[#16A34A] border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
+          <div className="w-64 h-8 rounded-none bg-[#FF0000] border-2 border-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" />
           <div className="w-72 h-4 rounded-none bg-neutral-300 dark:bg-neutral-800" />
         </div>
 

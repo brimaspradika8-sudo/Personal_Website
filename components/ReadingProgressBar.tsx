@@ -3,26 +3,26 @@
 import { useEffect, useState } from "react";
 
 export default function ReadingProgressBar() {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [completion, setCompletion] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        const progress = (window.scrollY / totalHeight) * 100;
-        setScrollProgress(Math.min(100, Math.max(0, progress)));
+    const updateScrollCompletion = () => {
+      const currentProgress = window.scrollY;
+      const scrollHeight = document.body.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        setCompletion(Number((currentProgress / scrollHeight).toFixed(3)) * 100);
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", updateScrollCompletion);
+    return () => window.removeEventListener("scroll", updateScrollCompletion);
   }, []);
 
   return (
-    <div className="fixed top-0 inset-x-0 z-[100] h-2 bg-slate-900/10 dark:bg-white/10 pointer-events-none">
+    <div className="fixed top-0 left-0 right-0 z-[60] h-1.5 bg-neutral-200 dark:bg-neutral-900 border-b border-black dark:border-white pointer-events-none">
       <div
-        className="h-full bg-[#166534] border-r-2 border-slate-900 dark:border-white transition-all duration-75 ease-out shadow-[0_2px_4px_rgba(22,101,52,0.5)]"
-        style={{ width: `${scrollProgress}%` }}
+        className="h-full bg-[#FFFF00] transition-all duration-75 shadow-[0_0_8px_rgba(255,255,0,0.8)]"
+        style={{ width: `${completion}%` }}
       />
     </div>
   );

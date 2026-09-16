@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { checkIsAdmin, getArticles } from "@/lib/actions/article";
 import AdminArticlesClient from "./articles-client";
+import { hasArticleManagementAccess } from "@/lib/membership";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export default async function AdminArticlesPage() {
     redirect("/login?redirectedFrom=/admin/artikel");
   }
 
-  // 2. Pengecekan Admin Role & Membership Sahabat Brimas
+  // 2. Pengecekan Admin Role & Membership (Kawan / Sahabat / Admin)
   const userEmail = (user?.email ?? "").toLowerCase().trim();
   const isAdmin = await checkIsAdmin(userEmail);
 
@@ -34,16 +35,13 @@ export default async function AdminArticlesPage() {
     } catch {}
   }
 
-  const { hasAdminDashboardAccess } = await import("@/lib/membership");
-  const hasAccess = await hasAdminDashboardAccess(dbUser?.id, isAdmin);
+  const hasAccess = await hasArticleManagementAccess(dbUser?.id, isAdmin);
 
   if (!hasAccess) {
-    redirect("/dashboard");
+    redirect("/upgrade?reason=must_subscribe");
   }
 
-
-
-  // 4. Fetch Daftar Artikel Lengkap
+  // 3. Fetch Daftar Artikel Lengkap
   const articles = await getArticles();
 
   return (

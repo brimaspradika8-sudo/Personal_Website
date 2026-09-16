@@ -27,6 +27,10 @@ import {
   ImageIcon,
   Sparkles,
   Palette,
+  Crown,
+  Bookmark,
+  Trash2,
+  BookOpen,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import {
@@ -39,6 +43,8 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
 import { getSavedTheme, saveTheme } from "@/lib/theme";
+import { getBookmarks, toggleBookmark, subscribeBookmarks, BookmarkedArticle } from "@/lib/bookmarks";
+
 
 interface ProfileClientProps {
   user: {
@@ -62,6 +68,8 @@ interface ProfileClientProps {
     email: string;
     name: string | null;
     avatar: string | null;
+    tier?: string;
+    tier_expires_at?: Date | string | null;
     created_at: Date | string;
   } | null;
 }
@@ -134,10 +142,19 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
   const [sfxEnabled, setSfxEnabled] = useState(soundFx.getIsEnabled());
   const [mode, setMode] = useState<"day" | "night">("day");
+  const [bookmarks, setBookmarks] = useState<BookmarkedArticle[]>([]);
+
+  useEffect(() => {
+    setBookmarks(getBookmarks());
+    return subscribeBookmarks((newList) => {
+      setBookmarks(newList);
+    });
+  }, []);
 
   useEffect(() => {
     setMode(getSavedTheme());
   }, []);
+
 
   useEffect(() => {
     saveTheme(mode);
@@ -433,12 +450,45 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               <div className="pt-2 flex items-center justify-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-[#FFFF00] text-black font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                   <span className="w-2.5 h-2.5 rounded-full bg-black animate-ping" />
-                  <span>{isAuthenticated ? (lang === "id" ? "MEMBER AKTIF" : "ACTIVE MEMBER") : (lang === "id" ? "GUEST SESSION" : "GUEST SESSION")}</span>
+                  <span>{isAuthenticated ? (lang === "id" ? `MEMBER ${dbUser?.tier || "FREE"}` : `MEMBER ${dbUser?.tier || "FREE"}`) : (lang === "id" ? "GUEST SESSION" : "GUEST SESSION")}</span>
                 </span>
               </div>
             </div>
 
           </div>
+        </div>
+
+        {/* 1.5. PROMINENT MEMBERSHIP TIER CARD (Neo-Brutalist Banner) */}
+        <div className="rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono">
+          <div className="space-y-2 max-w-xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-white text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+              <Crown className="w-4 h-4 text-[#FFFF00]" />
+              <span>{lang === "id" ? "STATUS MEMBERSHIP SAYA" : "MY MEMBERSHIP STATUS"}</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black uppercase leading-tight">
+              {dbUser?.tier === "SAHABAT_BRIMAS"
+                ? "SAHABAT BRIMAS (VIP GOLD)"
+                : dbUser?.tier === "KAWAN_BRIMAS"
+                ? "KAWAN BRIMAS (SILVER)"
+                : "FREE TIER"}
+            </h3>
+            <p className="text-xs font-bold leading-relaxed">
+              {dbUser?.tier === "SAHABAT_BRIMAS"
+                ? "Akses VIP Admin Penuh & Publikasi Artikel Tanpa Batas."
+                : dbUser?.tier === "KAWAN_BRIMAS"
+                ? "Dapat mempublikasikan hingga 3 artikel per 7 hari."
+                : "Tingkat gratis. Upgrade ke Kawan atau Sahabat Brimas untuk mulai mempublikasikan artikel & fitur eksklusif."}
+            </p>
+          </div>
+
+          <Link
+            href="/upgrade"
+            onClick={() => soundFx.playClick()}
+            className="w-full sm:w-auto px-6 py-3.5 rounded-none bg-[#FF0000] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-[#FFFF00] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0"
+          >
+            <Crown className="w-4 h-4" />
+            <span>{dbUser?.tier && dbUser.tier !== "FREE" ? "KELOLA MEMBERSHIP" : "UPGRADE MEMBERSHIP"}</span>
+          </Link>
         </div>
 
         {/* 2. DESKTOP 2-COLUMN GRID (Account Settings & Preferences Side-by-Side) */}
@@ -653,7 +703,86 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
         </div>
 
+        {/* 2.5. BOOKMARKED / SAVED ARTICLES SECTION */}
+        <div className="rounded-none border-4 border-black bg-white dark:bg-black text-black dark:text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-5 space-y-4 font-mono">
+          <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-none bg-[#FFFF00] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Bookmark className="w-4 h-4 text-black fill-black" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black uppercase text-black dark:text-white leading-tight">
+                  {lang === "id" ? "ARTIKEL TERSIMPAN" : "SAVED ARTICLES"} ({bookmarks.length})
+                </h3>
+                <p className="text-[10px] text-neutral-500 font-bold uppercase">
+                  {lang === "id" ? "Daftar bacaan yang Anda simpan untuk dibaca nanti" : "Saved reading list for later"}
+                </p>
+              </div>
+            </div>
+
+            {bookmarks.length > 0 && (
+              <Link
+                href="/artikel"
+                onClick={() => soundFx.playClick()}
+                className="px-3 py-1 rounded-none bg-[#FF0000] text-white border-2 border-black text-[11px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all"
+              >
+                + CARI ARTIKEL
+              </Link>
+            )}
+          </div>
+
+          {bookmarks.length === 0 ? (
+            <div className="p-6 text-center space-y-3 rounded-none border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
+              <BookOpen className="w-8 h-8 text-neutral-400 mx-auto" />
+              <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase">
+                {lang === "id" ? "Belum ada artikel tersimpan." : "No saved articles yet."}
+              </p>
+              <Link
+                href="/artikel"
+                onClick={() => soundFx.playClick()}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-[#FFFF00] text-black border-2 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer"
+              >
+                <span>{lang === "id" ? "JELAJAHI ARTIKEL SEKARANG" : "EXPLORE ARTICLES NOW"}</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {bookmarks.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-3.5 rounded-none border-3 border-black dark:border-white bg-neutral-50 dark:bg-neutral-900 flex items-center justify-between gap-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] group"
+                >
+                  <Link
+                    href={`/artikel/${item.slug}`}
+                    onClick={() => soundFx.playClick()}
+                    className="flex-1 space-y-1 min-w-0"
+                  >
+                    <h4 className="font-black text-xs uppercase truncate text-black dark:text-white group-hover:text-[#FF0000] transition-colors">
+                      {item.title}
+                    </h4>
+                    <p className="text-[10px] text-neutral-500 font-bold uppercase">
+                      {lang === "id" ? "DISIMPAN" : "SAVED"}: {new Date(item.saved_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toggleBookmark(item);
+                    }}
+                    className="p-1.5 rounded-none border-2 border-black bg-[#FF0000] text-white hover:bg-black transition-all cursor-pointer shrink-0"
+                    title="Hapus Simpanan"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* 3. SIGN OUT / LOGIN ACTION BUTTON */}
+
         <div className="pt-2">
           {isAuthenticated ? (
             <form action={signOut}>

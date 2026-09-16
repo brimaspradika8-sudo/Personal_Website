@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Heart, ArrowUp, Mail } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 
@@ -54,7 +55,13 @@ interface FooterProps {
   isNight?: boolean;
 }
 
-export default function Footer({ isNight = true }: FooterProps) {
+export default function Footer({ isNight = false }: FooterProps) {
+  const pathname = usePathname();
+  const isAllowedPage =
+    pathname === "/" ||
+    pathname === "/dashboard" ||
+    pathname.startsWith("/artikel");
+
   const scrollToTop = () => {
     soundFx.playClick();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -88,14 +95,14 @@ export default function Footer({ isNight = true }: FooterProps) {
     },
   ];
 
+  // Dynamic Theme Helpers
+  const textColor = isNight ? "text-white" : "text-black dark:text-white";
+  const textMuted = isNight ? "text-neutral-200" : "text-black dark:text-white";
+  const borderColor = isNight ? "border-white" : "border-black dark:border-white";
+  const bgStyle = isNight ? "bg-black text-white" : "bg-white dark:bg-black text-black dark:text-white";
+
   return (
-    <footer
-      className={`relative pt-10 sm:pt-16 pb-20 md:pb-12 border-t-4 border-black dark:border-white transition-colors duration-300 ${
-        isNight
-          ? "bg-[#000000] text-white"
-          : "bg-[#FFFFFF] text-black"
-      }`}
-    >
+    <footer className={`relative pt-10 sm:pt-16 pb-20 md:pb-12 border-t-4 ${borderColor} transition-colors duration-300 ${bgStyle}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         
         {/* Top Footer Section */}
@@ -112,14 +119,14 @@ export default function Footer({ isNight = true }: FooterProps) {
                 B
               </div>
               <div>
-                <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">
+                <h3 className={`text-base font-mono font-black uppercase ${textColor}`}>
                   Brimas Pradika Utama
                 </h3>
                 <p className="text-xs font-mono font-black text-[#FF0000] uppercase">[ AI Systems &amp; Fullstack Developer ]</p>
               </div>
             </Link>
 
-            <p className="text-xs leading-relaxed max-w-sm font-mono font-bold text-black dark:text-white">
+            <p className={`text-xs leading-relaxed max-w-sm font-mono font-bold ${textMuted}`}>
               Membangun aplikasi web generasi terbaru, sistem berbasis kecerdasan buatan, serta antarmuka digital performa tinggi.
             </p>
 
@@ -136,37 +143,37 @@ export default function Footer({ isNight = true }: FooterProps) {
 
           {/* Quick Navigation Links Column */}
           <div className="md:col-span-3 space-y-3">
-            <h4 className="text-xs font-mono font-black uppercase tracking-wider text-black dark:text-white border-b-3 border-black dark:border-white pb-1 inline-block">
+            <h4 className={`text-xs font-mono font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
               NAVIGASI CEPAT
             </h4>
             <ul className="space-y-2 text-xs font-mono font-black">
               <li>
-                <Link href="/dashboard" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                <Link href="/dashboard" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ BERANDA ]
                 </Link>
               </li>
               <li>
-                <Link href="/about" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                <Link href="/about" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ TENTANG SAYA ]
                 </Link>
               </li>
               <li>
-                <Link href="/upgrade" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                <Link href="/upgrade" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ MEMBERSHIP BRIMAS ]
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard#projects" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                <Link href="/dashboard#projects" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ PROYEK UNGGULAN ]
                 </Link>
               </li>
               <li>
-                <Link href="/artikel" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                <Link href="/artikel" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ ARTIKEL &amp; TUTORIAL ]
                 </Link>
               </li>
               <li>
-                <Link href="/profile" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                <Link href="/profile" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ PROFIL SAYA ]
                 </Link>
               </li>
@@ -175,10 +182,10 @@ export default function Footer({ isNight = true }: FooterProps) {
 
           {/* Social Media Column */}
           <div className="md:col-span-4 space-y-3">
-            <h4 className="text-xs font-mono font-black uppercase tracking-wider text-black dark:text-white border-b-3 border-black dark:border-white pb-1 inline-block">
+            <h4 className={`text-xs font-mono font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
               MEDIA SOSIAL
             </h4>
-            <p className="text-xs leading-relaxed font-mono font-bold text-black dark:text-white">
+            <p className={`text-xs leading-relaxed font-mono font-bold ${textMuted}`}>
               Hubungi saya atau ikuti pembaruan proyek terbaru melalui saluran media sosial berikut.
             </p>
 
@@ -204,7 +211,7 @@ export default function Footer({ isNight = true }: FooterProps) {
         </div>
 
         {/* Bottom Footer Border & Copyright */}
-        <div className="pt-8 border-t-3 border-black dark:border-white flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono font-black text-black dark:text-white uppercase">
+        <div className={`pt-8 border-t-3 ${borderColor} flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono font-black ${textColor} uppercase`}>
           <p className="flex items-center gap-1.5 font-mono">
             <span>© {new Date().getFullYear()} BRIMAS PRADIKA UTAMA. MADE WITH</span>
             <Heart className="w-3.5 h-3.5 text-[#FF0000] fill-[#FF0000]" />
@@ -213,13 +220,15 @@ export default function Footer({ isNight = true }: FooterProps) {
 
           <div className="flex items-center gap-4">
             <span className="hidden sm:inline">BUILT WITH NEXT.JS 16 &amp; PURE BRUTALISM</span>
-            <button
-              onClick={scrollToTop}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-none border-2 border-black dark:border-white bg-[#FF0000] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-            >
-              <span>KEMBALI KE ATAS</span>
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
+            {isAllowedPage && (
+              <button
+                onClick={scrollToTop}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-none border-2 border-black dark:border-white bg-[#FF0000] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+              >
+                <span>KEMBALI KE ATAS</span>
+                <ArrowUp className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
 

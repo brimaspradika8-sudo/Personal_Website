@@ -1,15 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowUp } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function BackToTop() {
+  const pathname = usePathname();
   const { lang } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
 
+  // Hanya izinkan pada dashboard ('/', '/dashboard') dan halaman konten artikel ('/artikel' & '/artikel/[slug]')
+  const isAllowedPage =
+    pathname === "/" ||
+    pathname === "/dashboard" ||
+    pathname.startsWith("/artikel");
+
   useEffect(() => {
+    if (!isAllowedPage) {
+      setIsVisible(false);
+      return;
+    }
+
     const toggleVisibility = () => {
       if (window.scrollY > 350) {
         setIsVisible(true);
@@ -20,7 +33,7 @@ export default function BackToTop() {
 
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
+  }, [isAllowedPage]);
 
   const scrollToTop = () => {
     try {
@@ -32,7 +45,7 @@ export default function BackToTop() {
     });
   };
 
-  if (!isVisible) return null;
+  if (!isAllowedPage || !isVisible) return null;
 
   return (
     <button

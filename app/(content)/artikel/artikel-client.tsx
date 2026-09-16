@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -14,12 +14,49 @@ import {
   ChevronRight,
   RefreshCw,
   SlidersHorizontal,
-  Layers,
+  Plus,
+  Bookmark,
 } from "lucide-react";
 
 import { ArticleItem, seedSampleArticlesIfEmpty } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import { isBookmarked, toggleBookmark, subscribeBookmarks } from "@/lib/bookmarks";
+
+function BookmarkCardButton({ article }: { article: ArticleItem }) {
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setSaved(isBookmarked(article.id) || isBookmarked(article.slug));
+    return subscribeBookmarks(() => {
+      setSaved(isBookmarked(article.id) || isBookmarked(article.slug));
+    });
+  }, [article.id, article.slug]);
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleBookmark({
+          id: article.id,
+          title: article.title,
+          slug: article.slug,
+          thumbnail: article.thumbnail,
+          created_at: article.created_at,
+        });
+      }}
+      className={`p-2 rounded-none border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+        saved ? "bg-[#FFFF00] text-black" : "bg-white text-black hover:bg-[#FF0000] hover:text-white"
+      }`}
+      title={saved ? "Tersimpan di Profil" : "Simpan Artikel"}
+    >
+      <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-black" : ""}`} />
+    </button>
+  );
+}
+
 
 interface ArtikelClientProps {
   initialArticles: ArticleItem[];
@@ -28,9 +65,9 @@ interface ArtikelClientProps {
     email?: string;
     user_metadata?: { full_name?: string; avatar_url?: string };
   } | null;
+  userTier?: string;
   isAdmin?: boolean;
 }
-
 
 function ArticleThumbnail({ src, title }: { src?: string | null; title: string }) {
   const [hasError, setHasError] = useState(false);
@@ -119,15 +156,27 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 space-y-8">
 
         {/* 1. TOP NAV & BREADCRUMB (Pure Brutalism Sharp Button) */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/dashboard"
-            onClick={() => soundFx.playClick()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#FF0000]" />
-            <span>KEMBALI KE BERANDA</span>
-          </Link>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <Link
+              href="/dashboard"
+              onClick={() => soundFx.playClick()}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#FF0000]" />
+              <span>BERANDA</span>
+            </Link>
+
+            <Link
+              href="/admin/artikel/tambah"
+              onClick={() => soundFx.playClick()}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none bg-[#FF0000] border-3 border-black dark:border-white text-white text-xs font-mono font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase"
+              title="Tulis artikel baru (Khusus Member Berlangganan)"
+            >
+              <Plus className="w-4 h-4 text-white" />
+              <span>TULIS ARTIKEL</span>
+            </Link>
+          </div>
 
           {isAdmin && (
             <button
@@ -222,6 +271,11 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
                 <div className="relative w-full h-48 bg-black border-b-4 border-black dark:border-white overflow-hidden shrink-0">
                   <ArticleThumbnail src={article.thumbnail} title={article.title} />
 
+                  {/* Bookmark Button Top Left */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <BookmarkCardButton article={article} />
+                  </div>
+
                   {/* Estimated Read Time Badge */}
                   {article.readTime && (
                     <div className="absolute bottom-3 right-3 px-3 py-1 rounded-none bg-[#FFFF00] text-black border-2 border-black text-[10px] font-mono font-black flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
@@ -230,6 +284,7 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
                     </div>
                   )}
                 </div>
+
 
                 {/* Body Content */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
