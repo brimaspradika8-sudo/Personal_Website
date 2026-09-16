@@ -22,8 +22,8 @@ export const MEMBERSHIP_PLANS: Record<"KAWAN_BRIMAS" | "SAHABAT_BRIMAS", Members
     key: "KAWAN_BRIMAS",
     title: "Kawan Brimas",
     badge: "KAWAN",
-    priceIdr: 50000, // Rp 50.000 / bulan (Placeholder)
-    priceUsd: 3.5,
+    priceIdr: 5000, // Rp 5.000 / bulan
+    priceUsd: 0.35,
     weeklyArticleLimit: 3, // Maksimal 3 artikel per 7 hari (rolling window)
     adminAccess: false,
     description: "Tingkat membership dasar untuk kreator & penulis aktif.",
@@ -32,15 +32,15 @@ export const MEMBERSHIP_PLANS: Record<"KAWAN_BRIMAS" | "SAHABAT_BRIMAS", Members
       "Akses penuh fitur komentar & reaksi komunitas",
       "Sertifikat keanggotaan digital Kawan Brimas",
       "Badge eksklusif di profil pengguna",
-      "Dukungan prioritas & garansi garansi platform",
+      "Dukungan prioritas & garansi platform",
     ],
   },
   SAHABAT_BRIMAS: {
     key: "SAHABAT_BRIMAS",
     title: "Sahabat Brimas",
     badge: "SAHABAT VIP",
-    priceIdr: 150000, // Rp 150.000 / bulan (Placeholder)
-    priceUsd: 10,
+    priceIdr: 20000, // Rp 20.000 / bulan
+    priceUsd: 1.35,
     weeklyArticleLimit: null, // Unlimited
     adminAccess: true, // Full Admin Dashboard Access
     description: "Tingkat membership VIP dengan akses admin penuh & tanpa batas artikel.",
