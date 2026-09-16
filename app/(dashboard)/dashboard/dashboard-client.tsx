@@ -239,7 +239,7 @@ export default function DashboardClient({
                 soundFx.playClick();
                 toggleLang();
               }}
-              className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-mono font-bold border-2 border-slate-900 dark:border-white bg-amber-400 text-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+              className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-mono font-bold border-2 border-slate-900 dark:border-white bg-sky-400 text-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
             >
               {lang.toUpperCase()}
             </button>
@@ -248,10 +248,10 @@ export default function DashboardClient({
             <button
               type="button"
               onClick={handleToggleMode}
-              className="p-1.5 sm:p-2 rounded-full border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 text-slate-950 dark:text-amber-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center"
+              className="p-1.5 sm:p-2 rounded-full border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 text-slate-950 dark:text-sky-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center"
               title={isNight ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {isNight ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />}
+              {isNight ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />}
             </button>
 
             {/* Admin Badge */}
@@ -368,7 +368,7 @@ export default function DashboardClient({
       {/* 2. HERO SECTION (Neo-Brutalism Style) */}
       <section id="hero" className="relative min-h-[85vh] sm:min-h-[92vh] flex items-center justify-center pt-24 sm:pt-28 pb-12 overflow-hidden text-center">
         {/* Background Ticker / Running Text (Neo-Brutalist Marquee Bar - Hidden on mobile, active on desktop) */}
-        <div className="hidden sm:block absolute top-24 sm:top-28 inset-x-0 overflow-hidden py-2.5 bg-amber-400 border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-mono font-bold text-xs sm:text-sm tracking-widest uppercase">
+        <div className="hidden sm:block absolute top-24 sm:top-28 inset-x-0 overflow-hidden py-2.5 bg-sky-400 border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-mono font-bold text-xs sm:text-sm tracking-widest uppercase">
           <div className="whitespace-nowrap animate-marquee flex items-center gap-8">
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
@@ -450,7 +450,7 @@ export default function DashboardClient({
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-full max-w-xs sm:max-w-md h-[260px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-amber-400 dark:bg-[#0E121D] border-2 sm:border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-4"
+              className="relative w-full max-w-xs sm:max-w-md h-[260px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-sky-400 dark:bg-[#0E121D] border-2 sm:border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-4"
             >
               <Image
                 src="/images/avatar.webp"

@@ -40,7 +40,7 @@ const TECH_ITEMS: TechItem[] = [
     icon: Code2,
     lightBg: "bg-slate-950 text-white",
     darkBg: "dark:bg-[#0E121D] dark:text-white",
-    badgeBg: "bg-[#DC2626] text-white",
+    badgeBg: "bg-sky-500 text-white",
     span: "col-span-1 md:col-span-2 lg:col-span-2",
   },
   {
@@ -51,9 +51,9 @@ const TECH_ITEMS: TechItem[] = [
     description: "RESTful API Architecture, Eloquent ORM, Queue Workers & Middleware.",
     useCase: "Sistem manajemen data, otentikasi enterprise, dan backend service.",
     icon: Flame,
-    lightBg: "bg-[#DC2626] text-white",
-    darkBg: "dark:bg-[#B91C1C] dark:text-white",
-    badgeBg: "bg-amber-400 text-slate-950",
+    lightBg: "bg-sky-600 text-white",
+    darkBg: "dark:bg-sky-700 dark:text-white",
+    badgeBg: "bg-sky-300 text-slate-950",
     span: "col-span-1 md:col-span-1 lg:col-span-1",
   },
   {
@@ -64,8 +64,8 @@ const TECH_ITEMS: TechItem[] = [
     description: "Agentic Workflows, OpenAI/Anthropic APIs, Prompt Engineering & Embeddings.",
     useCase: "Otomatisasi alur kerja cerdas, chatbot kustom, dan analisis dokumen.",
     icon: Cpu,
-    lightBg: "bg-amber-400 text-slate-950",
-    darkBg: "dark:bg-amber-400 dark:text-slate-950",
+    lightBg: "bg-sky-400 text-slate-950",
+    darkBg: "dark:bg-sky-400 dark:text-slate-950",
     badgeBg: "bg-slate-950 text-white",
     span: "col-span-1 md:col-span-1 lg:col-span-1",
   },
@@ -90,8 +90,8 @@ const TECH_ITEMS: TechItem[] = [
     description: "Neo-Brutalism design system, mikro-animasi UI, dan responsif layout.",
     useCase: "Menciptakan antarmuka yang bold, cepat, berani, dan modern.",
     icon: Layers,
-    lightBg: "bg-sky-400 text-slate-950",
-    darkBg: "dark:bg-sky-500 dark:text-slate-950",
+    lightBg: "bg-cyan-400 text-slate-950",
+    darkBg: "dark:bg-cyan-500 dark:text-slate-950",
     badgeBg: "bg-slate-950 text-white",
     span: "col-span-1 md:col-span-1 lg:col-span-1",
   },
@@ -105,7 +105,7 @@ const TECH_ITEMS: TechItem[] = [
     icon: Container,
     lightBg: "bg-indigo-500 text-white",
     darkBg: "dark:bg-indigo-600 dark:text-white",
-    badgeBg: "bg-amber-400 text-slate-950",
+    badgeBg: "bg-sky-300 text-slate-950",
     span: "col-span-1 md:col-span-2 lg:col-span-2",
   },
 ];
@@ -135,12 +135,12 @@ export default function TechStackBento({ isNight, lang }: TechStackBentoProps) {
         {/* Section Title Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2 sm:space-y-3 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-xl bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-bold tracking-widest uppercase">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-xl bg-sky-500 text-white border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-bold tracking-widest uppercase">
               <Sparkles className="w-3.5 h-3.5 text-white" />
               <span>TEKNOLOGI &amp; KAPABILITAS</span>
             </div>
             <h2 className="font-serif text-2xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
-              STACK &amp; <span className="text-[#DC2626]">KEAHLIAN UTAMA</span>
+              STACK &amp; <span className="text-sky-500">KEAHLIAN UTAMA</span>
             </h2>
             <p className="text-xs sm:text-base text-slate-800 dark:text-slate-200 font-sans font-medium leading-relaxed">
               {lang === "id"
@@ -160,7 +160,7 @@ export default function TechStackBento({ isNight, lang }: TechStackBentoProps) {
                 }}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold uppercase transition-all border-2 border-slate-900 dark:border-white cursor-pointer ${
                   selectedFilter === cat
-                    ? "bg-[#DC2626] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
+                    ? "bg-sky-500 text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
                     : "bg-white dark:bg-[#0E121D] text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
                 }`}
               >
@@ -213,7 +213,7 @@ export default function TechStackBento({ isNight, lang }: TechStackBentoProps) {
 
                 {/* Use Case Footer */}
                 <div className="pt-3 border-t-2 border-slate-900/30 dark:border-white/30 flex items-center gap-2 text-xs font-sans font-bold">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-[#DC2626]" />
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-sky-500" />
                   <span className="line-clamp-1">{item.useCase}</span>
                 </div>
               </motion.div>
