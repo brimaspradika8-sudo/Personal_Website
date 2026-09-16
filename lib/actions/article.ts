@@ -339,13 +339,32 @@ export async function getArticleById(id: string): Promise<ArticleItem | null> {
 }
 
 import { uploadFileToSupabaseStorage } from "@/lib/supabase/storage";
+import { canUserCreateArticle, getEffectiveUserTier } from "@/lib/membership";
 
 export async function uploadArticleImage(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user || !(await checkIsAdmin(user.email))) {
-    return { error: "Akses ditolak. Hanya pemilik yang dapat mengunggah gambar artikel." };
+  if (!user || !user.email) {
+    return { error: "Harus login terlebih dahulu untuk mengunggah gambar artikel." };
+  }
+
+  const isAdmin = await checkIsAdmin(user.email);
+  let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+  if (!dbUser) {
+    dbUser = await prisma.user.create({
+      data: {
+        email: user.email,
+        name: user.user_metadata?.full_name || user.email.split("@")[0],
+        avatar: user.user_metadata?.avatar_url || null,
+        role: isAdmin ? "ADMIN" : "USER",
+      },
+    });
+  }
+
+  const effectiveTier = await getEffectiveUserTier(dbUser.id);
+  if (!isAdmin && effectiveTier === "FREE") {
+    return { error: "Akses ditolak. Silakan upgrade membership untuk mengunggah gambar artikel." };
   }
 
   const file = formData.get("file") as File | null;
@@ -369,7 +388,7 @@ export async function uploadArticleImage(formData: FormData) {
   }
 }
 
-// 3. Admin-only: Buat Artikel Baru
+// 3. Buat Artikel Baru (Dengan Gate Permission & Limit Rolling 7-Hari)
 export async function createArticle(data: {
   title: string;
   slug?: string;
@@ -379,8 +398,27 @@ export async function createArticle(data: {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user || !(await checkIsAdmin(user.email))) {
-    return { error: "Akses ditolak. Hanya Admin yang dapat membuat artikel baru." };
+  if (!user || !user.email) {
+    return { error: "Harus login terlebih dahulu untuk membuat artikel baru." };
+  }
+
+  const isAdmin = await checkIsAdmin(user.email);
+  let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+  if (!dbUser) {
+    dbUser = await prisma.user.create({
+      data: {
+        email: user.email,
+        name: user.user_metadata?.full_name || user.email.split("@")[0],
+        avatar: user.user_metadata?.avatar_url || null,
+        role: isAdmin ? "ADMIN" : "USER",
+      },
+    });
+  }
+
+  // Cek Permission Pembuatan Artikel berbasis Tier Membership & Rolling Window Limit
+  const permission = await canUserCreateArticle(dbUser.id, isAdmin);
+  if (!permission.allowed) {
+    return { error: permission.reason || "Anda tidak diizinkan membuat artikel." };
   }
 
   try {
@@ -405,6 +443,7 @@ export async function createArticle(data: {
 
     const newArt = await prisma.article.create({
       data: {
+        author_id: dbUser.id,
         title: data.title.trim(),
         slug: slugFormatted,
         content: data.content.trim(),
@@ -421,19 +460,36 @@ export async function createArticle(data: {
   }
 }
 
-// 4. Admin-only: Hapus Artikel
+// 4. Hapus Artikel (Admin Asli & SAHABAT_BRIMAS boleh hapus semua; KAWAN_BRIMAS hanya miliknya sendiri)
 export async function deleteArticle(articleId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user || !(await checkIsAdmin(user.email))) {
-    return { error: "Akses ditolak. Hanya Admin yang dapat menghapus artikel." };
+  if (!user || !user.email) {
+    return { error: "Harus login terlebih dahulu untuk menghapus artikel." };
+  }
+
+  const isAdmin = await checkIsAdmin(user.email);
+  let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+  if (!dbUser) {
+    return { error: "Profil pengguna tidak ditemukan." };
+  }
+
+  const effectiveTier = await getEffectiveUserTier(dbUser.id);
+  const isSahabat = effectiveTier === "SAHABAT_BRIMAS";
+  const isKawan = effectiveTier === "KAWAN_BRIMAS";
+
+  if (!isAdmin && !isSahabat && !isKawan) {
+    return { error: "Akses ditolak. Silakan upgrade membership Anda." };
   }
 
   try {
     if (isValidUuid(articleId)) {
       const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
       if (existingArt) {
+        if (!isAdmin && !isSahabat && isKawan && existingArt.author_id !== dbUser.id) {
+          return { error: "Anda hanya dapat menghapus artikel karya Anda sendiri." };
+        }
         await prisma.article.delete({ where: { id: articleId } });
       }
     }
@@ -446,7 +502,7 @@ export async function deleteArticle(articleId: string) {
   }
 }
 
-// 4b. Admin-only: Update / Edit Artikel
+// 4b. Update / Edit Artikel (Admin Asli & SAHABAT_BRIMAS boleh edit semua; KAWAN_BRIMAS hanya miliknya sendiri)
 export async function updateArticle(
   articleId: string,
   data: {
@@ -459,8 +515,22 @@ export async function updateArticle(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user || !(await checkIsAdmin(user.email))) {
-    return { error: "Akses ditolak. Hanya Admin yang dapat mengedit artikel." };
+  if (!user || !user.email) {
+    return { error: "Harus login terlebih dahulu untuk mengedit artikel." };
+  }
+
+  const isAdmin = await checkIsAdmin(user.email);
+  let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+  if (!dbUser) {
+    return { error: "Profil pengguna tidak ditemukan." };
+  }
+
+  const effectiveTier = await getEffectiveUserTier(dbUser.id);
+  const isSahabat = effectiveTier === "SAHABAT_BRIMAS";
+  const isKawan = effectiveTier === "KAWAN_BRIMAS";
+
+  if (!isAdmin && !isSahabat && !isKawan) {
+    return { error: "Akses ditolak. Silakan upgrade membership Anda." };
   }
 
   try {
@@ -485,11 +555,15 @@ export async function updateArticle(
       existingArt = await prisma.article.findUnique({ where: { slug: slugFormatted } });
     }
 
+    if (existingArt && !isAdmin && !isSahabat && isKawan && existingArt.author_id !== dbUser.id) {
+      return { error: "Anda hanya dapat mengedit artikel karya Anda sendiri." };
+    }
+
     let updatedArt;
     if (!existingArt) {
-      // Jika merupakan sample article atau belum ada di database, buat artikel baru di database
       updatedArt = await prisma.article.create({
         data: {
+          author_id: dbUser.id,
           title: data.title.trim(),
           slug: slugFormatted,
           content: data.content.trim(),

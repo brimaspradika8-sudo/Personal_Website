@@ -18,6 +18,8 @@ export default function MobileBottomNav() {
       ? "profile"
       : pathname === "/artikel" || pathname?.startsWith("/artikel")
       ? "artikel"
+      : pathname === "/about" || pathname?.startsWith("/about")
+      ? "about"
       : pathname === "/dashboard" || pathname === "/"
       ? "home"
       : ""
@@ -28,13 +30,14 @@ export default function MobileBottomNav() {
     { id: "projects", label: lang === "id" ? "PROYEK" : "PROJECT", href: "#projects", Icon: FolderGit2, isCenter: false },
     { id: "artikel", label: lang === "id" ? "ARTIKEL" : "ARTIKEL", href: "/artikel", Icon: BookOpen, isCenter: false },
     { id: "home", label: lang === "id" ? "BERANDA" : "HOME", href: "/dashboard", Icon: Home, isCenter: true },
-    { id: "about", label: lang === "id" ? "TENTANG" : "ABOUT", href: "#about", Icon: User, isCenter: false },
+    { id: "about", label: lang === "id" ? "TENTANG" : "ABOUT", href: "/about", Icon: User, isCenter: false },
     { id: "profile", label: lang === "id" ? "PROFIL" : "PROFILE", href: "/profile", Icon: UserCheck, isCenter: false },
   ];
 
   useEffect(() => {
     router.prefetch("/profile");
     router.prefetch("/artikel");
+    router.prefetch("/about");
     router.prefetch("/dashboard");
   }, [router]);
 

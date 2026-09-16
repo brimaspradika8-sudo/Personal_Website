@@ -207,13 +207,13 @@ export default function DashboardClient({
             >
               {dict.nav.home.toUpperCase()}
             </a>
-            <a
-              href="#about"
+            <Link
+              href="/about"
               onClick={() => soundFx.playClick()}
               className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
             >
               {dict.nav.about.toUpperCase()}
-            </a>
+            </Link>
             <a
               href="#projects"
               onClick={() => soundFx.playClick()}
@@ -224,9 +224,23 @@ export default function DashboardClient({
             <Link
               href="/artikel"
               onClick={() => soundFx.playClick()}
-              className="px-3.5 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider bg-[#166534] text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
             >
               {dict.nav.articles.toUpperCase()}
+            </Link>
+            <Link
+              href="/pricing"
+              onClick={() => soundFx.playClick()}
+              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
+            >
+              {dict.nav.pricing ? dict.nav.pricing.toUpperCase() : "PRICING"}
+            </Link>
+            <Link
+              href="/upgrade"
+              onClick={() => soundFx.playClick()}
+              className="px-3.5 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider bg-[#EAB308] text-slate-950 border border-slate-950 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+            >
+              MEMBERSHIP
             </Link>
           </nav>
 
@@ -332,20 +346,20 @@ export default function DashboardClient({
             }`}
           >
             <div className="grid grid-cols-2 gap-2 text-center text-xs font-mono font-bold uppercase">
-              <a
-                href="#hero"
+              <Link
+                href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
               >
                 {dict.nav.home.toUpperCase()}
-              </a>
-              <a
-                href="#about"
+              </Link>
+              <Link
+                href="/about"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
               >
                 {dict.nav.about.toUpperCase()}
-              </a>
+              </Link>
               <a
                 href="#projects"
                 onClick={() => setMobileMenuOpen(false)}
@@ -353,13 +367,20 @@ export default function DashboardClient({
               >
                 {dict.nav.projects.toUpperCase()}
               </a>
-              <a
+              <Link
                 href="/artikel"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
               >
                 {dict.nav.articles.toUpperCase()}
-              </a>
+              </Link>
+              <Link
+                href="/pricing"
+                onClick={() => setMobileMenuOpen(false)}
+                className="col-span-2 p-2 rounded-xl bg-[#166534] text-white border-2 border-slate-900 dark:border-white"
+              >
+                {dict.nav.pricing ? dict.nav.pricing.toUpperCase() : "PRICING"}
+              </Link>
             </div>
           </div>
         )}

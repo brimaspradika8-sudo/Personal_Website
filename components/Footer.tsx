@@ -141,22 +141,32 @@ export default function Footer({ isNight = true }: FooterProps) {
             </h4>
             <ul className="space-y-2 text-xs font-mono font-black">
               <li>
-                <Link href="/dashboard" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
+                <Link href="/dashboard" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
                   [ BERANDA ]
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard#projects" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
+                <Link href="/about" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                  [ TENTANG SAYA ]
+                </Link>
+              </li>
+              <li>
+                <Link href="/pricing" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
+                  [ PAKET HARGA &amp; PRICING ]
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard#projects" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
                   [ PROYEK UNGGULAN ]
                 </Link>
               </li>
               <li>
-                <Link href="/artikel" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
+                <Link href="/artikel" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
                   [ ARTIKEL &amp; TUTORIAL ]
                 </Link>
               </li>
               <li>
-                <Link href="/profile" onClick={() => soundFx.playClick()} className="hover:text-[#FF0000] transition-colors block">
+                <Link href="/profile" onClick={() => soundFx.playClick()} className="hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block">
                   [ PROFIL SAYA ]
                 </Link>
               </li>

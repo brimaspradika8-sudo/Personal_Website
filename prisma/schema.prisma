@@ -21,21 +21,39 @@ enum Role {
   USER
 }
 
+enum MembershipTier {
+  FREE
+  KAWAN_BRIMAS
+  SAHABAT_BRIMAS
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXPIRED
+  FAILED
+}
+
 model User {
-  id         String      @id @default(uuid()) @db.Uuid
-  name       String
-  email      String      @unique
-  avatar     String?
-  role       Role        @default(USER)
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
-  reactions  Reaction[]
-  comments   Comment[]
-  guestbooks Guestbook[]
+  id              String         @id @default(uuid()) @db.Uuid
+  name            String
+  email           String         @unique
+  avatar          String?
+  role            Role           @default(USER)
+  tier            MembershipTier @default(FREE)
+  tier_expires_at DateTime?
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+  reactions       Reaction[]
+  comments        Comment[]
+  guestbooks      Guestbook[]
+  articles        Article[]
+  payments        Payment[]
 }
 
 model Article {
   id         String     @id @default(uuid()) @db.Uuid
+  author_id  String?    @db.Uuid
   title      String
   slug       String     @unique
   content    String
@@ -46,7 +64,10 @@ model Article {
   reactions  Reaction[]
   comments   Comment[]
 
+  author User? @relation(fields: [author_id], references: [id])
+
   @@index([created_at(sort: Desc)])
+  @@index([author_id])
 }
 
 model Reaction {
@@ -102,4 +123,25 @@ model Guestbook {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([created_at(sort: Desc)])
+}
+
+model Payment {
+  id                String         @id @default(uuid()) @db.Uuid
+  user_id           String         @db.Uuid
+  tier              MembershipTier
+  amount            Int
+  status            PaymentStatus  @default(PENDING)
+  xendit_invoice_id String         @unique
+  external_id       String         @unique
+  invoice_url       String?
+  paid_at           DateTime?
+  period_start      DateTime?
+  period_end        DateTime?
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([status])
 }

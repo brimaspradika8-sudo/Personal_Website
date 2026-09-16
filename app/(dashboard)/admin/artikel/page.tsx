@@ -21,15 +21,10 @@ export default async function AdminArticlesPage() {
     redirect("/login?redirectedFrom=/admin/artikel");
   }
 
-  // 2. Pengecekan Admin Role
+  // 2. Pengecekan Admin Role & Membership Sahabat Brimas
   const userEmail = (user?.email ?? "").toLowerCase().trim();
   const isAdmin = await checkIsAdmin(userEmail);
 
-  if (!isAdmin) {
-    redirect("/dashboard");
-  }
-
-  // 3. Fetch Data User dari DB
   let dbUser = null;
   if (userEmail) {
     try {
@@ -38,6 +33,15 @@ export default async function AdminArticlesPage() {
       });
     } catch {}
   }
+
+  const { hasAdminDashboardAccess } = await import("@/lib/membership");
+  const hasAccess = await hasAdminDashboardAccess(dbUser?.id, isAdmin);
+
+  if (!hasAccess) {
+    redirect("/dashboard");
+  }
+
+
 
   // 4. Fetch Daftar Artikel Lengkap
   const articles = await getArticles();

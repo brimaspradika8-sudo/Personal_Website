@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
+import { hasAdminDashboardAccess } from "@/lib/membership";
 import AdminDashboard from "./admin-dashboard";
 
 export const dynamic = "force-dynamic";
@@ -45,8 +46,10 @@ export default async function AdminPage() {
     envAdminEmails.includes(userEmail) ||
     dbUser?.role === "ADMIN";
 
-  // Jika BUKAN admin, redirect ke dashboard user publik
-  if (!isAdmin) {
+  const hasAccess = await hasAdminDashboardAccess(dbUser?.id, isAdmin);
+
+  // Jika BUKAN admin dan BUKAN Sahabat Brimas, redirect ke dashboard user publik
+  if (!hasAccess) {
     redirect("/dashboard");
   }
 
