@@ -41,7 +41,7 @@ export default function QuickContactFAB() {
   return (
     <>
       {/* Floating Action Button (FAB) */}
-      <div className="fixed bottom-20 md:bottom-6 right-5 z-40">
+      <div className="fixed bottom-36 md:bottom-22 right-5 md:right-6 z-40">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

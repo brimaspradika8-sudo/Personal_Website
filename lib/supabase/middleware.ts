@@ -34,12 +34,19 @@ export async function updateSession(request: NextRequest) {
       }
     );
 
-    // Refresh user session from Supabase Auth server per-request.
-    const { data: { user } } = await supabase.auth.getUser();
-
     const pathname = request.nextUrl.pathname;
     const isAdminRoute = pathname.startsWith("/admin");
     const isOwnerAdminOnlyRoute = pathname === "/admin" || pathname.startsWith("/admin/projects") || pathname.startsWith("/admin/users");
+
+    // Fast-path: jika tidak ada cookie Supabase Auth dan bukan route /admin, hindari panggilan HTTP getUser()
+    const hasAuthCookie = request.cookies.getAll().some((c) => c.name.startsWith("sb-") || c.name.includes("auth-token"));
+
+    if (!hasAuthCookie && !isAdminRoute) {
+      return supabaseResponse;
+    }
+
+    // Refresh user session from Supabase Auth server per-request.
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (isAdminRoute) {
       if (!user || !user.email) {

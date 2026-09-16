@@ -244,15 +244,6 @@ export default function DashboardClient({
               {lang.toUpperCase()}
             </button>
 
-            {/* Theme Switcher Button */}
-            <button
-              type="button"
-              onClick={handleToggleMode}
-              className="p-1.5 sm:p-2 rounded-full border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 text-slate-950 dark:text-[#EAB308] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center"
-              title={isNight ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-              {isNight ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#EAB308]" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />}
-            </button>
 
             {/* Admin Badge */}
             {isAdmin && (

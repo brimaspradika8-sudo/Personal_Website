@@ -154,56 +154,58 @@ export async function verifyLatestUserPayment() {
 
     let updatedCount = 0;
 
-    for (const payment of pendingPayments) {
-      if (!payment.xendit_invoice_id) continue;
+    const invoiceChecks = pendingPayments
+      .filter((p: { xendit_invoice_id?: string | null }) => Boolean(p.xendit_invoice_id))
+      .map(async (payment: { id: string; xendit_invoice_id?: string | null; tier: any }) => {
+        try {
+          const xenditInvoice = await getXenditInvoice(payment.xendit_invoice_id!);
 
-      try {
-        const xenditInvoice = await getXenditInvoice(payment.xendit_invoice_id);
+          if (xenditInvoice && (xenditInvoice.status === "PAID" || xenditInvoice.status === "SETTLED")) {
+            const now = new Date();
+            const periodStart = now;
+            const periodEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 Hari
 
-        if (xenditInvoice && (xenditInvoice.status === "PAID" || xenditInvoice.status === "SETTLED")) {
-          const now = new Date();
-          const periodStart = now;
-          const periodEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 Hari
+            // 1. Update Payment status
+            await prisma.payment.update({
+              where: { id: payment.id },
+              data: {
+                status: "PAID",
+                paid_at: now,
+                period_start: periodStart,
+                period_end: periodEnd,
+              },
+            });
 
-          // 1. Update Payment status
-          await prisma.payment.update({
-            where: { id: payment.id },
-            data: {
-              status: "PAID",
-              paid_at: now,
-              period_start: periodStart,
-              period_end: periodEnd,
-            },
-          });
-
-          // 2. Update User Membership Tier
-          let targetTier = payment.tier;
-          if (dbUser.tier === "SAHABAT_BRIMAS" && payment.tier === "KAWAN_BRIMAS") {
-            if (dbUser.tier_expires_at && dbUser.tier_expires_at > now) {
-              targetTier = "SAHABAT_BRIMAS";
+            // 2. Update User Membership Tier
+            let targetTier = payment.tier;
+            if (dbUser.tier === "SAHABAT_BRIMAS" && payment.tier === "KAWAN_BRIMAS") {
+              if (dbUser.tier_expires_at && dbUser.tier_expires_at > now) {
+                targetTier = "SAHABAT_BRIMAS";
+              }
             }
+
+            await prisma.user.update({
+              where: { id: dbUser.id },
+              data: {
+                tier: targetTier,
+                tier_expires_at: periodEnd,
+              },
+            });
+
+            updatedCount++;
+            console.log(`Auto-Verified Xendit Payment Success: User ${dbUser.id} upgraded to ${targetTier}`);
+          } else if (xenditInvoice && xenditInvoice.status === "EXPIRED") {
+            await prisma.payment.update({
+              where: { id: payment.id },
+              data: { status: "EXPIRED" },
+            });
           }
-
-          await prisma.user.update({
-            where: { id: dbUser.id },
-            data: {
-              tier: targetTier,
-              tier_expires_at: periodEnd,
-            },
-          });
-
-          updatedCount++;
-          console.log(`Auto-Verified Xendit Payment Success: User ${dbUser.id} upgraded to ${targetTier}`);
-        } else if (xenditInvoice && xenditInvoice.status === "EXPIRED") {
-          await prisma.payment.update({
-            where: { id: payment.id },
-            data: { status: "EXPIRED" },
-          });
+        } catch (err) {
+          console.error(`Error verifying Xendit invoice ${payment.xendit_invoice_id}:`, err);
         }
-      } catch (err) {
-        console.error(`Error verifying Xendit invoice ${payment.xendit_invoice_id}:`, err);
-      }
-    }
+      });
+
+    await Promise.allSettled(invoiceChecks);
 
     if (updatedCount > 0) {
       revalidatePath("/upgrade");

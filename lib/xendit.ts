@@ -95,6 +95,7 @@ export async function getXenditInvoice(
       Authorization: authHeader,
       "Content-Type": "application/json",
     },
+    signal: AbortSignal.timeout(4000),
   });
 
   const responseData = await response.json();

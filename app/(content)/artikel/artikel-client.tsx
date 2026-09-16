@@ -15,6 +15,7 @@ import {
   RefreshCw,
   SlidersHorizontal,
   Plus,
+  LayoutDashboard,
   Bookmark,
 } from "lucide-react";
 
@@ -168,13 +169,13 @@ export default function ArtikelClient({ initialArticles, isAdmin = false }: Arti
             </Link>
 
             <Link
-              href="/admin/artikel/tambah"
+              href="/admin/artikel"
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none bg-[#FF0000] border-3 border-black dark:border-white text-white text-xs font-mono font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase"
-              title="Tulis artikel baru (Khusus Member Berlangganan)"
+              title="Dashboard Kelola Artikel (Tambah, Edit, & Hapus - Khusus Member)"
             >
-              <Plus className="w-4 h-4 text-white" />
-              <span>TULIS ARTIKEL</span>
+              <LayoutDashboard className="w-4 h-4 text-white" />
+              <span>DASHBOARD ARTIKEL</span>
             </Link>
           </div>
 
