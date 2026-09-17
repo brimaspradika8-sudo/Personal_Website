@@ -310,7 +310,6 @@ export default function DashboardClient({
 
       {/* 2. HERO SECTION (Neo-Brutalism Style) */}
       <section id="hero" className="relative flex flex-col items-center justify-start pt-20 sm:pt-28 pb-6 sm:pb-12 overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
-        {/* Background Ticker / Running Text (Neo-Brutalist Marquee Bar - Visible on mobile & desktop) */}
         <div className="absolute top-20 sm:top-24 inset-x-0 overflow-hidden py-1.5 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-mono font-bold text-[10px] sm:text-xs tracking-widest uppercase shadow-sm">
           <div className="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-8">
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
@@ -326,7 +325,6 @@ export default function DashboardClient({
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-12 sm:pt-14 pb-2 sm:pb-4 space-y-4 sm:space-y-6"
         >
-        
           <h1 className="font-serif font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-3 sm:space-y-4">
             <span className="block min-h-[1.1em] overflow-hidden">
               <AnimatePresence mode="wait">
@@ -349,7 +347,6 @@ export default function DashboardClient({
             </span>
           </h1>
 
-          {/* Subtitle Paragraph with Marker Highlighter Effect */}
           <p className="text-xs sm:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-sans font-medium pt-1">
             Software &amp;{" "}
             <span className="bg-[#EAB308] text-slate-950 px-2 py-0.5 border-2 border-slate-900 font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
@@ -358,7 +355,6 @@ export default function DashboardClient({
             Developer berfokus pada arsitektur web modern, integrasi AI agent, dan solusi digital performa tinggi.
           </p>
 
-          {/* Neo-Brutalist CTA Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
             <motion.a
               whileHover={{ scale: 1.02 }}
@@ -384,14 +380,11 @@ export default function DashboardClient({
         </motion.div>
       </section>
 
-      {/* 3. ABOUT ME SECTION (Neo-Brutalism Style) */}
       <section
         id="about"
         className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 border-t-2 border-b-2 border-slate-900 dark:border-white"
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
-          
-          {/* Left Column: Portrait Photo with Offset Background Frame */}
           <div className="lg:col-span-5 flex justify-center items-center">
             <motion.div
               animate={{ y: [0, -6, 0] }}
@@ -409,7 +402,6 @@ export default function DashboardClient({
             </motion.div>
           </div>
 
-          {/* Right Column: About Me Bio */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-xl bg-[#00E676] text-slate-950 border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-xs font-mono font-bold tracking-widest uppercase">
               <User className="w-3.5 h-3.5 text-slate-950" />
@@ -421,7 +413,7 @@ export default function DashboardClient({
                 BRIMAS <span className="text-[#00C853]">PRADIKA UTAMA</span>
               </h2>
               <p className="text-xs sm:text-sm font-mono font-bold tracking-wide uppercase text-[#00C853]">
-                Junior Developer &bull; SMK Bhakti Mulia Pare
+                Junior Progammer &bull; SMK Bhakti Mulia Pare
               </p>
               <p className="text-xs sm:text-base font-sans font-medium leading-relaxed max-w-xl text-slate-800 dark:text-slate-200">
                 {lang === "id"
@@ -430,7 +422,6 @@ export default function DashboardClient({
               </p>
             </div>
 
-            {/* Feature Badges Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
               <div className="p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534]">
@@ -448,7 +439,7 @@ export default function DashboardClient({
                   <span className="text-[11px] font-mono font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
                 </div>
                 <p className="text-xs font-sans font-bold truncate text-slate-950 dark:text-white">
-                  Junior Developer
+                  Junior Progammer
                 </p>
               </div>
 
@@ -463,7 +454,6 @@ export default function DashboardClient({
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-3">
               <a
                 href="#projects"
@@ -486,17 +476,14 @@ export default function DashboardClient({
         </div>
       </section>
 
-      {/* 3.5 BENTO GRID TECH STACK */}
       <TechStackBento isNight={isNight} lang={lang} />
 
-      {/* 4. LATEST ARTICLES & INSIGHTS SECTION (Neo-Brutalist Magazine Style) */}
       <section
         id="articles"
         className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 border-b-2 border-slate-900 dark:border-white text-left"
       >
         <div className="space-y-6 sm:space-y-10">
           
-          {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 pb-2">
             <div className="space-y-2 sm:space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-[#166534] text-white border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-bold tracking-widest uppercase">
@@ -525,194 +512,29 @@ export default function DashboardClient({
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-
-          {/* Editorial Articles Grid (Featured Big Card + Side Column Stack) */}
-          {(() => {
-            const articlesList =
-              initialArticles && initialArticles.length > 0
-                ? initialArticles
-                : [
-                    {
-                      id: "1",
-                      title: "Transisi Arsitektur Software: Membangun Enterprise AI Agent dan Automation Workflow Berbasis Next.js",
-                      slug: "transisi-arsitektur-software-membangun-enterprise-ai-agent-nextjs",
-                      category: "AI Systems",
-                      readTime: "6 min read",
-                      created_at: new Date().toISOString(),
-                      thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
-                      content: "Perkembangan artificial intelligence telah bergeser dari sekadar prompt engineering sederhana menuju Agentic Workflows—sistem di mana AI mampu mengambil keputusan mandiri, memanggil tools, serta mengeksekusi urutan tugas yang kompleks secara otomatis.",
-                    },
-                    {
-                      id: "2",
-                      title: "Implementasi RESTful API & Eloquent Performance Optimization pada Laravel 11",
-                      slug: "restful-api-performance-laravel-11",
-                      category: "Backend Engineering",
-                      readTime: "7 min read",
-                      created_at: new Date().toISOString(),
-                      thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
-                      content: "Optimasi kueri basis data dan pengelolaan memori pada arsitektur backend skala besar dengan Laravel 11 dan PostgreSQL.",
-                    },
-                    {
-                      id: "3",
-                      title: "Prisma ORM, Docker & PostgreSQL: Trik Query Optimization & Indexing",
-                      slug: "prisma-postgresql-query-optimization",
-                      category: "Database & Systems",
-                      readTime: "6 min read",
-                      created_at: new Date().toISOString(),
-                      thumbnail: "https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1200&q=80",
-                      content: "Teknik membuat indexing teratur dan optimasi koneksi database relasional dalam lingkungan kontainer Docker.",
-                    },
-                  ];
-
-            const featured = articlesList[0];
-            const sideArticles = articlesList.slice(1, 3);
-
-            return (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch">
-                
-                {/* Featured Big Hero Article (7 Cols) */}
-                {featured && (
-                  <div className="lg:col-span-7 flex">
-                    <Link
-                      href={`/artikel/${featured.slug}`}
-                      onClick={() => soundFx.playClick()}
-                      className={`w-full p-4 sm:p-7 rounded-2xl border-2 sm:border-3 border-slate-900 dark:border-white flex flex-col justify-between space-y-4 sm:space-y-6 group transition-all duration-200 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0px_0px_rgba(0,230,118,1)] ${
-                        isNight
-                          ? "bg-[#0E121D]"
-                          : "bg-white"
-                      }`}
-                    >
-                      <div className="space-y-6">
-                        {/* Large Featured Image */}
-                        <div className="relative w-full h-64 sm:h-80 rounded-xl overflow-hidden bg-slate-900 border-2 border-slate-900 dark:border-white">
-                          <Image
-                            src={featured.thumbnail || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"}
-                            alt={featured.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                          />
-                          <div className="absolute top-4 left-4 z-10">
-                            <span className="px-3 py-1 rounded-lg bg-[#FFE600] text-slate-950 border-2 border-slate-900 text-[10px] font-mono font-black tracking-widest uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                              {lang === "id" ? "ARTIKEL UNGGULAN" : "FEATURED ARTICLE"}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Article Metadata */}
-                        <div className="flex items-center gap-3 text-xs text-slate-800 dark:text-slate-200 font-mono">
-                          <span className="flex items-center gap-1.5 font-bold text-xs">
-                            <Calendar className="w-3.5 h-3.5 text-[#166534]" />
-                            {new Date(featured.created_at).toLocaleDateString("id-ID", {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            })}
-                          </span>
-                        </div>
-
-                        {/* Title & Excerpt */}
-                        <div className="space-y-3">
-                          <h3 className="font-serif font-black text-2xl sm:text-3xl text-slate-950 dark:text-white group-hover:text-[#166534] transition-colors leading-tight">
-                            {featured.title}
-                          </h3>
-                          <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-sans font-medium leading-relaxed line-clamp-3">
-                            {featured.content?.replace(/<[^>]*>?/gm, "").substring(0, 180)}...
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Footer Read Action */}
-                      <div className="pt-4 border-t-2 border-slate-900 dark:border-white flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
-                          <Clock className="w-3.5 h-3.5 text-[#166534]" />
-                          {featured.readTime || "5 min read"}
-                        </span>
-                        <span className="text-[#166534] font-black text-xs uppercase tracking-wider font-mono flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                          <span>BACA ARTIKEL</span>
-                          <ArrowRight className="w-4 h-4" />
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
-                )}
-
-                {/* Side Stack Articles (5 Cols) */}
-                <div className="lg:col-span-5 flex flex-col gap-6 justify-between">
-                  {sideArticles.map((art) => (
-                    <Link
-                      key={art.id}
-                      href={`/artikel/${art.slug}`}
-                      onClick={() => soundFx.playClick()}
-                      className={`flex-1 p-5 rounded-2xl border-2 sm:border-3 border-slate-900 dark:border-white flex flex-col justify-between space-y-4 group transition-all duration-200 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0px_0px_rgba(22,101,52,1)] ${
-                        isNight
-                          ? "bg-[#0E121D]"
-                          : "bg-white"
-                      }`}
-                    >
-                      <div className="space-y-4">
-                        <div className="relative w-full h-36 rounded-xl overflow-hidden bg-slate-900 border-2 border-slate-900 dark:border-white">
-                          <Image
-                            src={art.thumbnail || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80"}
-                            alt={art.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                          />
-                        </div>
-
-                        <div className="flex items-center justify-end text-xs font-mono">
-                          <span className="font-bold text-[11px] text-slate-800 dark:text-slate-200">
-                            {art.readTime || "5 min read"}
-                          </span>
-                        </div>
-
-                        <h4 className="font-serif font-black text-lg sm:text-xl text-slate-950 dark:text-white group-hover:text-[#166534] transition-colors leading-snug">
-                          {art.title}
-                        </h4>
-                      </div>
-
-                      <div className="pt-3 border-t-2 border-slate-900 dark:border-white flex items-center justify-between text-xs font-mono font-bold text-[#166534]">
-                        <span>{lang === "id" ? "BACA SEKARANG" : "READ NOW"}</span>
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-
-              </div>
-            );
-          })()}
-
         </div>
       </section>
 
-      {/* 5. PORTFOLIO PROJECTS SHOWCASE SECTION */}
       <ProjectShowcase
         isNight={isNight}
         lang={lang}
         onSelectProject={(proj) => setSelectedProject(null)}
       />
 
-      {/* 6. EXPERIENCE & JOURNEY TIMELINE SECTION */}
       <ExperienceTimeline isNight={isNight} lang={lang} />
 
-
-      {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#166534] text-white font-bold text-xs font-mono shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
           {toastMsg}
         </div>
       )}
 
-      {/* Footer */}
       <Footer isNight={isNight} />
 
-      {/* Floating Mobile Bottom Navigation */}
       <MobileBottomNav />
 
-      {/* Quick Contact Floating Action Button & Drawer */}
       <QuickContactFAB />
 
-      {/* Command Palette */}
       <CommandPalette
         isOpen={cmdPaletteOpen}
         onClose={() => setCmdPaletteOpen(false)}
@@ -720,7 +542,6 @@ export default function DashboardClient({
         isNight={isNight}
       />
 
-      {/* Project Detail Modal */}
       <ProjectModal
         project={selectedProject}
         onClose={() => setSelectedProject(null)}

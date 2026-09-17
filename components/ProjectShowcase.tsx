@@ -70,7 +70,6 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
     <section id="projects" className="scroll-mt-20 max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 border-b-4 border-black dark:border-white">
       <div className="space-y-5 sm:space-y-8 text-left">
         
-        {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-xl">
             <h2 className="font-mono text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
@@ -83,7 +82,6 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
             </p>
           </div>
 
-          {/* Interactive Supabase Client Sync Button */}
           <div className="flex items-center gap-2">
             <button
               type="button"

@@ -145,7 +145,6 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 space-y-8">
 
-        {/* 1. TOP NAV & ACTIONS BAR */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3 flex-wrap font-mono">
             <Link

@@ -10,28 +10,24 @@ export interface MembershipPlanConfig {
   badge: string;
   priceIdr: number;
   priceUsd: number;
-  weeklyArticleLimit: number | null; // 3 for Kawan, null for unlimited
+  weeklyArticleLimit: number | null; 
   adminAccess: boolean;
   description: string;
   features: string[];
 }
 
-/**
- * Single source of truth untuk konfigurasi harga & batasan tier membership.
- * Ubah harga nominal di sini saja.
- */
 export const MEMBERSHIP_PLANS: Record<"KAWAN_BRIMAS" | "SAHABAT_BRIMAS", MembershipPlanConfig> = {
   KAWAN_BRIMAS: {
     key: "KAWAN_BRIMAS",
     title: "Kawan Brimas",
     badge: "KAWAN",
-    priceIdr: 5000, // Rp 5.000 / bulan
+    priceIdr: 5000,
     priceUsd: 0.35,
-    weeklyArticleLimit: 3, // Maksimal 3 artikel per 7 hari (rolling window)
+    weeklyArticleLimit: 3,
     adminAccess: false,
     description: "Tingkat keanggotaan dasar untuk kreator & penulis aktif.",
     features: [
-      "Publikasi hingga 3 artikel / 7 hari (Rolling Window)",
+      "Publikasi hingga 3 artikel / 7 hari",
       "Akses Narasi Suara AI Neural (Suara Pria — Ardi)",
       "Akses Rangkuman AI Artikel Standar (3-4 poin)",
       "Badge Mahkota Hijau eksklusif di profil pengguna",
@@ -42,15 +38,15 @@ export const MEMBERSHIP_PLANS: Record<"KAWAN_BRIMAS" | "SAHABAT_BRIMAS", Members
     key: "SAHABAT_BRIMAS",
     title: "Sahabat Brimas VIP",
     badge: "SAHABAT VIP",
-    priceIdr: 20000, // Rp 20.000 / bulan
+    priceIdr: 20000,
     priceUsd: 1.35,
-    weeklyArticleLimit: null, // Unlimited
+    weeklyArticleLimit: null,
     adminAccess: false,
     description: "Tingkat keanggotaan VIP tertinggi dengan fasilitas terlengkap & tanpa batas.",
     features: [
       "Publikasi artikel TANPA BATAS (Unlimited)",
       "Pilihan 2 Suara Narasi AI (Pria: Ardi & Wanita: Gadis)",
-      "Rangkuman AI Eksekutif Mendalam (Key Takeaways & Kesimpulan)",
+      "Rangkuman AI Eksekutif Mendalam",
       "Komentar Pinned VIP Emas otomatis disematkan di paling atas",
       "Prioritas tampil artikel dengan label VIP Featured di feed utama",
       "Badge Mahkota Emas VIP & Golden Avatar Glow Aura",
@@ -59,10 +55,6 @@ export const MEMBERSHIP_PLANS: Record<"KAWAN_BRIMAS" | "SAHABAT_BRIMAS", Members
   },
 };
 
-/**
- * Mengecek dan mengembalikan tier pengguna yang valid.
- * Jika `tier_expires_at` sudah lewat dari waktu sekarang, otomatis diturunkan ke FREE di database.
- */
 export async function getEffectiveUserTier(userId: string): Promise<MembershipTier> {
   try {
     const user = await prisma.user.findUnique({
@@ -75,7 +67,6 @@ export async function getEffectiveUserTier(userId: string): Promise<MembershipTi
     if (user.tier !== "FREE" && user.tier_expires_at) {
       const now = new Date();
       if (user.tier_expires_at < now) {
-        // Otomatis turunkan ke FREE karena masa berlaku habis
         await prisma.user.update({
           where: { id: userId },
           data: {
@@ -94,13 +85,6 @@ export async function getEffectiveUserTier(userId: string): Promise<MembershipTi
   }
 }
 
-/**
- * Memeriksa apakah pengguna diizinkan membuat artikel baru.
- * - Admin asli -> Selalu diizinkan
- * - FREE -> Tidak diizinkan (harus upgrade)
- * - SAHABAT_BRIMAS -> Selalu diizinkan (Unlimited)
- * - KAWAN_BRIMAS -> Diizinkan jika pembuatan artikel dalam 7 hari terakhir < 3
- */
 export async function canUserCreateArticle(
   userId: string,
   isAdmin: boolean
@@ -151,10 +135,6 @@ export async function canUserCreateArticle(
   return { allowed: false, reason: "Akses tidak diizinkan." };
 }
 
-/**
- * Memeriksa apakah pengguna memiliki hak akses ke Dashboard Admin.
- * Diizinkan jika merupakan Admin Asli ATAU berlangganan tier SAHABAT_BRIMAS.
- */
 export async function hasAdminDashboardAccess(
   userId: string | null | undefined,
   isAdmin: boolean
@@ -166,10 +146,6 @@ export async function hasAdminDashboardAccess(
   return effectiveTier === "SAHABAT_BRIMAS";
 }
 
-/**
- * Memeriksa apakah pengguna memiliki hak akses untuk mengelola/membuat artikel.
- * Diizinkan jika merupakan Admin Asli ATAU berlangganan tier KAWAN_BRIMAS / SAHABAT_BRIMAS.
- */
 export async function hasArticleManagementAccess(
   userId: string | null | undefined,
   isAdmin: boolean

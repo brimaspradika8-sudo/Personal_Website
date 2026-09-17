@@ -169,7 +169,7 @@ export default function Footer({ isNight = false }: FooterProps) {
               </li>
               <li>
                 <Link href="/artikel" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
-                  [ ARTIKEL &amp; TUTORIAL ]
+                  [ ARTIKEL ]
                 </Link>
               </li>
               <li>

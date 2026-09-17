@@ -1,7 +1,7 @@
 export default function StudioArticlesLoading() {
   return (
     <div className="min-h-screen bg-[#F4F4F0] dark:bg-[#05080E] text-black dark:text-white font-mono pb-24 antialiased selection:bg-[#EAB308]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 space-y-6 animate-pulse">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 space-y-6 animate-pulse">
         
         {/* Navigation Back Skeleton */}
         <div className="flex items-center justify-between">

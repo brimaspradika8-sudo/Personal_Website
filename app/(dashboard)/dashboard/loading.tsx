@@ -6,7 +6,7 @@ export default function DashboardLoading() {
       <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-6xl rounded-full border-2 sm:border-3 border-slate-900 dark:border-white bg-white/90 dark:bg-[#0E121D]/90 backdrop-blur-md font-mono shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-3.5 sm:px-6 py-2 sm:py-2.5">
         <div className="flex items-center justify-between gap-2 sm:gap-4 animate-pulse">
           
-          {/* Left: Logo & Brand */}
+
           <div className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#EAB308] border-2 border-slate-900 text-slate-950 flex items-center justify-center font-mono font-black text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               B
@@ -14,7 +14,6 @@ export default function DashboardLoading() {
             <div className="w-28 sm:w-36 h-4 sm:h-5 rounded-md bg-slate-900 dark:bg-white" />
           </div>
 
-          {/* Middle: Desktop Nav Links Pill Skeleton */}
           <div className="hidden md:flex items-center gap-2 bg-slate-100/80 dark:bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-900/20 dark:border-white/20">
             <div className="w-14 h-4 rounded-full bg-slate-300 dark:bg-slate-800" />
             <div className="w-16 h-4 rounded-full bg-slate-300 dark:bg-slate-800" />

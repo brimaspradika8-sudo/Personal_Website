@@ -4,7 +4,6 @@ import fs from "fs/promises";
 import path from "path";
 import os from "os";
 
-// Server-side In-Memory Audio Cache (LRU style, max 50 items, TTL 24h)
 interface CacheEntry {
   buffer: ArrayBuffer;
   timestamp: number;
@@ -47,10 +46,6 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getEffectiveUserTier } from "@/lib/membership";
 
-/**
- * High-Performance Text-To-Speech API Route (Microsoft Edge Neural TTS + ElevenLabs Fallback)
- * Endpoint: POST /api/tts
- */
 export async function POST(request: Request) {
   const startTime = performance.now();
 
@@ -62,7 +57,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Teks tidak valid untuk audio" }, { status: 400 });
     }
 
-    // 1. Backend Security: Verifikasi User Membership Tier Server-side
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -83,7 +77,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Clean markdown and trim text length
     const cleanText = text
       .replace(/```[\s\S]*?```/g, " Kode program diabaikan. ")
       .replace(/<[^>]*>?/gm, " ")
@@ -96,7 +89,6 @@ export async function POST(request: Request) {
     const defaultVoice = selectedEngine === "edge" ? "id-ID-ArdiNeural" : "1k39YpzqXZn52BgyLyGO";
     let targetVoiceId = voiceId || defaultVoice;
 
-    // Hanya Sahabat Brimas VIP yang berhak memakai Suara Wanita (GadisNeural)
     if (targetVoiceId.includes("Gadis") && userTier !== "SAHABAT_BRIMAS") {
       targetVoiceId = "id-ID-ArdiNeural";
     }
@@ -195,8 +187,7 @@ export async function POST(request: Request) {
         clearTimeout(timeoutId);
       }
     }
-
-    // Store generated audio in Server Memory Cache
+    
     setToCache(cacheKey, audioArrayBuffer);
 
     const totalDuration = (performance.now() - startTime).toFixed(1);

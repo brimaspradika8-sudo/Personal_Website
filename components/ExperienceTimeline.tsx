@@ -68,7 +68,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
           </p>
         </div>
 
-        {/* Vertical Pure Brutalist Timeline */}
+
         <div className="relative pl-6 sm:pl-10 border-l-4 border-black dark:border-white space-y-6 sm:space-y-10">
           {timelineData.map((item) => {
             const IconComponent = item.icon;

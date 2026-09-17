@@ -121,7 +121,7 @@ export default function UserArticlesClient({
       )}
 
       {/* Main Container */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 space-y-6">
         
         {/* Navigation Back Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -151,7 +151,7 @@ export default function UserArticlesClient({
               className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#EAB308] text-black border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all text-xs font-black uppercase"
             >
               <ShieldAlert className="w-4 h-4" />
-              <span>Dashboard Admin HQ</span>
+              <span>Dashboard Admin</span>
             </Link>
           )}
         </div>
@@ -175,7 +175,7 @@ export default function UserArticlesClient({
               )}
               {isSahabat && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EAB308] text-slate-950 border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <Crown className="w-4 h-4 fill-[#EAB308]" /> SAHABAT VIP
+                  <Crown className="w-4 h-4 fill-[#EAB308]" /> SAHABAT BRIMAS
                 </span>
               )}
               {isFree && (
@@ -210,7 +210,6 @@ export default function UserArticlesClient({
           </div>
         </div>
 
-        {/* Membership Status & Quota Progress Box */}
         <div className="p-5 sm:p-6 border-4 border-black dark:border-white bg-white dark:bg-[#0E131F] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
           {isFree ? (
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
