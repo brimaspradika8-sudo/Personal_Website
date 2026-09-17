@@ -35,10 +35,9 @@ export default async function AdminArticlesPage() {
     } catch {}
   }
 
-  const hasAccess = await hasArticleManagementAccess(dbUser?.id, isAdmin);
-
-  if (!hasAccess) {
-    redirect("/upgrade?reason=must_subscribe");
+  // 2. Akses /admin/artikel strictly hanya untuk Super Admin. Jika member biasa (Kawan/Sahabat), arahkan ke Studio Artikel Member
+  if (!isAdmin) {
+    redirect("/dashboard/artikel");
   }
 
   // 3. Fetch Daftar Artikel Lengkap

@@ -209,6 +209,59 @@ export async function getArticles(params?: {
   return getArticlesMemoized(params);
 }
 
+// 1b. Ambil daftar artikel khusus karya penulis pengguna (Member Workspace)
+export async function getUserArticles(authorId: string): Promise<ArticleItem[]> {
+  if (!authorId) return [];
+  try {
+    const dbArticles = await prisma.article.findMany({
+      where: { author_id: authorId },
+      include: {
+        reactions: true,
+        comments: true,
+        author: true,
+      },
+      orderBy: { created_at: "desc" },
+    });
+
+    if (dbArticles && dbArticles.length > 0) {
+      return dbArticles.map((art) => {
+        const likeCount = art.reactions.filter((r) => r.type === "LIKE").length;
+        const dislikeCount = art.reactions.filter((r) => r.type === "DISLIKE").length;
+
+        let category = "Tutorial";
+        const titleLower = art.title.toLowerCase();
+        if (titleLower.includes("ai") || titleLower.includes("automation") || titleLower.includes("agent")) {
+          category = "AI Systems";
+        } else if (titleLower.includes("web") || titleLower.includes("next.js") || titleLower.includes("react")) {
+          category = "Web Dev";
+        } else if (titleLower.includes("database") || titleLower.includes("supabase") || titleLower.includes("prisma")) {
+          category = "Database";
+        }
+
+        return {
+          id: art.id,
+          title: art.title,
+          slug: art.slug,
+          content: art.content,
+          thumbnail: art.thumbnail,
+          category,
+          readTime: calculateReadTime(art.content),
+          created_at: art.created_at.toISOString(),
+          updated_at: art.updated_at.toISOString(),
+          likeCount,
+          dislikeCount,
+          commentCount: art.comments.length,
+          authorName: art.author?.name || "Penulis Member",
+          authorAvatar: art.author?.avatar || "/images/avatar.webp",
+        };
+      });
+    }
+  } catch (err) {
+    console.warn("getUserArticles fetch warning:", err);
+  }
+  return [];
+}
+
 // 2. Ambil detail artikel berdasarkan Slug
 const getArticleBySlugMemoized = cache(async (
   slug: string
@@ -487,14 +540,16 @@ export async function deleteArticle(articleId: string) {
     if (isValidUuid(articleId)) {
       const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
       if (existingArt) {
-        if (!isAdmin && !isSahabat && isKawan && existingArt.author_id !== dbUser.id) {
-          return { error: "Anda hanya dapat menghapus artikel karya Anda sendiri." };
+        // Super Admin bisa hapus semua artikel; Member hanya boleh hapus artikel karya sendiri
+        if (!isAdmin && existingArt.author_id !== dbUser.id) {
+          return { error: "Anda hanya diizinkan menghapus artikel karya Anda sendiri." };
         }
         await prisma.article.delete({ where: { id: articleId } });
       }
     }
     revalidatePath("/artikel");
     revalidatePath("/admin/artikel");
+    revalidatePath("/dashboard/artikel");
     return { success: true };
   } catch (err: unknown) {
     console.error("Error deleting article:", err);
@@ -555,8 +610,8 @@ export async function updateArticle(
       existingArt = await prisma.article.findUnique({ where: { slug: slugFormatted } });
     }
 
-    if (existingArt && !isAdmin && !isSahabat && isKawan && existingArt.author_id !== dbUser.id) {
-      return { error: "Anda hanya dapat mengedit artikel karya Anda sendiri." };
+    if (existingArt && !isAdmin && existingArt.author_id !== dbUser.id) {
+      return { error: "Anda hanya diizinkan mengedit artikel karya Anda sendiri." };
     }
 
     let updatedArt;

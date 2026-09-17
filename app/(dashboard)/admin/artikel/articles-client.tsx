@@ -22,6 +22,7 @@ import {
   Globe,
   LogOut,
   Save,
+  BookOpen,
 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -325,7 +326,18 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
             className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all bg-[#D32F2F] text-white font-bold shadow-xs"
           >
             <FileText className="w-4 h-4" />
-            <span className="text-xs font-semibold">Artikel (CRUD)</span>
+            <span className="text-xs font-semibold">Artikel Admin (HQ)</span>
+          </Link>
+
+          <Link
+            href="/dashboard/artikel"
+            onClick={() => soundFx.playClick()}
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${isNight ? "text-slate-300 hover:bg-slate-900 hover:text-white" : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"}`}
+          >
+            <div className="flex items-center gap-3">
+              <BookOpen className="w-4 h-4 text-[#EAB308]" />
+              <span className="text-xs font-semibold">Studio Artikel Member</span>
+            </div>
           </Link>
 
           <Link

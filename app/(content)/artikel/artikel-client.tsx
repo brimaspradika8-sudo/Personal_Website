@@ -158,13 +158,13 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             </Link>
 
             <Link
-              href="/admin/artikel"
+              href="/dashboard/artikel"
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-amber-400"
-              title="Dashboard Kelola Artikel (Tambah, Edit, & Hapus - Khusus Member)"
+              title="Studio Artikel Saya (Ruang Kerja Member)"
             >
               <LayoutDashboard className="w-4 h-4 text-slate-950" />
-              <span>DASHBOARD ARTIKEL</span>
+              <span>STUDIO ARTIKEL SAYA</span>
             </Link>
           </div>
 
