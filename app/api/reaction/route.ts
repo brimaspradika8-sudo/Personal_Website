@@ -26,17 +26,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Pastikan data user tersedia di Prisma database
-    let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
-    if (!dbUser) {
-      dbUser = await prisma.user.create({
-        data: {
-          email: user.email,
-          name: user.user_metadata?.full_name || user.email.split("@")[0],
-          avatar: user.user_metadata?.avatar_url || null,
-        },
-      });
-    }
+    // 1. Pastikan data user tersedia di Prisma database (Gunakan Upsert agar aman dari race condition)
+    const userEmail = user.email.toLowerCase().trim();
+    const userName = user.user_metadata?.full_name || user.user_metadata?.name || userEmail.split("@")[0];
+    const userAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
+
+    const dbUser = await prisma.user.upsert({
+      where: { email: userEmail },
+      update: {
+        name: userName,
+        avatar: userAvatar,
+      },
+      create: {
+        email: userEmail,
+        name: userName,
+        avatar: userAvatar,
+      },
+    });
 
     // 2. Cari artikel berdasarkan UUID id atau slug
     const isValidUuid = (str: string) =>
@@ -72,12 +78,12 @@ export async function POST(request: NextRequest) {
 
     if (existingReaction) {
       if (existingReaction.type === type) {
-        // Toggle: Jika diklik reaksi yang sama, hapus reaksi (unlike)
+        // Toggle: Hapus reaksi jika diklik tombol tipe yang sama
         await prisma.reaction.delete({ where: { id: existingReaction.id } });
         action = "deleted";
         finalType = null;
       } else {
-        // Switch: Jika klik DISLIKE setelah LIKE (atau sebaliknya), ganti type-nya
+        // Switch: Ganti tipe jika diklik tipe berbeda (LIKE <-> DISLIKE)
         await prisma.reaction.update({
           where: { id: existingReaction.id },
           data: { type },
@@ -85,7 +91,7 @@ export async function POST(request: NextRequest) {
         action = "updated";
       }
     } else {
-      // Insert reaksi baru
+      // Create: Buat reaksi baru
       await prisma.reaction.create({
         data: {
           user_id: dbUser.id,

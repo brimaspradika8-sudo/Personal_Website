@@ -26,17 +26,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Dapatkan / Buat user di database Prisma
-    let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
-    if (!dbUser) {
-      dbUser = await prisma.user.create({
-        data: {
-          email: user.email,
-          name: user.user_metadata?.full_name || user.email.split("@")[0],
-          avatar: user.user_metadata?.avatar_url || null,
-        },
-      });
-    }
+    // 1. Dapatkan / Buat user di database Prisma dengan upsert
+    const userEmail = user.email.toLowerCase().trim();
+    const userName = user.user_metadata?.full_name || user.user_metadata?.name || userEmail.split("@")[0];
+    const userAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
+
+    const dbUser = await prisma.user.upsert({
+      where: { email: userEmail },
+      update: {
+        name: userName,
+        avatar: userAvatar,
+      },
+      create: {
+        email: userEmail,
+        name: userName,
+        avatar: userAvatar,
+      },
+    });
 
     // 2. Cari artikel berdasarkan UUID id atau slug
     const isValidUuid = (str: string) =>
