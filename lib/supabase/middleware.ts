@@ -76,6 +76,33 @@ export async function updateSession(request: NextRequest) {
       }
     }
 
+    // Teruskan data user yang tervalidasi via Request Headers untuk menghindari duplikasi getUser() di Server Components
+    if (user && user.email) {
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("x-user-id", user.id);
+      requestHeaders.set("x-user-email", user.email);
+      requestHeaders.set(
+        "x-user-name",
+        encodeURIComponent(user.user_metadata?.full_name || user.user_metadata?.name || "")
+      );
+      requestHeaders.set(
+        "x-user-avatar",
+        encodeURIComponent(user.user_metadata?.avatar_url || user.user_metadata?.picture || "")
+      );
+
+      const nextResponse = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
+
+      // Salin cookies jika ada pembaruan token dari Supabase Client
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        nextResponse.cookies.set(cookie);
+      });
+
+      return nextResponse;
+    }
 
   } catch (err) {
     console.error(

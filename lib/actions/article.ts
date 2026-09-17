@@ -76,12 +76,42 @@ const getArticlesMemoized = cache(async (params?: {
   sort?: "latest" | "oldest" | "popular";
 }): Promise<ArticleItem[]> => {
   try {
-    // Fetch dari database via Prisma
+    const whereClause: Record<string, unknown> = {};
+    if (params?.query) {
+      const q = params.query.toLowerCase();
+      whereClause.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { slug: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
+    // Fetch dari database via Prisma dengan SELECT ringan (tanpa full content, reactions, & comments)
     const dbArticles = await prisma.article.findMany({
-      include: {
-        reactions: true,
-        comments: true,
-        author: true,
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        thumbnail: true,
+        views: true,
+        created_at: true,
+        updated_at: true,
+        author: {
+          select: {
+            name: true,
+            avatar: true,
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+        reactions: {
+          select: {
+            type: true,
+          },
+        },
       },
       orderBy:
         params?.sort === "oldest"
@@ -108,26 +138,20 @@ const getArticlesMemoized = cache(async (params?: {
           id: art.id,
           title: art.title,
           slug: art.slug,
-          content: art.content,
+          content: "",
           thumbnail: art.thumbnail,
           category,
-          readTime: calculateReadTime(art.content),
+          readTime: "3 min read",
+          views: art.views || 0,
           created_at: art.created_at.toISOString(),
           updated_at: art.updated_at.toISOString(),
           likeCount,
           dislikeCount,
-          commentCount: art.comments.length,
+          commentCount: art._count.comments,
           authorName: art.author?.name || "Penulis Platform",
           authorAvatar: art.author?.avatar || "/images/avatar.webp",
         };
       });
-
-      if (params?.query) {
-        const q = params.query.toLowerCase();
-        articles = articles.filter(
-          (a) => a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q)
-        );
-      }
 
       if (params?.category && params.category !== "All" && params.category !== "Semua") {
         articles = articles.filter(

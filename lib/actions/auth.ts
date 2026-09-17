@@ -33,10 +33,16 @@ function formatAuthError(errorMsg: string): string {
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
 
-const checkIsAdminMemoized = cache(async (email?: string | null): Promise<boolean> => {
+const checkIsAdminMemoized = cache(async (email?: string | null, userRole?: string | null): Promise<boolean> => {
   if (!email) return false;
   const normalizedEmail = email.toLowerCase().trim();
 
+  // 1. Cek langsung jika userRole sudah didapat dari kueri dbUser sebelumnya
+  if (userRole === "ADMIN") {
+    return true;
+  }
+
+  // 2. Cek email Admin dari environment variable atau superadmin email
   const envAdminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((e) => e.trim().toLowerCase())
@@ -48,6 +54,11 @@ const checkIsAdminMemoized = cache(async (email?: string | null): Promise<boolea
 
   if (normalizedEmail === "brimaspradika8@gmail.com") {
     return true;
+  }
+
+  // 3. Jika userRole sudah disuplai dan bernilai bukan "ADMIN", hindari kueri Prisma tambahan
+  if (userRole !== undefined && userRole !== null) {
+    return false;
   }
 
   try {
@@ -63,12 +74,12 @@ const checkIsAdminMemoized = cache(async (email?: string | null): Promise<boolea
   return false;
 });
 
-export async function checkIsAdmin(email?: string | null): Promise<boolean> {
-  return checkIsAdminMemoized(email);
+export async function checkIsAdmin(email?: string | null, userRole?: string | null): Promise<boolean> {
+  return checkIsAdminMemoized(email, userRole);
 }
 
-export async function checkIsOwner(email?: string | null): Promise<boolean> {
-  return checkIsAdmin(email);
+export async function checkIsOwner(email?: string | null, userRole?: string | null): Promise<boolean> {
+  return checkIsAdmin(email, userRole);
 }
 
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---

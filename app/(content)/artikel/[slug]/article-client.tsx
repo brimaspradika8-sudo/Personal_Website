@@ -1062,31 +1062,8 @@ export default function ArticleClient({
             </div>
           </div>
 
-          {/* Controls: Voice, Font Resizer & Speed Selectors */}
+          {/* Controls: Voice & Speed Selectors */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            
-            {/* Font Size Adjuster Control (Temuan 4) */}
-            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
-              <span className="px-1 text-[10px] font-bold text-[#00FF66] uppercase">FONT:</span>
-              {(["sm", "base", "lg", "xl"] as const).map((sz) => (
-                <button
-                  key={sz}
-                  type="button"
-                  onClick={() => {
-                    setFontSizeScale(sz);
-                    showToast(`Ukuran font diubah ke: ${sz === "sm" ? "Kecil" : sz === "base" ? "Normal" : sz === "lg" ? "Besar" : "Sangat Besar"}`);
-                  }}
-                  className={`px-2 py-0.5 rounded-lg font-bold text-[11px] uppercase transition-all cursor-pointer ${
-                    fontSizeScale === sz
-                      ? "bg-[#00FF66] text-slate-950 border border-slate-900 font-black"
-                      : "text-slate-300 hover:text-white"
-                  }`}
-                  title={`Ukuran font ${sz}`}
-                >
-                  {sz === "sm" ? "A-" : sz === "base" ? "A" : sz === "lg" ? "A+" : "A++"}
-                </button>
-              ))}
-            </div>
 
             {/* Dual Voice Selector for SAHABAT_BRIMAS VIP */}
             {userTier === "SAHABAT_BRIMAS" && (
@@ -1172,41 +1149,79 @@ export default function ArticleClient({
           )}
         </div>
 
-        {/* 4. MAIN ARTICLE CONTENT WITH SIDEBAR TABLE OF CONTENTS */}
+        {/* 4. MAIN ARTICLE CONTENT WITH COMBINED SIDEBAR/TOP CARD (DAFTAR ISI + PENGATURAN FONT) */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
-          {/* Interactive Table of Contents Sidebar */}
-          {toc.length > 0 && (
-            <aside className="lg:col-span-1 order-2 lg:order-1">
-              <div className="sticky top-24 p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] font-mono">
-                <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-black dark:text-white pb-3 border-b-3 border-black dark:border-white">
-                  <List className="w-4 h-4 text-[#166534]" />
-                  <span>DAFTAR ISI</span>
+          {/* Combined Card: Daftar Isi & Font Resizer (Di Atas Konten Artikel pada Mobile - order-1) */}
+          <aside className="lg:col-span-1 order-1">
+            <div className="sticky top-24 p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] font-mono">
+              
+              {/* Part 1: Daftar Isi Navigasi */}
+              {toc.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-black dark:text-white pb-2 border-b-3 border-black dark:border-white">
+                    <List className="w-4 h-4 text-[#166534]" />
+                    <span>DAFTAR ISI</span>
+                  </div>
+                  <nav className="space-y-1.5 text-xs font-mono font-bold max-h-56 overflow-y-auto pr-1">
+                    {toc.map((item) => (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const el = document.getElementById(item.id);
+                          if (el) el.scrollIntoView({ behavior: "smooth" });
+                        }}
+                        className={`block py-1.5 px-2.5 rounded-none transition-colors border-l-3 border-transparent hover:border-[#166534] hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:text-[#166534] uppercase ${
+                          item.level === 3 ? "pl-4 text-[11px]" : "font-black text-xs"
+                        }`}
+                      >
+                        {item.text}
+                      </a>
+                    ))}
+                  </nav>
                 </div>
-                <nav className="space-y-2 text-xs font-mono font-bold">
-                  {toc.map((item) => (
-                    <a
-                      key={item.id}
-                      href={`#${item.id}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const el = document.getElementById(item.id);
-                        if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }}
-                      className={`block py-1.5 px-2.5 rounded-none transition-colors border-l-3 border-transparent hover:border-[#166534] hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:text-[#166534] uppercase ${
-                        item.level === 3 ? "pl-4 text-[11px]" : "font-black text-xs"
-                      }`}
-                    >
-                      {item.text}
-                    </a>
-                  ))}
-                </nav>
-              </div>
-            </aside>
-          )}
+              )}
 
-          {/* Article Text Content */}
-          <main className={`${toc.length > 0 ? "lg:col-span-3 order-1 lg:order-2" : "col-span-4"}`}>
+              {/* Part 2: Pengaturan Ukuran Font Artikel (Terintegrasi 1 Card) */}
+              <div className={`${toc.length > 0 ? "pt-3 border-t-3 border-black dark:border-white" : ""} space-y-2 font-mono`}>
+                <div className="flex items-center justify-between text-xs font-black uppercase text-black dark:text-white">
+                  <span className="flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-[#166534]" />
+                    UKURAN FONT
+                  </span>
+                  <span className="text-[10px] text-[#166534] dark:text-[#EAB308]">
+                    {fontSizeScale === "sm" ? "KECIL" : fontSizeScale === "base" ? "NORMAL" : fontSizeScale === "lg" ? "BESAR" : "EXTRA BESAR"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 gap-1 bg-neutral-100 dark:bg-neutral-900 p-1.5 border-3 border-black dark:border-white">
+                  {(["sm", "base", "lg", "xl"] as const).map((sz) => (
+                    <button
+                      key={sz}
+                      type="button"
+                      onClick={() => {
+                        setFontSizeScale(sz);
+                        showToast(`Ukuran font diubah ke: ${sz === "sm" ? "Kecil" : sz === "base" ? "Normal" : sz === "lg" ? "Besar" : "Sangat Besar"}`);
+                      }}
+                      className={`py-1 rounded-none text-center font-mono font-black text-xs uppercase transition-all cursor-pointer ${
+                        fontSizeScale === sz
+                          ? "bg-[#166534] text-white dark:bg-[#EAB308] dark:text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                          : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800"
+                      }`}
+                      title={`Ukuran font ${sz}`}
+                    >
+                      {sz === "sm" ? "A-" : sz === "base" ? "A" : sz === "lg" ? "A+" : "A++"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </aside>
+
+          {/* Article Text Content (Order 2 di mobile) */}
+          <main className={`${toc.length > 0 ? "lg:col-span-3 order-2" : "col-span-4 lg:col-span-3 order-2"}`}>
             <article className="p-6 sm:p-10 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-6 text-black dark:text-white">
               {renderContent(article.content)}
             </article>
