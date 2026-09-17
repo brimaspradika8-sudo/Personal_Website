@@ -29,30 +29,32 @@ export const MEMBERSHIP_PLANS: Record<"KAWAN_BRIMAS" | "SAHABAT_BRIMAS", Members
     priceUsd: 0.35,
     weeklyArticleLimit: 3, // Maksimal 3 artikel per 7 hari (rolling window)
     adminAccess: false,
-    description: "Tingkat membership dasar untuk kreator & penulis aktif.",
+    description: "Tingkat keanggotaan dasar untuk kreator & penulis aktif.",
     features: [
-      "Bisa publikasi artikel hingga 3 artikel / 7 hari",
+      "Publikasi hingga 3 artikel / 7 hari (Rolling Window)",
+      "Akses Narasi Suara AI Neural (Suara Pria — Ardi)",
+      "Akses Rangkuman AI Artikel Standar (3-4 poin)",
+      "Badge Mahkota Hijau eksklusif di profil pengguna",
       "Akses penuh fitur komentar & reaksi komunitas",
-      "Sertifikat keanggotaan digital Kawan Brimas",
-      "Badge eksklusif di profil pengguna",
-      "Dukungan prioritas & garansi platform",
     ],
   },
   SAHABAT_BRIMAS: {
     key: "SAHABAT_BRIMAS",
-    title: "Sahabat Brimas",
+    title: "Sahabat Brimas VIP",
     badge: "SAHABAT VIP",
     priceIdr: 20000, // Rp 20.000 / bulan
     priceUsd: 1.35,
     weeklyArticleLimit: null, // Unlimited
-    adminAccess: true, // Full Admin Dashboard Access
-    description: "Tingkat membership VIP dengan akses admin penuh & tanpa batas artikel.",
+    adminAccess: false,
+    description: "Tingkat keanggotaan VIP tertinggi dengan fasilitas terlengkap & tanpa batas.",
     features: [
-      "Bisa publikasi artikel TANPA BATAS (Unlimited)",
-      "AKSES ADMIN PENUH (Kelola semua artikel, komentar, project & user)",
-      "Prioritas teratas pada daftar anggota & portofolio",
-      "Badge VIP Emas eksklusif di seluruh sistem",
-      "Dukungan langsung via grup / jalur khusus 24/7",
+      "Publikasi artikel TANPA BATAS (Unlimited)",
+      "Pilihan 2 Suara Narasi AI (Pria: Ardi & Wanita: Gadis)",
+      "Rangkuman AI Eksekutif Mendalam (Key Takeaways & Kesimpulan)",
+      "Komentar Pinned VIP Emas otomatis disematkan di paling atas",
+      "Prioritas tampil artikel dengan label VIP Featured di feed utama",
+      "Badge Mahkota Emas VIP & Golden Avatar Glow Aura",
+      "Bebas pasang foto sampul profil (Cover Banner)",
     ],
   },
 };

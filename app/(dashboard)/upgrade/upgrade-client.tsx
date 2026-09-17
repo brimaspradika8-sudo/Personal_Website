@@ -387,7 +387,7 @@ export default function UpgradeClient({
               {/* Features List */}
               <div className="space-y-3 pt-2">
                 <div className="text-xs font-mono font-black uppercase text-slate-950 dark:text-white tracking-wider">
-                  FITUR UNGGULAN & ADMIN PRIVILEGE:
+                  FITUR EKSKLUSIF &amp; FASILITAS VIP:
                 </div>
                 <ul className="space-y-2.5 text-xs text-slate-800 dark:text-slate-200 font-sans font-medium">
                   {MEMBERSHIP_PLANS.SAHABAT_BRIMAS.features.map((feat, idx) => (
