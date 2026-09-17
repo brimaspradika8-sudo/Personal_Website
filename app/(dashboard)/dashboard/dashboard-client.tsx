@@ -214,13 +214,13 @@ export default function DashboardClient({
             >
               {dict.nav.about.toUpperCase()}
             </Link>
-            <a
-              href="#projects"
+            <Link
+              href="/proyek"
               onClick={() => soundFx.playClick()}
               className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
             >
               {dict.nav.projects.toUpperCase()}
-            </a>
+            </Link>
             <Link
               href="/artikel"
               onClick={() => soundFx.playClick()}

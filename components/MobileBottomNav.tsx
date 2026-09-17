@@ -27,7 +27,7 @@ export default function MobileBottomNav() {
 
   // Exact order: Project -> Artikel -> Home (Center Floating) -> About -> Profile
   const navItems = [
-    { id: "projects", label: lang === "id" ? "PROYEK" : "PROJECT", href: "#projects", Icon: FolderGit2, isCenter: false },
+    { id: "projects", label: lang === "id" ? "PROYEK" : "PROJECT", href: "/proyek", Icon: FolderGit2, isCenter: false },
     { id: "artikel", label: lang === "id" ? "ARTIKEL" : "ARTIKEL", href: "/artikel", Icon: BookOpen, isCenter: false },
     { id: "home", label: lang === "id" ? "BERANDA" : "HOME", href: "/dashboard", Icon: Home, isCenter: true },
     { id: "about", label: lang === "id" ? "TENTANG" : "ABOUT", href: "/about", Icon: User, isCenter: false },
