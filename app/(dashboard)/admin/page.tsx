@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { hasAdminDashboardAccess } from "@/lib/membership";
+import { getProjects } from "@/lib/actions/project";
+import { getArticles } from "@/lib/actions/article";
 import AdminDashboard from "./admin-dashboard";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +19,6 @@ export default async function AdminPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Jika tidak ada sesi, redirect ke login
   if (!user) {
     redirect("/login?redirectedFrom=/admin");
   }
@@ -48,12 +49,11 @@ export default async function AdminPage() {
 
   const hasAccess = await hasAdminDashboardAccess(dbUser?.id, isAdmin);
 
-  // Jika BUKAN admin dan BUKAN Sahabat Brimas, redirect ke dashboard user publik
   if (!hasAccess) {
     redirect("/dashboard");
   }
 
-  // 4. Fetch Stats untuk Admin
+  // 4. Fetch Data & Stats untuk Admin
   const projectsCount = await prisma.project.count().catch(() => 0);
   const articlesCount = await prisma.article.count().catch(() => 0);
   const usersCount = await prisma.user.count().catch(() => 0);
@@ -69,6 +69,9 @@ export default async function AdminPage() {
     orderBy: { created_at: "desc" },
   }).catch(() => []);
 
+  const allProjects = await getProjects().catch(() => []);
+  const allArticles = await getArticles().catch(() => []);
+
   return (
     <AdminDashboard
       user={user}
@@ -76,6 +79,9 @@ export default async function AdminPage() {
       stats={{ projectsCount, articlesCount, usersCount, commentsCount }}
       recentProjects={recentProjects}
       recentArticles={recentArticles}
+      allProjects={allProjects}
+      allArticles={allArticles}
+      initialTab="overview"
     />
   );
 }

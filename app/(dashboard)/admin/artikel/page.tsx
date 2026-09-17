@@ -3,17 +3,20 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { checkIsAdmin, getArticles } from "@/lib/actions/article";
-import AdminArticlesClient from "./articles-client";
-import { hasArticleManagementAccess } from "@/lib/membership";
+import { getProjects } from "@/lib/actions/project";
+import AdminDashboard from "../admin-dashboard";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Kelola Artikel | Admin Dashboard",
+  description: "Manajemen artikel dan moderasi komentar.",
+};
 
 export default async function AdminArticlesPage() {
   noStore();
 
   const supabase = await createClient();
-
-  // 1. Verifikasi sesi dari Supabase Auth
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -22,7 +25,6 @@ export default async function AdminArticlesPage() {
     redirect("/login?redirectedFrom=/admin/artikel");
   }
 
-  // 2. Pengecekan Admin Role & Membership (Kawan / Sahabat / Admin)
   const userEmail = (user?.email ?? "").toLowerCase().trim();
   const isAdmin = await checkIsAdmin(userEmail);
 
@@ -35,19 +37,38 @@ export default async function AdminArticlesPage() {
     } catch {}
   }
 
-  // 2. Akses /admin/artikel strictly hanya untuk Super Admin. Jika member biasa (Kawan/Sahabat), arahkan ke Studio Artikel Member
   if (!isAdmin) {
     redirect("/dashboard/artikel");
   }
 
-  // 3. Fetch Daftar Artikel Lengkap
-  const articles = await getArticles();
+  const projectsCount = await prisma.project.count().catch(() => 0);
+  const articlesCount = await prisma.article.count().catch(() => 0);
+  const usersCount = await prisma.user.count().catch(() => 0);
+  const commentsCount = await prisma.comment.count().catch(() => 0);
+
+  const recentProjects = await prisma.project.findMany({
+    take: 5,
+    orderBy: { created_at: "desc" },
+  }).catch(() => []);
+
+  const recentArticles = await prisma.article.findMany({
+    take: 5,
+    orderBy: { created_at: "desc" },
+  }).catch(() => []);
+
+  const allProjects = await getProjects().catch(() => []);
+  const allArticles = await getArticles().catch(() => []);
 
   return (
-    <AdminArticlesClient
+    <AdminDashboard
       user={user}
       dbUser={dbUser}
-      initialArticles={articles}
+      stats={{ projectsCount, articlesCount, usersCount, commentsCount }}
+      recentProjects={recentProjects}
+      recentArticles={recentArticles}
+      allProjects={allProjects}
+      allArticles={allArticles}
+      initialTab="artikel"
     />
   );
 }
