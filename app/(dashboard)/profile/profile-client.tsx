@@ -444,7 +444,6 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         
         {/* 1. TOP HEADER BANNER CARD (Neo-Brutalist Cover Photo + Overlapping Avatar) */}
         <div className="rounded-none border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative">
-          
           {/* Cover Header Image/Gradient Background */}
           <div
             className={`h-48 sm:h-64 w-full relative flex items-start justify-between p-4 border-b-4 border-black ${

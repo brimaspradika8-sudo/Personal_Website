@@ -326,7 +326,7 @@ export default function DashboardClient({
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-12 sm:pt-14 pb-2 sm:pb-4 space-y-4 sm:space-y-6"
         >
-          {/* Headline with Neo-Brutalist Greeting Banner */}
+        
           <h1 className="font-serif font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-3 sm:space-y-4">
             <span className="block min-h-[1.1em] overflow-hidden">
               <AnimatePresence mode="wait">

@@ -113,11 +113,6 @@ export default function AboutClient() {
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#166534] dark:text-[#EAB308]" />
             <span>{lang === "id" ? "KEMBALI KE BERANDA" : "BACK TO HOME"}</span>
           </Link>
-
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#166534] text-white border-2 border-black dark:border-white text-[11px] font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <span className="w-2 h-2 rounded-full bg-[#00E676] animate-pulse" />
-            <span>{lang === "id" ? "STATUS: AKTIF & TERSEDIA" : "STATUS: AVAILABLE"}</span>
-          </div>
         </div>
 
         {/* 2. HERO HEADER BANNER (Brazil Neo-Brutalism Style) */}
@@ -365,53 +360,6 @@ export default function AboutClient() {
             ))}
           </div>
         </section>
-
-        {/* 5. EDUCATION & TIMELINE SECTION */}
-        <section className="space-y-6 pt-4">
-          <div className="space-y-2 border-b-4 border-black dark:border-white pb-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-              <GraduationCap className="w-3.5 h-3.5 text-white" />
-              <span>{lang === "id" ? "REKAM JEJAK & PENDIDIKAN" : "TIMELINE & EDUCATION"}</span>
-            </div>
-            <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
-              RIWAYAT PENDIDIKAN &amp; MILESTONES
-            </h2>
-          </div>
-
-          <div className="space-y-4">
-            {TIMELINE_EVENTS.map((event, idx) => (
-              <div
-                key={idx}
-                className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-              >
-                <div className="space-y-1.5 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="px-2.5 py-0.5 rounded-none border-2 border-black text-xs font-mono font-black text-black uppercase"
-                      style={{ backgroundColor: event.color }}
-                    >
-                      {event.year}
-                    </span>
-                    <span className="text-xs font-mono font-black text-[#166534] dark:text-[#EAB308] uppercase">
-                      [{event.badge}]
-                    </span>
-                  </div>
-
-                  <h3 className="font-serif font-black text-lg sm:text-xl uppercase text-black dark:text-white">
-                    {lang === "id" ? event.title_id : event.title_en}
-                  </h3>
-                  <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-400">
-                    📍 {lang === "id" ? event.school_id : event.school_en}
-                  </p>
-                  <p className="text-xs font-mono leading-relaxed text-black dark:text-white pt-1">
-                    {lang === "id" ? event.desc_id : event.desc_en}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* 6. CERTIFICATIONS & ACHIEVEMENTS GALLERY */}
         <section className="space-y-6 pt-4">
           <div className="space-y-2 border-b-4 border-black dark:border-white pb-4">
@@ -447,7 +395,7 @@ export default function AboutClient() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="px-2.5 py-0.5 bg-[#166534] text-white border border-black text-[10px] font-mono font-black uppercase">
-                    TAHUN 2026
+                    TAHUN 2025
                   </span>
                   <span className="text-xs font-mono font-black text-[#166534] dark:text-[#00E676] flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
@@ -456,10 +404,10 @@ export default function AboutClient() {
                 </div>
 
                 <h3 className="font-serif font-black text-xl uppercase text-black dark:text-white">
-                  SERTIFIKAT BCT X TRIAL CLASS 2026
+                  SERTIFIKAT BCT X TRIAL CLASS 2025
                 </h3>
                 <p className="text-xs font-mono text-neutral-600 dark:text-neutral-400 font-bold leading-relaxed">
-                  Sertifikat resmi kelulusan program Trial Class 2026 tentang arsitektur perangkat lunak, dasar pemrograman modern, dan otomatisasi berbasis teknologi.
+                  Sertifikat resmi mengikuti program Basic Coding Training X Trial Class 2025
                 </p>
               </div>
             </div>

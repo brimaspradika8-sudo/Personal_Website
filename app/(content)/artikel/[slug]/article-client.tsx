@@ -90,6 +90,7 @@ export default function ArticleClient({
   const activeLineKeyRef = useRef<string | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const elevenLabsAudioRef = useRef<HTMLAudioElement | null>(null);
+  const clientAudioCacheRef = useRef<Map<string, string>>(new Map());
   const [aiSummary, setAiSummary] = useState<string[] | null>(null);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -304,7 +305,58 @@ export default function ArticleClient({
 
   const playElevenLabsAudio = async () => {
     setIsLoadingElevenLabs(true);
-    showToast("Mengisi suara AI ElevenLabs...");
+
+    // 1. Check Client-Side Audio Cache (0ms Instant Playback)
+    const cachedAudioUrl = clientAudioCacheRef.current.get(article.id);
+    if (cachedAudioUrl) {
+      console.log("[Client TTS] Served from client-side memory cache (0ms)");
+      const audio = new Audio(cachedAudioUrl);
+      audio.playbackRate = audioSpeed;
+      elevenLabsAudioRef.current = audio;
+
+      audio.ontimeupdate = () => {
+        if (audio.duration && lineRanges.length > 0) {
+          const totalChars = lineRanges[lineRanges.length - 1].end;
+          const progressRatio = audio.currentTime / audio.duration;
+          const charIdx = Math.floor(progressRatio * totalChars);
+          const currentRange = lineRanges.find((r) => charIdx >= r.start && charIdx <= r.end);
+          if (currentRange && currentRange.key !== activeLineKeyRef.current) {
+            activeLineKeyRef.current = currentRange.key;
+            setActiveLineKey(currentRange.key);
+          }
+        }
+      };
+
+      audio.onended = () => {
+        setIsPlayingAudio(false);
+        activeLineKeyRef.current = null;
+        setActiveLineKey(null);
+      };
+
+      audio.onerror = () => {
+        setIsPlayingAudio(false);
+        activeLineKeyRef.current = null;
+        startSpeech(audioSpeed);
+      };
+
+      try {
+        await audio.play();
+        setIsPlayingAudio(true);
+        showToast("Memutar narasi ElevenLabs AI!");
+      } catch (e) {
+        console.error("Audio play error:", e);
+        startSpeech(audioSpeed);
+      } finally {
+        setIsLoadingElevenLabs(false);
+      }
+      return;
+    }
+
+    showToast("Mengisi suara AI Edge Neural (id-ID)...");
+
+    // 2. Fetch with 6.0s AbortController Timeout Guard
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
     try {
       const textToSpeak = `${article.title}. ${cleanTextForSpeech(article.content)}`;
@@ -313,13 +365,18 @@ export default function ArticleClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           text: textToSpeak,
-          voiceId: "1k39YpzqXZn52BgyLyGO",
+          engine: "edge",
+          voiceId: "id-ID-ArdiNeural",
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        showToast("ELEVENLABS_API_KEY belum dipasang di .env. Mengalihkan ke suara browser...");
+        const userMsg = errorData.error || "Gagal memproses Edge Neural AI.";
+        showToast(`${userMsg} Mengalihkan ke suara browser...`);
         startSpeech(audioSpeed);
         setIsLoadingElevenLabs(false);
         return;
@@ -327,6 +384,8 @@ export default function ArticleClient({
 
       const blob = await res.blob();
       const audioUrl = URL.createObjectURL(blob);
+      clientAudioCacheRef.current.set(article.id, audioUrl);
+
       const audio = new Audio(audioUrl);
       audio.playbackRate = audioSpeed;
       elevenLabsAudioRef.current = audio;
@@ -358,9 +417,14 @@ export default function ArticleClient({
 
       await audio.play();
       setIsPlayingAudio(true);
-      showToast("Memutar narasi ElevenLabs AI!");
-    } catch (e) {
-      console.error("ElevenLabs Audio Error:", e);
+      showToast("Memutar narasi Edge Neural AI!");
+    } catch (e: any) {
+      clearTimeout(timeoutId);
+      if (e?.name === "AbortError") {
+        showToast("Koneksi Edge Neural AI terlalu lama (>6s). Mengalihkan ke suara browser...");
+      } else {
+        console.error("Edge Neural TTS Audio Error:", e);
+      }
       startSpeech(audioSpeed);
     } finally {
       setIsLoadingElevenLabs(false);
