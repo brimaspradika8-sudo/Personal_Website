@@ -7,6 +7,7 @@ import { soundFx } from "@/lib/audio/sound";
 import { ProjectData } from "@/components/ProjectModal";
 import { createClient } from "@/lib/supabase/client";
 import TiltCard from "@/components/TiltCard";
+import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 
 const showcaseProjects: ProjectData[] = [];
 
@@ -175,14 +176,12 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                       : "bg-white"
                   }`}
                 >
-                  {/* Thumbnail Container */}
-                  <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-black border-b-4 border-black dark:border-white">
-                    <Image
-                      src={project.thumbnail || "/images/project1.png"}
-                      alt={project.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  {/* Thumbnail Carousel Container */}
+                  <div className="relative w-full overflow-hidden bg-black border-b-4 border-black dark:border-white">
+                    <ProjectImageCarousel
+                      thumbnail={project.thumbnail}
+                      title={project.title}
+                      aspectRatioClass="h-48 sm:h-52"
                     />
 
                     {/* Overlay Action Badge */}
@@ -193,7 +192,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                         soundFx.playClick();
                         onSelectProject(project);
                       }}
-                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-none bg-[#166534] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                      className="absolute bottom-3 right-3 z-20 px-3 py-1.5 rounded-none bg-[#166534] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>{lang === "id" ? "DETAIL PROYEK" : "VIEW CASE STUDY"}</span>

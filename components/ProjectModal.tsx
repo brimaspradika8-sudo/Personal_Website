@@ -7,6 +7,8 @@ import { X, ExternalLink, Code2, CheckCircle2, Layers } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
+import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+
 export interface ProjectData {
   id: string;
   title: string;
@@ -71,15 +73,13 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
             className="w-full max-w-2xl bg-[#0D0D0E] border border-white/15 dark:border-[#26262A] rounded-2xl overflow-hidden text-[#F1EFE9] shadow-2xl relative flex flex-col max-h-[88vh] my-auto"
           >
             {/* Header Image / Thumbnail Banner */}
-            <div className="relative w-full h-52 sm:h-64 bg-black shrink-0">
-              <Image
-                src={project.thumbnail || "/images/project1.png"}
-                alt={project.title}
-                fill
-                className="object-cover"
-                unoptimized
+            <div className="relative w-full overflow-hidden bg-black shrink-0">
+              <ProjectImageCarousel
+                thumbnail={project.thumbnail}
+                title={project.title}
+                aspectRatioClass="h-56 sm:h-64"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0E] via-[#0D0D0E]/50 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0E] via-transparent to-transparent pointer-events-none" />
 
               {/* Top Close Button */}
               <button

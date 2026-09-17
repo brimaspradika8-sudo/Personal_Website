@@ -29,6 +29,7 @@ import QuickContactFAB from "@/components/QuickContactFAB";
 import { ProjectItem } from "@/lib/actions/project";
 import ProjectModal, { ProjectData } from "@/components/ProjectModal";
 import TiltCard from "@/components/TiltCard";
+import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 
 const DEFAULT_PROJECTS: ProjectData[] = [
   {
@@ -265,14 +266,12 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
               >
                 <div className="h-full rounded-none border-4 border-black dark:border-white bg-white dark:bg-[#0A0D14] overflow-hidden flex flex-col justify-between group cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(22,101,52,1)] transition-all">
                   
-                  {/* Thumbnail */}
-                  <div className="relative w-full h-52 bg-black border-b-4 border-black dark:border-white overflow-hidden">
-                    <Image
-                      src={project.thumbnail || "/images/project1.png"}
-                      alt={project.title}
-                      fill
-                      unoptimized
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  {/* Thumbnail Carousel Container */}
+                  <div className="relative w-full overflow-hidden bg-black border-b-4 border-black dark:border-white">
+                    <ProjectImageCarousel
+                      thumbnail={project.thumbnail}
+                      title={project.title}
+                      aspectRatioClass="h-52"
                     />
 
                     {/* View Detail Overlay Badge */}
@@ -283,7 +282,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                         soundFx.playClick();
                         setSelectedProjectModal(project);
                       }}
-                      className="absolute bottom-3 right-3 px-3 py-1.5 bg-[#166534] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                      className="absolute bottom-3 right-3 z-20 px-3 py-1.5 bg-[#166534] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>{lang === "id" ? "DETAIL PROYEK" : "VIEW DETAILS"}</span>
