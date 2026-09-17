@@ -81,6 +81,7 @@ const getArticlesMemoized = cache(async (params?: {
       include: {
         reactions: true,
         comments: true,
+        author: true,
       },
       orderBy:
         params?.sort === "oldest"
@@ -116,8 +117,8 @@ const getArticlesMemoized = cache(async (params?: {
           likeCount,
           dislikeCount,
           commentCount: art.comments.length,
-          authorName: "Brimas Pradika Utama",
-          authorAvatar: "/images/avatar.webp",
+          authorName: art.author?.name || "Penulis Platform",
+          authorAvatar: art.author?.avatar || "/images/avatar.webp",
         };
       });
 
@@ -282,6 +283,7 @@ const getArticleBySlugMemoized = cache(async (
       where: { slug },
       include: {
         reactions: true,
+        author: true,
         comments: {
           include: {
             user: {
@@ -327,8 +329,8 @@ const getArticleBySlugMemoized = cache(async (
         likeCount,
         dislikeCount,
         commentCount: art.comments.length,
-        authorName: "Brimas Pradika Utama",
-        authorAvatar: "/images/avatar.webp",
+        authorName: art.author?.name || "Penulis Platform",
+        authorAvatar: art.author?.avatar || "/images/avatar.webp",
         userReaction,
         comments: art.comments.map((c) => ({
           id: c.id,

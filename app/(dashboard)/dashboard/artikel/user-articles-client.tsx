@@ -123,16 +123,26 @@ export default function UserArticlesClient({
       {/* Main Container */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 space-y-6">
         
-        {/* Navigation Back */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/dashboard"
-            onClick={() => soundFx.playClick()}
-            className="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-900 border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#EAB308] dark:hover:bg-[#EAB308] hover:text-black transition-all text-xs font-black uppercase"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Kembali ke Dashboard</span>
-          </Link>
+        {/* Navigation Back Buttons */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              href="/artikel"
+              onClick={() => soundFx.playClick()}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-900 border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#EAB308] dark:hover:bg-[#EAB308] hover:text-black transition-all text-xs font-black uppercase"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Daftar Artikel Public</span>
+            </Link>
+
+            <Link
+              href="/dashboard"
+              onClick={() => soundFx.playClick()}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs font-black uppercase"
+            >
+              <span>Dashboard User</span>
+            </Link>
+          </div>
 
           {isAdmin && (
             <Link

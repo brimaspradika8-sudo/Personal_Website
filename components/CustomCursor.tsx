@@ -17,16 +17,29 @@ export default function CustomCursor() {
     setIsMobile(false);
 
     const onMouseMove = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+
+      // Disable custom cursor over input fields, textareas, and rich text editor
+      const isTextInput =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable ||
+          Boolean(target.closest(".ProseMirror")) ||
+          Boolean(target.closest("[contenteditable='true']")));
+
+      if (isTextInput) {
+        setIsVisible(false);
+        return;
+      }
+
       setPosition({ x: e.clientX, y: e.clientY });
       if (!isVisible) setIsVisible(true);
 
-      const target = e.target as HTMLElement | null;
       if (
         target &&
         (target.tagName === "BUTTON" ||
           target.tagName === "A" ||
-          target.tagName === "INPUT" ||
-          target.tagName === "TEXTAREA" ||
           target.closest("button") ||
           target.closest("a") ||
           target.classList.contains("cursor-pointer") ||

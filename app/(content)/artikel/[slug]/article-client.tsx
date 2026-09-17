@@ -147,24 +147,47 @@ export default function ArticleClient({
   const wordCount = article.content ? article.content.split(/\s+/).filter(Boolean).length : 0;
   const calculatedReadTime = Math.max(1, Math.ceil(wordCount / 180));
 
-  // Feature 2.3: Table of Contents State
+  // Feature 2.3: Table of Contents State (Supports both Markdown and HTML Content)
   const [toc] = useState<TocItem[]>(() => {
     if (!initialArticle.content) return [];
-    const lines = initialArticle.content.split("\n");
     const items: TocItem[] = [];
 
-    lines.forEach((line) => {
-      const trimmed = line.trim();
-      if (trimmed.startsWith("## ")) {
-        const text = trimmed.replace("## ", "");
-        const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-        items.push({ id, text, level: 2 });
-      } else if (trimmed.startsWith("### ")) {
-        const text = trimmed.replace("### ", "");
-        const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-        items.push({ id, text, level: 3 });
+    const isHtml = /^\s*<[a-z0-9]+/i.test(initialArticle.content) || initialArticle.content.includes("<p>") || initialArticle.content.includes("<h2>") || initialArticle.content.includes("<h3>");
+
+    if (isHtml) {
+      const headingRegex = /<h([23])\s*([^>]*)>(.*?)<\/h[23]>/gi;
+      let match;
+      while ((match = headingRegex.exec(initialArticle.content)) !== null) {
+        const level = parseInt(match[1], 10);
+        const attrs = match[2];
+        const innerText = match[3].replace(/<[^>]*>?/gm, "").trim();
+        
+        let id = "";
+        const idMatch = /id=["']([^"']+)["']/i.exec(attrs);
+        if (idMatch) {
+          id = idMatch[1];
+        } else {
+          id = innerText.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+        }
+        if (innerText) {
+          items.push({ id, text: innerText, level });
+        }
       }
-    });
+    } else {
+      const lines = initialArticle.content.split("\n");
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith("## ")) {
+          const text = trimmed.replace("## ", "").replace(/<[^>]*>?/gm, "").trim();
+          const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+          items.push({ id, text, level: 2 });
+        } else if (trimmed.startsWith("### ")) {
+          const text = trimmed.replace("### ", "").replace(/<[^>]*>?/gm, "").trim();
+          const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+          items.push({ id, text, level: 3 });
+        }
+      });
+    }
 
     return items;
   });
@@ -487,9 +510,18 @@ export default function ArticleClient({
     setIsGeneratingSummary(true);
 
     setTimeout(() => {
-      const lines = article.content.split("\n").map((l) => l.trim()).filter(Boolean);
-      const headings = lines.filter((l) => l.startsWith("##") || l.startsWith("###")).map((l) => l.replace(/^#+\s*/, ""));
-      const textParagraphs = lines.filter((l) => !l.startsWith("#") && !l.startsWith("```") && l.length > 25);
+      // Clean HTML tags and sanitize lines
+      const cleanLineText = (txt: string) => txt.replace(/<[^>]*>?/gm, " ").replace(/\s+/g, " ").trim();
+
+      const rawLines = article.content.split("\n").map((l) => l.trim()).filter(Boolean);
+      const headings = rawLines
+        .filter((l) => l.startsWith("##") || l.startsWith("###") || l.includes("<h2>") || l.includes("<h3>"))
+        .map((l) => cleanLineText(l.replace(/^#+\s*/, "")))
+        .filter(Boolean);
+
+      const textParagraphs = rawLines
+        .map((l) => cleanLineText(l))
+        .filter((l) => !l.startsWith("#") && !l.startsWith("```") && l.length > 25);
 
       const bullets: string[] = [];
       if (userTier === "SAHABAT_BRIMAS") {
@@ -686,14 +718,47 @@ export default function ArticleClient({
     }
   };
 
+  const [fontSizeScale, setFontSizeScale] = useState<"sm" | "base" | "lg" | "xl">("base");
+
+  const fontClass = useMemo(() => {
+    switch (fontSizeScale) {
+      case "sm": return "text-sm leading-relaxed";
+      case "base": return "text-base sm:text-lg leading-relaxed";
+      case "lg": return "text-lg sm:text-xl leading-relaxed";
+      case "xl": return "text-xl sm:text-2xl leading-relaxed";
+      default: return "text-base sm:text-lg leading-relaxed";
+    }
+  }, [fontSizeScale]);
+
+  const processHtmlHeadings = (html: string) => {
+    return html.replace(/<h([23])(\s*[^>]*)>(.*?)<\/h[23]>/gi, (match, level, attrs, innerText) => {
+      const cleanText = innerText.replace(/<[^>]*>?/gm, "").trim();
+      const idMatch = /id=["']([^"']+)["']/i.exec(attrs);
+      const id = idMatch ? idMatch[1] : cleanText.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+      const hasClass = /class=["']/i.test(attrs);
+      const scrollClass = "scroll-mt-24";
+      let newAttrs = attrs;
+      if (!idMatch) {
+        newAttrs += ` id="${id}"`;
+      }
+      if (hasClass) {
+        newAttrs = newAttrs.replace(/class=["']([^"']+)["']/i, `class="$1 ${scrollClass}"`);
+      } else {
+        newAttrs += ` class="${scrollClass}"`;
+      }
+      return `<h${level}${newAttrs}>${innerText}</h${level}>`;
+    });
+  };
+
   const renderContent = (content: string) => {
     const isHtml = /^\s*<[a-z0-9]+/i.test(content) || content.includes("<p>") || content.includes("<h2>") || content.includes("<h3>") || content.includes("<ul>") || content.includes("<table>");
     
     if (isHtml) {
+      const processedContent = processHtmlHeadings(content);
       return (
         <div
-          className="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 font-sans leading-relaxed space-y-4 [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-slate-300 [&_table]:dark:border-slate-800 [&_th]:border [&_th]:border-slate-300 [&_th]:dark:border-slate-800 [&_th]:bg-slate-100 [&_th]:dark:bg-slate-900 [&_th]:p-2.5 [&_td]:border [&_td]:border-slate-300 [&_td]:dark:border-slate-800 [&_td]:p-2.5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:border-l-4 [&_blockquote]:border-[#D32F2F] [&_blockquote]:pl-4 [&_blockquote]:italic"
-          dangerouslySetInnerHTML={{ __html: content }}
+          className={`prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 font-sans ${fontClass} space-y-4 [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-slate-300 [&_table]:dark:border-slate-800 [&_th]:border [&_th]:border-slate-300 [&_th]:dark:border-slate-800 [&_th]:bg-slate-100 [&_th]:dark:bg-slate-900 [&_th]:p-2.5 [&_td]:border [&_td]:border-slate-300 [&_td]:dark:border-slate-800 [&_td]:p-2.5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:border-l-4 [&_blockquote]:border-[#D32F2F] [&_blockquote]:pl-4 [&_blockquote]:italic`}
+          dangerouslySetInnerHTML={{ __html: processedContent }}
         />
       );
     }
@@ -747,8 +812,8 @@ export default function ArticleClient({
               const text = trimmed.replace("## ", "");
               const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
               return (
-                <h2 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-20 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
-                  <span id={id} className="scroll-mt-20">{text}</span>
+                <h2 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-24 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
+                  <span id={id} className="scroll-mt-24">{text}</span>
                 </h2>
               );
             }
@@ -756,8 +821,8 @@ export default function ArticleClient({
               const text = trimmed.replace("### ", "");
               const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
               return (
-                <h3 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-20 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
-                  <span id={id} className="scroll-mt-20">{text}</span>
+                <h3 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-24 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
+                  <span id={id} className="scroll-mt-24">{text}</span>
                 </h3>
               );
             }
@@ -766,7 +831,7 @@ export default function ArticleClient({
             }
             if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
               return (
-                <li key={lIdx} id={`line-${lineKey}`} className={`ml-5 list-disc text-base sm:text-lg text-slate-800 dark:text-slate-200 leading-relaxed font-sans transition-all duration-300 ${isActiveReading ? "bg-[#FFFF00] text-slate-950 font-bold p-2.5 rounded-none border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] list-none" : "font-normal"}`}>
+                <li key={lIdx} id={`line-${lineKey}`} className={`ml-5 list-disc ${fontClass} text-slate-800 dark:text-slate-200 font-sans transition-all duration-300 ${isActiveReading ? "bg-[#FFFF00] text-slate-950 font-bold p-2.5 rounded-none border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] list-none" : "font-normal"}`}>
                   {isActiveReading && (
                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] mr-2">
                       <Volume2 className="w-3 h-3 animate-pulse" />
@@ -794,7 +859,7 @@ export default function ArticleClient({
                     BAGIAN ARTIKEL SEDANG DIBACA
                   </span>
                 )}
-                <p className={`text-base sm:text-lg leading-relaxed font-sans ${isActiveReading ? "font-bold text-black" : "text-slate-800 dark:text-slate-200 font-normal"}`}>
+                <p className={`${fontClass} font-sans ${isActiveReading ? "font-bold text-black" : "text-slate-800 dark:text-slate-200 font-normal"}`}>
                   {trimmed}
                 </p>
               </div>
@@ -894,8 +959,14 @@ export default function ArticleClient({
               />
             </div>
             <div className="space-y-0.5">
-              <p className="font-mono font-black text-sm sm:text-base uppercase text-black dark:text-white leading-tight">{article.authorName || "Brimas Pradika Utama"}</p>
-              <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-400 uppercase">AI Systems Developer · SMK Bhakti Mulia Pare</p>
+              <p className="font-mono font-black text-sm sm:text-base uppercase text-black dark:text-white leading-tight">
+                {article.authorName || "Penulis Platform"}
+              </p>
+              <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-400 uppercase">
+                {article.authorName?.toLowerCase().includes("brimas")
+                  ? "AI Systems Developer · SMK Bhakti Mulia Pare"
+                  : "Penulis Member Platform · Member Studio"}
+              </p>
             </div>
           </div>
         </div>
@@ -913,7 +984,7 @@ export default function ArticleClient({
           </div>
         )}
 
-        {/* Feature 2.3: Neo-Brutalist Audio Voice Player Bar */}
+        {/* Feature 2.3: Neo-Brutalist Audio Voice Player & Reader Controls Bar */}
         <div className="p-4 rounded-2xl border-3 border-slate-900 dark:border-white bg-amber-400 text-slate-950 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
@@ -945,8 +1016,32 @@ export default function ArticleClient({
             </div>
           </div>
 
-          {/* Audio Controls (Voice & Speed Selectors) */}
+          {/* Controls: Voice, Font Resizer & Speed Selectors */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            
+            {/* Font Size Adjuster Control (Temuan 4) */}
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
+              <span className="px-1 text-[10px] font-bold text-[#00FF66] uppercase">FONT:</span>
+              {(["sm", "base", "lg", "xl"] as const).map((sz) => (
+                <button
+                  key={sz}
+                  type="button"
+                  onClick={() => {
+                    setFontSizeScale(sz);
+                    showToast(`Ukuran font diubah ke: ${sz === "sm" ? "Kecil" : sz === "base" ? "Normal" : sz === "lg" ? "Besar" : "Sangat Besar"}`);
+                  }}
+                  className={`px-2 py-0.5 rounded-lg font-bold text-[11px] uppercase transition-all cursor-pointer ${
+                    fontSizeScale === sz
+                      ? "bg-[#00FF66] text-slate-950 border border-slate-900 font-black"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                  title={`Ukuran font ${sz}`}
+                >
+                  {sz === "sm" ? "A-" : sz === "base" ? "A" : sz === "lg" ? "A+" : "A++"}
+                </button>
+              ))}
+            </div>
+
             {/* Dual Voice Selector for SAHABAT_BRIMAS VIP */}
             {userTier === "SAHABAT_BRIMAS" && (
               <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
