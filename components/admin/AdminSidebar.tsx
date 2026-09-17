@@ -180,7 +180,7 @@ export default function AdminSidebar({
           {!isCollapsed ? (
             <div className="p-3 rounded-none border-3 border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] flex items-center gap-3">
               <div className="w-8 h-8 rounded-none bg-[#EAB308] border-2 border-black flex shrink-0 items-center justify-center text-black font-black text-xs overflow-hidden relative">
-                {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
+                {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill unoptimized className="object-cover" /> : initial}
               </div>
               <div className="truncate">
                 <p className="text-xs font-mono font-black truncate text-black dark:text-white uppercase">{displayName}</p>
@@ -190,7 +190,7 @@ export default function AdminSidebar({
           ) : (
             <div className="flex justify-center">
               <div className="w-9 h-9 rounded-none bg-[#EAB308] border-2 border-black flex items-center justify-center text-black font-black text-xs overflow-hidden relative shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
+                {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill unoptimized className="object-cover" /> : initial}
               </div>
             </div>
           )}

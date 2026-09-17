@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     ],
   },
   images: {
+    dangerouslyAllowSVG: true,
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2592000,
     remotePatterns: [
@@ -31,6 +32,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
       },
       {
         protocol: "https",
