@@ -1,6 +1,6 @@
 export default function ArticleDetailLoading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono antialiased pb-24 selection:bg-[#FF0000] selection:text-white">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono antialiased pb-24 selection:bg-[#EAB308] selection:text-slate-950">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8 animate-pulse">
         {/* 1. TOP NAV BREADCRUMB SKELETON */}
         <div className="flex items-center justify-between">
@@ -25,7 +25,7 @@ export default function ArticleDetailLoading() {
           {/* Author Card Skeleton */}
           <div className="p-4 rounded-none border-3 border-black dark:border-white bg-neutral-100 dark:bg-neutral-900 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-[#FF0000] border-2 border-black shrink-0" />
+              <div className="w-12 h-12 rounded-full bg-[#166534] border-2 border-black shrink-0" />
               <div className="space-y-1">
                 <div className="w-36 h-5 rounded-none bg-black dark:bg-white" />
                 <div className="w-48 h-4 rounded-none bg-neutral-300 dark:bg-neutral-700" />
@@ -48,7 +48,7 @@ export default function ArticleDetailLoading() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-4">
           <aside className="lg:col-span-1 space-y-3">
             <div className="p-4 rounded-none border-3 border-black dark:border-white bg-white dark:bg-black space-y-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="w-32 h-6 rounded-none bg-[#FF0000]" />
+              <div className="w-32 h-6 rounded-none bg-[#166534]" />
               <div className="space-y-2">
                 <div className="w-full h-4 bg-neutral-300 dark:bg-neutral-800" />
                 <div className="w-4/5 h-4 bg-neutral-300 dark:bg-neutral-800" />

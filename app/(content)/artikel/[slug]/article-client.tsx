@@ -39,7 +39,6 @@ import {
 import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { isBookmarked, toggleBookmark, subscribeBookmarks } from "@/lib/bookmarks";
-import SocialShareBar from "@/components/SocialShareBar";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 
 
@@ -88,6 +87,7 @@ export default function ArticleClient({
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [audioSpeed, setAudioSpeed] = useState<number>(1);
   const [activeLineKey, setActiveLineKey] = useState<string | null>(null);
+  const activeLineKeyRef = useRef<string | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const elevenLabsAudioRef = useRef<HTMLAudioElement | null>(null);
   const [aiSummary, setAiSummary] = useState<string[] | null>(null);
@@ -96,6 +96,20 @@ export default function ArticleClient({
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>("");
   const [useElevenLabs, setUseElevenLabs] = useState<boolean>(true);
   const [isLoadingElevenLabs, setIsLoadingElevenLabs] = useState<boolean>(false);
+
+  // Feature: Dedicated Smooth Auto-Scroll Hook - Only triggers ONCE per line change after DOM reflow
+  useEffect(() => {
+    if (!activeLineKey || !isPlayingAudio) return;
+
+    const timer = setTimeout(() => {
+      const elem = document.getElementById(`line-${activeLineKey}`);
+      if (elem) {
+        elem.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 80);
+
+    return () => clearTimeout(timer);
+  }, [activeLineKey, isPlayingAudio]);
 
   // Load browser voices (prioritizing Indonesian and Natural voices)
   useEffect(() => {
@@ -264,23 +278,22 @@ export default function ArticleClient({
       if (event.name === "word" || event.charIndex !== undefined) {
         const charIdx = event.charIndex;
         const currentRange = lineRanges.find((r) => charIdx >= r.start && charIdx <= r.end);
-        if (currentRange) {
+        if (currentRange && currentRange.key !== activeLineKeyRef.current) {
+          activeLineKeyRef.current = currentRange.key;
           setActiveLineKey(currentRange.key);
-          const elem = document.getElementById(`line-${currentRange.key}`);
-          if (elem) {
-            elem.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
         }
       }
     };
 
     utterance.onend = () => {
       setIsPlayingAudio(false);
+      activeLineKeyRef.current = null;
       setActiveLineKey(null);
     };
 
     utterance.onerror = () => {
       setIsPlayingAudio(false);
+      activeLineKeyRef.current = null;
       setActiveLineKey(null);
     };
 
@@ -318,13 +331,28 @@ export default function ArticleClient({
       audio.playbackRate = audioSpeed;
       elevenLabsAudioRef.current = audio;
 
+      audio.ontimeupdate = () => {
+        if (audio.duration && lineRanges.length > 0) {
+          const totalChars = lineRanges[lineRanges.length - 1].end;
+          const progressRatio = audio.currentTime / audio.duration;
+          const charIdx = Math.floor(progressRatio * totalChars);
+          const currentRange = lineRanges.find((r) => charIdx >= r.start && charIdx <= r.end);
+          if (currentRange && currentRange.key !== activeLineKeyRef.current) {
+            activeLineKeyRef.current = currentRange.key;
+            setActiveLineKey(currentRange.key);
+          }
+        }
+      };
+
       audio.onended = () => {
         setIsPlayingAudio(false);
+        activeLineKeyRef.current = null;
         setActiveLineKey(null);
       };
 
       audio.onerror = () => {
         setIsPlayingAudio(false);
+        activeLineKeyRef.current = null;
         startSpeech(audioSpeed);
       };
 
@@ -350,6 +378,7 @@ export default function ArticleClient({
       }
       setIsPlayingAudio(false);
       setIsLoadingElevenLabs(false);
+      activeLineKeyRef.current = null;
       setActiveLineKey(null);
       showToast("Pembacaan audio dihentikan.");
       return;
@@ -589,7 +618,7 @@ export default function ArticleClient({
               <span className="font-mono text-black font-black">{lang || "CODE"}</span>
               <button
                 onClick={() => handleCopyCode(code, idx)}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white hover:bg-[#FF0000] transition-all cursor-pointer text-xs font-mono font-black border-2 border-black"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white hover:bg-[#166534] transition-all cursor-pointer text-xs font-mono font-black border-2 border-black"
               >
                 {copiedCodeIndex === idx ? (
                   <>
@@ -625,8 +654,8 @@ export default function ArticleClient({
               const text = trimmed.replace("## ", "");
               const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
               return (
-                <h2 key={lIdx} id={id} className={`font-mono text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-20 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
-                  {text}
+                <h2 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-20 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
+                  <span id={id} className="scroll-mt-20">{text}</span>
                 </h2>
               );
             }
@@ -634,8 +663,8 @@ export default function ArticleClient({
               const text = trimmed.replace("### ", "");
               const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
               return (
-                <h3 key={lIdx} id={id} className={`font-mono text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-20 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
-                  {text}
+                <h3 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-20 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
+                  <span id={id} className="scroll-mt-20">{text}</span>
                 </h3>
               );
             }
@@ -646,7 +675,7 @@ export default function ArticleClient({
               return (
                 <li key={lIdx} id={`line-${lineKey}`} className={`ml-5 list-disc text-base sm:text-lg text-slate-800 dark:text-slate-200 leading-relaxed font-sans transition-all duration-300 ${isActiveReading ? "bg-[#FFFF00] text-slate-950 font-bold p-2.5 rounded-none border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] list-none" : "font-normal"}`}>
                   {isActiveReading && (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-[#FF0000] text-white text-[10px] font-mono font-black uppercase mb-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] mr-2">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] mr-2">
                       <Volume2 className="w-3 h-3 animate-pulse" />
                       MEMBACA...
                     </span>
@@ -667,7 +696,7 @@ export default function ArticleClient({
                 }`}
               >
                 {isActiveReading && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#FF0000] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                     BAGIAN ARTIKEL SEDANG DIBACA
                   </span>
@@ -684,12 +713,12 @@ export default function ArticleClient({
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#FF0000] selection:text-white pb-28 sm:pb-20">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-slate-950 pb-28 sm:pb-20">
       
       {/* Feature 2.1: Fixed Reading Progress Bar Top Indicator */}
       <div
         style={{ width: `${scrollProgress}%` }}
-        className="fixed top-0 left-0 h-1.5 bg-[#FF0000] z-50 transition-all duration-75 ease-out shadow-[0_2px_0_0_rgba(0,0,0,1)]"
+        className="fixed top-0 left-0 h-1.5 bg-[#166534] z-50 transition-all duration-75 ease-out shadow-[0_2px_0_0_rgba(0,0,0,1)]"
       />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
@@ -701,7 +730,7 @@ export default function ArticleClient({
             onClick={() => soundFx.playClick()}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#FF0000]" />
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#166534]" />
             <span>KEMBALI KE ARTIKEL</span>
           </Link>
 
@@ -751,7 +780,7 @@ export default function ArticleClient({
             )}
 
             <span className="px-3 py-1 rounded-none bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white border-2 border-black dark:border-white flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] uppercase">
-              <Calendar className="w-3.5 h-3.5 text-[#FF0000]" />
+              <Calendar className="w-3.5 h-3.5 text-[#166534]" />
               <span>{new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
             </span>
           </div>
@@ -762,7 +791,7 @@ export default function ArticleClient({
 
           {/* Author Card (Neo-Brutalist Avatar & Badge) */}
           <div className="flex items-center gap-3.5 pt-3 pb-5 border-b-4 border-black dark:border-white">
-            <div className="relative w-12 h-12 rounded-none border-3 border-black dark:border-white bg-[#FF0000] overflow-hidden shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] shrink-0">
+            <div className="relative w-12 h-12 rounded-none border-3 border-black dark:border-white bg-[#166534] overflow-hidden shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] shrink-0">
               <Image
                 src={article.authorAvatar || "/images/avatar.webp"}
                 alt={article.authorName || "Author"}
@@ -922,7 +951,7 @@ export default function ArticleClient({
             <aside className="lg:col-span-1 order-2 lg:order-1">
               <div className="sticky top-24 p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] font-mono">
                 <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-black dark:text-white pb-3 border-b-3 border-black dark:border-white">
-                  <List className="w-4 h-4 text-[#FF0000]" />
+                  <List className="w-4 h-4 text-[#166534]" />
                   <span>DAFTAR ISI</span>
                 </div>
                 <nav className="space-y-2 text-xs font-mono font-bold">
@@ -935,7 +964,7 @@ export default function ArticleClient({
                         const el = document.getElementById(item.id);
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className={`block py-1.5 px-2.5 rounded-none transition-colors border-l-3 border-transparent hover:border-[#FF0000] hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:text-[#FF0000] uppercase ${
+                      className={`block py-1.5 px-2.5 rounded-none transition-colors border-l-3 border-transparent hover:border-[#166534] hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:text-[#166534] uppercase ${
                         item.level === 3 ? "pl-4 text-[11px]" : "font-black text-xs"
                       }`}
                     >
@@ -963,11 +992,11 @@ export default function ArticleClient({
               onClick={() => handleReaction("LIKE")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-none border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                 article.userReaction === "LIKE"
-                  ? "bg-[#FF0000] text-white"
+                  ? "bg-[#166534] text-white"
                   : "bg-white text-black hover:bg-[#FFFF00]"
               }`}
             >
-              <Heart className={`w-4 h-4 ${article.userReaction === "LIKE" ? "fill-white" : "text-[#FF0000]"}`} />
+              <Heart className={`w-4 h-4 ${article.userReaction === "LIKE" ? "fill-white" : "text-[#166534]"}`} />
               <span>SUKA ({article.likeCount})</span>
             </button>
 
@@ -1012,7 +1041,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleSocialShare("li")}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-blue-600 text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FF0000] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-blue-600 text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#166534] transition-all"
               title="Bagikan ke LinkedIn"
             >
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -1023,14 +1052,11 @@ export default function ArticleClient({
           </div>
         </div>
 
-        {/* Feature 2.2: Social Share Bar */}
-        <SocialShareBar title={article.title} slug={article.slug} />
-
 
         {/* 6. COMMENTS SECTION */}
         <section className="space-y-6 pt-4 font-mono">
           <div className="flex items-center gap-2 text-xl font-mono font-black uppercase text-black dark:text-white">
-            <MessageSquare className="w-5 h-5 text-[#FF0000]" />
+            <MessageSquare className="w-5 h-5 text-[#166534]" />
             <span>KOMENTAR ({article.commentCount})</span>
           </div>
 
@@ -1039,14 +1065,14 @@ export default function ArticleClient({
             {user ? (
               <div className="flex items-center gap-2 text-xs font-mono font-bold text-black dark:text-white">
                 <span className="w-2.5 h-2.5 rounded-none bg-[#00FF66] border border-black" />
-                <span>MENULIS SEBAGAI <strong className="text-[#FF0000] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
+                <span>MENULIS SEBAGAI <strong className="text-[#166534] dark:text-[#EAB308] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
               </div>
             ) : (
               <div className="p-3.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 <span>ANDA BELUM MASUK AKUN. SILAKAN LOGIN UNTUK MENGIRIM KOMENTAR.</span>
                 <Link
                   href="/login"
-                  className="px-4 py-1.5 rounded-none bg-black text-white border-2 border-black font-mono font-black hover:bg-[#FF0000] transition-all shrink-0 uppercase"
+                  className="px-4 py-1.5 rounded-none bg-black text-white border-2 border-black font-mono font-black hover:bg-[#166534] transition-all shrink-0 uppercase"
                 >
                   MASUK AKUN
                 </Link>
@@ -1059,14 +1085,14 @@ export default function ArticleClient({
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               disabled={!user}
-              className="w-full p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-xs font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-[#FF0000] transition-all disabled:opacity-50"
+              className="w-full p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-xs font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all disabled:opacity-50"
             />
 
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={!user || !commentText.trim()}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
               >
                 <Send className="w-4 h-4" />
                 <span>KIRIM KOMENTAR</span>
@@ -1088,7 +1114,7 @@ export default function ArticleClient({
                 >
                   <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-none bg-[#FF0000] text-white font-mono font-black text-xs border-2 border-black flex items-center justify-center uppercase">
+                      <div className="w-8 h-8 rounded-none bg-[#166534] text-white font-mono font-black text-xs border-2 border-black flex items-center justify-center uppercase">
                         {comment.user.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -1102,7 +1128,7 @@ export default function ArticleClient({
                     {user && user.id === comment.user_id && (
                       <button
                         onClick={() => handleDeleteComment(comment.id)}
-                        className="p-1 text-black dark:text-white hover:text-[#FF0000] transition-colors cursor-pointer"
+                        className="p-1 text-black dark:text-white hover:text-[#166534] transition-colors cursor-pointer"
                         title="Hapus komentar saya"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1132,7 +1158,7 @@ export default function ArticleClient({
                   key={rel.id}
                   href={`/artikel/${rel.slug}`}
                   onClick={() => soundFx.playClick()}
-                  className="p-4 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black hover:-translate-x-1 hover:-translate-y-1 transition-all flex gap-4 items-center group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:shadow-[8px_8px_0px_0px_rgba(255,0,0,1)] cursor-pointer"
+                  className="p-4 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black hover:-translate-x-1 hover:-translate-y-1 transition-all flex gap-4 items-center group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:shadow-[8px_8px_0px_0px_rgba(22,101,52,1)] cursor-pointer"
                 >
                   <div className="relative w-20 h-16 rounded-none bg-black border-2 border-black overflow-hidden shrink-0">
                     {rel.thumbnail ? (
@@ -1144,7 +1170,7 @@ export default function ArticleClient({
                     )}
                   </div>
                   <div className="space-y-1">
-                    <h4 className="font-mono font-black text-xs text-black dark:text-white group-hover:text-[#FF0000] transition-colors line-clamp-2 uppercase">
+                    <h4 className="font-mono font-black text-xs text-black dark:text-white group-hover:text-[#166534] transition-colors line-clamp-2 uppercase">
                       {rel.title}
                     </h4>
                     <p className="text-[10px] font-mono font-bold text-neutral-500 uppercase">{rel.readTime || "5 min read"}</p>
@@ -1159,7 +1185,7 @@ export default function ArticleClient({
 
       {/* Toast Popup Notification */}
       {toastMsg && (
-        <div className="fixed bottom-24 right-6 z-50 px-4 py-2.5 rounded-none bg-[#FF0000] text-white border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="fixed bottom-24 right-6 z-50 px-4 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           {toastMsg}
         </div>
       )}
@@ -1184,13 +1210,13 @@ export default function ArticleClient({
               <div className="w-full max-w-md bg-white dark:bg-black border-4 border-black dark:border-white rounded-none p-5 space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono">
                 <div className="flex items-center justify-between border-b-3 pb-3 border-black dark:border-white">
                   <div className="flex items-center gap-2 font-mono font-black text-sm uppercase text-black dark:text-white">
-                    <List className="w-4 h-4 text-[#FF0000]" />
+                    <List className="w-4 h-4 text-[#166534]" />
                     <span>DAFTAR ISI ARTIKEL</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setIsTocOpen(false)}
-                    className="w-8 h-8 rounded-none bg-[#FF0000] text-white border-2 border-black font-mono font-black text-xs flex items-center justify-center cursor-pointer"
+                    className="w-8 h-8 rounded-none bg-[#166534] text-white border-2 border-black font-mono font-black text-xs flex items-center justify-center cursor-pointer"
                   >
                     ✕
                   </button>

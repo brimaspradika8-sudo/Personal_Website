@@ -55,7 +55,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
         
         {/* Header */}
         <div className="space-y-3 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-black tracking-widest uppercase">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-black tracking-widest uppercase">
             <GraduationCap className="w-3.5 h-3.5 text-white" />
           </div>
           <h2 className="font-mono text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
@@ -76,7 +76,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
               <div key={item.id} className="relative group">
                 
                 {/* Node Marker */}
-                <div className="absolute -left-[38px] sm:-left-[54px] top-2 w-8 h-8 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white flex items-center justify-center font-mono font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                <div className="absolute -left-[38px] sm:-left-[54px] top-2 w-8 h-8 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white flex items-center justify-center font-mono font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                   <IconComponent className="w-4 h-4 text-white" />
                 </div>
 
@@ -88,7 +88,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
                 }`}>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                     <div>
-                      <span className="text-xs font-mono font-black text-[#FF0000] flex items-center gap-1 uppercase">
+                      <span className="text-xs font-mono font-black text-[#166534] dark:text-[#EAB308] flex items-center gap-1 uppercase">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>[{item.year}]</span>
                       </span>

@@ -73,10 +73,6 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#FF0000] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-black tracking-widest uppercase">
-              <Database className="w-3.5 h-3.5 text-white" />
-              <span>[ SUPABASE LIVE SYNC ]</span>
-            </div>
             <h2 className="font-mono text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
               PROYEK &amp; <span className="bg-[#FFFF00] text-black px-2 py-0.5 border-3 border-black">PORTFOLIO</span>
             </h2>
@@ -121,7 +117,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                 }}
                 className={`px-4 py-1.5 rounded-none text-xs font-mono font-black transition-all cursor-pointer whitespace-nowrap border-3 border-black dark:border-white uppercase ${
                   isActive
-                    ? "bg-[#FF0000] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
+                    ? "bg-[#166534] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
                     : isNight
                     ? "bg-black text-white hover:bg-neutral-800"
                     : "bg-white text-black hover:bg-neutral-200"
@@ -152,14 +148,14 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
           </div>
         ) : displayProjects.length === 0 ? (
           <div className="p-10 rounded-none border-4 border-black dark:border-white text-center space-y-3 bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
-            <FolderGit2 className="w-8 h-8 text-[#FF0000] mx-auto opacity-80" />
+            <FolderGit2 className="w-8 h-8 text-[#166534] mx-auto opacity-80" />
             <p className="text-xs font-mono font-black uppercase text-black dark:text-white">
               {lang === "id" ? "BELUM ADA PROYEK UNTUK KATEGORI INI." : "NO PROJECTS FOUND IN THIS CATEGORY."}
             </p>
             <button
               type="button"
               onClick={() => setSelectedCategory(lang === "id" ? "Semua" : "All")}
-              className="text-xs font-mono font-black text-[#FF0000] underline cursor-pointer uppercase"
+              className="text-xs font-mono font-black text-[#166534] underline cursor-pointer uppercase"
             >
               {lang === "id" ? "TAMPILKAN SEMUA PROYEK" : "SHOW ALL PROJECTS"}
             </button>
@@ -175,7 +171,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                 }}
               >
                 <div
-                  className={`rounded-none border-4 border-black dark:border-white overflow-hidden transition-all duration-150 flex flex-col justify-between group cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(255,0,0,1)] ${
+                  className={`rounded-none border-4 border-black dark:border-white overflow-hidden transition-all duration-150 flex flex-col justify-between group cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(22,101,52,1)] ${
                     isNight
                       ? "bg-black"
                       : "bg-white"
@@ -199,7 +195,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                         soundFx.playClick();
                         onSelectProject(project);
                       }}
-                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-none bg-[#FF0000] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-none bg-[#166534] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>{lang === "id" ? "DETAIL PROYEK" : "VIEW CASE STUDY"}</span>
@@ -209,7 +205,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                   {/* Card Body */}
                   <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
                     <div className="space-y-2">
-                      <h3 className="text-lg font-mono font-black uppercase text-black dark:text-white leading-snug group-hover:text-[#FF0000] transition-colors">
+                      <h3 className="text-lg font-mono font-black uppercase text-black dark:text-white leading-snug group-hover:text-[#166534] transition-colors">
                         {project.title}
                       </h3>
                       <p className="text-xs text-black dark:text-white leading-relaxed font-mono font-bold line-clamp-3">
@@ -241,7 +237,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                               e.stopPropagation();
                               soundFx.playClick();
                             }}
-                            className="text-black dark:text-white hover:text-[#FF0000] transition-colors flex items-center gap-1"
+                            className="text-black dark:text-white hover:text-[#166534] transition-colors flex items-center gap-1"
                           >
                             <Code2 className="w-3.5 h-3.5" />
                             <span>CODE</span>
@@ -257,7 +253,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                               e.stopPropagation();
                               soundFx.playClick();
                             }}
-                            className="text-[#FF0000] font-black underline flex items-center gap-1"
+                            className="text-[#166534] font-black underline flex items-center gap-1"
                           >
                             <span>DEMO</span>
                             <ExternalLink className="w-3.5 h-3.5" />

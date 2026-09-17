@@ -304,63 +304,15 @@ export default function DashboardClient({
                 {dict.nav.login.toUpperCase()}
               </Link>
             )}
-
-            {/* Mobile Menu Icon */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 rounded-full border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white"
-            >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-            </button>
           </div>
         </div>
-
-        {/* Mobile Header Menu Drawer */}
-        {mobileMenuOpen && (
-          <div
-            className={`md:hidden mt-3 p-3 rounded-2xl border-2 border-slate-900 dark:border-white space-y-2 ${
-              isNight ? "bg-[#0E121D]" : "bg-white"
-            }`}
-          >
-            <div className="grid grid-cols-2 gap-2 text-center text-xs font-mono font-bold uppercase">
-              <Link
-                href="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
-              >
-                {dict.nav.home.toUpperCase()}
-              </Link>
-              <Link
-                href="/about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
-              >
-                {dict.nav.about.toUpperCase()}
-              </Link>
-              <a
-                href="#projects"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
-              >
-                {dict.nav.projects.toUpperCase()}
-              </a>
-              <Link
-                href="/artikel"
-                onClick={() => setMobileMenuOpen(false)}
-                className="col-span-2 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-900 dark:border-white"
-              >
-                {dict.nav.articles.toUpperCase()}
-              </Link>
-            </div>
-          </div>
-        )}
       </header>
 
       {/* 2. HERO SECTION (Neo-Brutalism Style) */}
-      <section id="hero" className="relative min-h-[80vh] sm:min-h-[88vh] flex items-center justify-center pt-24 sm:pt-32 pb-10 overflow-hidden text-center">
-        {/* Background Ticker / Running Text (Neo-Brutalist Marquee Bar - Hidden on mobile, active on desktop) */}
-        <div className="hidden sm:block absolute top-20 sm:top-24 inset-x-0 overflow-hidden py-2.5 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-mono font-bold text-xs sm:text-sm tracking-widest uppercase shadow-sm">
-          <div className="whitespace-nowrap animate-marquee flex items-center gap-8">
+      <section id="hero" className="relative flex flex-col items-center justify-start pt-20 sm:pt-28 pb-6 sm:pb-12 overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
+        {/* Background Ticker / Running Text (Neo-Brutalist Marquee Bar - Visible on mobile & desktop) */}
+        <div className="absolute top-20 sm:top-24 inset-x-0 overflow-hidden py-1.5 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-mono font-bold text-[10px] sm:text-xs tracking-widest uppercase shadow-sm">
+          <div className="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-8">
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
@@ -372,7 +324,7 @@ export default function DashboardClient({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 py-6 sm:py-10 space-y-5 sm:space-y-7 mt-1 sm:mt-3"
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-12 sm:pt-14 pb-2 sm:pb-4 space-y-4 sm:space-y-6"
         >
           {/* Headline with Neo-Brutalist Greeting Banner */}
           <h1 className="font-serif font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-3 sm:space-y-4">
@@ -401,7 +353,7 @@ export default function DashboardClient({
           <p className="text-xs sm:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-sans font-medium pt-1">
             Software &amp;{" "}
             <span className="bg-[#EAB308] text-slate-950 px-2 py-0.5 border-2 border-slate-900 font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              AI SYSTEMS
+              AI SYSTEM
             </span>{" "}
             Developer berfokus pada arsitektur web modern, integrasi AI agent, dan solusi digital performa tinggi.
           </p>

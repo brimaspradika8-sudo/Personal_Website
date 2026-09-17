@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { syncUserToDatabase } from "@/lib/actions/auth";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -252,3 +253,39 @@ export async function updateBannerPreset(bannerUrl: string) {
 
   return { success: true };
 }
+
+/**
+ * Server Action: Get Current Logged-in User and DB Profile
+ */
+export async function getCurrentProfile() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user || !user.email) {
+      return { user: null, dbUser: null };
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { email: user.email },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        tier: true,
+        tier_expires_at: true,
+        role: true,
+        created_at: true,
+      },
+    });
+
+    return { user, dbUser };
+  } catch (err) {
+    console.error("Error in getCurrentProfile:", err);
+    return { user: null, dbUser: null };
+  }
+}
+

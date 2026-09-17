@@ -115,14 +115,14 @@ export default function Footer({ isNight = false }: FooterProps) {
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-none bg-[#FF0000] border-2 border-black dark:border-white flex items-center justify-center text-white font-mono font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <div className="w-8 h-8 rounded-none bg-[#166534] border-2 border-black dark:border-white flex items-center justify-center text-white font-mono font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 B
               </div>
               <div>
                 <h3 className={`text-base font-mono font-black uppercase ${textColor}`}>
                   Brimas Pradika Utama
                 </h3>
-                <p className="text-xs font-mono font-black text-[#FF0000] uppercase">[ AI Systems &amp; Fullstack Developer ]</p>
+                <p className="text-xs font-mono font-black text-[#166534] dark:text-[#EAB308] uppercase">[ AI Systems &amp; Fullstack Developer ]</p>
               </div>
             </Link>
 
@@ -214,7 +214,6 @@ export default function Footer({ isNight = false }: FooterProps) {
         <div className={`pt-8 border-t-3 ${borderColor} flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono font-black ${textColor} uppercase`}>
           <p className="flex items-center gap-1.5 font-mono">
             <span>© {new Date().getFullYear()} BRIMAS PRADIKA UTAMA. MADE WITH</span>
-            <Heart className="w-3.5 h-3.5 text-[#FF0000] fill-[#FF0000]" />
             <span>IN INDONESIA.</span>
           </p>
 
@@ -223,7 +222,7 @@ export default function Footer({ isNight = false }: FooterProps) {
             {isAllowedPage && (
               <button
                 onClick={scrollToTop}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-none border-2 border-black dark:border-white bg-[#FF0000] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-none border-2 border-black dark:border-white bg-[#166534] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
               >
                 <span>KEMBALI KE ATAS</span>
                 <ArrowUp className="w-3.5 h-3.5" />

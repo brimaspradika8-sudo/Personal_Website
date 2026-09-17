@@ -14,27 +14,23 @@ export default async function ProfilePage() {
   let dbUser = null;
 
   if (user?.email) {
-    const dbPromise = prisma.user.findUnique({
-      where: { email: user.email },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        avatar: true,
-        tier: true,
-        tier_expires_at: true,
-        created_at: true,
-      },
-    }).catch((e) => {
+    try {
+      dbUser = await prisma.user.findUnique({
+        where: { email: user.email },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          avatar: true,
+          tier: true,
+          tier_expires_at: true,
+          role: true,
+          created_at: true,
+        },
+      });
+    } catch (e) {
       console.warn("Failed fetching user for profile:", e);
-      return null;
-    });
-
-    const timeoutPromise = new Promise<null>((resolve) =>
-      setTimeout(() => resolve(null), 3000)
-    );
-
-    dbUser = await Promise.race([dbPromise, timeoutPromise]);
+    }
   }
 
   return <ProfileClient user={user} dbUser={dbUser} />;

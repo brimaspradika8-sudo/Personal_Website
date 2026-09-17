@@ -512,7 +512,7 @@ export default function AboutClient() {
                 </h3>
                 <button
                   onClick={() => setSelectedCert(null)}
-                  className="p-1 rounded-none bg-[#FF0000] text-white border-2 border-black cursor-pointer hover:scale-105"
+                  className="p-1 rounded-none bg-[#166534] text-white border-2 border-black cursor-pointer hover:scale-105"
                 >
                   <X className="w-5 h-5" />
                 </button>

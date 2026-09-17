@@ -78,7 +78,7 @@ export default function MobileBottomNav() {
                   onClick={() => handleNav(item.id, item.href)}
                   className={`w-14 h-14 rounded-full border-4 border-black dark:border-white flex flex-col items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all cursor-pointer ${
                     isActive
-                      ? "bg-[#FFFF00] text-black scale-110 ring-4 ring-[#FF0000]"
+                      ? "bg-[#FFFF00] text-black scale-110 ring-4 ring-[#166534]"
                       : "bg-[#FFFF00] text-black hover:bg-white hover:scale-105"
                   }`}
                   title={item.label}
@@ -107,7 +107,7 @@ export default function MobileBottomNav() {
                 <motion.div
                   layoutId="activeMobileBottomTab"
                   transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  className="absolute inset-0 bg-[#FF0000] border-2 border-black dark:border-white rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-0"
+                  className="absolute inset-0 bg-[#166534] border-2 border-black dark:border-white rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-0"
                 />
               )}
               

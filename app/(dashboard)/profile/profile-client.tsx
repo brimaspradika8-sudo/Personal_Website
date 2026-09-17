@@ -31,13 +31,17 @@ import {
   Bookmark,
   Trash2,
   BookOpen,
+  Key,
+  Bell,
+  Shield,
 } from "lucide-react";
-import { signOut } from "@/lib/actions/auth";
+import { signOut, updatePasswordWithSession } from "@/lib/actions/auth";
 import {
   updateUserProfile,
   uploadAvatarFile,
   uploadBannerFile,
   updateBannerPreset,
+  getCurrentProfile,
 } from "@/lib/actions/profile";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
@@ -78,8 +82,8 @@ interface ProfileClientProps {
 const BANNER_PRESETS = [
   {
     id: "preset-1",
-    name: "CYBER YELLOW RED",
-    style: "bg-gradient-to-r from-[#FF0000] via-[#FFFF00] to-amber-500",
+    name: "CYBER GREEN YELLOW",
+    style: "bg-gradient-to-r from-[#166534] via-[#FFFF00] to-amber-500",
   },
   {
     id: "preset-2",
@@ -101,38 +105,100 @@ const BANNER_PRESETS = [
 export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   const { lang, toggleLang } = useLanguage();
   const router = useRouter();
-  
+
   const avatarFileInputRef = useRef<HTMLInputElement>(null);
   const bannerFileInputRef = useRef<HTMLInputElement>(null);
 
-  const [activeModal, setActiveModal] = useState<"none" | "info" | "edit" | "banner" | "help">("none");
+  const [currentUser, setCurrentUser] = useState(user);
+  const [currentDbUser, setCurrentDbUser] = useState(dbUser);
 
-  const isAuthenticated = !!user;
+  const [activeModal, setActiveModal] = useState<
+    "none" | "info" | "edit" | "banner" | "help" | "password"
+  >("none");
 
-  // Real user data when logged in vs Guest placeholder when unauthenticated
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("notif_enabled");
+    if (saved !== null) {
+      setNotificationsEnabled(saved === "true");
+    }
+  }, []);
+
+  const toggleNotifications = () => {
+    const next = !notificationsEnabled;
+    setNotificationsEnabled(next);
+    localStorage.setItem("notif_enabled", String(next));
+    soundFx.playClick();
+  };
+
+  useEffect(() => {
+    async function syncClientAuth() {
+      try {
+        const res = await getCurrentProfile();
+        if (res.user) {
+          setCurrentUser(res.user);
+          if (res.dbUser) {
+            setCurrentDbUser(res.dbUser);
+          }
+        }
+      } catch (err) {
+        console.error("Profile client auth sync failed:", err);
+      }
+    }
+    syncClientAuth();
+  }, [user, dbUser]);
+
+  const isAuthenticated = !!currentUser || !!user;
+
+  const userEmail =
+    currentUser?.email ||
+    currentDbUser?.email ||
+    user?.email ||
+    dbUser?.email ||
+    "";
+
   const userName = isAuthenticated
-    ? dbUser?.name ||
+    ? currentDbUser?.name ||
+      dbUser?.name ||
+      currentUser?.user_metadata?.full_name ||
+      currentUser?.user_metadata?.name ||
       user?.user_metadata?.full_name ||
-      user?.user_metadata?.name ||
-      user?.email?.split("@")[0] ||
-      "Brimas Pradika Utama"
-    : "Brimas Pradika Utama";
-
-  const userEmail = isAuthenticated
-    ? user?.email || dbUser?.email || "brimaspradika8@gmail.com"
+      (userEmail ? userEmail.split("@")[0] : "Pengguna")
     : "Tamu (Belum Login)";
 
+  const userTier = currentDbUser?.tier || dbUser?.tier || "FREE";
+  const tierExpiresAt = currentDbUser?.tier_expires_at || dbUser?.tier_expires_at;
+
   const defaultAvatar = isAuthenticated
-    ? dbUser?.avatar || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || ""
+    ? currentDbUser?.avatar ||
+      dbUser?.avatar ||
+      currentUser?.user_metadata?.avatar_url ||
+      currentUser?.user_metadata?.picture ||
+      ""
     : "";
 
   const defaultBanner = isAuthenticated
-    ? user?.user_metadata?.banner_url || ""
+    ? currentUser?.user_metadata?.banner_url ||
+      user?.user_metadata?.banner_url ||
+      ""
     : "";
 
-  const [name, setName] = useState(isAuthenticated ? userName : "");
+  const [name, setName] = useState(userName);
   const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
   const [bannerUrl, setBannerUrl] = useState(defaultBanner);
+
+  useEffect(() => {
+    if (userName && userName !== "Tamu (Belum Login)") {
+      setName(userName);
+    }
+    if (defaultAvatar) setAvatarUrl(defaultAvatar);
+    if (defaultBanner) setBannerUrl(defaultBanner);
+  }, [userName, defaultAvatar, defaultBanner]);
 
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -283,7 +349,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   // Save Name & Profile Details
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!isAuthenticated) return;
     setSaving(true);
     setMessage(null);
 
@@ -296,6 +362,41 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     } else {
       setMessage({ type: "success", text: lang === "id" ? "Profil berhasil tersimpan!" : "Profile saved!" });
       router.refresh();
+      setTimeout(() => {
+        setMessage(null);
+        setActiveModal("none");
+      }, 2000);
+    }
+  };
+
+  // Change Account Password
+  const handleSavePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isAuthenticated) return;
+
+    if (!newPassword || newPassword.length < 6) {
+      setMessage({ type: "error", text: "Kata sandi baru minimal 6 karakter." });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setMessage({ type: "error", text: "Konfirmasi kata sandi tidak cocok. Silakan periksa kembali." });
+      return;
+    }
+
+    setUpdatingPassword(true);
+    setMessage(null);
+    soundFx.playClick();
+
+    const res = await updatePasswordWithSession(newPassword);
+    setUpdatingPassword(false);
+
+    if (res.error) {
+      setMessage({ type: "error", text: res.error });
+    } else {
+      setMessage({ type: "success", text: "Kata sandi akun Anda berhasil diperbarui!" });
+      setNewPassword("");
+      setConfirmPassword("");
       setTimeout(() => {
         setMessage(null);
         setActiveModal("none");
@@ -383,7 +484,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     soundFx.playClick();
                     setActiveModal("banner");
                   }}
-                  className="px-3.5 py-1.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
                   title="Edit Gambar & Tema Cover Banner"
                 >
                   <Camera className="w-4 h-4" />
@@ -415,7 +516,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       unoptimized
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-[#FF0000] flex items-center justify-center text-4xl sm:text-5xl font-mono font-black text-white">
+                    <div className="w-full h-full rounded-full bg-[#166534] flex items-center justify-center text-4xl sm:text-5xl font-mono font-black text-white">
                       {initialLetter}
                     </div>
                   )}
@@ -430,77 +531,140 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 </div>
               )}
 
-              {/* Verified Badge */}
-              <div className="absolute bottom-1 right-1 bg-[#00FF66] border-2 border-black p-1 sm:p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Check className="w-4 h-4 text-black stroke-[3]" />
-              </div>
+              {/* Verified / Membership Tier Avatar Corner Badge */}
+              {isAuthenticated && userTier === "SAHABAT_BRIMAS" ? (
+                <div
+                  className="absolute bottom-1 right-1 bg-black border-2 border-[#FFD700] p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                  title="Sahabat Brimas (VIP Gold)"
+                >
+                  <Crown className="w-4 h-4 text-[#FFD700] fill-[#FFD700]" />
+                </div>
+              ) : isAuthenticated && userTier === "KAWAN_BRIMAS" ? (
+                <div
+                  className="absolute bottom-1 right-1 bg-black border-2 border-[#00FF66] p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                  title="Kawan Brimas (Silver)"
+                >
+                  <Crown className="w-4 h-4 text-[#00FF66] fill-[#00FF66]" />
+                </div>
+              ) : (
+                <div className="absolute bottom-1 right-1 bg-[#00FF66] border-2 border-black p-1 sm:p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <Check className="w-4 h-4 text-black stroke-[3]" />
+                </div>
+              )}
             </div>
 
             {/* Profile Name & Tagline Quote */}
             <div className="mt-4 space-y-2 w-full max-w-lg">
-              <h1 className="text-2xl sm:text-3xl font-mono font-black uppercase tracking-tight text-black">
-                {userName}
+              <h1 className="text-2xl sm:text-3xl font-mono font-black uppercase tracking-tight text-black flex items-center justify-center gap-2">
+                <span>{userName}</span>
+                {isAuthenticated && userTier === "SAHABAT_BRIMAS" && (
+                  <span title="Sahabat Brimas VIP">
+                    <Crown className="w-6 h-6 text-[#FFD700] fill-[#FFD700] drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] shrink-0" />
+                  </span>
+                )}
+                {isAuthenticated && userTier === "KAWAN_BRIMAS" && (
+                  <span title="Kawan Brimas">
+                    <Crown className="w-6 h-6 text-[#00FF66] fill-[#00FF66] drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] shrink-0" />
+                  </span>
+                )}
               </h1>
 
               <p className="text-xs sm:text-sm font-mono font-bold text-neutral-700 max-w-md mx-auto leading-relaxed flex items-center justify-center gap-1.5">
-                <Quote className="w-4 h-4 text-[#FF0000] shrink-0 inline" />
+                <Quote className="w-4 h-4 text-[#166534] shrink-0 inline" />
                 <span>Work hard in silence. Let your success be the noise.</span>
               </p>
 
-              <div className="pt-2 flex items-center justify-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-[#FFFF00] text-black font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                  <span className="w-2.5 h-2.5 rounded-full bg-black animate-ping" />
-                  <span>{isAuthenticated ? (lang === "id" ? `MEMBER ${dbUser?.tier || "FREE"}` : `MEMBER ${dbUser?.tier || "FREE"}`) : (lang === "id" ? "GUEST SESSION" : "GUEST SESSION")}</span>
-                </span>
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+                {isAuthenticated && userTier === "SAHABAT_BRIMAS" ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-black text-[#FFD700] font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    <Crown className="w-4 h-4 text-[#FFD700] fill-[#FFD700]" />
+                    <span>SAHABAT BRIMAS (GOLD)</span>
+                  </span>
+                ) : isAuthenticated && userTier === "KAWAN_BRIMAS" ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-black text-[#00FF66] font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    <Crown className="w-4 h-4 text-[#00FF66] fill-[#00FF66]" />
+                    <span>KAWAN BRIMAS (SILVER)</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-[#FFFF00] text-black font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    <span className="w-2.5 h-2.5 rounded-full bg-black animate-ping" />
+                    <span>{isAuthenticated ? "FREE TIER" : "GUEST SESSION"}</span>
+                  </span>
+                )}
+
+                {userEmail && isAuthenticated && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-none border-2 border-black bg-white text-black font-mono text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    {userEmail}
+                  </span>
+                )}
               </div>
             </div>
 
           </div>
         </div>
 
-        {/* 1.5. PROMINENT MEMBERSHIP TIER CARD (Neo-Brutalist Banner) */}
-        <div className="rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono">
-          <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-white text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
-              <Crown className="w-4 h-4 text-[#FFFF00]" />
-              <span>{lang === "id" ? "STATUS MEMBERSHIP SAYA" : "MY MEMBERSHIP STATUS"}</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-black uppercase leading-tight">
-              {dbUser?.tier === "SAHABAT_BRIMAS"
-                ? "SAHABAT BRIMAS (VIP GOLD)"
-                : dbUser?.tier === "KAWAN_BRIMAS"
-                ? "KAWAN BRIMAS (SILVER)"
-                : "FREE TIER"}
-            </h3>
-            <p className="text-xs font-bold leading-relaxed">
-              {dbUser?.tier === "SAHABAT_BRIMAS"
-                ? "Akses VIP Admin Penuh & Publikasi Artikel Tanpa Batas."
-                : dbUser?.tier === "KAWAN_BRIMAS"
-                ? "Dapat mempublikasikan hingga 3 artikel per 7 hari."
-                : "Tingkat gratis. Upgrade ke Kawan atau Sahabat Brimas untuk mulai mempublikasikan artikel & fitur eksklusif."}
-            </p>
-          </div>
+        {/* 1.5. PROMINENT MEMBERSHIP TIER CARD (Neo-Brutalist Banner - ONLY SHOWN WHEN LOGGED IN) */}
+        {isAuthenticated && (
+          <div className="rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono">
+            <div className="space-y-2 max-w-xl">
+              {userTier === "SAHABAT_BRIMAS" ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-[#FFD700] text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+                  <Crown className="w-4 h-4 text-[#FFD700] fill-[#FFD700]" />
+                  <span>SAHABAT BRIMAS (VIP GOLD)</span>
+                </div>
+              ) : userTier === "KAWAN_BRIMAS" ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-[#00FF66] text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+                  <Crown className="w-4 h-4 text-[#00FF66] fill-[#00FF66]" />
+                  <span>KAWAN BRIMAS (SILVER)</span>
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-white text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+                  <span>STATUS MEMBERSHIP SAYA</span>
+                </div>
+              )}
 
-          <Link
-            href="/upgrade"
-            onClick={() => soundFx.playClick()}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-none bg-[#FF0000] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-[#FFFF00] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0"
-          >
-            <Crown className="w-4 h-4" />
-            <span>{dbUser?.tier && dbUser.tier !== "FREE" ? "KELOLA MEMBERSHIP" : "UPGRADE MEMBERSHIP"}</span>
-          </Link>
-        </div>
+              <h3 className="text-xl sm:text-2xl font-black uppercase leading-tight">
+                {userTier === "SAHABAT_BRIMAS"
+                  ? "SAHABAT BRIMAS (VIP GOLD)"
+                  : userTier === "KAWAN_BRIMAS"
+                  ? "KAWAN BRIMAS (SILVER)"
+                  : "FREE TIER (GRATIS)"}
+              </h3>
+              <p className="text-xs font-bold leading-relaxed">
+                {userTier === "SAHABAT_BRIMAS"
+                  ? "Akses VIP Admin Penuh, AI Voice ElevenLabs, & Publikasi Artikel Tanpa Batas."
+                  : userTier === "KAWAN_BRIMAS"
+                  ? "Dapat mempublikasikan hingga 3 artikel per 7 hari & Akses Fitur Eksklusif."
+                  : "Tingkat gratis. Upgrade ke Kawan atau Sahabat Brimas untuk membuka fitur eksklusif & publikasi artikel."}
+              </p>
+              {tierExpiresAt && (
+                <p className="text-[11px] font-black text-[#166534] uppercase pt-1">
+                  📅 Masa berlaku hingga: {new Date(tierExpiresAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+                </p>
+              )}
+            </div>
+
+            <Link
+              href="/upgrade"
+              onClick={() => soundFx.playClick()}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-none bg-[#166534] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-[#FFFF00] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0"
+            >
+              <Crown className="w-4 h-4" />
+              <span>{userTier !== "FREE" ? "KELOLA MEMBERSHIP" : "UPGRADE MEMBERSHIP"}</span>
+            </Link>
+          </div>
+        )}
 
         {/* 2. DESKTOP 2-COLUMN GRID (Account Settings & Preferences Side-by-Side) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* LEFT COLUMN: INFORMASI AKUN & PROFIL */}
+          {/* LEFT COLUMN: INFORMASI AKUN & KEAMANAN */}
           {isAuthenticated ? (
             <div className="rounded-none border-4 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] divide-y-3 divide-black flex flex-col justify-between">
               <div>
                 <div className="p-4 bg-[#FFFF00] border-b-3 border-black text-black font-mono font-black text-xs uppercase flex items-center gap-2">
                   <UserIcon className="w-4 h-4 stroke-[3]" />
-                  <span>{lang === "id" ? "MANAJEMEN AKUN & PROFIL" : "ACCOUNT & PROFILE MANAGEMENT"}</span>
+                  <span>{lang === "id" ? "PENGATURAN AKUN & KEAMANAN" : "ACCOUNT & SECURITY SETTINGS"}</span>
                 </div>
 
                 {/* Item 1: Detail Status Akun */}
@@ -516,7 +680,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       <ShieldCheck className="w-5 h-5 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                         {lang === "id" ? "Detail Status Akun" : "Account Status Details"}
                       </h3>
                       <p className="text-[11px] font-mono font-bold text-neutral-500">
@@ -536,11 +700,11 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 transition-all cursor-pointer group"
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-none bg-[#FF0000] border-2 border-black flex items-center justify-center text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                    <div className="w-10 h-10 rounded-none bg-[#166534] border-2 border-black flex items-center justify-center text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
                       <Edit3 className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                         {lang === "id" ? "Edit Nama & Foto Profil" : "Edit Name & Profile Photo"}
                       </h3>
                       <p className="text-[11px] font-mono font-bold text-neutral-500">
@@ -551,7 +715,31 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
                 </button>
 
-                {/* Item 3: Edit Cover Banner Header */}
+                {/* Item 3: Ubah Kata Sandi / Password */}
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    setActiveModal("password");
+                  }}
+                  className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-neutral-100 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-none bg-amber-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                      <Key className="w-5 h-5 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
+                        {lang === "id" ? "Ubah Kata Sandi (Password)" : "Change Password"}
+                      </h3>
+                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                        {lang === "id" ? "Perbarui kata sandi keamanan akun Anda" : "Update your account security password"}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-black group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                {/* Item 4: Edit Cover Banner Header */}
                 <button
                   onClick={() => {
                     soundFx.playClick();
@@ -564,7 +752,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       <ImageIcon className="w-5 h-5 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                         {lang === "id" ? "Edit Cover Banner" : "Edit Cover Banner"}
                       </h3>
                       <p className="text-[11px] font-mono font-bold text-neutral-500">
@@ -581,7 +769,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             <div className="p-6 rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-5 font-mono flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-none bg-[#FF0000] border-2 border-black flex items-center justify-center text-white shrink-0 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="w-12 h-12 rounded-none bg-[#166534] border-2 border-black flex items-center justify-center text-white shrink-0 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                     <Lock className="w-6 h-6 stroke-[3]" />
                   </div>
                   <div>
@@ -599,7 +787,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 <Link
                   href="/login"
                   onClick={() => soundFx.playClick()}
-                  className="w-full py-3 px-4 text-center rounded-none bg-[#FF0000] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all cursor-pointer"
+                  className="w-full py-3 px-4 text-center rounded-none bg-[#166534] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all cursor-pointer"
                 >
                   {lang === "id" ? "MASUK / LOGIN" : "SIGN IN"}
                 </Link>
@@ -622,7 +810,33 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 <span>{lang === "id" ? "PREFERENSI & SISTEM" : "PREFERENCES & SYSTEM"}</span>
               </div>
 
-              {/* Item 1: Efek Suara (Ambient SFX) */}
+              {/* Item 1: Notifikasi Email & Aktivitas */}
+              <div className="p-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-none bg-indigo-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                    <Bell className="w-5 h-5 text-black" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-mono font-black uppercase text-black">
+                      {lang === "id" ? "Notifikasi Email & Sistem" : "Notifications"}
+                    </h3>
+                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      {notificationsEnabled ? (lang === "id" ? "Notifikasi Aktif" : "Enabled") : (lang === "id" ? "Notifikasi Dinonaktifkan" : "Disabled")}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={toggleNotifications}
+                  className={`px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer ${
+                    notificationsEnabled ? "bg-[#00FF66] text-black" : "bg-neutral-300 text-black"
+                  }`}
+                >
+                  {notificationsEnabled ? "ON" : "OFF"}
+                </button>
+              </div>
+
+              {/* Item 2: Efek Suara (Ambient SFX) */}
               <div className="p-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3.5">
                   <div className="w-10 h-10 rounded-none bg-[#00FF66] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
@@ -648,7 +862,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 </button>
               </div>
 
-              {/* Item 2: Bahasa Antarmuka (Language ID/EN) */}
+              {/* Item 3: Bahasa Antarmuka (Language ID/EN) */}
               <div className="p-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3.5">
                   <div className="w-10 h-10 rounded-none bg-sky-400 border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
@@ -688,7 +902,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <HelpCircle className="w-5 h-5 text-black" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#FF0000] transition-colors">
+                    <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                       {lang === "id" ? "Pusat Bantuan & FAQ" : "Help Center & FAQ"}
                     </h3>
                     <p className="text-[11px] font-mono font-bold text-neutral-500">
@@ -703,83 +917,85 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
         </div>
 
-        {/* 2.5. BOOKMARKED / SAVED ARTICLES SECTION */}
-        <div className="rounded-none border-4 border-black bg-white dark:bg-black text-black dark:text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-5 space-y-4 font-mono">
-          <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-none bg-[#FFFF00] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Bookmark className="w-4 h-4 text-black fill-black" />
+        {/* 2.5. BOOKMARKED / SAVED ARTICLES SECTION (ONLY SHOWN WHEN LOGGED IN) */}
+        {isAuthenticated && (
+          <div className="rounded-none border-4 border-black bg-white dark:bg-black text-black dark:text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-5 space-y-4 font-mono">
+            <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-none bg-[#FFFF00] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <Bookmark className="w-4 h-4 text-black fill-black" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black uppercase text-black dark:text-white leading-tight">
+                    {lang === "id" ? "ARTIKEL TERSIMPAN" : "SAVED ARTICLES"} ({bookmarks.length})
+                  </h3>
+                  <p className="text-[10px] text-neutral-500 font-bold uppercase">
+                    {lang === "id" ? "Daftar bacaan yang Anda simpan untuk dibaca nanti" : "Saved reading list for later"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-sm font-black uppercase text-black dark:text-white leading-tight">
-                  {lang === "id" ? "ARTIKEL TERSIMPAN" : "SAVED ARTICLES"} ({bookmarks.length})
-                </h3>
-                <p className="text-[10px] text-neutral-500 font-bold uppercase">
-                  {lang === "id" ? "Daftar bacaan yang Anda simpan untuk dibaca nanti" : "Saved reading list for later"}
-                </p>
-              </div>
+
+              {bookmarks.length > 0 && (
+                <Link
+                  href="/artikel"
+                  onClick={() => soundFx.playClick()}
+                  className="px-3 py-1 rounded-none bg-[#166534] text-white border-2 border-black text-[11px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all"
+                >
+                  + CARI ARTIKEL
+                </Link>
+              )}
             </div>
 
-            {bookmarks.length > 0 && (
-              <Link
-                href="/artikel"
-                onClick={() => soundFx.playClick()}
-                className="px-3 py-1 rounded-none bg-[#FF0000] text-white border-2 border-black text-[11px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all"
-              >
-                + CARI ARTIKEL
-              </Link>
+            {bookmarks.length === 0 ? (
+              <div className="p-6 text-center space-y-3 rounded-none border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
+                <BookOpen className="w-8 h-8 text-neutral-400 mx-auto" />
+                <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase">
+                  {lang === "id" ? "Belum ada artikel tersimpan." : "No saved articles yet."}
+                </p>
+                <Link
+                  href="/artikel"
+                  onClick={() => soundFx.playClick()}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-[#FFFF00] text-black border-2 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all cursor-pointer"
+                >
+                  <span>{lang === "id" ? "JELAJAHI ARTIKEL SEKARANG" : "EXPLORE ARTICLES NOW"}</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {bookmarks.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-3.5 rounded-none border-3 border-black dark:border-white bg-neutral-50 dark:bg-neutral-900 flex items-center justify-between gap-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] group"
+                  >
+                    <Link
+                      href={`/artikel/${item.slug}`}
+                      onClick={() => soundFx.playClick()}
+                      className="flex-1 space-y-1 min-w-0"
+                    >
+                      <h4 className="font-black text-xs uppercase truncate text-black dark:text-white group-hover:text-[#166534] transition-colors">
+                        {item.title}
+                      </h4>
+                      <p className="text-[10px] text-neutral-500 font-bold uppercase">
+                        {lang === "id" ? "DISIMPAN" : "SAVED"}: {new Date(item.saved_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleBookmark(item);
+                      }}
+                      className="p-1.5 rounded-none border-2 border-black bg-[#166534] text-white hover:bg-black transition-all cursor-pointer shrink-0"
+                      title="Hapus Simpanan"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-
-          {bookmarks.length === 0 ? (
-            <div className="p-6 text-center space-y-3 rounded-none border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
-              <BookOpen className="w-8 h-8 text-neutral-400 mx-auto" />
-              <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase">
-                {lang === "id" ? "Belum ada artikel tersimpan." : "No saved articles yet."}
-              </p>
-              <Link
-                href="/artikel"
-                onClick={() => soundFx.playClick()}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-[#FFFF00] text-black border-2 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer"
-              >
-                <span>{lang === "id" ? "JELAJAHI ARTIKEL SEKARANG" : "EXPLORE ARTICLES NOW"}</span>
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {bookmarks.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-3.5 rounded-none border-3 border-black dark:border-white bg-neutral-50 dark:bg-neutral-900 flex items-center justify-between gap-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] group"
-                >
-                  <Link
-                    href={`/artikel/${item.slug}`}
-                    onClick={() => soundFx.playClick()}
-                    className="flex-1 space-y-1 min-w-0"
-                  >
-                    <h4 className="font-black text-xs uppercase truncate text-black dark:text-white group-hover:text-[#FF0000] transition-colors">
-                      {item.title}
-                    </h4>
-                    <p className="text-[10px] text-neutral-500 font-bold uppercase">
-                      {lang === "id" ? "DISIMPAN" : "SAVED"}: {new Date(item.saved_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
-                    </p>
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      toggleBookmark(item);
-                    }}
-                    className="p-1.5 rounded-none border-2 border-black bg-[#FF0000] text-white hover:bg-black transition-all cursor-pointer shrink-0"
-                    title="Hapus Simpanan"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
 
         {/* 3. SIGN OUT / LOGIN ACTION BUTTON */}
 
@@ -789,7 +1005,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               <button
                 type="submit"
                 onClick={() => soundFx.playClick()}
-                className="w-full py-4 rounded-none border-4 border-black bg-[#FF0000] text-white font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-none border-4 border-black bg-[#166534] text-white font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <LogOut className="w-5 h-5" />
                 <span>{lang === "id" ? "KELUAR DARI AKUN (SIGN OUT)" : "SIGN OUT FROM ACCOUNT"}</span>
@@ -799,7 +1015,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             <Link
               href="/login"
               onClick={() => soundFx.playClick()}
-              className="w-full py-4 rounded-none border-4 border-black bg-[#FFFF00] text-black font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-none border-4 border-black bg-[#FFFF00] text-black font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <LogIn className="w-5 h-5" />
               <span>{lang === "id" ? "MASUK / LOGIN KE AKUN" : "SIGN IN / LOGIN TO ACCOUNT"}</span>
@@ -819,12 +1035,12 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#FF0000]" />
+                <ShieldCheck className="w-5 h-5 text-[#166534]" />
                 <span>INFORMASI STATUS AKUN</span>
               </h3>
               <button
                 onClick={() => setActiveModal("none")}
-                className="p-1 rounded-none border-2 border-black bg-[#FF0000] text-white hover:bg-black transition-colors"
+                className="p-1 rounded-none border-2 border-black bg-[#166534] text-white hover:bg-black transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -856,12 +1072,12 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-[#FF0000]" />
+                <Edit3 className="w-5 h-5 text-[#166534]" />
                 <span>EDIT NAMA &amp; FOTO PROFIL</span>
               </h3>
               <button
                 onClick={() => setActiveModal("none")}
-                className="p-1 rounded-none border-2 border-black bg-[#FF0000] text-white hover:bg-black transition-colors"
+                className="p-1 rounded-none border-2 border-black bg-[#166534] text-white hover:bg-black transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -873,7 +1089,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   className={`p-3 rounded-none text-xs font-black uppercase border-2 ${
                     message.type === "success"
                       ? "bg-[#00FF66] border-black text-black"
-                      : "bg-[#FF0000] border-black text-white"
+                      : "bg-[#166534] border-black text-white"
                   }`}
                 >
                   {message.text}
@@ -920,7 +1136,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               </h3>
               <button
                 onClick={() => setActiveModal("none")}
-                className="p-1 rounded-none border-2 border-black bg-[#FF0000] text-white hover:bg-black transition-colors"
+                className="p-1 rounded-none border-2 border-black bg-[#166534] text-white hover:bg-black transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -931,7 +1147,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 className={`p-3 rounded-none text-xs font-black uppercase border-2 ${
                   message.type === "success"
                     ? "bg-[#00FF66] border-black text-black"
-                    : "bg-[#FF0000] border-black text-white"
+                    : "bg-[#166534] border-black text-white"
                 }`}
               >
                 {message.text}
@@ -941,7 +1157,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             {/* Option A: Upload Custom Banner Image */}
             <div className="space-y-3 p-4 bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white">
               <h4 className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
-                <Camera className="w-4 h-4 text-[#FF0000]" />
+                <Camera className="w-4 h-4 text-[#166534]" />
                 <span>1. UNGGAH GAMBAR BANNER KUSTOM</span>
               </h4>
               <p className="text-[11px] text-neutral-600 dark:text-neutral-400">
@@ -955,7 +1171,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                   bannerFileInputRef.current?.click();
                 }}
                 disabled={uploadingBanner}
-                className="w-full py-3 rounded-none bg-[#FFFF00] text-black border-2 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF0000] hover:text-white transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-none bg-[#FFFF00] text-black border-2 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <ImageIcon className="w-4 h-4" />
                 <span>{uploadingBanner ? "MENGUNGGAH BANNER..." : "PILIH BERKAS BANNER"}</span>
@@ -988,18 +1204,93 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         </div>
       )}
 
-      {/* MODAL 4: BANTUAN & FAQ */}
+      {/* MODAL 4: UBAH KATA SANDI (PASSWORD) */}
+      {activeModal === "password" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative">
+            <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
+              <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
+                <Key className="w-5 h-5 text-amber-400" />
+                <span>UBAH KATA SANDI AKUN</span>
+              </h3>
+              <button
+                onClick={() => setActiveModal("none")}
+                className="p-1 rounded-none border-2 border-black bg-[#166534] text-white hover:bg-black transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePassword} className="space-y-4">
+              {message && (
+                <div
+                  className={`p-3 rounded-none text-xs font-black uppercase border-2 ${
+                    message.type === "success"
+                      ? "bg-[#00FF66] border-black text-black"
+                      : "bg-[#166534] border-black text-white"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase text-black dark:text-white block">
+                  KATA SANDI BARU
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Masukkan kata sandi baru (min. 6 karakter)..."
+                  required
+                  minLength={6}
+                  className="w-full px-4 py-3 rounded-none border-3 border-black dark:border-white bg-neutral-100 dark:bg-neutral-900 text-xs font-black text-black dark:text-white focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase text-black dark:text-white block">
+                  KONFIRMASI KATA SANDI BARU
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Ulangi kata sandi baru..."
+                  required
+                  minLength={6}
+                  className="w-full px-4 py-3 rounded-none border-3 border-black dark:border-white bg-neutral-100 dark:bg-neutral-900 text-xs font-black text-black dark:text-white focus:outline-none"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={updatingPassword}
+                  className="w-full py-3.5 rounded-none bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-black hover:text-white transition-all"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{updatingPassword ? "MEMPERBARUI KATA SANDI..." : "SIMPAN KATA SANDI BARU"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 5: BANTUAN & FAQ */}
       {activeModal === "help" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
           <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-[#FF0000]" />
+                <HelpCircle className="w-5 h-5 text-[#166534]" />
                 <span>PUSAT BANTUAN &amp; FAQ</span>
               </h3>
               <button
                 onClick={() => setActiveModal("none")}
-                className="p-1 rounded-none border-2 border-black bg-[#FF0000] text-white hover:bg-black transition-colors"
+                className="p-1 rounded-none border-2 border-black bg-[#166534] text-white hover:bg-black transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
