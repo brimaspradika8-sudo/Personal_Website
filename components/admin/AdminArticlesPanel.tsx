@@ -267,7 +267,6 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
             <thead>
               <tr className="border-b-4 border-black dark:border-white text-xs font-black uppercase tracking-wider bg-[#FFFF00] text-black">
                 <th className="py-3.5 px-4 border-r-2 border-black">Artikel</th>
-                <th className="py-3.5 px-4 border-r-2 border-black">Slug</th>
                 <th className="py-3.5 px-4 border-r-2 border-black">Tanggal</th>
                 <th className="py-3.5 px-4 border-r-2 border-black text-center">Interaksi</th>
                 <th className="py-3.5 px-4 text-right">Aksi</th>
@@ -299,10 +298,6 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                           <span className="text-[10px] text-neutral-500 uppercase">{art.category || "Tutorial"}</span>
                         </div>
                       </div>
-                    </td>
-
-                    <td className="py-3 px-4 font-bold text-neutral-600 dark:text-neutral-400">
-                      {art.slug}
                     </td>
 
                     <td className="py-3 px-4 whitespace-nowrap text-neutral-600 dark:text-neutral-400">
@@ -353,7 +348,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-neutral-500 font-bold uppercase text-xs">
+                  <td colSpan={4} className="py-8 text-center text-neutral-500 font-bold uppercase text-xs">
                     {searchQuery ? "TIDAK ADA ARTIKEL BERDASARKAN PENCARIAN" : "BELUM ADA ARTIKEL"}
                   </td>
                 </tr>
