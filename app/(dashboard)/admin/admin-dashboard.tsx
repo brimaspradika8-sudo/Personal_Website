@@ -76,6 +76,7 @@ export default function AdminDashboard({
   const NAV_ITEMS = [
     { label: "Overview", icon: LayoutDashboard, href: "/admin", active: true, external: false },
     { label: "Artikel (CRUD)", icon: FileText, href: "/admin/artikel", active: false, external: false },
+    { label: "Proyek (CRUD)", icon: FolderKanban, href: "/admin/proyek", active: false, external: false },
     { label: "Lihat Website", icon: Globe, href: "/dashboard", active: false, external: true },
   ];
 
@@ -217,6 +218,15 @@ export default function AdminDashboard({
                 </button>
 
                 <Link
+                  href="/admin/proyek/tambah"
+                  onClick={() => soundFx.playClick()}
+                  className="px-4 py-2 rounded-xl bg-[#166534] hover:bg-[#14532D] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Tambah Proyek</span>
+                </Link>
+
+                <Link
                   href="/admin/artikel"
                   onClick={() => soundFx.playClick()}
                   className="px-4 py-2 rounded-xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
@@ -257,6 +267,10 @@ export default function AdminDashboard({
                     <FolderKanban className="w-4 h-4 text-[#D32F2F]" />
                     <span>Proyek Terbaru</span>
                   </h3>
+                  <Link href="/admin/proyek" className="text-xs text-[#D32F2F] font-bold hover:underline flex items-center gap-1">
+                    <span>Kelola</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
                 </div>
                 <div className="p-4 flex-1 space-y-3 font-sans">
                   {recentProjects.length > 0 ? recentProjects.map((p) => (
