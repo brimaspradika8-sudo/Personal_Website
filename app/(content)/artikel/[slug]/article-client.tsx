@@ -56,14 +56,17 @@ interface ArticleClientProps {
     email?: string;
     user_metadata?: { full_name?: string; avatar_url?: string };
   } | null;
+  userTier?: "FREE" | "KAWAN_BRIMAS" | "SAHABAT_BRIMAS";
 }
 
 export default function ArticleClient({
   article: initialArticle,
   relatedArticles,
   user,
+  userTier = "FREE",
 }: ArticleClientProps) {
   const [article, setArticle] = useState<ArticleDetail>(initialArticle);
+  const [selectedVoiceId, setSelectedVoiceId] = useState<string>("id-ID-ArdiNeural");
   const [commentText, setCommentText] = useState("");
   const [isCopied, setIsCopied] = useState(false);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null);
@@ -366,7 +369,7 @@ export default function ArticleClient({
         body: JSON.stringify({
           text: textToSpeak,
           engine: "edge",
-          voiceId: "id-ID-ArdiNeural",
+          voiceId: selectedVoiceId,
         }),
         signal: controller.signal,
       });
@@ -384,7 +387,7 @@ export default function ArticleClient({
 
       const blob = await res.blob();
       const audioUrl = URL.createObjectURL(blob);
-      clientAudioCacheRef.current.set(article.id, audioUrl);
+      clientAudioCacheRef.current.set(`${article.id}_${selectedVoiceId}`, audioUrl);
 
       const audio = new Audio(audioUrl);
       audio.playbackRate = audioSpeed;
@@ -417,7 +420,7 @@ export default function ArticleClient({
 
       await audio.play();
       setIsPlayingAudio(true);
-      showToast("Memutar narasi Edge Neural AI!");
+      showToast(`Memutar narasi AI Edge Neural (${selectedVoiceId.includes("Gadis") ? "Wanita" : "Pria"})!`);
     } catch (e: any) {
       clearTimeout(timeoutId);
       if (e?.name === "AbortError") {
@@ -432,6 +435,12 @@ export default function ArticleClient({
   };
 
   const handleToggleAudio = () => {
+    if (userTier === "FREE") {
+      soundFx.playClick();
+      showToast("🔒 Fitur Narasi Suara AI khusus untuk Member Kawan & Sahabat Brimas. Silakan upgrade!");
+      return;
+    }
+
     if (isPlayingAudio || isLoadingElevenLabs) {
       if (elevenLabsAudioRef.current) {
         elevenLabsAudioRef.current.pause();
@@ -469,6 +478,12 @@ export default function ArticleClient({
 
   const handleGenerateAiSummary = () => {
     try { soundFx.playClick(); } catch {}
+
+    if (userTier === "FREE") {
+      showToast("🔒 Fitur Rangkuman AI khusus untuk Member Kawan & Sahabat Brimas. Silakan upgrade!");
+      return;
+    }
+
     setIsGeneratingSummary(true);
 
     setTimeout(() => {
@@ -477,22 +492,36 @@ export default function ArticleClient({
       const textParagraphs = lines.filter((l) => !l.startsWith("#") && !l.startsWith("```") && l.length > 25);
 
       const bullets: string[] = [];
-      if (headings.length > 0) {
-        bullets.push(`Topik Utama: Menjelaskan ${headings.slice(0, 2).join(" & ")}.`);
-      }
-      if (textParagraphs.length > 0) {
-        bullets.push(textParagraphs[0]);
-      }
-      if (textParagraphs.length > 1) {
-        bullets.push(textParagraphs[Math.floor(textParagraphs.length / 2)]);
-      }
-      if (bullets.length < 3) {
-        bullets.push(`Memberikan langkah-langkah implementasi praktis terkait ${article.title}.`);
+      if (userTier === "SAHABAT_BRIMAS") {
+        bullets.push(`👑 [DEEP EXECUTIVE SUMMARY] Ringkasan Mendalam Artikel "${article.title}"`);
+        if (headings.length > 0) {
+          bullets.push(`📌 Fokus Topik Utama: Menjelaskan ${headings.slice(0, 3).join(", ")}.`);
+        }
+        if (textParagraphs.length > 0) {
+          bullets.push(`💡 Key Takeaways: ${textParagraphs[0]}`);
+        }
+        if (textParagraphs.length > 1) {
+          bullets.push(`🎯 Poin Pembelajaran Penting: ${textParagraphs[Math.floor(textParagraphs.length / 2)]}`);
+        }
+        bullets.push(`🚀 Kesimpulan Eksekutif: Implementasi panduan praktis ini memberikan efisiensi tinggi pada pengembangan aplikasi.`);
+      } else {
+        if (headings.length > 0) {
+          bullets.push(`Topik Utama: Menjelaskan ${headings.slice(0, 2).join(" & ")}.`);
+        }
+        if (textParagraphs.length > 0) {
+          bullets.push(textParagraphs[0]);
+        }
+        if (textParagraphs.length > 1) {
+          bullets.push(textParagraphs[Math.floor(textParagraphs.length / 2)]);
+        }
+        if (bullets.length < 3) {
+          bullets.push(`Memberikan langkah-langkah implementasi praktis terkait ${article.title}.`);
+        }
       }
 
-      setAiSummary(bullets.slice(0, 4));
+      setAiSummary(bullets);
       setIsGeneratingSummary(false);
-      showToast("Ringkasan AI berhasil dibuat!");
+      showToast(userTier === "SAHABAT_BRIMAS" ? "Rangkuman Eksekutif AI VIP Berhasil Dibuat!" : "Ringkasan AI Berhasil Dibuat!");
     }, 600);
   };
 
@@ -918,25 +947,20 @@ export default function ArticleClient({
 
           {/* Audio Controls (Voice & Speed Selectors) */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            {/* Voice Picker Dropdown */}
-            {availableVoices.length > 0 && (
+            {/* Dual Voice Selector for SAHABAT_BRIMAS VIP */}
+            {userTier === "SAHABAT_BRIMAS" && (
               <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
-                <span className="px-1.5 text-[10px] font-bold text-emerald-400 uppercase">VOICE:</span>
+                <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">SUARA AI (VIP):</span>
                 <select
-                  value={selectedVoiceURI}
+                  value={selectedVoiceId}
                   onChange={(e) => {
-                    setSelectedVoiceURI(e.target.value);
-                    if (isPlayingAudio && typeof window !== "undefined" && "speechSynthesis" in window) {
-                      startSpeech(audioSpeed);
-                    }
+                    setSelectedVoiceId(e.target.value);
+                    showToast(`Suara AI diubah ke: ${e.target.value.includes("Gadis") ? "Wanita (Gadis)" : "Pria (Ardi)"}`);
                   }}
-                  className="bg-slate-900 text-white text-[11px] font-mono font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer max-w-[140px] truncate"
+                  className="bg-slate-900 text-[#EAB308] text-[11px] font-mono font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
                 >
-                  {availableVoices.map((v) => (
-                    <option key={v.voiceURI} value={v.voiceURI}>
-                      {v.name.replace(/Microsoft|Google|Indonesian|Indonesia|\(.*?\)/gi, "").trim() || v.name} {v.name.includes("Natural") || v.name.includes("Online") ? "✨" : ""}
-                    </option>
-                  ))}
+                  <option value="id-ID-ArdiNeural">🎙️ Ardi (Pria AI)</option>
+                  <option value="id-ID-GadisNeural">🎙️ Gadis (Wanita AI)</option>
                 </select>
               </div>
             )}
@@ -1171,40 +1195,75 @@ export default function ArticleClient({
                 BELUM ADA KOMENTAR.
               </div>
             ) : (
-              article.comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-3 text-left shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] font-mono"
-                >
-                  <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-none bg-[#166534] text-white font-mono font-black text-xs border-2 border-black flex items-center justify-center uppercase">
-                        {comment.user.name.charAt(0).toUpperCase()}
+              [...article.comments]
+                .sort((a, b) => {
+                  const aIsVip = (a.user as any)?.tier === "SAHABAT_BRIMAS";
+                  const bIsVip = (b.user as any)?.tier === "SAHABAT_BRIMAS";
+                  if (aIsVip && !bIsVip) return -1;
+                  if (!aIsVip && bIsVip) return 1;
+                  return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                })
+                .map((comment) => {
+                  const isVipComment = (comment.user as any)?.tier === "SAHABAT_BRIMAS";
+                  const isKawanComment = (comment.user as any)?.tier === "KAWAN_BRIMAS";
+
+                  return (
+                    <div
+                      key={comment.id}
+                      className={`p-5 rounded-none border-4 ${
+                        isVipComment
+                          ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
+                          : "border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
+                      } space-y-3 text-left font-mono`}
+                    >
+                      <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-8 h-8 rounded-none ${
+                            isVipComment
+                              ? "bg-[#EAB308] text-black ring-2 ring-[#FFD700] shadow-[0_0_8px_rgba(234,179,8,0.6)]"
+                              : isKawanComment
+                              ? "bg-[#166534] text-white"
+                              : "bg-neutral-800 text-white"
+                          } font-mono font-black text-xs border-2 border-black flex items-center justify-center uppercase`}>
+                            {comment.user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-mono font-black text-xs uppercase text-black dark:text-white">{comment.user.name}</p>
+                              {isVipComment && (
+                                <span className="px-1.5 py-0.5 rounded-none bg-[#EAB308] text-black font-mono font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                  👑 VIP PINNED
+                                </span>
+                              )}
+                              {isKawanComment && (
+                                <span className="px-1.5 py-0.5 rounded-none bg-[#166534] text-white font-mono font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                  🟢 KAWAN
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[10px] font-mono text-neutral-500 font-bold uppercase">
+                              {new Date(comment.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                            </p>
+                          </div>
+                        </div>
+
+                        {user && user.id === comment.user_id && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="p-1 text-black dark:text-white hover:text-[#166534] transition-colors cursor-pointer"
+                            title="Hapus komentar saya"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
-                      <div>
-                        <p className="font-mono font-black text-xs uppercase text-black dark:text-white">{comment.user.name}</p>
-                        <p className="text-[10px] font-mono text-neutral-500 font-bold uppercase">
-                          {new Date(comment.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
-                        </p>
-                      </div>
+
+                      <p className="text-xs text-black dark:text-white font-mono font-medium leading-relaxed uppercase">
+                        {comment.content}
+                      </p>
                     </div>
-
-                    {user && user.id === comment.user_id && (
-                      <button
-                        onClick={() => handleDeleteComment(comment.id)}
-                        className="p-1 text-black dark:text-white hover:text-[#166534] transition-colors cursor-pointer"
-                        title="Hapus komentar saya"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-
-                  <p className="text-xs text-black dark:text-white font-mono font-medium leading-relaxed uppercase">
-                    {comment.content}
-                  </p>
-                </div>
-              ))
+                  );
+                })
             )}
           </div>
         </section>

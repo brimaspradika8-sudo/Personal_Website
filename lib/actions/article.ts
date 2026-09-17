@@ -284,7 +284,14 @@ const getArticleBySlugMemoized = cache(async (
         reactions: true,
         comments: {
           include: {
-            user: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+                tier: true,
+              },
+            },
           },
           orderBy: { created_at: "desc" },
         },
@@ -332,6 +339,7 @@ const getArticleBySlugMemoized = cache(async (
             id: c.user.id,
             name: c.user.name,
             avatar: c.user.avatar,
+            tier: (c.user as any).tier || "FREE",
           },
         })),
       };

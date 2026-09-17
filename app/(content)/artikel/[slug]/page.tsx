@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticles, incrementArticleViews } from "@/lib/actions/article";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getEffectiveUserTier } from "@/lib/membership";
 import ArticleClient from "./article-client";
 
 export const dynamic = "force-dynamic";
@@ -77,7 +79,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   // Run view count increment asynchronously in background without blocking initial HTML render
   incrementArticleViews(slug).catch(() => {});
 
-  // Parallelize data fetching to eliminate waterfall latency
   const [article, allArticles, { data: { user } }] = await Promise.all([
     getArticleBySlug(slug),
     getArticles(),
@@ -90,11 +91,23 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const relatedArticles = allArticles.filter((a) => a.slug !== slug);
 
+  let userTier: "FREE" | "KAWAN_BRIMAS" | "SAHABAT_BRIMAS" = "FREE";
+  if (user?.email) {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: user.email },
+      select: { id: true }
+    });
+    if (dbUser) {
+      userTier = await getEffectiveUserTier(dbUser.id);
+    }
+  }
+
   return (
     <ArticleClient
       article={article}
       relatedArticles={relatedArticles}
       user={user}
+      userTier={userTier}
     />
   );
 }

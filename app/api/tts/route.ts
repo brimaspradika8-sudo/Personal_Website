@@ -43,6 +43,10 @@ function setToCache(key: string, buffer: ArrayBuffer) {
   ttsCache.set(key, { buffer, timestamp: Date.now() });
 }
 
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import { getEffectiveUserTier } from "@/lib/membership";
+
 /**
  * High-Performance Text-To-Speech API Route (Microsoft Edge Neural TTS + ElevenLabs Fallback)
  * Endpoint: POST /api/tts
@@ -58,6 +62,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Teks tidak valid untuk audio" }, { status: 400 });
     }
 
+    // 1. Backend Security: Verifikasi User Membership Tier Server-side
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || !user.email) {
+      return NextResponse.json(
+        { error: "Silakan login dan upgrade membership untuk mendengarkan Narasi Suara AI." },
+        { status: 401 }
+      );
+    }
+
+    const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+    const userTier = dbUser ? await getEffectiveUserTier(dbUser.id) : "FREE";
+
+    if (userTier === "FREE") {
+      return NextResponse.json(
+        { error: "Fitur Narasi Suara AI khusus untuk Kawan Brimas & Sahabat Brimas VIP." },
+        { status: 403 }
+      );
+    }
+
     // Clean markdown and trim text length
     const cleanText = text
       .replace(/```[\s\S]*?```/g, " Kode program diabaikan. ")
@@ -69,7 +94,12 @@ export async function POST(request: Request) {
 
     const selectedEngine = engine === "elevenlabs" ? "elevenlabs" : "edge";
     const defaultVoice = selectedEngine === "edge" ? "id-ID-ArdiNeural" : "1k39YpzqXZn52BgyLyGO";
-    const targetVoiceId = voiceId || defaultVoice;
+    let targetVoiceId = voiceId || defaultVoice;
+
+    // Hanya Sahabat Brimas VIP yang berhak memakai Suara Wanita (GadisNeural)
+    if (targetVoiceId.includes("Gadis") && userTier !== "SAHABAT_BRIMAS") {
+      targetVoiceId = "id-ID-ArdiNeural";
+    }
 
     const cacheKey = generateCacheKey(selectedEngine, cleanText, targetVoiceId);
     const cachedBuffer = getFromCache(cacheKey);

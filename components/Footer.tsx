@@ -177,6 +177,11 @@ export default function Footer({ isNight = false }: FooterProps) {
                   [ PROFIL SAYA ]
                 </Link>
               </li>
+              <li>
+                <Link href="/syarat-ketentuan" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
+                  [ SYARAT &amp; KETENTUAN ]
+                </Link>
+              </li>
             </ul>
           </div>
 
