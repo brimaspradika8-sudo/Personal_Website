@@ -11,8 +11,6 @@ import {
   MessageSquare,
   Plus,
   ArrowRight,
-  Sun,
-  Moon,
   Menu,
   X,
   ChevronRight,
@@ -20,6 +18,7 @@ import {
   LogOut,
   Globe,
   ExternalLink,
+  FolderGit2,
 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { soundFx } from "@/lib/audio/sound";
@@ -62,7 +61,6 @@ export default function AdminDashboard({
   recentArticles,
 }: AdminDashboardProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isNight, setIsNight] = useState<boolean>(false);
 
   useEffect(() => {
     document.documentElement.classList.remove("dark");
@@ -74,73 +72,90 @@ export default function AdminDashboard({
   const initial = displayName.charAt(0).toUpperCase();
 
   const NAV_ITEMS = [
-    { label: "Overview", icon: LayoutDashboard, href: "/admin", active: true, external: false },
-    { label: "Artikel (CRUD)", icon: FileText, href: "/admin/artikel", active: false, external: false },
-    { label: "Proyek (CRUD)", icon: FolderKanban, href: "/admin/proyek", active: false, external: false },
-    { label: "Lihat Website", icon: Globe, href: "/dashboard", active: false, external: true },
+    { label: "OVERVIEW", icon: LayoutDashboard, href: "/admin", active: true, external: false },
+    { label: "ARTIKEL (CRUD)", icon: FileText, href: "/admin/artikel", active: false, external: false },
+    { label: "PROYEK (CRUD)", icon: FolderKanban, href: "/admin/proyek", active: false, external: false },
+    { label: "LIHAT WEBSITE", icon: Globe, href: "/dashboard", active: false, external: true },
   ];
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-300 ${isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F8F9FA] text-slate-900"}`}>
+    <div className="min-h-screen flex bg-white dark:bg-[#05080E] text-black dark:text-white font-mono selection:bg-[#FFFF00] selection:text-black">
       
+      {/* Mobile Backdrop */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:flex lg:flex-col lg:shrink-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} ${isNight ? "bg-[#0E1015] border-r border-slate-800" : "bg-white border-r border-slate-200"}`}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
-          <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-xs shadow-xs">
+      {/* 1. SIDEBAR (Neo-Brutalist Sharp Border & Blocky Tabs) */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:flex lg:flex-col lg:shrink-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } bg-white dark:bg-[#0A0D14] border-r-4 border-black dark:border-white shadow-[6px_0px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_0px_0px_0px_rgba(255,255,255,1)]`}
+      >
+        {/* Brand Header */}
+        <div className="h-16 flex items-center justify-between px-5 border-b-4 border-black dark:border-white bg-[#FFFF00] text-black">
+          <Link
+            href="/dashboard"
+            onClick={() => soundFx.playClick()}
+            className="flex items-center gap-2.5 group"
+          >
+            <div className="w-8 h-8 rounded-none bg-black text-white flex items-center justify-center font-mono font-black text-sm border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               B
             </div>
-            <span className="font-bold text-sm tracking-tight font-sans text-slate-900 dark:text-slate-100">
-              Brimas <span className="font-normal text-slate-500 dark:text-slate-400">Admin</span>
+            <span className="font-serif font-black text-base tracking-tight uppercase">
+              BRIMAS <span className="underline">ADMIN</span>
             </span>
           </Link>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100">
-            <X className="w-5 h-5" />
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1 text-black hover:scale-110 cursor-pointer"
+          >
+            <X className="w-5 h-5 stroke-[3]" />
           </button>
         </div>
 
-        <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto font-sans">
-          <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Utama</div>
+        {/* Sidebar Nav Items */}
+        <nav className="flex-1 px-4 py-6 space-y-3 overflow-y-auto">
+          <div className="text-[10px] font-mono font-black text-neutral-500 uppercase tracking-widest px-1">
+            MENU UTAMA
+          </div>
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.label}
               href={item.href}
               target={item.external ? "_blank" : undefined}
               onClick={() => soundFx.playClick()}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
+              className={`flex items-center justify-between px-4 py-3 rounded-none border-3 border-black dark:border-white text-xs font-mono font-black uppercase transition-all cursor-pointer ${
                 item.active
-                  ? "bg-[#D32F2F] text-white font-bold shadow-xs"
-                  : isNight
-                  ? "text-slate-300 hover:bg-slate-900 hover:text-white"
-                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                  ? "bg-[#FFFF00] text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  : "bg-white dark:bg-[#0E131F] text-black dark:text-white hover:bg-[#FEF9C3] dark:hover:bg-slate-800 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <item.icon className="w-4 h-4" />
-                <span className="text-xs font-semibold">{item.label}</span>
+              <div className="flex items-center gap-2.5">
+                <item.icon className="w-4 h-4 stroke-[2.5]" />
+                <span>{item.label}</span>
               </div>
-              {item.external && <ExternalLink className="w-3.5 h-3.5 opacity-60" />}
+              {item.external ? (
+                <ExternalLink className="w-3.5 h-3.5" />
+              ) : item.active ? (
+                <div className="w-2.5 h-2.5 bg-black rounded-none border border-black" />
+              ) : null}
             </Link>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 font-sans">
-          <div className={`p-3 rounded-xl flex items-center justify-between gap-3 ${isNight ? "bg-slate-900 border border-slate-800" : "bg-slate-100/80 border border-slate-200"}`}>
-            <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-[#D32F2F] flex shrink-0 items-center justify-center text-white font-bold text-xs shadow-xs overflow-hidden relative">
-                {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
-              </div>
-              <div className="truncate">
-                <p className="text-xs font-bold truncate text-slate-900 dark:text-slate-100">{displayName}</p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-sans">Administrator</p>
-              </div>
+        {/* User Card & Logout Button */}
+        <div className="p-4 border-t-4 border-black dark:border-white space-y-3 bg-slate-50 dark:bg-[#0E131F]">
+          <div className="p-3 rounded-none border-3 border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-none bg-[#EAB308] border-2 border-black flex shrink-0 items-center justify-center text-black font-black text-xs overflow-hidden relative">
+              {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill className="object-cover" /> : initial}
+            </div>
+            <div className="truncate">
+              <p className="text-xs font-mono font-black truncate text-black dark:text-white uppercase">{displayName}</p>
+              <p className="text-[10px] text-neutral-500 font-mono font-bold truncate uppercase">ADMINISTRATOR</p>
             </div>
           </div>
 
@@ -149,188 +164,300 @@ export default function AdminDashboard({
               soundFx.playClick();
               await signOut();
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-400 text-xs font-bold transition-colors border border-red-500/20 cursor-pointer"
-            title="Keluar dari Akun Admin"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-none bg-red-600 text-white border-3 border-black font-mono font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-red-800 transition-all cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
-            <span>Keluar (Logout)</span>
+            <span>KELUAR (LOGOUT)</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
-        <header className={`h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0 backdrop-blur-md border-b transition-colors duration-300 ${isNight ? "bg-[#0B0F17]/80 border-slate-800" : "bg-white/90 border-slate-200 shadow-xs"}`}>
+        {/* Sticky Header Topbar */}
+        <header className="h-16 shrink-0 flex items-center justify-between px-4 sm:px-8 bg-white dark:bg-[#0A0D14] border-b-4 border-black dark:border-white sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"
+              className="lg:hidden p-1.5 rounded-none border-2 border-black bg-[#FFFF00] text-black"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5 stroke-[3]" />
             </button>
-            <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
-              Dashboard Overview
+            <h1 className="text-base sm:text-xl font-serif font-black uppercase tracking-tight text-black dark:text-white">
+              DASHBOARD OVERVIEW
             </h1>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <Link
-              href="/dashboard"
-              target="_blank"
-              onClick={() => soundFx.playClick()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
-              title="Buka Website Publik"
-            >
-              <Globe className="w-3.5 h-3.5 text-[#D32F2F]" />
-              <span>Lihat Website</span>
-              <ExternalLink className="w-3 h-3 opacity-60" />
-            </Link>
-
-          </div>
+          <Link
+            href="/dashboard"
+            target="_blank"
+            onClick={() => soundFx.playClick()}
+            className="px-3.5 py-1.5 rounded-none border-3 border-black dark:border-white bg-white dark:bg-black text-black dark:text-white text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] hover:text-black transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <Globe className="w-4 h-4 text-[#166534]" />
+            <span className="hidden sm:inline">LIHAT WEBSITE</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
         </header>
 
-        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+        {/* Dashboard Main Scroll Container */}
+        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 space-y-8">
           <div className="max-w-6xl mx-auto space-y-8">
             
-            {/* Header Welcome */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-              <div className="space-y-1">
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-sans font-medium">Selamat datang kembali,</p>
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-                  {displayName}
-                </h2>
+            {/* A. HEADER WELCOME BANNER WITH 2 TOP BUTTONS (Wireframe Top Row) */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b-4 border-black dark:border-white">
+              <div className="space-y-2">
+                <span className="text-xs font-mono font-black uppercase text-neutral-500">
+                  SELAMAT DATANG KEMBALI,
+                </span>
+                <div>
+                  <span className="bg-[#FFFF00] text-black px-3.5 py-1 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-serif font-black uppercase text-2xl sm:text-4xl inline-block">
+                    {displayName}
+                  </span>
+                </div>
               </div>
-              
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={() => {
-                    soundFx.playClick();
-                    try {
-                      sessionStorage.removeItem("hasSeenRiveIntro");
-                    } catch {}
-                    alert("Animasi Rive Intro berhasil di-reset!");
-                  }}
-                  className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors cursor-pointer flex items-center gap-2"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#D32F2F]" />
-                  <span>Reset Intro Rive</span>
-                </button>
 
+              {/* Wireframe Top Right 2 Action Buttons (Green & Yellow) */}
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                {/* Green Button: + TAMBAH PROYEK */}
                 <Link
                   href="/admin/proyek/tambah"
                   onClick={() => soundFx.playClick()}
-                  className="px-4 py-2 rounded-xl bg-[#166534] hover:bg-[#14532D] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-2.5 rounded-none bg-[#166534] hover:bg-[#14532D] text-white border-3 border-black dark:border-white font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-2"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Tambah Proyek</span>
+                  <Plus className="w-4 h-4 stroke-[3]" />
+                  <span>TAMBAH PROYEK</span>
                 </Link>
 
+                {/* Yellow Button: + KELOLA ARTIKEL */}
                 <Link
                   href="/admin/artikel"
                   onClick={() => soundFx.playClick()}
-                  className="px-4 py-2 rounded-xl bg-[#D32F2F] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-2.5 rounded-none bg-[#FFFF00] hover:bg-[#E5E500] text-black border-3 border-black dark:border-white font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-2"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Kelola Artikel</span>
+                  <Plus className="w-4 h-4 stroke-[3]" />
+                  <span>KELOLA ARTIKEL</span>
                 </Link>
               </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { label: "Total Proyek", value: stats.projectsCount, icon: FolderKanban },
-                { label: "Total Artikel", value: stats.articlesCount, icon: FileText },
-                { label: "Pengguna Terdaftar", value: stats.usersCount, icon: Users },
-                { label: "Komentar Masuk", value: stats.commentsCount, icon: MessageSquare },
-              ].map((stat, idx) => (
-                <div key={idx} className={`p-5 rounded-2xl border ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
-                  <div className="flex items-center justify-between mb-3 text-slate-400">
-                    <stat.icon className="w-5 h-5 text-[#D32F2F]" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{stat.value}</h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium mt-1">{stat.label}</p>
+            {/* B. 4 STAT CARDS ROW (Wireframe 4 Grid Cards across with green badges) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              
+              {/* Stat 1: Total Proyek */}
+              <div className="relative p-5 bg-white dark:bg-[#0A0D14] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-black uppercase text-neutral-600 dark:text-neutral-400">
+                    TOTAL PROYEK
+                  </span>
+                  {/* Top Right Green Badge Icon */}
+                  <div className="w-8 h-8 rounded-none bg-[#00FF66] text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <FolderKanban className="w-4 h-4 stroke-[2.5]" />
                   </div>
                 </div>
-              ))}
+                <div className="text-3xl sm:text-4xl font-serif font-black text-black dark:text-white">
+                  {stats.projectsCount}
+                </div>
+                <div className="inline-block px-2 py-0.5 bg-[#FEF9C3] text-black border border-black text-[10px] font-mono font-black uppercase">
+                  PUBLISHED
+                </div>
+              </div>
+
+              {/* Stat 2: Total Artikel */}
+              <div className="relative p-5 bg-white dark:bg-[#0A0D14] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-black uppercase text-neutral-600 dark:text-neutral-400">
+                    TOTAL ARTIKEL
+                  </span>
+                  {/* Top Right Green Badge Icon */}
+                  <div className="w-8 h-8 rounded-none bg-[#00FF66] text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <FileText className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                </div>
+                <div className="text-3xl sm:text-4xl font-serif font-black text-black dark:text-white">
+                  {stats.articlesCount}
+                </div>
+                <div className="inline-block px-2 py-0.5 bg-[#DCFCE7] text-black border border-black text-[10px] font-mono font-black uppercase">
+                  LIVE ARTICLES
+                </div>
+              </div>
+
+              {/* Stat 3: Pengguna Terdaftar */}
+              <div className="relative p-5 bg-white dark:bg-[#0A0D14] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-black uppercase text-neutral-600 dark:text-neutral-400">
+                    PENGGUNA TERDAFTAR
+                  </span>
+                  {/* Top Right Green Badge Icon */}
+                  <div className="w-8 h-8 rounded-none bg-[#00FF66] text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <Users className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                </div>
+                <div className="text-3xl sm:text-4xl font-serif font-black text-black dark:text-white">
+                  {stats.usersCount}
+                </div>
+                <div className="inline-block px-2 py-0.5 bg-[#FEF9C3] text-black border border-black text-[10px] font-mono font-black uppercase">
+                  MEMBERS
+                </div>
+              </div>
+
+              {/* Stat 4: Komentar Masuk */}
+              <div className="relative p-5 bg-white dark:bg-[#0A0D14] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-black uppercase text-neutral-600 dark:text-neutral-400">
+                    KOMENTAR MASUK
+                  </span>
+                  {/* Top Right Green Badge Icon */}
+                  <div className="w-8 h-8 rounded-none bg-[#00FF66] text-black border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <MessageSquare className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                </div>
+                <div className="text-3xl sm:text-4xl font-serif font-black text-black dark:text-white">
+                  {stats.commentsCount}
+                </div>
+                <div className="inline-block px-2 py-0.5 bg-[#DCFCE7] text-black border border-black text-[10px] font-mono font-black uppercase">
+                  INTERACTIONS
+                </div>
+              </div>
+
             </div>
 
-            {/* Recent Activity Grids */}
+            {/* C. BOTTOM 2 PANELS SIDE-BY-SIDE (Wireframe Panel 1 & Panel 2) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
-              {/* Recent Projects */}
-              <div className={`rounded-2xl border flex flex-col ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
-                <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <FolderKanban className="w-4 h-4 text-[#D32F2F]" />
-                    <span>Proyek Terbaru</span>
+              {/* Panel 1: PROYEK TERBARU */}
+              <div className="p-6 bg-white dark:bg-[#0A0D14] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col justify-between space-y-5">
+                
+                {/* Panel Header */}
+                <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
+                  <h3 className="font-serif font-black text-lg uppercase text-black dark:text-white flex items-center gap-2">
+                    <FolderKanban className="w-5 h-5 text-[#166534] dark:text-[#EAB308]" />
+                    <span>PROYEK TERBARU</span>
                   </h3>
-                  <Link href="/admin/proyek" className="text-xs text-[#D32F2F] font-bold hover:underline flex items-center gap-1">
-                    <span>Kelola</span>
-                    <ArrowRight className="w-3 h-3" />
+                  
+                  {/* Wireframe Header Right Button: [KELOLA] */}
+                  <Link
+                    href="/admin/proyek"
+                    onClick={() => soundFx.playClick()}
+                    className="px-3 py-1 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white text-xs font-mono font-black uppercase text-black dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] hover:text-black transition-colors flex items-center gap-1"
+                  >
+                    <span>KELOLA</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
-                <div className="p-4 flex-1 space-y-3 font-sans">
-                  {recentProjects.length > 0 ? recentProjects.map((p) => (
-                    <div key={p.id} className="flex items-center gap-3 group">
-                      <div className="w-10 h-10 rounded-lg border flex-shrink-0 bg-cover bg-center bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800" style={{ backgroundImage: `url(${p.thumbnail || '/placeholder.png'})` }} />
-                      <div className="flex-1 min-w-0">
-                        <Link href={`#projects`} className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors truncate block">
-                          {p.title}
+
+                {/* List of Item Cards inside Panel */}
+                <div className="space-y-3 flex-1">
+                  {recentProjects.length > 0 ? (
+                    recentProjects.map((p) => (
+                      <div
+                        key={p.id}
+                        className="p-3.5 bg-slate-50 dark:bg-[#121824] border-3 border-black dark:border-white flex items-center justify-between gap-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="w-10 h-10 border-2 border-black bg-slate-200 dark:bg-slate-900 relative shrink-0 overflow-hidden">
+                            {p.thumbnail ? (
+                              <Image src={p.thumbnail} alt={p.title} fill unoptimized className="object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <FolderGit2 className="w-5 h-5 text-neutral-500" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="truncate">
+                            <h4 className="text-xs font-mono font-black uppercase truncate text-black dark:text-white">
+                              {p.title}
+                            </h4>
+                            <p className="text-[10px] font-mono text-neutral-500">
+                              {new Date(p.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Wireframe Yellow Action Button on Right of Item */}
+                        <Link
+                          href="/admin/proyek"
+                          onClick={() => soundFx.playClick()}
+                          className="px-3 py-1 bg-[#FFFF00] text-black border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-colors shrink-0"
+                        >
+                          DETAIL
                         </Link>
-                        <p className="text-[11px] text-slate-500 font-sans mt-0.5">
-                          {new Date(p.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#D32F2F] transition-colors" />
-                    </div>
-                  )) : (
-                    <div className="h-full flex items-center justify-center text-slate-500 dark:text-slate-400 text-xs font-semibold font-sans py-8">
-                      Belum ada proyek
+                    ))
+                  ) : (
+                    <div className="p-8 border-2 border-dashed border-black dark:border-white text-center text-xs font-mono font-black uppercase text-neutral-500">
+                      BELUM ADA PROYEK
                     </div>
                   )}
                 </div>
+
               </div>
 
-              {/* Recent Articles */}
-              <div className={`rounded-2xl border flex flex-col ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
-                <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-[#D32F2F]" />
-                    <span>Artikel Terbaru</span>
+              {/* Panel 2: ARTIKEL TERBARU */}
+              <div className="p-6 bg-white dark:bg-[#0A0D14] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col justify-between space-y-5">
+                
+                {/* Panel Header */}
+                <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
+                  <h3 className="font-serif font-black text-lg uppercase text-black dark:text-white flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-[#166534] dark:text-[#EAB308]" />
+                    <span>ARTIKEL TERBARU</span>
                   </h3>
-                  <Link href="/admin/artikel" className="text-xs text-[#D32F2F] font-bold hover:underline flex items-center gap-1">
-                    <span>Kelola</span>
-                    <ArrowRight className="w-3 h-3" />
+
+                  {/* Wireframe Header Right Button: [KELOLA] */}
+                  <Link
+                    href="/admin/artikel"
+                    onClick={() => soundFx.playClick()}
+                    className="px-3 py-1 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white text-xs font-mono font-black uppercase text-black dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] hover:text-black transition-colors flex items-center gap-1"
+                  >
+                    <span>KELOLA</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
-                <div className="p-4 flex-1 space-y-3 font-sans">
-                  {recentArticles.length > 0 ? recentArticles.map((a) => (
-                    <div key={a.id} className="flex items-center gap-3 group">
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center border shrink-0 bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400">
-                        <FileText className="w-4 h-4 text-[#D32F2F]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/artikel/${a.slug}`} className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#D32F2F] transition-colors truncate block">
-                          {a.title}
+
+                {/* List of Item Cards inside Panel */}
+                <div className="space-y-3 flex-1">
+                  {recentArticles.length > 0 ? (
+                    recentArticles.map((a) => (
+                      <div
+                        key={a.id}
+                        className="p-3.5 bg-slate-50 dark:bg-[#121824] border-3 border-black dark:border-white flex items-center justify-between gap-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="w-10 h-10 border-2 border-black bg-[#FEF9C3] text-black flex items-center justify-center shrink-0">
+                            <FileText className="w-5 h-5 stroke-[2.5]" />
+                          </div>
+                          <div className="truncate">
+                            <h4 className="text-xs font-mono font-black uppercase truncate text-black dark:text-white">
+                              {a.title}
+                            </h4>
+                            <p className="text-[10px] font-mono text-neutral-500">
+                              {new Date(a.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Wireframe Yellow Action Button on Right of Item */}
+                        <Link
+                          href={`/artikel/${a.slug}`}
+                          onClick={() => soundFx.playClick()}
+                          className="px-3 py-1 bg-[#FFFF00] text-black border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-colors shrink-0"
+                        >
+                          BACA
                         </Link>
-                        <p className="text-[11px] text-slate-500 font-sans mt-0.5">
-                          {new Date(a.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#D32F2F] transition-colors" />
-                    </div>
-                  )) : (
-                    <div className="h-full flex items-center justify-center text-slate-500 dark:text-slate-400 text-xs font-semibold font-sans py-8">
-                      Belum ada artikel
+                    ))
+                  ) : (
+                    <div className="p-8 border-2 border-dashed border-black dark:border-white text-center text-xs font-mono font-black uppercase text-neutral-500">
+                      BELUM ADA ARTIKEL
                     </div>
                   )}
                 </div>
+
               </div>
 
             </div>
+
           </div>
         </div>
       </main>
