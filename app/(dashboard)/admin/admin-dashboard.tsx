@@ -15,7 +15,6 @@ import {
   ExternalLink,
   FolderGit2,
 } from "lucide-react";
-import { User } from "@supabase/supabase-js";
 import { soundFx } from "@/lib/audio/sound";
 import AdminSidebar, { AdminTab } from "@/components/admin/AdminSidebar";
 import AdminProjectsPanel from "@/components/admin/AdminProjectsPanel";
@@ -45,7 +44,7 @@ interface ArticleRecord {
 }
 
 interface AdminDashboardProps {
-  user: User | null;
+  user: { email?: string; user_metadata?: { full_name?: string; avatar_url?: string } } | null;
   dbUser: { name?: string; avatar?: string | null } | null;
   stats: DashboardStats;
   recentProjects: ProjectRecord[];

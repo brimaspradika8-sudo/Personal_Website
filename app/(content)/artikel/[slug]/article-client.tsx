@@ -3,11 +3,12 @@
 import { useState, useEffect, useTransition, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Calendar,
   Clock,
-  Heart,
+  ThumbsUp,
   ThumbsDown,
   MessageSquare,
   Bookmark,
@@ -65,6 +66,7 @@ export default function ArticleClient({
   user,
   userTier = "FREE",
 }: ArticleClientProps) {
+  const router = useRouter();
   const [article, setArticle] = useState<ArticleDetail>(initialArticle);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("id-ID-ArdiNeural");
   const [commentText, setCommentText] = useState("");
@@ -559,7 +561,8 @@ export default function ArticleClient({
 
   const handleReaction = (type: "LIKE" | "DISLIKE") => {
     if (!user) {
-      showToast("Silakan masuk akun terlebih dahulu untuk memberikan reaksi.");
+      showToast("Kamu harus login dulu untuk memberikan reaksi");
+      router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk memberikan reaksi")}`);
       return;
     }
 
@@ -593,12 +596,28 @@ export default function ArticleClient({
       };
     });
 
-    // Non-blocking background sync with database
-    toggleArticleReaction(article.id, type).then((res) => {
-      if (res?.error) {
-        showToast(res.error);
-      }
-    });
+    // Sync via POST /api/reaction REST API route (fallback to Server Action if needed)
+    fetch("/api/reaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ article_id: article.id, type }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (res.status === 401) {
+            showToast("Kamu harus login dulu untuk memberikan reaksi");
+            router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk memberikan reaksi")}`);
+            return;
+          }
+          if (data.error) showToast(data.error);
+        }
+      })
+      .catch(() => {
+        toggleArticleReaction(article.id, type).then((res) => {
+          if (res?.error) showToast(res.error);
+        });
+      });
   };
 
   const handleAddComment = (e: React.FormEvent) => {
@@ -606,7 +625,8 @@ export default function ArticleClient({
     if (!commentText.trim()) return;
 
     if (!user) {
-      showToast("Silakan masuk akun terlebih dahulu untuk menulis komentar.");
+      showToast("Kamu harus login dulu untuk berkomentar");
+      router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk berkomentar")}`);
       return;
     }
 
@@ -638,22 +658,48 @@ export default function ArticleClient({
 
     showToast("Komentar berhasil dikirim!");
 
-    // Non-blocking background sync
-    addArticleComment(article.id, text).then((res) => {
-      if (res.error) {
-        showToast(res.error);
-        setArticle((prev) => ({
-          ...prev,
-          commentCount: Math.max(0, prev.commentCount - 1),
-          comments: prev.comments.filter((c) => c.id !== tempId),
-        }));
-      } else if (res.comment) {
-        setArticle((prev) => ({
-          ...prev,
-          comments: prev.comments.map((c) => (c.id === tempId ? res.comment! : c)),
-        }));
-      }
-    });
+    // Background sync via REST API POST /api/comment (fallback to Server Action)
+    fetch("/api/comment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ article_id: article.id, content: text }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (res.status === 401) {
+            showToast("Kamu harus login dulu untuk berkomentar");
+            router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk berkomentar")}`);
+            return;
+          }
+          if (data.error) showToast(data.error);
+        } else {
+          const data = await res.json();
+          if (data.comment) {
+            setArticle((prev) => ({
+              ...prev,
+              comments: prev.comments.map((c) => (c.id === tempId ? data.comment : c)),
+            }));
+          }
+        }
+      })
+      .catch(() => {
+        addArticleComment(article.id, text).then((res) => {
+          if (res.error) {
+            showToast(res.error);
+            setArticle((prev) => ({
+              ...prev,
+              commentCount: Math.max(0, prev.commentCount - 1),
+              comments: prev.comments.filter((c) => c.id !== tempId),
+            }));
+          } else if (res.comment) {
+            setArticle((prev) => ({
+              ...prev,
+              comments: prev.comments.map((c) => (c.id === tempId ? res.comment! : c)),
+            }));
+          }
+        });
+      });
   };
 
   const handleDeleteComment = (commentId: string) => {
@@ -1179,7 +1225,7 @@ export default function ArticleClient({
                   : "bg-white text-black hover:bg-[#FFFF00]"
               }`}
             >
-              <Heart className={`w-4 h-4 ${article.userReaction === "LIKE" ? "fill-white" : "text-[#166534]"}`} />
+              <ThumbsUp className={`w-4 h-4 ${article.userReaction === "LIKE" ? "fill-white" : "text-[#166534]"}`} />
               <span>SUKA ({article.likeCount})</span>
             </button>
 
@@ -1243,45 +1289,43 @@ export default function ArticleClient({
             <span>KOMENTAR ({article.commentCount})</span>
           </div>
 
-          {/* Add Comment Box */}
-          <form onSubmit={handleAddComment} className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
-            {user ? (
+          {/* Add Comment Box - Form hanya tampil jika user sudah login */}
+          {user ? (
+            <form onSubmit={handleAddComment} className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
               <div className="flex items-center gap-2 text-xs font-mono font-bold text-black dark:text-white">
                 <span className="w-2.5 h-2.5 rounded-none bg-[#00FF66] border border-black" />
                 <span>MENULIS SEBAGAI <strong className="text-[#166534] dark:text-[#EAB308] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
               </div>
-            ) : (
-              <div className="p-3.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                <span>ANDA BELUM MASUK AKUN. SILAKAN LOGIN UNTUK MENGIRIM KOMENTAR.</span>
-                <Link
-                  href="/login"
-                  className="px-4 py-1.5 rounded-none bg-black text-white border-2 border-black font-mono font-black hover:bg-[#166534] transition-all shrink-0 uppercase"
+
+              <textarea
+                rows={3}
+                placeholder="TULISKAN PANDANGAN ANDA..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                className="w-full p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-xs font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all"
+              />
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={!commentText.trim()}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
                 >
-                  MASUK AKUN
-                </Link>
+                  <Send className="w-4 h-4" />
+                  <span>KIRIM KOMENTAR</span>
+                </button>
               </div>
-            )}
-
-            <textarea
-              rows={3}
-              placeholder="TULISKAN PANDANGAN ANDA..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              disabled={!user}
-              className="w-full p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-xs font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all disabled:opacity-50"
-            />
-
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                disabled={!user || !commentText.trim()}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
+            </form>
+          ) : (
+            <div className="p-4 sm:p-5 rounded-none bg-[#FFFF00] text-black border-4 border-black text-xs font-mono font-black flex items-center justify-between shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <Link
+                href={`/login?message=${encodeURIComponent("Kamu harus login dulu untuk berkomentar")}`}
+                className="hover:underline flex items-center gap-2 text-black font-black uppercase cursor-pointer"
               >
-                <Send className="w-4 h-4" />
-                <span>KIRIM KOMENTAR</span>
-              </button>
+                <span>🔑 LOGIN DULU UNTUK BERKOMENTAR</span>
+              </Link>
             </div>
-          </form>
+          )}
 
           {/* Comments List */}
           <div className="space-y-4">

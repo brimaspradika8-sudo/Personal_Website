@@ -11,20 +11,19 @@ export default async function ArtikelPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  let userTier: MembershipTier = "FREE";
-  if (user?.email) {
-    try {
-      const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
-      if (dbUser) {
-        userTier = await getEffectiveUserTier(dbUser.id);
-      }
-    } catch {}
-  }
+  const userEmail = user?.email ? user.email.toLowerCase().trim() : "";
 
-  const [isAdmin, articles] = await Promise.all([
-    checkIsAdmin(user?.email),
+  const [isAdmin, articles, dbUser] = await Promise.all([
+    checkIsAdmin(userEmail),
     getArticles(),
+    userEmail
+      ? prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } }).catch(() => null)
+      : Promise.resolve(null),
   ]);
+
+  const userTier: MembershipTier = dbUser
+    ? await getEffectiveUserTier(dbUser.id).catch(() => "FREE")
+    : "FREE";
 
   return (
     <ArtikelClient

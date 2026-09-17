@@ -15,17 +15,23 @@ const RiveTeddyAnimation = dynamic(
 function LoginForm() {
   const searchParams = useSearchParams();
   const urlError = searchParams.get("error");
+  const urlMessage = searchParams.get("message");
 
   const [error, setError] = useState<string | null>(() => {
-    if (typeof window !== "undefined" && urlError) {
-      const msg = decodeURIComponent(urlError);
-      const lower = msg.toLowerCase();
-      if (lower.includes("invalid api key") || lower.includes("invalid_api_key")) {
-        return "API Key Supabase tidak valid atau belum di-set.";
-      } else if (lower.includes("auth_callback_failed") || lower.includes("invalid_grant") || lower.includes("code verifier")) {
-        return "Gagal autentikasi OAuth. Silakan coba lagi.";
+    if (typeof window !== "undefined") {
+      if (urlMessage) {
+        return decodeURIComponent(urlMessage);
       }
-      return msg;
+      if (urlError) {
+        const msg = decodeURIComponent(urlError);
+        const lower = msg.toLowerCase();
+        if (lower.includes("invalid api key") || lower.includes("invalid_api_key")) {
+          return "API Key Supabase tidak valid atau belum di-set.";
+        } else if (lower.includes("auth_callback_failed") || lower.includes("invalid_grant") || lower.includes("code verifier")) {
+          return "Gagal autentikasi OAuth. Silakan coba lagi.";
+        }
+        return msg;
+      }
     }
     return null;
   });

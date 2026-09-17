@@ -46,23 +46,39 @@ export default async function AdminArticlesPage() {
   const usersCount = await prisma.user.count().catch(() => 0);
   const commentsCount = await prisma.comment.count().catch(() => 0);
 
-  const recentProjects = await prisma.project.findMany({
+  const recentProjectsRaw = await prisma.project.findMany({
     take: 5,
     orderBy: { created_at: "desc" },
   }).catch(() => []);
 
-  const recentArticles = await prisma.article.findMany({
+  const recentProjects = recentProjectsRaw.map((p) => ({
+    id: p.id,
+    title: p.title,
+    thumbnail: p.thumbnail,
+    created_at: p.created_at ? p.created_at.toISOString() : new Date().toISOString(),
+  }));
+
+  const recentArticlesRaw = await prisma.article.findMany({
     take: 5,
     orderBy: { created_at: "desc" },
   }).catch(() => []);
+
+  const recentArticles = recentArticlesRaw.map((a) => ({
+    id: a.id,
+    title: a.title,
+    slug: a.slug,
+    created_at: a.created_at ? a.created_at.toISOString() : new Date().toISOString(),
+  }));
 
   const allProjects = await getProjects().catch(() => []);
   const allArticles = await getArticles().catch(() => []);
 
+  const plainDbUser = dbUser ? { name: dbUser.name, avatar: dbUser.avatar } : null;
+
   return (
     <AdminDashboard
       user={user}
-      dbUser={dbUser}
+      dbUser={plainDbUser}
       stats={{ projectsCount, articlesCount, usersCount, commentsCount }}
       recentProjects={recentProjects}
       recentArticles={recentArticles}

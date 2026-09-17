@@ -73,16 +73,20 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-
   const supabase = await createClient();
 
   // Run view count increment asynchronously in background without blocking initial HTML render
   incrementArticleViews(slug).catch(() => {});
 
-  const [article, allArticles, { data: { user } }] = await Promise.all([
+  const { data: { user } } = await supabase.auth.getUser();
+  const userEmail = user?.email ? user.email.toLowerCase().trim() : "";
+
+  const [article, allArticles, dbUser] = await Promise.all([
     getArticleBySlug(slug),
     getArticles(),
-    supabase.auth.getUser(),
+    userEmail
+      ? prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } }).catch(() => null)
+      : Promise.resolve(null),
   ]);
 
   if (!article) {
@@ -90,17 +94,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   const relatedArticles = allArticles.filter((a) => a.slug !== slug);
-
-  let userTier: "FREE" | "KAWAN_BRIMAS" | "SAHABAT_BRIMAS" = "FREE";
-  if (user?.email) {
-    const dbUser = await prisma.user.findUnique({
-      where: { email: user.email },
-      select: { id: true }
-    });
-    if (dbUser) {
-      userTier = await getEffectiveUserTier(dbUser.id);
-    }
-  }
+  const userTier = dbUser
+    ? await getEffectiveUserTier(dbUser.id).catch(() => "FREE" as const)
+    : ("FREE" as const);
 
   return (
     <ArticleClient
