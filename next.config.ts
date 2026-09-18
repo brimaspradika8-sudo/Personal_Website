@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   compress: true,
   reactStrictMode: true,
   experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
     optimizePackageImports: [
       "lucide-react",
       "framer-motion",
