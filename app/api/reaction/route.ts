@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getAuthenticatedUser();
 
     if (!user || !user.email) {
       return NextResponse.json(
@@ -78,12 +75,10 @@ export async function POST(request: NextRequest) {
 
     if (existingReaction) {
       if (existingReaction.type === type) {
-        // Toggle: Hapus reaksi jika diklik tombol tipe yang sama
         await prisma.reaction.delete({ where: { id: existingReaction.id } });
         action = "deleted";
         finalType = null;
       } else {
-        // Switch: Ganti tipe jika diklik tipe berbeda (LIKE <-> DISLIKE)
         await prisma.reaction.update({
           where: { id: existingReaction.id },
           data: { type },
@@ -91,7 +86,6 @@ export async function POST(request: NextRequest) {
         action = "updated";
       }
     } else {
-      // Create: Buat reaksi baru
       await prisma.reaction.create({
         data: {
           user_id: dbUser.id,
