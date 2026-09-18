@@ -11,75 +11,75 @@
   },
   "hero": {
     "badge": "AI Systems Developer",
-    "greeting": "Welcome to Portfolio",
+    "greeting": "Yo, Welcome!",
     "role": "AI Systems Developer",
-    "subheadline": "Architecting distributed backend systems, modern AI platforms, and precision web interfaces.",
-    "description": "Focusing on high-scale architecture performance, intelligent AI model integration, and clean, intuitive user interfaces.",
-    "viewProjects": "View Projects",
-    "contactMe": "Contact Me",
-    "techHeader": "Technology & Architecture"
+    "subheadline": "Building fast backend systems, smart AI platforms, and sleek web interfaces.",
+    "description": "Obsessed with high-scale tech stack performance, crafting intelligent AI agents, and designing super clean user experiences!",
+    "viewProjects": "Explore Projects",
+    "contactMe": "Let's Talk",
+    "techHeader": "Tech Stack & Architecture"
   },
   "projects": {
-    "title": "Exploration Project Collection",
-    "badge": "Featured Portfolio",
-    "subtitle": "Selected works crafted with attention to detail and aesthetic excellence",
-    "githubRepo": "GitHub Repository",
-    "comingSoonBadge": "Coming Soon",
-    "comingSoonTitle": "Project Collection Under Preparation",
-    "comingSoonDesc": "A curated showcase of selected projects and distributed system architecture case studies is being finalized and will be published shortly.",
-    "githubMonitor": "Monitor Repository on GitHub"
+    "title": "Featured Projects & Builds",
+    "badge": "Handcrafted Work",
+    "subtitle": "Selected projects built with meticulous detail & high aesthetic standards",
+    "githubRepo": "GitHub Repo",
+    "comingSoonBadge": "On The Way",
+    "comingSoonTitle": "New Projects Coming Soon!",
+    "comingSoonDesc": "Currently polishing up recent system builds & case studies. Stay tuned!",
+    "githubMonitor": "Check GitHub Repo"
   },
   "contact": {
-    "title": "Ready to Collaborate on the Next Exploration?",
-    "desc": "Open for software architecture discussions, AI integration, engineering consulting, or new project opportunities.",
-    "btn": "Contact Me",
+    "title": "Ready to Build Something Cool Together?",
+    "desc": "Open for tech discussions, AI integrations, engineering consulting, or exciting new project collabs!",
+    "btn": "Hit Me Up",
     "copyEmail": "Copy Email",
-    "copied": "Email Copied!"
+    "copied": "Email Copied! 🚀"
   },
   "auth": {
-    "title": "Authentication & Profile Status",
-    "userEmail": "User Email",
-    "role": "Role",
+    "title": "Account & Profile Status",
+    "userEmail": "Your Email",
+    "role": "Account Role",
     "dbStatus": "Account Status",
     "logout": "Sign Out"
   },
   "profile": {
-    "title": "Account & Profile Center",
-    "backBtn": "Back to Dashboard",
-    "authenticated": "Authenticated Session",
-    "guest": "Public Guest Mode",
+    "title": "Account & Profile Hub",
+    "backBtn": "Back to Home",
+    "authenticated": "Active Session 🔥",
+    "guest": "Public Guest Mode ⚡",
     "overviewTab": "Profile Info",
     "editTab": "Edit Profile",
     "settingsTab": "Settings",
     "helpTab": "Help & FAQ",
     "accountStatus": "Account Status",
-    "memberSince": "Member Since",
+    "memberSince": "Joined Since",
     "primaryEmail": "Primary Email",
     "authProvider": "Login Provider",
-    "editTabDesc": "Update your display name and choose a custom avatar or your favorite character preset.",
+    "editTabDesc": "Customize your display name and pick your favorite avatar preset or custom picture!",
     "editNameLabel": "Display Name",
-    "namePlaceholder": "Enter your full name...",
-    "cameraHint": "Click the camera icon 📸 on your profile photo above to instantly upload a new photo from your device.",
-    "presetAvatarsLabel": "Avatar & Character Preset Collection (Click to select)",
-    "customUrlLabel": "Or Enter Custom Avatar URL",
-    "customUrlPlaceholder": "https://domain.com/profile-photo.jpg",
-    "saveBtn": "Save Profile Changes",
-    "saving": "Saving Changes...",
+    "namePlaceholder": "Enter your full name here...",
+    "cameraHint": "Click the camera icon 📸 on your profile photo to instantly upload a picture from your device!",
+    "presetAvatarsLabel": "Cool Avatar & Character Collection (Click to choose)",
+    "customUrlLabel": "Or Enter Custom Image URL",
+    "customUrlPlaceholder": "https://domain.com/your-photo.jpg",
+    "saveBtn": "Save Profile",
+    "saving": "Saving Profile...",
     "uploading": "Uploading Photo...",
-    "savedSuccess": "Profile changes saved permanently!",
-    "themeSetting": "Landscape Theme Mode",
-    "themeDesc": "Switch between Day Mode or Night Mode",
-    "sfxSetting": "Ambient Sound Effects (SFX)",
-    "sfxDesc": "Synthetic sound feedback on button clicks and hover",
+    "savedSuccess": "Profile updated successfully! 🎉",
+    "themeSetting": "Display Theme",
+    "themeDesc": "Switch between Day Mode (Bright) or Night Mode (Dark)",
+    "sfxSetting": "Interactive Sound Effects (SFX)",
+    "sfxDesc": "Satisfying retro audio feedback on button clicks and hover",
     "langSetting": "Interface Language",
-    "langDesc": "Choose Bahasa Indonesia or English"
+    "langDesc": "Switch between Casual Indonesian or English"
   },
   "command": {
     "title": "Quick Search & Navigation",
-    "placeholder": "Type a command or search (e.g. Projects, Email, GitHub)...",
-    "noResults": "No search results found."
+    "placeholder": "Type anything (e.g. Projects, Email, GitHub, Articles)...",
+    "noResults": "No results found."
   },
   "footer": {
-    "rights": "All Rights Reserved."
+    "rights": "All Rights Reserved. Built with Love & AI 🔥"
   }
 }

@@ -252,22 +252,22 @@ export default function AboutClient() {
             </div>
 
             <div className="space-y-4 text-xs sm:text-sm font-mono leading-relaxed text-black dark:text-white">
-              <p className="p-4 rounded-none border-3 border-black dark:border-white bg-[#FEF9C3] dark:bg-[#121824] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+              <p className="p-4 rounded-none border-3 border-black dark:border-white bg-[#FEF9C3] dark:bg-[#121824] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] font-bold">
                 {lang === "id"
-                  ? "Halo! Saya Brimas Pradika Utama, seorang pengembang perangkat lunak muda berbasis di Pare, Kediri. Saat ini saya sedang menempuh pendidikan di SMK Bhakti Mulia Pare pada keahlian Rekayasa Perangkat Lunak (RPL)."
-                  : "Hello! I am Brimas Pradika Utama, a passionate young software developer based in Pare, Kediri. Currently studying Software Engineering (RPL) at SMK Bhakti Mulia Pare."}
+                  ? "Halo! Gua Brimas Pradika Utama, developer muda dari Pare, Kediri! 🚀 Sekarang lagi seru-serunya belajar Rekayasa Perangkat Lunak (RPL) di SMK Bhakti Mulia Pare."
+                  : "Hey there! I'm Brimas Pradika Utama, a tech enthusiast & developer from Pare, Kediri! 🚀 Currently diving deep into Software Engineering at SMK Bhakti Mulia Pare."}
               </p>
 
               <p>
                 {lang === "id"
-                  ? "Minat utama saya berfokus pada arsitektur sistem web berskala tinggi, pembuatan aplikasi berbasis kecerdasan buatan (AI Agent), serta perancangan antarmuka antarmuka yang bersih dan responsif. Saya percaya bahwa integrasi antara Next.js 15, TypeScript, dan Supabase mampu menghasilkan pengalaman web modern yang cepat dan andal."
-                  : "My primary focus lies in high-scale web system architecture, artificial intelligence agent integration, and crafting clean, responsive interfaces. I believe combining Next.js 15, TypeScript, and Supabase delivers fast and reliable modern web experiences."}
+                  ? "Sehari-hari gua paling hobi ngulik arsitektur web modern, ngeracik AI Agent yang pinter, dan bikin antarmuka web yang bersih, kenceng, plus estetik. Stack andalan gua saat ini: Next.js 15, TypeScript, Prisma, dan Supabase."
+                  : "I love building fast web applications, crafting smart AI Agents, and designing super clean, aesthetic interfaces. My main stack of choice: Next.js 15, TypeScript, Prisma, and Supabase."}
               </p>
 
               <p>
                 {lang === "id"
-                  ? "Selain aktivitas pembelajaran di sekolah, saya aktif mengikuti pelatihan eksternal seperti BCT Trial Class 2026 dan membangun berbagai proyek eksperimental untuk memperdalam pemahaman teknis di bidang fullstack & AI."
-                  : "In addition to my high school studies, I actively participate in external training programs such as the BCT Trial Class 2026 and build experimental projects to deepen my technical expertise in fullstack & AI engineering."}
+                  ? "Selain belajar di sekolah, gua juga aktif ikut event tech & pelatihan kayak BCT Trial Class 2026, plus terus bikin proyek-proyek seru buat ngasah skill fullstack & AI engineering!"
+                  : "Besides school, I love joining tech workshops like BCT Trial Class 2026 and shipping cool side projects to hone my fullstack & AI skills!"}
               </p>
             </div>
 
@@ -279,7 +279,9 @@ export default function AboutClient() {
                   <h4 className="font-mono font-black text-xs uppercase">{lang === "id" ? "KODE BERSIH & PERFORMA" : "CLEAN CODE & SPEED"}</h4>
                 </div>
                 <p className="text-[11px] font-mono leading-relaxed text-black dark:text-white">
-                  Menulis kode yang terstruktur, bermemori efisien, dan mudah dipelihara dalam jangka panjang.
+                  {lang === "id"
+                    ? "Menulis kode yang terstruktur, bermemori efisien, dan mudah dipelihara dalam jangka panjang."
+                    : "Writing structured, memory-efficient code that is maintainable for the long term."}
                 </p>
               </div>
 
@@ -289,7 +291,9 @@ export default function AboutClient() {
                   <h4 className="font-mono font-black text-xs uppercase">{lang === "id" ? "INTEGRASI AI AGENT" : "AI AGENT INTEGRATION"}</h4>
                 </div>
                 <p className="text-[11px] font-mono leading-relaxed text-black dark:text-white">
-                  Memanfaatkan LLM dan otomatisasi cerdas untuk meningkatkan produktivitas dan alur kerja aplikasi.
+                  {lang === "id"
+                    ? "Memanfaatkan LLM dan otomatisasi cerdas untuk meningkatkan produktivitas dan alur kerja aplikasi."
+                    : "Leveraging LLMs and smart automation to boost application productivity and workflows."}
                 </p>
               </div>
             </div>
@@ -306,7 +310,7 @@ export default function AboutClient() {
                 <span>{lang === "id" ? "MATRIKS KEAHLIAN TEKNIS" : "TECHNICAL SKILL MATRIX"}</span>
               </div>
               <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
-                TEKNOLOGI &amp; STACK PILIHAN
+                {lang === "id" ? "TEKNOLOGI & STACK PILIHAN" : "TECHNOLOGY & FEATURED STACK"}
               </h2>
             </div>
 
@@ -368,7 +372,7 @@ export default function AboutClient() {
               <span>{lang === "id" ? "SERTIFIKASI & PENGHARGAAN" : "CERTIFICATIONS & AWARDS"}</span>
             </div>
             <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
-              GALERI SERTIFIKAT RESMI
+              {lang === "id" ? "GALERI SERTIFIKAT RESMI" : "OFFICIAL CERTIFICATE GALLERY"}
             </h2>
           </div>
 
@@ -387,7 +391,7 @@ export default function AboutClient() {
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <div className="px-4 py-2 bg-[#EAB308] text-black border-2 border-black font-mono font-black text-xs uppercase flex items-center gap-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                     <Maximize2 className="w-4 h-4" />
-                    <span>PERBESAR GAMBAR</span>
+                    <span>{lang === "id" ? "PERBESAR GAMBAR" : "ZOOM IMAGE"}</span>
                   </div>
                 </div>
               </div>
@@ -395,7 +399,7 @@ export default function AboutClient() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="px-2.5 py-0.5 bg-[#166534] text-white border border-black text-[10px] font-mono font-black uppercase">
-                    TAHUN 2025
+                    {lang === "id" ? "TAHUN 2025" : "YEAR 2025"}
                   </span>
                   <span className="text-xs font-mono font-black text-[#166534] dark:text-[#00E676] flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
@@ -407,7 +411,9 @@ export default function AboutClient() {
                   SERTIFIKAT BCT X TRIAL CLASS 2025
                 </h3>
                 <p className="text-xs font-mono text-neutral-600 dark:text-neutral-400 font-bold leading-relaxed">
-                  Sertifikat resmi mengikuti program Basic Coding Training X Trial Class 2025
+                  {lang === "id"
+                    ? "Sertifikat resmi mengikuti program Basic Coding Training X Trial Class 2025"
+                    : "Official certificate for participating in Basic Coding Training X Trial Class 2025"}
                 </p>
               </div>
             </div>
@@ -420,13 +426,15 @@ export default function AboutClient() {
           <div className="space-y-3 max-w-xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               <Sparkles className="w-3.5 h-3.5 text-black" />
-              <span>MARI BERKOLABORASI</span>
+              <span>{lang === "id" ? "MARI BERKOLABORASI" : "LET'S COLLABORATE"}</span>
             </div>
             <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase leading-tight text-white">
-              PUNYA PROYEK ATAU IDE DISKUSI TEKNOLOGI?
+              {lang === "id" ? "PUNYA PROYEK ATAU IDE DISKUSI TEKNOLOGI?" : "HAVE A PROJECT OR TECHNICAL DISCUSSION IDEA?"}
             </h2>
             <p className="text-xs sm:text-sm font-mono font-bold leading-relaxed text-slate-100">
-              Terbuka untuk diskusi arsitektur perangkat lunak, proyek pembuatan website, integrasi AI agent, atau kesempatan konsultasi.
+              {lang === "id"
+                ? "Terbuka untuk diskusi arsitektur perangkat lunak, proyek pembuatan website, integrasi AI agent, atau kesempatan konsultasi."
+                : "Open for software architecture discussions, web development projects, AI agent integrations, or consulting opportunities."}
             </p>
           </div>
 
@@ -437,7 +445,7 @@ export default function AboutClient() {
               className="w-full sm:w-auto px-6 py-3 rounded-none bg-[#EAB308] hover:bg-[#d9a207] text-black border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
             >
               <Mail className="w-4 h-4" />
-              <span>KIRIM PESAN EMAIL</span>
+              <span>{lang === "id" ? "KIRIM PESAN EMAIL" : "SEND EMAIL MESSAGE"}</span>
             </a>
           </div>
         </section>
@@ -456,7 +464,7 @@ export default function AboutClient() {
             >
               <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
                 <h3 className="font-serif font-black text-lg uppercase text-black dark:text-white">
-                  PRINTPREVIEW: SERTIFIKAT BCT X TRIAL CLASS 2026
+                  {lang === "id" ? "PRINTPREVIEW: SERTIFIKAT BCT X TRIAL CLASS 2026" : "PRINT PREVIEW: BCT X TRIAL CLASS CERTIFICATE"}
                 </h3>
                 <button
                   onClick={() => setSelectedCert(null)}
