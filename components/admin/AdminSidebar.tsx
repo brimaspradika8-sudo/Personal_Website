@@ -56,7 +56,6 @@ export default function AdminSidebar({
 
   return (
     <>
-      {/* Mobile Backdrop */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 lg:hidden"
@@ -64,13 +63,12 @@ export default function AdminSidebar({
         />
       )}
 
-      {/* Sidebar Container */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 transform transition-all duration-300 lg:translate-x-0 lg:static lg:flex lg:flex-col lg:shrink-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } ${isCollapsed ? "lg:w-20" : "lg:w-64"} w-64 bg-white dark:bg-[#0A0D14] border-r-4 border-black dark:border-white shadow-[6px_0px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_0px_0px_0px_rgba(255,255,255,1)]`}
       >
-        {/* Brand Header */}
+
         <div className="h-16 flex items-center justify-between px-4 border-b-4 border-black dark:border-white bg-[#FFFF00] text-black">
           {!isCollapsed ? (
             <Link
@@ -93,7 +91,6 @@ export default function AdminSidebar({
             </div>
           )}
 
-          {/* Collapse Toggle Button (Desktop) */}
           <button
             type="button"
             onClick={toggleCollapse}
@@ -103,7 +100,6 @@ export default function AdminSidebar({
             {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </button>
 
-          {/* Close Button (Mobile) */}
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
@@ -113,7 +109,6 @@ export default function AdminSidebar({
           </button>
         </div>
 
-        {/* Navigation Items */}
         <nav className="flex-1 px-3 py-6 space-y-3 overflow-y-auto">
           {!isCollapsed && (
             <div className="text-[10px] font-mono font-black text-neutral-500 uppercase tracking-widest px-1">

@@ -7,6 +7,7 @@ import { UploadCloud, X, GripVertical, Images, Video } from "lucide-react";
 import { uploadProjectImage } from "@/lib/actions/project";
 import { soundFx } from "@/lib/audio/sound";
 import { createClient as createBrowserSupabaseClient } from "@/lib/supabase/client";
+import { ensurePublicSupabaseUrl } from "@/lib/supabase/url";
 
 export const isVideoUrl = (url: string) => {
   if (!url) return false;
@@ -40,7 +41,8 @@ function ImageSlotItem({
   onRemove: () => void;
 }) {
   const dragControls = useDragControls();
-  const isVid = isVideoUrl(imgUrl);
+  const safeUrl = ensurePublicSupabaseUrl(imgUrl);
+  const isVid = isVideoUrl(safeUrl);
 
   return (
     <Reorder.Item
@@ -58,7 +60,7 @@ function ImageSlotItem({
     >
       {isVid ? (
         <video
-          src={imgUrl}
+          src={safeUrl}
           muted
           loop
           playsInline
@@ -67,7 +69,7 @@ function ImageSlotItem({
         />
       ) : (
         <Image
-          src={imgUrl}
+          src={safeUrl}
           alt={`Media ${index + 1}`}
           fill
           unoptimized
@@ -112,43 +114,93 @@ export default function ProjectImageUploader({
   setUrlInput,
   setStatusMsg,
 }: ProjectImageUploaderProps) {
-  // Direct Browser Client Upload to Supabase Storage (Bypasses Vercel/Next.js 4.5MB Server Limit)
+  // Safe Media Upload with multi-level fallback & JSON validation
   const uploadMediaDirectly = async (file: File): Promise<{ url?: string; error?: string }> => {
     try {
-      const supabase = createBrowserSupabaseClient();
-      const fileExt = file.name.split(".").pop() || (file.type.startsWith("video/") ? "mp4" : "png");
-      const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
-      const fileName = `project-media/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
+      const isVid = file.type.startsWith("video/");
+      const maxLimit = isVid ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
 
-      const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || "articles";
-
-      const { error: uploadError } = await supabase.storage
-        .from(bucketName)
-        .upload(fileName, file, {
-          contentType: file.type,
-          upsert: true,
-        });
-
-      if (!uploadError) {
-        const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(fileName);
-        if (publicUrlData?.publicUrl) {
-          return { url: publicUrlData.publicUrl };
-        }
+      if (file.size > maxLimit) {
+        return {
+          error: `Ukuran file "${file.name}" (${(file.size / (1024 * 1024)).toFixed(1)}MB) melebihi batas ${
+            isVid ? "video (50MB)" : "gambar/GIF (10MB)"
+          }.`,
+        };
       }
 
-      // Fallback to Server Action if browser storage upload fails
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await uploadProjectImage(formData);
-      if ("url" in res && res.url) return { url: res.url };
-      if ("error" in res && res.error) return { error: res.error };
-      return { error: uploadError?.message || "Gagal mengunggah media." };
+      // Method A: Direct Browser Supabase Client Upload (Bypasses Vercel/Next.js limits)
+      try {
+        const supabase = createBrowserSupabaseClient();
+        const fileExt = file.name.split(".").pop() || (isVid ? "mp4" : "png");
+        const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
+        const fileName = `project-media/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
+        const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || "articles";
+
+        const { error: uploadError } = await supabase.storage
+          .from(bucketName)
+          .upload(fileName, file, {
+            contentType: file.type || "application/octet-stream",
+            upsert: true,
+          });
+
+        if (!uploadError) {
+          const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(fileName);
+          if (publicUrlData?.publicUrl) {
+            return { url: ensurePublicSupabaseUrl(publicUrlData.publicUrl) };
+          }
+        }
+      } catch (clientErr) {
+        console.warn("Direct browser upload warning:", clientErr);
+      }
+
+      // Method B: REST API Endpoint /api/upload
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "project-media");
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (res.status === 413) {
+          return { error: `File "${file.name}" terlalu besar untuk diunggah (Status 413). Batas max 50MB.` };
+        }
+
+        const contentType = res.headers.get("content-type") || "";
+        if (res.ok && contentType.includes("application/json")) {
+          const json = await res.json();
+          if (json.url) {
+            return { url: ensurePublicSupabaseUrl(json.url) };
+          }
+          if (json.error) {
+            return { error: json.error };
+          }
+        }
+      } catch (apiErr) {
+        console.warn("API route upload warning:", apiErr);
+      }
+
+      // Method C: Server Action Fallback wrapped in try/catch
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const actionRes = await uploadProjectImage(formData);
+        if ("url" in actionRes && actionRes.url) {
+          return { url: ensurePublicSupabaseUrl(actionRes.url) };
+        }
+        if ("error" in actionRes && actionRes.error) {
+          return { error: actionRes.error };
+        }
+      } catch (actionErr) {
+        console.warn("Server action upload catch:", actionErr);
+      }
+
+      return { error: `Gagal mengunggah file "${file.name}". Pastikan ukuran file < 10MB (Foto/GIF) atau < 50MB (Video).` };
     } catch (err: unknown) {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await uploadProjectImage(formData);
-      if ("url" in res && res.url) return { url: res.url };
-      return { error: (err as Error)?.message || "Gagal mengunggah media." };
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan tidak terduga saat upload.";
+      return { error: msg };
     }
   };
 
@@ -161,24 +213,6 @@ export default function ProjectImageUploader({
       return;
     }
 
-    // Pre-validation for file sizes
-    for (let i = 0; i < files.length; i++) {
-      const f = files[i];
-      const isVid = f.type.startsWith("video/");
-      const maxLimit = isVid ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
-
-      if (f.size > maxLimit) {
-        setStatusMsg({
-          type: "error",
-          text: `File "${f.name}" (${(f.size / (1024 * 1024)).toFixed(1)}MB) melebihi batas ${
-            isVid ? "video (50MB)" : "gambar (10MB)"
-          }.`,
-        });
-        e.target.value = "";
-        return;
-      }
-    }
-
     setUploadingImage(true);
     setStatusMsg(null);
 
@@ -187,11 +221,22 @@ export default function ProjectImageUploader({
     for (let i = 0; i < files.length; i++) {
       if (images.length + uploadedUrls.length >= 5) break;
 
-      const res = await uploadMediaDirectly(files[i]);
-      if (res.url) {
-        uploadedUrls.push(res.url);
-      } else if (res.error) {
-        setStatusMsg({ type: "error", text: res.error });
+      try {
+        const res = await uploadMediaDirectly(files[i]);
+        if (res.url) {
+          uploadedUrls.push(res.url);
+        } else if (res.error) {
+          setStatusMsg({ type: "error", text: res.error });
+          setUploadingImage(false);
+          e.target.value = "";
+          return;
+        }
+      } catch (fileErr) {
+        console.error("Single file upload error:", fileErr);
+        setStatusMsg({
+          type: "error",
+          text: `Gagal mengunggah berkas ${files[i].name}.`,
+        });
         setUploadingImage(false);
         e.target.value = "";
         return;
@@ -216,7 +261,8 @@ export default function ProjectImageUploader({
       setStatusMsg({ type: "error", text: "Maksimal 5 media per proyek." });
       return;
     }
-    onChange([...images, urlInput.trim()].slice(0, 5));
+    const safeInput = ensurePublicSupabaseUrl(urlInput.trim());
+    onChange([...images, safeInput].slice(0, 5));
     setUrlInput("");
     setStatusMsg({ type: "success", text: "URL Media berhasil ditambahkan!" });
   };

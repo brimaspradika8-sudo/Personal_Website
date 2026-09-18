@@ -1,4 +1,7 @@
 import { createClient } from "./server";
+import { ensurePublicSupabaseUrl } from "./url";
+
+export { ensurePublicSupabaseUrl };
 
 /**
  * Membaca nama Supabase Storage Bucket dari Environment Variable (.env)
@@ -107,9 +110,11 @@ export async function uploadFileToSupabaseStorage({
     return { error: "Gagal mendapatkan Public URL gambar dari Supabase Storage." };
   }
 
+  const finalPublicUrl = ensurePublicSupabaseUrl(publicUrlData.publicUrl);
+
   return {
     success: true,
-    url: publicUrlData.publicUrl,
+    url: finalPublicUrl,
     bucket: targetBucket,
     path: fileName,
   };

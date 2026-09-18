@@ -83,12 +83,7 @@ export default function ArticleClient({
       setIsSavedBookmark(isBookmarked(initialArticle.id) || isBookmarked(initialArticle.slug));
     });
   }, [initialArticle.id, initialArticle.slug]);
-
-  // Feature 2.1: Reading Progress Bar State
-
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  // Feature 2.2 & 2.3: Audio Player TTS & AI Summary States
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [audioSpeed, setAudioSpeed] = useState<number>(1);
   const [activeLineKey, setActiveLineKey] = useState<string | null>(null);
@@ -194,7 +189,6 @@ export default function ArticleClient({
     return items;
   });
 
-  // Cleanup speech synthesis & audio elements on unmount
   useEffect(() => {
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {

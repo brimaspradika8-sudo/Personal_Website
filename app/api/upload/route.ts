@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getStorageBucketConfig } from "@/lib/supabase/storage";
+import { getStorageBucketConfig, ensurePublicSupabaseUrl } from "@/lib/supabase/storage";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
+import { checkIsAdmin } from "@/lib/actions/auth";
 
 /**
  * API ROUTE ENDPOINT: POST /api/upload
- * Menerima unggahan file dari client/frontend, lalu mengunggahnya ke Supabase Storage Endpoint.
+ * Menerima unggahan file dari client/frontend, mengunggah ke Supabase Storage,
+ * dan selalu mengembalikan JSON respons yang valid (mencegah error 413 / HTML parse error).
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    // 1. Verifikasi User Sesi (Security Check)
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
+    // 1. Authenticate user via fast header auth
+    const user = await getAuthenticatedUser();
     if (!user) {
       return NextResponse.json(
         { error: "Unauthorized. Silakan login terlebih dahulu." },
@@ -22,34 +20,58 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Extract File dari FormData Request Body
+    const isAdmin = await checkIsAdmin(user.email);
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: "Akses ditolak. Hanya Admin yang dapat mengunggah berkas media." },
+        { status: 403 }
+      );
+    }
+
+    // 2. Extract file from FormData
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
-    const folder = (formData.get("folder") as string) || "uploads";
+    const folder = (formData.get("folder") as string) || "project-media";
 
     if (!file || file.size === 0) {
       return NextResponse.json(
-        { error: "File gambar tidak ditemukan." },
+        { error: "File media tidak ditemukan." },
         { status: 400 }
       );
     }
 
-    // 3. Ambil Nama Bucket dari Env
+    const isVideo = file.type.startsWith("video/");
+    const maxLimit = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
+
+    if (file.size > maxLimit) {
+      return NextResponse.json(
+        {
+          error: `Ukuran file "${file.name}" (${(file.size / (1024 * 1024)).toFixed(1)}MB) melebihi batas ${
+            isVideo ? "video (50MB)" : "gambar/GIF (10MB)"
+          }.`,
+        },
+        { status: 413 }
+      );
+    }
+
+    // 3. Get target storage bucket
     const { articleBucket } = getStorageBucketConfig();
     const targetBucket = articleBucket;
 
-    const fileExt = file.name.split(".").pop() || "png";
+    const fileExt = file.name.split(".").pop() || (isVideo ? "mp4" : "png");
     const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
 
-    // 4. Kirim File ke Supabase Storage REST Endpoint via SDK
+    const supabase = await createClient();
+
+    // 4. Upload file to Supabase Storage Bucket
     const { error: uploadError } = await supabase.storage
       .from(targetBucket)
       .upload(fileName, fileBuffer, {
-        contentType: file.type,
+        contentType: file.type || "application/octet-stream",
         upsert: true,
       });
 
@@ -60,14 +82,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. Ambil URL Publik Gambar
+    // 5. Generate and sanitize Public URL
     const { data: publicUrlData } = supabase.storage
       .from(targetBucket)
       .getPublicUrl(fileName);
 
+    const finalUrl = ensurePublicSupabaseUrl(publicUrlData?.publicUrl || "");
+
     return NextResponse.json({
       success: true,
-      url: publicUrlData.publicUrl,
+      url: finalUrl,
       bucket: targetBucket,
       path: fileName,
     });
