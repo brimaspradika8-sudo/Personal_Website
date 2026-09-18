@@ -40,7 +40,7 @@ function ImageSlotItem({
         boxShadow: "6px 6px 0px 0px rgba(0,0,0,1)",
         cursor: "grabbing",
       }}
-      className="relative w-full h-28 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white overflow-hidden flex flex-col items-center justify-center group"
+      className="relative w-full h-28 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white overflow-hidden flex flex-col items-center justify-center group select-none"
     >
       <Image
         src={imgUrl}
@@ -64,8 +64,11 @@ function ImageSlotItem({
       </button>
 
       <div
-        onPointerDown={(e) => dragControls.start(e)}
-        className="absolute bottom-1 right-1 p-1 bg-black/80 text-white border border-black cursor-grab active:cursor-grabbing touch-none z-20"
+        onPointerDown={(e) => {
+          e.preventDefault();
+          dragControls.start(e);
+        }}
+        className="absolute bottom-1 right-1 p-1 bg-black/80 text-white border border-black cursor-grab active:cursor-grabbing touch-none z-20 hover:bg-amber-500 hover:text-black transition-colors"
         title="Tahan untuk geser urutan"
       >
         <GripVertical className="w-3.5 h-3.5" />
@@ -152,33 +155,29 @@ export default function ProjectImageUploader({
         </span>
       </div>
 
-      {/* Grid Slot (Draggable + Static Empty Slots) */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {images.length > 0 && (
-          <Reorder.Group
-            as="div"
-            axis="x"
-            values={images}
-            onReorder={onChange}
-            className="contents"
-          >
-            {images.map((imgUrl, index) => (
-              <ImageSlotItem
-                key={imgUrl}
-                imgUrl={imgUrl}
-                index={index}
-                onRemove={() => handleRemoveImage(imgUrl)}
-              />
-            ))}
-          </Reorder.Group>
-        )}
+      {/* Grid Container (Reorder Group) */}
+      <Reorder.Group
+        as="div"
+        axis="x"
+        values={images}
+        onReorder={onChange}
+        className="grid grid-cols-2 sm:grid-cols-5 gap-3"
+      >
+        {images.map((imgUrl, index) => (
+          <ImageSlotItem
+            key={imgUrl}
+            imgUrl={imgUrl}
+            index={index}
+            onRemove={() => handleRemoveImage(imgUrl)}
+          />
+        ))}
 
         {Array.from({ length: emptySlotsCount }).map((_, i) => {
           const slotNum = images.length + i + 1;
           return (
             <div
               key={`empty-${slotNum}`}
-              className="relative w-full h-28 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white overflow-hidden flex flex-col items-center justify-center"
+              className="relative w-full h-28 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white overflow-hidden flex flex-col items-center justify-center select-none"
             >
               <div className="text-center p-2 space-y-1">
                 <UploadCloud className="w-5 h-5 text-neutral-400 mx-auto" />
@@ -189,12 +188,12 @@ export default function ProjectImageUploader({
             </div>
           );
         })}
-      </div>
+      </Reorder.Group>
 
       {images.length > 1 && (
         <p className="text-[10px] font-mono text-neutral-500 flex items-center gap-1">
-          <GripVertical className="w-3 h-3" />
-          Tahan &amp; geser gambar untuk mengatur ulang urutan carousel.
+          <GripVertical className="w-3 h-3 text-[#166534] dark:text-[#EAB308]" />
+          Tahan ikon grip di sudut kanan bawah gambar untuk menggeser urutan carousel.
         </p>
       )}
 
