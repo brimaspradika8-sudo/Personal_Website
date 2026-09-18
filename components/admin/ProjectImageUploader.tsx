@@ -6,6 +6,7 @@ import { Reorder, useDragControls } from "framer-motion";
 import { UploadCloud, X, GripVertical, Images, Video } from "lucide-react";
 import { uploadProjectImage } from "@/lib/actions/project";
 import { soundFx } from "@/lib/audio/sound";
+import { createClient as createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 export const isVideoUrl = (url: string) => {
   if (!url) return false;
@@ -111,6 +112,47 @@ export default function ProjectImageUploader({
   setUrlInput,
   setStatusMsg,
 }: ProjectImageUploaderProps) {
+  // Helper: Direct Browser Upload to Supabase Storage (Bypasses Vercel/Next.js 4.5MB Body Limit!)
+  const uploadMediaDirectly = async (file: File): Promise<{ url?: string; error?: string }> => {
+    try {
+      const supabase = createBrowserSupabaseClient();
+      const fileExt = file.name.split(".").pop() || (file.type.startsWith("video/") ? "mp4" : "png");
+      const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
+      const fileName = `project-media/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
+
+      const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || "articles";
+
+      // Direct upload from browser client to Supabase Storage REST endpoint
+      const { error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(fileName, file, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (!uploadError) {
+        const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(fileName);
+        if (publicUrlData?.publicUrl) {
+          return { url: publicUrlData.publicUrl };
+        }
+      }
+
+      // Fallback to Server Action if browser storage RLS blocks anonymous/client upload
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await uploadProjectImage(formData);
+      if ("url" in res && res.url) return { url: res.url };
+      if ("error" in res && res.error) return { error: res.error };
+      return { error: uploadError?.message || "Gagal mengunggah media." };
+    } catch (err: unknown) {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await uploadProjectImage(formData);
+      if ("url" in res && res.url) return { url: res.url };
+      return { error: (err as Error)?.message || "Gagal mengunggah media." };
+    }
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -120,7 +162,7 @@ export default function ProjectImageUploader({
       return;
     }
 
-    // Client-side file size pre-validation
+    // Pre-validation for file sizes
     for (let i = 0; i < files.length; i++) {
       const f = files[i];
       const isVid = f.type.startsWith("video/");
@@ -145,13 +187,11 @@ export default function ProjectImageUploader({
 
     for (let i = 0; i < files.length; i++) {
       if (images.length + uploadedUrls.length >= 5) break;
-      const formData = new FormData();
-      formData.append("file", files[i]);
 
-      const res = await uploadProjectImage(formData);
-      if ("url" in res && res.url) {
+      const res = await uploadMediaDirectly(files[i]);
+      if (res.url) {
         uploadedUrls.push(res.url);
-      } else if ("error" in res && res.error) {
+      } else if (res.error) {
         setStatusMsg({ type: "error", text: res.error });
         setUploadingImage(false);
         e.target.value = "";
