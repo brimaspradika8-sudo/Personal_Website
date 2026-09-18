@@ -72,33 +72,37 @@ export async function getProjectBySlug(slug: string): Promise<ProjectItem | null
   return null;
 }
 
-// 3. Upload Gambar Thumbnail Proyek (Admin Only)
+// 3. Upload Media (Gambar / Video) Proyek (Admin Only)
 export async function uploadProjectImage(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user || !(await checkIsAdmin(user.email))) {
-    return { error: "Akses ditolak. Hanya pemilik/admin yang dapat mengunggah gambar proyek." };
+    return { error: "Akses ditolak. Hanya pemilik/admin yang dapat mengunggah media proyek." };
   }
 
   const file = formData.get("file") as File | null;
   if (!file || file.size === 0) {
-    return { error: "File gambar tidak ditemukan." };
+    return { error: "File media tidak ditemukan." };
   }
 
-  if (!file.type.startsWith("image/")) {
-    return { error: "File harus berupa gambar (JPG, PNG, WEBP, SVG)." };
+  const isVideo = file.type.startsWith("video/");
+  const isImage = file.type.startsWith("image/");
+
+  if (!isImage && !isVideo) {
+    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG) atau video (MP4, WEBM, MOV)." };
   }
 
-  if (file.size > 8 * 1024 * 1024) {
-    return { error: "Ukuran file maksimal 8MB." };
+  const maxBytes = isVideo ? 25 * 1024 * 1024 : 8 * 1024 * 1024;
+  if (file.size > maxBytes) {
+    return { error: isVideo ? "Ukuran file video maksimal 25MB." : "Ukuran file gambar maksimal 8MB." };
   }
 
   try {
-    const res = await uploadFileToSupabaseStorage({ file, folder: "project-images" });
+    const res = await uploadFileToSupabaseStorage({ file, folder: "project-media" });
     return res;
   } catch (err: unknown) {
-    return { error: (err as Error)?.message || "Gagal mengunggah gambar proyek." };
+    return { error: (err as Error)?.message || "Gagal mengunggah file media proyek." };
   }
 }
 

@@ -23,6 +23,18 @@ export function parseProjectImages(thumbnail?: string | null): string[] {
   return [thumbnail.trim()];
 }
 
+export const isVideoUrl = (url: string) => {
+  if (!url) return false;
+  const cleanUrl = url.split("?")[0].toLowerCase();
+  return (
+    cleanUrl.endsWith(".mp4") ||
+    cleanUrl.endsWith(".webm") ||
+    cleanUrl.endsWith(".mov") ||
+    cleanUrl.endsWith(".ogg") ||
+    url.startsWith("data:video/")
+  );
+};
+
 interface ProjectImageCarouselProps {
   thumbnail?: string | null;
   title: string;
@@ -40,6 +52,8 @@ export default function ProjectImageCarousel({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const displayImages = images.length > 0 ? images : ["/images/project1.png"];
+  const currentMedia = displayImages[currentIndex];
+  const isVid = isVideoUrl(currentMedia);
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -61,20 +75,34 @@ export default function ProjectImageCarousel({
 
   return (
     <div className={`relative w-full overflow-hidden bg-black ${aspectRatioClass} ${className}`}>
-      {/* Current Active Image */}
-      <Image
-        src={displayImages[currentIndex]}
-        alt={`${title} - image ${currentIndex + 1}`}
-        fill
-        sizes="(max-width: 768px) 100vw, 50vw"
-        unoptimized
-        className="object-cover transition-opacity duration-300"
-      />
+      {/* Current Active Media (Video or Image) */}
+      {isVid ? (
+        <video
+          key={currentMedia}
+          src={currentMedia}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover transition-opacity duration-300"
+        />
+      ) : (
+        <Image
+          key={currentMedia}
+          src={currentMedia}
+          alt={`${title} - media ${currentIndex + 1}`}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          unoptimized
+          className="object-cover transition-opacity duration-300"
+        />
+      )}
 
       {/* Counter Badge if multiple images */}
       {displayImages.length > 1 && (
         <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-black/80 text-[#FFFF00] border border-black text-[10px] font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-          {currentIndex + 1} / {displayImages.length}
+          {currentIndex + 1} / {displayImages.length} {isVid ? "(VIDEO)" : ""}
         </div>
       )}
 
