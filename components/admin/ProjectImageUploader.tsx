@@ -112,7 +112,7 @@ export default function ProjectImageUploader({
   setUrlInput,
   setStatusMsg,
 }: ProjectImageUploaderProps) {
-  // Helper: Direct Browser Upload to Supabase Storage (Bypasses Vercel/Next.js 4.5MB Body Limit!)
+  // Direct Browser Client Upload to Supabase Storage (Bypasses Vercel/Next.js 4.5MB Server Limit)
   const uploadMediaDirectly = async (file: File): Promise<{ url?: string; error?: string }> => {
     try {
       const supabase = createBrowserSupabaseClient();
@@ -122,7 +122,6 @@ export default function ProjectImageUploader({
 
       const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || "articles";
 
-      // Direct upload from browser client to Supabase Storage REST endpoint
       const { error: uploadError } = await supabase.storage
         .from(bucketName)
         .upload(fileName, file, {
@@ -137,7 +136,7 @@ export default function ProjectImageUploader({
         }
       }
 
-      // Fallback to Server Action if browser storage RLS blocks anonymous/client upload
+      // Fallback to Server Action if browser storage upload fails
       const formData = new FormData();
       formData.append("file", file);
       const res = await uploadProjectImage(formData);
@@ -241,23 +240,29 @@ export default function ProjectImageUploader({
         </span>
       </div>
 
-      {/* Grid Container (Reorder Group) */}
-      <Reorder.Group
-        as="div"
-        axis="x"
-        values={images}
-        onReorder={onChange}
-        className="grid grid-cols-2 sm:grid-cols-5 gap-3"
-      >
-        {images.map((imgUrl, index) => (
-          <ImageSlotItem
-            key={imgUrl}
-            imgUrl={imgUrl}
-            index={index}
-            onRemove={() => handleRemoveImage(imgUrl)}
-          />
-        ))}
+      {/* Main Outer Grid Container */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        {/* Reorder Group wraps ONLY filled media items */}
+        {images.length > 0 && (
+          <Reorder.Group
+            as="div"
+            axis="x"
+            values={images}
+            onReorder={onChange}
+            className="contents"
+          >
+            {images.map((imgUrl, index) => (
+              <ImageSlotItem
+                key={imgUrl}
+                imgUrl={imgUrl}
+                index={index}
+                onRemove={() => handleRemoveImage(imgUrl)}
+              />
+            ))}
+          </Reorder.Group>
+        )}
 
+        {/* Static Non-Draggable Empty Slots */}
         {Array.from({ length: emptySlotsCount }).map((_, i) => {
           const slotNum = images.length + i + 1;
           return (
@@ -266,7 +271,7 @@ export default function ProjectImageUploader({
               className="relative w-full h-28 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white overflow-hidden flex flex-col items-center justify-center select-none"
             >
               <div className="text-center p-2 space-y-1">
-                <UploadCloud className="w-5 h-5 text-neutral-400 mx-auto" />
+                <UploadCloud className="w-5 h-5 text-neutral-400 mx-auto opacity-60" />
                 <span className="text-[9px] font-mono font-bold text-neutral-400 uppercase block">
                   SLOT #{slotNum}
                 </span>
@@ -274,12 +279,12 @@ export default function ProjectImageUploader({
             </div>
           );
         })}
-      </Reorder.Group>
+      </div>
 
       {images.length > 1 && (
         <p className="text-[10px] font-mono text-neutral-500 flex items-center gap-1">
           <GripVertical className="w-3 h-3 text-[#166534] dark:text-[#EAB308]" />
-          Tahan ikon grip untuk menggeser urutan carousel (bisa gambar atau video).
+          Tahan ikon grip untuk menggeser urutan carousel (hanya slot terisi yang dapat digeser).
         </p>
       )}
 
