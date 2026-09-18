@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, FolderGit2, ExternalLink, Code2, Eye, Search, Sparkles, Filter, Mail } from "lucide-react";
+import { ArrowLeft, FolderGit2, ExternalLink, Code2, Eye, Search, Sparkles, Mail } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { soundFx } from "@/lib/audio/sound";
 import Footer from "@/components/Footer";
@@ -47,12 +47,7 @@ interface ProyekClientProps {
 export default function ProyekClient({ initialProjects = [] }: ProyekClientProps) {
   const { lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [selectedProjectModal, setSelectedProjectModal] = useState<ProjectData | null>(null);
-
-  const categories = lang === "id"
-    ? ["Semua", "Web", "AI", "Fullstack", "Laravel", "Next.js"]
-    : ["All", "Web", "AI", "Fullstack", "Laravel", "Next.js"];
 
   // Mapping backend ProjectItem to ProjectData
   const projectsData: ProjectData[] = initialProjects.length > 0
@@ -66,20 +61,12 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
       }))
     : DEFAULT_PROJECTS;
 
-  // Filter projects by search query & category tag
+  // Filter projects by search query
   const filteredProjects = projectsData.filter((p) => {
-    const matchesSearch =
+    return (
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-    if (!matchesSearch) return false;
-
-    if (selectedCategory === "Semua" || selectedCategory === "All") return true;
-
-    const cat = selectedCategory.toLowerCase();
-    const titleDesc = (p.title + " " + p.description).toLowerCase();
-
-    return titleDesc.includes(cat);
+      p.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   });
 
   const isLiveDemoValid = (url?: string | null) => {
@@ -162,32 +149,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
             </div>
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none pt-1">
-            <span className="text-xs font-mono font-black uppercase text-neutral-500 shrink-0 flex items-center gap-1 mr-1">
-              <Filter className="w-3.5 h-3.5" />
-              Kategori:
-            </span>
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => {
-                    soundFx.playClick();
-                    setSelectedCategory(cat);
-                  }}
-                  className={`px-3.5 py-1.5 rounded-none text-xs font-mono font-black transition-all cursor-pointer whitespace-nowrap border-2 border-black dark:border-white uppercase ${
-                    isActive
-                      ? "bg-[#166534] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
-                      : "bg-white dark:bg-black text-black dark:text-white hover:bg-[#FEF9C3] dark:hover:bg-neutral-800"
-                  }`}
-                >
-                  [{cat}]
-                </button>
-              );
-            })}
-          </div>
+
         </div>
 
         {/* 4. PROJECTS GRID */}
@@ -199,7 +161,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                 {lang === "id" ? "TIDAK ADA PROYEK DITEMUKAN" : "NO PROJECTS FOUND"}
               </h3>
               <p className="text-xs font-mono text-neutral-500 font-bold">
-                {lang === "id" ? `Tidak ada proyek yang sesuai dengan filter "${searchQuery || selectedCategory}".` : `No projects match "${searchQuery || selectedCategory}".`}
+                {lang === "id" ? `Tidak ada proyek yang sesuai dengan pencarian "${searchQuery}".` : `No projects match search query "${searchQuery}".`}
               </p>
             </div>
             <button
@@ -207,11 +169,10 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
               onClick={() => {
                 soundFx.playClick();
                 setSearchQuery("");
-                setSelectedCategory(lang === "id" ? "Semua" : "All");
               }}
               className="px-5 py-2 bg-[#EAB308] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
             >
-              {lang === "id" ? "RESET SEMUA FILTER" : "RESET FILTERS"}
+              {lang === "id" ? "RESET PENCARIAN" : "RESET SEARCH"}
             </button>
           </div>
         ) : (

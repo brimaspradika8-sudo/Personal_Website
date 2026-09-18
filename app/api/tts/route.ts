@@ -42,6 +42,22 @@ function setToCache(key: string, buffer: ArrayBuffer) {
   ttsCache.set(key, { buffer, timestamp: Date.now() });
 }
 
+const requestLog = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 15;
+
+function isRateLimited(identifier: string): boolean {
+  const now = Date.now();
+  const timestamps = requestLog.get(identifier) || [];
+  const validTimestamps = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    return true;
+  }
+  validTimestamps.push(now);
+  requestLog.set(identifier, validTimestamps);
+  return false;
+}
+
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getEffectiveUserTier } from "@/lib/membership";
@@ -64,6 +80,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Silakan login dan upgrade membership untuk mendengarkan Narasi Suara AI." },
         { status: 401 }
+      );
+    }
+
+    // Rate Limiting Guard per User
+    if (isRateLimited(user.id || user.email)) {
+      return NextResponse.json(
+        { error: "Terlalu banyak permintaan audio dalam 1 menit. Silakan tunggu sebentar." },
+        { status: 429 }
       );
     }
 

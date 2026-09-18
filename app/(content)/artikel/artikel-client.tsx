@@ -101,9 +101,12 @@ interface ArtikelClientProps {
 export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string>("SEMUA");
   const [sortBy, setSortBy] = useState<"latest" | "oldest" | "popular">("latest");
   const [isPending, startTransition] = useTransition();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const availableTags = ["SEMUA", "AI", "NEXTJS", "TUTORIAL", "FULLSTACK", "SYSTEMS"];
 
   const handleSeedArticles = () => {
     soundFx.playClick();
@@ -124,11 +127,18 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
   const filteredArticles = articles
     .filter((article) => {
       const q = searchQuery.toLowerCase();
-      return (
+      const matchesQuery =
         article.title.toLowerCase().includes(q) ||
         article.content.toLowerCase().includes(q) ||
-        (article.category && article.category.toLowerCase().includes(q))
-      );
+        (article.category && article.category.toLowerCase().includes(q));
+
+      const matchesTag =
+        selectedTag === "SEMUA" ||
+        (article.category && article.category.toUpperCase().includes(selectedTag)) ||
+        article.title.toUpperCase().includes(selectedTag) ||
+        article.content.toUpperCase().includes(selectedTag);
+
+      return matchesQuery && matchesTag;
     })
     .sort((a, b) => {
       if (sortBy === "oldest") {
@@ -150,6 +160,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             <Link
               href="/dashboard"
               onClick={() => soundFx.playClick()}
+              aria-label="Kembali ke Beranda"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#166534] text-white border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-emerald-800"
             >
               <ArrowLeft className="w-4 h-4 text-[#EAB308]" />
@@ -159,6 +170,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             <Link
               href="/dashboard/artikel"
               onClick={() => soundFx.playClick()}
+              aria-label="Studio Artikel Saya"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-amber-400"
               title="Studio Artikel Saya (Ruang Kerja Member)"
             >
@@ -193,6 +205,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
               <input
                 type="text"
+                aria-label="Cari judul artikel"
                 placeholder="Cari judul artikel, topik, atau kata kunci..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -200,7 +213,9 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => setSearchQuery("")}
+                  aria-label="Hapus kata kunci pencarian"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-[#166534] dark:text-[#EAB308] hover:underline cursor-pointer"
                 >
                   CLEAR
@@ -212,6 +227,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 font-mono">
               <SlidersHorizontal className="w-4 h-4 text-slate-700 dark:text-slate-300 hidden sm:block" />
               <select
+                aria-label="Urutkan artikel"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as "latest" | "oldest" | "popular")}
                 className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:outline-none cursor-pointer uppercase"
@@ -221,6 +237,31 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
                 <option value="oldest">URUTKAN: TERLAMA</option>
               </select>
             </div>
+          </div>
+
+          {/* Topic Tag Filter Chips */}
+          <div className="flex items-center gap-2 flex-wrap pt-1 font-mono">
+            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 mr-1 flex items-center gap-1">
+              <Tag className="w-3 h-3 text-[#166534] dark:text-[#EAB308]" />
+              TOPIS:
+            </span>
+            {availableTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setSelectedTag(tag);
+                }}
+                className={`px-3 py-1 rounded-xl text-[10px] font-bold border-2 border-slate-900 transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                  selectedTag === tag
+                    ? "bg-[#166534] text-white"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-[#EAB308] hover:text-slate-950"
+                }`}
+              >
+                #{tag}
+              </button>
+            ))}
           </div>
         </div>
 

@@ -189,15 +189,30 @@ export default function ArticleClient({
     return items;
   });
 
+  const stopAllAudio = () => {
+    if (elevenLabsAudioRef.current) {
+      elevenLabsAudioRef.current.pause();
+      elevenLabsAudioRef.current.currentTime = 0;
+      elevenLabsAudioRef.current.ontimeupdate = null;
+      elevenLabsAudioRef.current.onended = null;
+      elevenLabsAudioRef.current.onerror = null;
+      elevenLabsAudioRef.current.src = "";
+      elevenLabsAudioRef.current = null;
+    }
+
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    setIsPlayingAudio(false);
+    setIsLoadingElevenLabs(false);
+    activeLineKeyRef.current = null;
+    setActiveLineKey(null);
+  };
+
   useEffect(() => {
     return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-      if (elevenLabsAudioRef.current) {
-        elevenLabsAudioRef.current.pause();
-        elevenLabsAudioRef.current = null;
-      }
+      stopAllAudio();
     };
   }, []);
 
@@ -222,44 +237,181 @@ export default function ArticleClient({
     setTimeout(() => setToastMsg(null), 3000);
   };
 
-  // Calculate character ranges for speech boundary line tracking
-  const lineRanges = useMemo(() => {
-    if (!article.content) return [];
-    const ranges: { key: string; text: string; start: number; end: number }[] = [];
-    let offset = 0;
+  // Helper to parse HTML or Markdown content into unified readable blocks
+  const parseContentBlocks = (rawContent: string) => {
+    if (!rawContent) return [];
+    const blocks: {
+      key: string;
+      tag: "h2" | "h3" | "h4" | "p" | "li" | "blockquote" | "code" | "hr";
+      content: string;
+      cleanText: string;
+      codeLang?: string;
+      id?: string;
+    }[] = [];
 
-    const blocks = article.content.split("```");
-    blocks.forEach((block, idx) => {
+    const isHtml = /^\s*<[a-z0-9]+/i.test(rawContent) || rawContent.includes("<p>") || rawContent.includes("<h2>") || rawContent.includes("<h3>") || rawContent.includes("<ul>") || rawContent.includes("<table>") || rawContent.includes("blockquote");
+
+    if (isHtml && typeof window !== "undefined") {
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(rawContent, "text/html");
+        const children = Array.from(doc.body.children);
+
+        let keyIdx = 0;
+        children.forEach((el) => {
+          const tagName = el.tagName.toLowerCase();
+
+          if (tagName === "ul" || tagName === "ol") {
+            const lis = Array.from(el.querySelectorAll("li"));
+            lis.forEach((li) => {
+              const clean = li.textContent?.trim() || "";
+              if (clean) {
+                blocks.push({
+                  key: `b-${keyIdx++}`,
+                  tag: "li",
+                  content: li.innerHTML,
+                  cleanText: clean + ". ",
+                });
+              }
+            });
+          } else if (tagName === "pre") {
+            const codeEl = el.querySelector("code") || el;
+            const clean = codeEl.textContent?.trim() || "";
+            blocks.push({
+              key: `b-${keyIdx++}`,
+              tag: "code",
+              content: clean,
+              cleanText: "Kode program diabaikan. ",
+              codeLang: el.getAttribute("data-language") || "CODE",
+            });
+          } else if (tagName === "hr") {
+            blocks.push({
+              key: `b-${keyIdx++}`,
+              tag: "hr",
+              content: "",
+              cleanText: "",
+            });
+          } else {
+            const clean = el.textContent?.trim() || "";
+            if (clean) {
+              const tag = (["h2", "h3", "h4", "blockquote"].includes(tagName) ? tagName : "p") as any;
+              const anchorId = el.getAttribute("id") || clean.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+              blocks.push({
+                key: `b-${keyIdx++}`,
+                tag,
+                content: el.innerHTML,
+                cleanText: clean + ". ",
+                id: anchorId,
+              });
+            }
+          }
+        });
+
+        if (blocks.length > 0) return blocks;
+      } catch (e) {
+        console.warn("HTML DOMParser fallback to regex:", e);
+      }
+    }
+
+    // Markdown / String Split Fallback
+    let keyIdx = 0;
+    const rawBlocks = rawContent.split("```");
+    rawBlocks.forEach((block, idx) => {
       if (idx % 2 === 1) {
-        const codePlaceholder = " Kode program diabaikan. ";
-        offset += codePlaceholder.length;
+        const firstLineEnd = block.indexOf("\n");
+        const lang = firstLineEnd !== -1 ? block.slice(0, firstLineEnd).trim() : "CODE";
+        const code = firstLineEnd !== -1 ? block.slice(firstLineEnd + 1).trim() : block.trim();
+        blocks.push({
+          key: `b-${keyIdx++}`,
+          tag: "code",
+          content: code,
+          cleanText: "Kode program diabaikan. ",
+          codeLang: lang || "CODE",
+        });
       } else {
         const lines = block.split("\n");
-        lines.forEach((line, lIdx) => {
+        lines.forEach((line) => {
           const trimmed = line.trim();
-          if (!trimmed || trimmed.startsWith("##") || trimmed.startsWith("###") || trimmed.startsWith("---")) {
-            if (trimmed.startsWith("##") || trimmed.startsWith("###")) {
-              const headerText = trimmed.replace(/^#+\s*/, "").trim() + ". ";
-              const start = offset;
-              const end = start + headerText.length;
-              offset = end;
-              ranges.push({ key: `${idx}-${lIdx}`, text: headerText, start, end });
-            }
+          if (!trimmed) return;
+
+          if (trimmed.startsWith("## ")) {
+            const text = trimmed.replace("## ", "");
+            const anchorId = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+            blocks.push({
+              key: `b-${keyIdx++}`,
+              tag: "h2",
+              content: text,
+              cleanText: text + ". ",
+              id: anchorId,
+            });
+          } else if (trimmed.startsWith("### ")) {
+            const text = trimmed.replace("### ", "");
+            const anchorId = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+            blocks.push({
+              key: `b-${keyIdx++}`,
+              tag: "h3",
+              content: text,
+              cleanText: text + ". ",
+              id: anchorId,
+            });
+          } else if (trimmed.startsWith("---")) {
+            blocks.push({
+              key: `b-${keyIdx++}`,
+              tag: "hr",
+              content: "",
+              cleanText: "",
+            });
+          } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+            const text = trimmed.replace(/^[-*]\s+/, "");
+            blocks.push({
+              key: `b-${keyIdx++}`,
+              tag: "li",
+              content: text,
+              cleanText: text + ". ",
+            });
           } else {
-            const clean = trimmed.replace(/<[^>]*>?/gm, " ").replace(/[#*`_~-]/g, " ").trim() + ". ";
-            const start = offset;
-            const end = start + clean.length;
-            offset = end;
-            ranges.push({ key: `${idx}-${lIdx}`, text: clean, start, end });
+            const clean = trimmed.replace(/<[^>]*>?/gm, " ").replace(/[#*`_~-]/g, " ").trim();
+            if (clean) {
+              blocks.push({
+                key: `b-${keyIdx++}`,
+                tag: "p",
+                content: trimmed,
+                cleanText: clean + ". ",
+              });
+            }
           }
         });
       }
     });
 
-    return ranges;
+    return blocks;
+  };
+
+  const [parsedBlocks, setParsedBlocks] = useState<ReturnType<typeof parseContentBlocks>>([]);
+
+  useEffect(() => {
+    setParsedBlocks(parseContentBlocks(article.content));
   }, [article.content]);
 
+  // Calculate character ranges for speech boundary line tracking
+  const lineRanges = useMemo(() => {
+    const ranges: { key: string; text: string; start: number; end: number }[] = [];
+    let offset = 0;
+    parsedBlocks.forEach((b) => {
+      if (b.cleanText && b.tag !== "hr") {
+        const start = offset;
+        const end = start + b.cleanText.length;
+        offset = end;
+        ranges.push({ key: b.key, text: b.cleanText, start, end });
+      }
+    });
+    return ranges;
+  }, [parsedBlocks]);
+
   const cleanTextForSpeech = (rawContent: string) => {
+    if (lineRanges.length > 0) {
+      return lineRanges.map((r) => r.text).join(" ");
+    }
     return rawContent
       .replace(/```[\s\S]*?```/g, " Kode program diabaikan. ")
       .replace(/<[^>]*>?/gm, " ")
@@ -269,9 +421,8 @@ export default function ArticleClient({
   };
 
   const startSpeech = (rate: number) => {
+    stopAllAudio();
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    
-    window.speechSynthesis.cancel();
 
     const fullText = lineRanges.length > 0 
       ? lineRanges.map((r) => r.text).join(" ")
@@ -309,15 +460,11 @@ export default function ArticleClient({
     };
 
     utterance.onend = () => {
-      setIsPlayingAudio(false);
-      activeLineKeyRef.current = null;
-      setActiveLineKey(null);
+      stopAllAudio();
     };
 
     utterance.onerror = () => {
-      setIsPlayingAudio(false);
-      activeLineKeyRef.current = null;
-      setActiveLineKey(null);
+      stopAllAudio();
     };
 
     utteranceRef.current = utterance;
@@ -326,10 +473,12 @@ export default function ArticleClient({
   };
 
   const playElevenLabsAudio = async () => {
+    stopAllAudio();
     setIsLoadingElevenLabs(true);
 
-    // 1. Check Client-Side Audio Cache (0ms Instant Playback)
-    const cachedAudioUrl = clientAudioCacheRef.current.get(article.id);
+    const cacheKey = `${article.id}_${selectedVoiceId}`;
+    const cachedAudioUrl = clientAudioCacheRef.current.get(cacheKey);
+
     if (cachedAudioUrl) {
       console.log("[Client TTS] Served from client-side memory cache (0ms)");
       const audio = new Audio(cachedAudioUrl);
@@ -350,14 +499,11 @@ export default function ArticleClient({
       };
 
       audio.onended = () => {
-        setIsPlayingAudio(false);
-        activeLineKeyRef.current = null;
-        setActiveLineKey(null);
+        stopAllAudio();
       };
 
       audio.onerror = () => {
-        setIsPlayingAudio(false);
-        activeLineKeyRef.current = null;
+        stopAllAudio();
         startSpeech(audioSpeed);
       };
 
@@ -376,7 +522,6 @@ export default function ArticleClient({
 
     showToast("Mengisi suara AI Edge Neural (id-ID)...");
 
-    // 2. Fetch with 6.0s AbortController Timeout Guard
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
 
@@ -406,7 +551,7 @@ export default function ArticleClient({
 
       const blob = await res.blob();
       const audioUrl = URL.createObjectURL(blob);
-      clientAudioCacheRef.current.set(`${article.id}_${selectedVoiceId}`, audioUrl);
+      clientAudioCacheRef.current.set(cacheKey, audioUrl);
 
       const audio = new Audio(audioUrl);
       audio.playbackRate = audioSpeed;
@@ -426,14 +571,11 @@ export default function ArticleClient({
       };
 
       audio.onended = () => {
-        setIsPlayingAudio(false);
-        activeLineKeyRef.current = null;
-        setActiveLineKey(null);
+        stopAllAudio();
       };
 
       audio.onerror = () => {
-        setIsPlayingAudio(false);
-        activeLineKeyRef.current = null;
+        stopAllAudio();
         startSpeech(audioSpeed);
       };
 
@@ -461,17 +603,7 @@ export default function ArticleClient({
     }
 
     if (isPlayingAudio || isLoadingElevenLabs) {
-      if (elevenLabsAudioRef.current) {
-        elevenLabsAudioRef.current.pause();
-        elevenLabsAudioRef.current = null;
-      }
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-      setIsPlayingAudio(false);
-      setIsLoadingElevenLabs(false);
-      activeLineKeyRef.current = null;
-      setActiveLineKey(null);
+      stopAllAudio();
       showToast("Pembacaan audio dihentikan.");
       return;
     }
@@ -495,6 +627,163 @@ export default function ArticleClient({
     }
   };
 
+  const renderParsedBlocks = (blocks: ReturnType<typeof parseContentBlocks>) => {
+    return (
+      <div className="space-y-5">
+        {blocks.map((b) => {
+          const isActiveReading = activeLineKey === b.key && isPlayingAudio;
+
+          if (b.tag === "code") {
+            return (
+              <div
+                key={b.key}
+                id={`line-${b.key}`}
+                className="my-6 rounded-none border-4 border-black dark:border-white bg-black text-white overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
+              >
+                <div className="px-4 py-2.5 bg-[#FFFF00] text-black border-b-3 border-black flex items-center justify-between font-mono text-xs font-black uppercase">
+                  <span className="font-mono text-black font-black">{b.codeLang || "CODE"}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(b.content, Number(b.key.replace("b-", "")))}
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white hover:bg-[#166534] transition-all cursor-pointer text-xs font-mono font-black border-2 border-black"
+                  >
+                    {copiedCodeIndex === Number(b.key.replace("b-", "")) ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-[#00FF66]" />
+                        <span className="text-[#00FF66]">TERSALIN! 🚀</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>SALIN KODE</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <pre className="p-4 sm:p-5 text-xs sm:text-sm font-mono text-neutral-100 overflow-x-auto leading-relaxed bg-black">
+                  <code>{b.content}</code>
+                </pre>
+              </div>
+            );
+          }
+
+          if (b.tag === "hr") {
+            return <hr key={b.key} className="border-2 border-black dark:border-white my-6" />;
+          }
+
+          if (b.tag === "h2") {
+            return (
+              <h2
+                key={b.key}
+                id={`line-${b.key}`}
+                className={`font-mono text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-24 transition-all duration-300 ${
+                  isActiveReading ? "bg-[#FFFF00] text-black p-3 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" : ""
+                }`}
+              >
+                {isActiveReading && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max">
+                    <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                    BAGIAN ARTIKEL SEDANG DIBACA
+                  </span>
+                )}
+                <span id={b.id} className="scroll-mt-24" dangerouslySetInnerHTML={{ __html: b.content }} />
+              </h2>
+            );
+          }
+
+          if (b.tag === "h3" || b.tag === "h4") {
+            return (
+              <h3
+                key={b.key}
+                id={`line-${b.key}`}
+                className={`font-mono text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-24 transition-all duration-300 ${
+                  isActiveReading ? "bg-[#FFFF00] text-black p-3 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" : ""
+                }`}
+              >
+                {isActiveReading && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max">
+                    <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                    BAGIAN ARTIKEL SEDANG DIBACA
+                  </span>
+                )}
+                <span id={b.id} className="scroll-mt-24" dangerouslySetInnerHTML={{ __html: b.content }} />
+              </h3>
+            );
+          }
+
+          if (b.tag === "li") {
+            return (
+              <li
+                key={b.key}
+                id={`line-${b.key}`}
+                className={`ml-5 list-disc ${fontClass} text-slate-800 dark:text-slate-200 font-sans transition-all duration-300 ${
+                  isActiveReading
+                    ? "bg-[#FFFF00] text-slate-950 p-3 rounded-none border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] list-none font-bold"
+                    : "font-normal"
+                }`}
+              >
+                {isActiveReading && (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] mr-2">
+                    <Volume2 className="w-3 h-3 animate-pulse" />
+                    BAGIAN ARTIKEL SEDANG DIBACA
+                  </span>
+                )}
+                <span dangerouslySetInnerHTML={{ __html: b.content }} />
+              </li>
+            );
+          }
+
+          if (b.tag === "blockquote") {
+            return (
+              <blockquote
+                key={b.key}
+                id={`line-${b.key}`}
+                className={`border-l-4 border-[#166534] pl-4 italic ${fontClass} font-sans transition-all duration-300 ${
+                  isActiveReading
+                    ? "bg-[#FFFF00] text-slate-950 p-3 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold not-italic"
+                    : "text-slate-700 dark:text-slate-300"
+                }`}
+              >
+                {isActiveReading && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max not-italic">
+                    <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                    BAGIAN ARTIKEL SEDANG DIBACA
+                  </span>
+                )}
+                <span dangerouslySetInnerHTML={{ __html: b.content }} />
+              </blockquote>
+            );
+          }
+
+          return (
+            <div
+              key={b.key}
+              id={`line-${b.key}`}
+              className={`transition-all duration-300 rounded-none ${
+                isActiveReading
+                  ? "bg-[#FFFF00] text-slate-950 p-3 sm:p-4 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
+                  : ""
+              }`}
+            >
+              {isActiveReading && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                  BAGIAN ARTIKEL SEDANG DIBACA
+                </span>
+              )}
+              <p
+                className={`${fontClass} font-sans ${
+                  isActiveReading ? "font-bold text-black" : "text-slate-800 dark:text-slate-200 font-normal"
+                }`}
+                dangerouslySetInnerHTML={{ __html: b.content }}
+              />
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   const handleGenerateAiSummary = () => {
     try { soundFx.playClick(); } catch {}
 
@@ -506,45 +795,44 @@ export default function ArticleClient({
     setIsGeneratingSummary(true);
 
     setTimeout(() => {
-      // Clean HTML tags and sanitize lines
-      const cleanLineText = (txt: string) => txt.replace(/<[^>]*>?/gm, " ").replace(/\s+/g, " ").trim();
-
-      const rawLines = article.content.split("\n").map((l) => l.trim()).filter(Boolean);
-      const headings = rawLines
-        .filter((l) => l.startsWith("##") || l.startsWith("###") || l.includes("<h2>") || l.includes("<h3>"))
-        .map((l) => cleanLineText(l.replace(/^#+\s*/, "")))
+      // Extract headings & clean text paragraphs using parsedBlocks (excluding code blocks)
+      const headings = parsedBlocks
+        .filter((b) => b.tag === "h2" || b.tag === "h3" || b.tag === "h4")
+        .map((b) => b.cleanText.replace(/\.\s*$/, "").trim())
         .filter(Boolean);
 
-      const textParagraphs = rawLines
-        .map((l) => cleanLineText(l))
-        .filter((l) => !l.startsWith("#") && !l.startsWith("```") && l.length > 25);
+      const textBlocks = parsedBlocks
+        .filter((b) => (b.tag === "p" || b.tag === "blockquote" || b.tag === "li") && b.cleanText)
+        .map((b) => b.cleanText.replace(/\.\s*$/, "").trim())
+        .filter((txt) => {
+          if (txt.length < 20) return false;
+          // Filter out raw code statements, function signatures, return await, supabase statements
+          if (/^\s*(return|import|export|const|let|var|function|async|await|supabase|select|from|where|class|interface|type)\b/i.test(txt)) return false;
+          if (txt.includes("return await") || txt.includes("supabase.from") || txt.includes("=>")) return false;
+          return true;
+        });
 
       const bullets: string[] = [];
+      const titleClean = article.title.trim();
+
       if (userTier === "SAHABAT_BRIMAS") {
-        bullets.push(`👑 [DEEP EXECUTIVE SUMMARY] Ringkasan Mendalam Artikel "${article.title}"`);
-        if (headings.length > 0) {
-          bullets.push(`📌 Fokus Topik Utama: Menjelaskan ${headings.slice(0, 3).join(", ")}.`);
-        }
-        if (textParagraphs.length > 0) {
-          bullets.push(`💡 Key Takeaways: ${textParagraphs[0]}`);
-        }
-        if (textParagraphs.length > 1) {
-          bullets.push(`🎯 Poin Pembelajaran Penting: ${textParagraphs[Math.floor(textParagraphs.length / 2)]}`);
-        }
-        bullets.push(`🚀 Kesimpulan Eksekutif: Implementasi panduan praktis ini memberikan efisiensi tinggi pada pengembangan aplikasi.`);
+        const topicOverview = headings.length > 0 ? headings.slice(0, 3).join(", ") : "Konsep Utama & Arsitektur Sistem";
+        const leadInsight = textBlocks.length > 0 ? textBlocks[0] : "Pembahasan mendalam tentang arsitektur dan otomatisasi modern.";
+        const coreTakeaway = textBlocks.length > 1 ? textBlocks[Math.floor(textBlocks.length / 2)] : (textBlocks[0] || "Solusi praktis untuk meningkatkan performa alur kerja.");
+        const actionItem = textBlocks.length > 2 ? textBlocks[textBlocks.length - 1] : "Panduan langkah demi langkah dalam implementasi proyek.";
+
+        bullets.push(`👑 [DEEP EXECUTIVE SUMMARY] Ringkasan Mendalam Artikel "${titleClean}"`);
+        bullets.push(`📌 Topik Utama: Menjelaskan ${topicOverview}.`);
+        bullets.push(`💡 Key Insight: ${leadInsight}.`);
+        bullets.push(`🎯 Poin Pembelajaran Kunci: ${coreTakeaway}.`);
+        bullets.push(`🚀 Panduan Eksekusi: ${actionItem}.`);
+        bullets.push(`✨ Kesimpulan VIP: Mengoptimalkan efisiensi, keandalan, dan kecepatan skalabilitas sistem.`);
       } else {
-        if (headings.length > 0) {
-          bullets.push(`Topik Utama: Menjelaskan ${headings.slice(0, 2).join(" & ")}.`);
-        }
-        if (textParagraphs.length > 0) {
-          bullets.push(textParagraphs[0]);
-        }
-        if (textParagraphs.length > 1) {
-          bullets.push(textParagraphs[Math.floor(textParagraphs.length / 2)]);
-        }
-        if (bullets.length < 3) {
-          bullets.push(`Memberikan langkah-langkah implementasi praktis terkait ${article.title}.`);
-        }
+        const topicOverview = headings.length > 0 ? headings.slice(0, 2).join(" & ") : titleClean;
+        bullets.push(`📌 Topik Utama: Menjelaskan ${topicOverview}.`);
+        if (textBlocks.length > 0) bullets.push(`💡 Key Takeaways: ${textBlocks[0]}.`);
+        if (textBlocks.length > 1) bullets.push(`🎯 Poin Penting: ${textBlocks[Math.floor(textBlocks.length / 2)]}.`);
+        if (bullets.length < 3) bullets.push(`🚀 Kesimpulan: Memberikan panduan praktis terkait ${titleClean}.`);
       }
 
       setAiSummary(bullets);
@@ -770,145 +1058,7 @@ export default function ArticleClient({
     }
   }, [fontSizeScale]);
 
-  const processHtmlHeadings = (html: string) => {
-    return html.replace(/<h([23])(\s*[^>]*)>(.*?)<\/h[23]>/gi, (match, level, attrs, innerText) => {
-      const cleanText = innerText.replace(/<[^>]*>?/gm, "").trim();
-      const idMatch = /id=["']([^"']+)["']/i.exec(attrs);
-      const id = idMatch ? idMatch[1] : cleanText.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-      const hasClass = /class=["']/i.test(attrs);
-      const scrollClass = "scroll-mt-24";
-      let newAttrs = attrs;
-      if (!idMatch) {
-        newAttrs += ` id="${id}"`;
-      }
-      if (hasClass) {
-        newAttrs = newAttrs.replace(/class=["']([^"']+)["']/i, `class="$1 ${scrollClass}"`);
-      } else {
-        newAttrs += ` class="${scrollClass}"`;
-      }
-      return `<h${level}${newAttrs}>${innerText}</h${level}>`;
-    });
-  };
 
-  const renderContent = (content: string) => {
-    const isHtml = /^\s*<[a-z0-9]+/i.test(content) || content.includes("<p>") || content.includes("<h2>") || content.includes("<h3>") || content.includes("<ul>") || content.includes("<table>");
-    
-    if (isHtml) {
-      const processedContent = processHtmlHeadings(content);
-      return (
-        <div
-          className={`prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 font-sans ${fontClass} space-y-4 [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-slate-300 [&_table]:dark:border-slate-800 [&_th]:border [&_th]:border-slate-300 [&_th]:dark:border-slate-800 [&_th]:bg-slate-100 [&_th]:dark:bg-slate-900 [&_th]:p-2.5 [&_td]:border [&_td]:border-slate-300 [&_td]:dark:border-slate-800 [&_td]:p-2.5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:border-l-4 [&_blockquote]:border-[#D32F2F] [&_blockquote]:pl-4 [&_blockquote]:italic`}
-          dangerouslySetInnerHTML={{ __html: processedContent }}
-        />
-      );
-    }
-
-    const blocks = content.split("```");
-    return blocks.map((block, idx) => {
-      if (idx % 2 === 1) {
-        const firstLineEnd = block.indexOf("\n");
-        const lang = firstLineEnd !== -1 ? block.slice(0, firstLineEnd).trim() : "code";
-        const code = firstLineEnd !== -1 ? block.slice(firstLineEnd + 1).trim() : block.trim();
-
-        return (
-          <div key={idx} className="my-6 rounded-none border-4 border-black dark:border-white bg-black text-white overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
-            <div className="px-4 py-2.5 bg-[#FFFF00] text-black border-b-3 border-black flex items-center justify-between font-mono text-xs font-black uppercase">
-              <span className="font-mono text-black font-black">{lang || "CODE"}</span>
-              <button
-                onClick={() => handleCopyCode(code, idx)}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white hover:bg-[#166534] transition-all cursor-pointer text-xs font-mono font-black border-2 border-black"
-              >
-                {copiedCodeIndex === idx ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-[#00FF66]" />
-                    <span className="text-[#00FF66]">TERSALIN! 🚀</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>SALIN KODE</span>
-                  </>
-                )}
-              </button>
-            </div>
-            <pre className="p-4 sm:p-5 text-xs sm:text-sm font-mono text-neutral-100 overflow-x-auto leading-relaxed bg-black">
-              <code>{code}</code>
-            </pre>
-          </div>
-        );
-      }
-
-      const lines = block.split("\n");
-      return (
-        <div key={idx} className="space-y-4">
-          {lines.map((line, lIdx) => {
-            const trimmed = line.trim();
-            if (!trimmed) return null;
-
-            const lineKey = `${idx}-${lIdx}`;
-            const isActiveReading = activeLineKey === lineKey && isPlayingAudio;
-
-            if (trimmed.startsWith("## ")) {
-              const text = trimmed.replace("## ", "");
-              const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-              return (
-                <h2 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-24 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
-                  <span id={id} className="scroll-mt-24">{text}</span>
-                </h2>
-              );
-            }
-            if (trimmed.startsWith("### ")) {
-              const text = trimmed.replace("### ", "");
-              const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-              return (
-                <h3 key={lIdx} id={`line-${lineKey}`} className={`font-mono text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-24 ${isActiveReading ? "bg-[#FFFF00] text-black px-2" : ""}`}>
-                  <span id={id} className="scroll-mt-24">{text}</span>
-                </h3>
-              );
-            }
-            if (trimmed.startsWith("---")) {
-              return <hr key={lIdx} className="border-2 border-black dark:border-white my-6" />;
-            }
-            if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-              return (
-                <li key={lIdx} id={`line-${lineKey}`} className={`ml-5 list-disc ${fontClass} text-slate-800 dark:text-slate-200 font-sans transition-all duration-300 ${isActiveReading ? "bg-[#FFFF00] text-slate-950 font-bold p-2.5 rounded-none border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] list-none" : "font-normal"}`}>
-                  {isActiveReading && (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] mr-2">
-                      <Volume2 className="w-3 h-3 animate-pulse" />
-                      MEMBACA...
-                    </span>
-                  )}
-                  {trimmed.replace(/^[-*]\s+/, "")}
-                </li>
-              );
-            }
-
-            return (
-              <div
-                key={lIdx}
-                id={`line-${lineKey}`}
-                className={`transition-all duration-300 rounded-none ${
-                  isActiveReading
-                    ? "bg-[#FFFF00] text-slate-950 p-3 sm:p-4 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
-                    : ""
-                }`}
-              >
-                {isActiveReading && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    <Volume2 className="w-3.5 h-3.5 animate-pulse" />
-                    BAGIAN ARTIKEL SEDANG DIBACA
-                  </span>
-                )}
-                <p className={`${fontClass} font-sans ${isActiveReading ? "font-bold text-black" : "text-slate-800 dark:text-slate-200 font-normal"}`}>
-                  {trimmed}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      );
-    });
-  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-slate-950 pb-28 sm:pb-20">
@@ -1217,7 +1367,7 @@ export default function ArticleClient({
           {/* Article Text Content (Order 2 di mobile) */}
           <main className={`${toc.length > 0 ? "lg:col-span-3 order-2" : "col-span-4 lg:col-span-3 order-2"}`}>
             <article className="p-6 sm:p-10 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-6 text-black dark:text-white">
-              {renderContent(article.content)}
+              {renderParsedBlocks(parsedBlocks)}
             </article>
           </main>
 
