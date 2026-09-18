@@ -120,6 +120,24 @@ export default function ProjectImageUploader({
       return;
     }
 
+    // Client-side file size pre-validation
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      const isVid = f.type.startsWith("video/");
+      const maxLimit = isVid ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
+
+      if (f.size > maxLimit) {
+        setStatusMsg({
+          type: "error",
+          text: `File "${f.name}" (${(f.size / (1024 * 1024)).toFixed(1)}MB) melebihi batas ${
+            isVid ? "video (50MB)" : "gambar (10MB)"
+          }.`,
+        });
+        e.target.value = "";
+        return;
+      }
+    }
+
     setUploadingImage(true);
     setStatusMsg(null);
 
@@ -136,6 +154,7 @@ export default function ProjectImageUploader({
       } else if ("error" in res && res.error) {
         setStatusMsg({ type: "error", text: res.error });
         setUploadingImage(false);
+        e.target.value = "";
         return;
       }
     }
@@ -144,7 +163,7 @@ export default function ProjectImageUploader({
       onChange([...images, ...uploadedUrls].slice(0, 5));
       setStatusMsg({
         type: "success",
-        text: `${uploadedUrls.length} file media (gambar/video) berhasil diunggah!`,
+        text: `${uploadedUrls.length} file media berhasil diunggah!`,
       });
     }
 
@@ -233,7 +252,7 @@ export default function ProjectImageUploader({
             {uploadingImage ? "MENGUNGGAH MEDIA..." : "UNGGAH FOTO / VIDEO PROYEK"}
           </span>
           <span className="text-[10px] font-mono text-neutral-500">
-            Foto max 8MB / Video max 25MB (pilih hingga {5 - images.length} lagi)
+            Foto max 10MB / Video max 50MB (pilih hingga {5 - images.length} lagi)
           </span>
           <input
             type="file"

@@ -93,9 +93,9 @@ export async function uploadProjectImage(formData: FormData) {
     return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG) atau video (MP4, WEBM, MOV)." };
   }
 
-  const maxBytes = isVideo ? 25 * 1024 * 1024 : 8 * 1024 * 1024;
+  const maxBytes = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
   if (file.size > maxBytes) {
-    return { error: isVideo ? "Ukuran file video maksimal 25MB." : "Ukuran file gambar maksimal 8MB." };
+    return { error: isVideo ? "Ukuran file video maksimal 50MB." : "Ukuran file gambar maksimal 10MB." };
   }
 
   try {
