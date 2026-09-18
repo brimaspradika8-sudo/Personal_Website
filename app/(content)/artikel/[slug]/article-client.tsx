@@ -604,13 +604,13 @@ export default function ArticleClient({
     })
       .then(async (res) => {
         if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
           if (res.status === 401) {
             showToast("Kamu harus login dulu untuk memberikan reaksi");
             router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk memberikan reaksi")}`);
             return;
           }
-          if (data.error) showToast(data.error);
+          const actionRes = await toggleArticleReaction(article.id, type);
+          if (actionRes?.error) showToast(actionRes.error);
         }
       })
       .catch(() => {

@@ -16,6 +16,25 @@ const nextConfig: NextConfig = {
       "@tiptap/extension-image",
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/projects",
+        destination: "/proyek",
+        permanent: true,
+      },
+      {
+        source: "/admin/projects",
+        destination: "/admin/proyek",
+        permanent: true,
+      },
+      {
+        source: "/admin/projects/:path*",
+        destination: "/admin/proyek/:path*",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     dangerouslyAllowSVG: true,
     formats: ["image/avif", "image/webp"],

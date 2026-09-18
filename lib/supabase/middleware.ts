@@ -59,7 +59,6 @@ export async function updateSession(request: NextRequest) {
       return supabaseResponse;
     }
 
-    // Refresh user session from Supabase Auth server per-request.
     const { data: { user } } = await supabase.auth.getUser();
 
     if (isAdminRoute) {

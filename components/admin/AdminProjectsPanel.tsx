@@ -14,15 +14,13 @@ import {
   Search,
   CheckCircle2,
   AlertCircle,
-  UploadCloud,
-  X,
   FileText,
   Save,
-  Images,
   Globe,
 } from "lucide-react";
-import { ProjectItem, deleteProject, createProject, uploadProjectImage } from "@/lib/actions/project";
+import { ProjectItem, deleteProject, createProject } from "@/lib/actions/project";
 import { soundFx } from "@/lib/audio/sound";
+import ProjectImageUploader from "./ProjectImageUploader";
 
 interface AdminProjectsPanelProps {
   initialProjects?: ProjectItem[];
@@ -68,58 +66,6 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
       setProjects((prev) => prev.filter((p) => p.id !== id));
       setStatusMsg({ type: "success", text: `Proyek "${projectTitle}" berhasil dihapus.` });
     }
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    if (images.length >= 5) {
-      setStatusMsg({ type: "error", text: "Maksimal 5 gambar per proyek." });
-      return;
-    }
-
-    setUploadingImage(true);
-    setStatusMsg(null);
-
-    const uploadedUrls: string[] = [];
-
-    for (let i = 0; i < files.length; i++) {
-      if (images.length + uploadedUrls.length >= 5) break;
-      const formData = new FormData();
-      formData.append("file", files[i]);
-
-      const res = await uploadProjectImage(formData);
-      if ("url" in res && res.url) {
-        uploadedUrls.push(res.url);
-      }
-    }
-
-    if (uploadedUrls.length > 0) {
-      setImages((prev) => [...prev, ...uploadedUrls].slice(0, 5));
-      setStatusMsg({ type: "success", text: `${uploadedUrls.length} gambar berhasil diunggah!` });
-    } else {
-      setStatusMsg({ type: "error", text: "Gagal mengunggah gambar." });
-    }
-
-    setUploadingImage(false);
-    e.target.value = "";
-  };
-
-  const handleAddUrl = () => {
-    if (!urlInput.trim()) return;
-    if (images.length >= 5) {
-      setStatusMsg({ type: "error", text: "Maksimal 5 gambar per proyek." });
-      return;
-    }
-    setImages((prev) => [...prev, urlInput.trim()].slice(0, 5));
-    setUrlInput("");
-    setStatusMsg({ type: "success", text: "URL Gambar ditambahkan!" });
-  };
-
-  const handleRemoveImage = (index: number) => {
-    soundFx.playClick();
-    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -354,94 +300,16 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
       {/* SUBVIEW 2: TAMBAH PROYEK FORM */}
       {subView === "tambah" && (
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Card 1: Gambar Proyek (Hingga 5 Gambar) */}
-          <div className="p-6 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
-            <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
-              <span className="text-xs font-mono font-black uppercase text-black dark:text-white flex items-center gap-2">
-                <Images className="w-4 h-4 text-[#166534] dark:text-[#EAB308]" />
-                01. GAMBAR PROYEK ({images.length}/5 GAMBAR CAROUSEL)
-              </span>
-              <span className="text-[10px] font-mono font-bold text-neutral-500 uppercase">
-                MAKSIMAL 5 GAMBAR
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              {[0, 1, 2, 3, 4].map((index) => {
-                const imgUrl = images[index];
-                return (
-                  <div
-                    key={index}
-                    className="relative w-full h-28 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white overflow-hidden flex flex-col items-center justify-center"
-                  >
-                    {imgUrl ? (
-                      <>
-                        <Image src={imgUrl} alt={`Gambar ${index + 1}`} fill unoptimized className="object-cover" />
-                        <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/80 text-[#FFFF00] text-[9px] font-mono font-black border border-black">
-                          #{index + 1}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(index)}
-                          className="absolute top-1 right-1 p-1 bg-red-600 text-white border border-black cursor-pointer hover:bg-red-800"
-                          title="Hapus gambar ini"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </>
-                    ) : (
-                      <div className="text-center p-2 space-y-1">
-                        <UploadCloud className="w-5 h-5 text-neutral-400 mx-auto" />
-                        <span className="text-[9px] font-mono font-bold text-neutral-400 uppercase block">
-                          SLOT #{index + 1}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <label className="border-3 border-dashed border-black dark:border-white bg-slate-50 dark:bg-slate-900 hover:bg-amber-50 dark:hover:bg-slate-800 p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all min-h-[100px]">
-                <UploadCloud className="w-6 h-6 text-[#166534] dark:text-[#EAB308] mb-1" />
-                <span className="text-xs font-mono font-black text-black dark:text-white uppercase">
-                  {uploadingImage ? "MENGUNGGAH GAMBAR..." : "UNGGAH FOTO PROYEK"}
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                  disabled={uploadingImage || images.length >= 5}
-                  className="hidden"
-                />
-              </label>
-
-              <div className="space-y-2 flex flex-col justify-center">
-                <label className="block text-[11px] font-mono font-black uppercase text-neutral-600 dark:text-neutral-400">
-                  ATAU TAMBAH VIA URL GAMBAR
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="url"
-                    value={urlInput}
-                    onChange={(e) => setUrlInput(e.target.value)}
-                    placeholder="https://domain.com/gambar.png"
-                    className="flex-1 px-3 py-2 border-2 border-black dark:border-white bg-white dark:bg-slate-900 text-black dark:text-white text-xs font-mono focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddUrl}
-                    disabled={images.length >= 5 || !urlInput.trim()}
-                    className="px-3 py-2 bg-[#166534] text-white border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#14532D] disabled:opacity-50 cursor-pointer"
-                  >
-                    Tambah
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Card 1: Gambar Proyek (Hingga 5 Gambar Drag & Drop) */}
+          <ProjectImageUploader
+            images={images}
+            onChange={setImages}
+            uploadingImage={uploadingImage}
+            setUploadingImage={setUploadingImage}
+            urlInput={urlInput}
+            setUrlInput={setUrlInput}
+            setStatusMsg={setStatusMsg}
+          />
 
           {/* Card 2: Detail Proyek */}
           <div className="p-6 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">

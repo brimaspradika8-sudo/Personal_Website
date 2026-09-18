@@ -166,18 +166,6 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
               <span>STUDIO ARTIKEL SAYA</span>
             </Link>
           </div>
-
-          {isAdmin && (
-            <button
-              onClick={handleSeedArticles}
-              disabled={isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-900 text-slate-950 dark:text-white border-2 border-slate-900 dark:border-white text-xs font-mono font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-50 uppercase"
-              title="Isi sampel artikel ke database jika kosong"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 text-[#166534] ${isPending ? "animate-spin" : ""}`} />
-              <span>{isPending ? "PROSES..." : "SEED ARTIKEL"}</span>
-            </button>
-          )}
         </div>
 
         {/* 2. HERO TITLE SECTION */}
