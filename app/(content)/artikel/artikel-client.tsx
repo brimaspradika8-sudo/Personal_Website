@@ -24,6 +24,7 @@ import { ArticleItem, seedSampleArticlesIfEmpty } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { isBookmarked, toggleBookmark, subscribeBookmarks } from "@/lib/bookmarks";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 function BookmarkCardButton({ article }: { article: ArticleItem }) {
   const [saved, setSaved] = useState(false);
@@ -99,6 +100,7 @@ interface ArtikelClientProps {
 }
 
 export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClientProps) {
+  const { lang } = useLanguage();
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string>("SEMUA");
@@ -106,19 +108,21 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
   const [isPending, startTransition] = useTransition();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const availableTags = ["SEMUA", "AI", "NEXTJS", "TUTORIAL", "FULLSTACK", "SYSTEMS"];
+  const availableTags = lang === "id" 
+    ? ["SEMUA", "AI", "NEXTJS", "TUTORIAL", "FULLSTACK", "SYSTEMS"]
+    : ["ALL", "AI", "NEXTJS", "TUTORIAL", "FULLSTACK", "SYSTEMS"];
 
   const handleSeedArticles = () => {
     soundFx.playClick();
     startTransition(async () => {
       const res = await seedSampleArticlesIfEmpty();
       if (res.seeded) {
-        setToastMsg(`Berhasil menambahkan artikel sampel ke database!`);
+        setToastMsg(lang === "id" ? `Berhasil menambahkan artikel sampel!` : `Sample articles added successfully!`);
         window.location.reload();
       } else if (res.error) {
         setToastMsg(res.error);
       } else {
-        setToastMsg("Database sudah terisi artikel.");
+        setToastMsg(lang === "id" ? "Database sudah terisi artikel." : "Database already populated.");
       }
       setTimeout(() => setToastMsg(null), 3500);
     });
@@ -132,11 +136,12 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
         article.content.toLowerCase().includes(q) ||
         (article.category && article.category.toLowerCase().includes(q));
 
+      const tagUpper = selectedTag.toUpperCase();
       const matchesTag =
-        selectedTag === "SEMUA" ||
-        (article.category && article.category.toUpperCase().includes(selectedTag)) ||
-        article.title.toUpperCase().includes(selectedTag) ||
-        article.content.toUpperCase().includes(selectedTag);
+        tagUpper === "SEMUA" || tagUpper === "ALL" ||
+        (article.category && article.category.toUpperCase().includes(tagUpper)) ||
+        article.title.toUpperCase().includes(tagUpper) ||
+        article.content.toUpperCase().includes(tagUpper);
 
       return matchesQuery && matchesTag;
     })
@@ -160,22 +165,22 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             <Link
               href="/dashboard"
               onClick={() => soundFx.playClick()}
-              aria-label="Kembali ke Beranda"
+              aria-label={lang === "id" ? "Kembali ke Beranda" : "Back to Home"}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#166534] text-white border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-emerald-800"
             >
               <ArrowLeft className="w-4 h-4 text-[#EAB308]" />
-              <span>BERANDA</span>
+              <span>{lang === "id" ? "BERANDA" : "HOME"}</span>
             </Link>
 
             <Link
               href="/dashboard/artikel"
               onClick={() => soundFx.playClick()}
-              aria-label="Studio Artikel Saya"
+              aria-label={lang === "id" ? "Studio Artikel Saya" : "My Article Studio"}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-amber-400"
-              title="Studio Artikel Saya (Ruang Kerja Member)"
+              title={lang === "id" ? "Studio Artikel Saya (Ruang Kerja Member)" : "My Article Studio (Member Workspace)"}
             >
               <LayoutDashboard className="w-4 h-4 text-slate-950" />
-              <span>STUDIO ARTIKEL SAYA</span>
+              <span>{lang === "id" ? "STUDIO ARTIKEL SAYA" : "MY ARTICLE STUDIO"}</span>
             </Link>
           </div>
         </div>
@@ -184,15 +189,19 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
         <div className="space-y-3 text-left">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-mono font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             <Sparkles className="w-3.5 h-3.5 text-slate-950" />
-            <span>JURNAL & INSIGHT ARTIKEL</span>
+            <span>{lang === "id" ? "JURNAL & INSIGHT ARTIKEL" : "JOURNAL & ARTICLE INSIGHTS"}</span>
           </div>
 
           <h1 className="font-serif font-black text-3xl sm:text-5xl uppercase tracking-tight text-slate-950 dark:text-white leading-none">
-            EKSPLORASI ARTIKEL & ARSITEKTUR WEB
+            {lang === "id" ? "EKSPLORASI ARTIKEL & ARSITEKTUR WEB" : "ARTICLE EXPLORATION & WEB ARCHITECTURE"}
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans font-medium max-w-2xl leading-relaxed">
-            Tulisan teknis, catatan riset AI Systems, serta panduan pengembangan web modern oleh <span className="font-bold text-[#166534] dark:text-[#EAB308]">Brimas Pradika Utama</span>.
+            {lang === "id" ? (
+              <>Tulisan teknis, catatan riset AI Systems, serta panduan pengembangan web modern oleh <span className="font-bold text-[#166534] dark:text-[#EAB308]">Brimas Pradika Utama</span>.</>
+            ) : (
+              <>Technical writing, AI Systems research notes, and modern web engineering guides by <span className="font-bold text-[#166534] dark:text-[#EAB308]">Brimas Pradika Utama</span>.</>
+            )}
           </p>
         </div>
 
@@ -205,8 +214,8 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
               <input
                 type="text"
-                aria-label="Cari judul artikel"
-                placeholder="Cari judul artikel, topik, atau kata kunci..."
+                aria-label={lang === "id" ? "Cari judul artikel" : "Search article title"}
+                placeholder={lang === "id" ? "Cari judul artikel, topik, atau kata kunci..." : "Search article title, topic, or keywords..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white placeholder:text-slate-400 text-xs font-mono font-bold focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all"
@@ -215,7 +224,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  aria-label="Hapus kata kunci pencarian"
+                  aria-label={lang === "id" ? "Hapus kata kunci pencarian" : "Clear search query"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-[#166534] dark:text-[#EAB308] hover:underline cursor-pointer"
                 >
                   CLEAR
@@ -227,14 +236,14 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 font-mono">
               <SlidersHorizontal className="w-4 h-4 text-slate-700 dark:text-slate-300 hidden sm:block" />
               <select
-                aria-label="Urutkan artikel"
+                aria-label={lang === "id" ? "Urutkan artikel" : "Sort articles"}
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as "latest" | "oldest" | "popular")}
                 className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:outline-none cursor-pointer uppercase"
               >
-                <option value="latest">URUTKAN: TERBARU</option>
-                <option value="popular">URUTKAN: TERPOPULER</option>
-                <option value="oldest">URUTKAN: TERLAMA</option>
+                <option value="latest">{lang === "id" ? "URUTKAN: TERBARU" : "SORT: LATEST"}</option>
+                <option value="popular">{lang === "id" ? "URUTKAN: TERPOPULER" : "SORT: POPULAR"}</option>
+                <option value="oldest">{lang === "id" ? "URUTKAN: TERLAMA" : "SORT: OLDEST"}</option>
               </select>
             </div>
           </div>
@@ -243,7 +252,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
           <div className="flex items-center gap-2 flex-wrap pt-1 font-mono">
             <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 mr-1 flex items-center gap-1">
               <Tag className="w-3 h-3 text-[#166534] dark:text-[#EAB308]" />
-              TOPIS:
+              {lang === "id" ? "TOPIK:" : "TOPICS:"}
             </span>
             {availableTags.map((tag) => (
               <button
@@ -269,16 +278,19 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
         {filteredArticles.length === 0 ? (
           <div className="py-16 text-center space-y-3 rounded-2xl sm:rounded-3xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
             <BookOpen className="w-10 h-10 text-[#166534] dark:text-[#EAB308] mx-auto" />
-            <h3 className="text-base font-serif font-black uppercase text-slate-950 dark:text-white">TIDAK ADA ARTIKEL DITEMUKAN</h3>
+            <h3 className="text-base font-serif font-black uppercase text-slate-950 dark:text-white">
+              {lang === "id" ? "TIDAK ADA ARTIKEL DITEMUKAN" : "NO ARTICLES FOUND"}
+            </h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium">
-              Coba kata kunci pencarian atau kategori lain.
+              {lang === "id" ? "Coba kata kunci pencarian atau kategori lain." : "Try a different search query or topic filter."}
             </p>
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery("")}
                 className="px-5 py-2.5 rounded-xl bg-[#166534] text-white border-2 border-slate-900 text-xs font-mono font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase"
               >
-                RESET PENCARIAN
+                {lang === "id" ? "RESET PENCARIAN" : "RESET SEARCH"}
               </button>
             )}
           </div>
