@@ -40,9 +40,6 @@ function getAuthHeader(): string {
   return `Basic ${encoded}`;
 }
 
-/**
- * Membuat Invoice Xendit via POST /v2/invoices
- */
 export async function createXenditInvoice(
   input: CreateInvoiceInput
 ): Promise<XenditInvoiceResponse> {
@@ -81,9 +78,6 @@ export async function createXenditInvoice(
   return responseData as XenditInvoiceResponse;
 }
 
-/**
- * Mengambil detail Invoice Xendit via GET /v2/invoices/{id}
- */
 export async function getXenditInvoice(
   invoiceId: string
 ): Promise<XenditInvoiceResponse> {
