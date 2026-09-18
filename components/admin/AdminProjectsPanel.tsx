@@ -11,16 +11,19 @@ import {
   ExternalLink,
   Code2,
   Trash2,
+  Edit,
   Search,
   CheckCircle2,
   AlertCircle,
   FileText,
   Save,
   Globe,
+  Video,
 } from "lucide-react";
-import { ProjectItem, deleteProject, createProject } from "@/lib/actions/project";
+import { ProjectItem, deleteProject, createProject, updateProject } from "@/lib/actions/project";
 import { soundFx } from "@/lib/audio/sound";
-import ProjectImageUploader from "./ProjectImageUploader";
+import ProjectImageUploader, { isVideoUrl } from "./ProjectImageUploader";
+import { parseThumbnailUrls, ensurePublicSupabaseUrl } from "@/lib/supabase/url";
 
 interface AdminProjectsPanelProps {
   initialProjects?: ProjectItem[];
@@ -28,12 +31,13 @@ interface AdminProjectsPanelProps {
 
 export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjectsPanelProps) {
   const [projects, setProjects] = useState<ProjectItem[]>(initialProjects);
-  const [subView, setSubView] = useState<"list" | "tambah">("list");
+  const [subView, setSubView] = useState<"list" | "tambah" | "edit">("list");
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Form State for "tambah" subview
+  // Form State
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -49,6 +53,32 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleStartTambah = () => {
+    soundFx.playClick();
+    setEditingProjectId(null);
+    setTitle("");
+    setDescription("");
+    setImages([]);
+    setUrlInput("");
+    setRepositoryUrl("");
+    setDemoUrl("");
+    setStatusMsg(null);
+    setSubView("tambah");
+  };
+
+  const handleStartEdit = (project: ProjectItem) => {
+    soundFx.playClick();
+    setEditingProjectId(project.id);
+    setTitle(project.title);
+    setDescription(project.description);
+    setImages(parseThumbnailUrls(project.thumbnail));
+    setUrlInput("");
+    setRepositoryUrl(project.repository_url || "");
+    setDemoUrl(project.demo_url || "");
+    setStatusMsg(null);
+    setSubView("edit");
+  };
 
   const handleDelete = async (id: string, projectTitle: string) => {
     if (!confirm(`Apakah Anda yakin ingin menghapus proyek "${projectTitle}"?`)) return;
@@ -87,21 +117,38 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
 
     const thumbnailData = images.length > 0 ? (images.length === 1 ? images[0] : JSON.stringify(images)) : undefined;
 
-    const res = await createProject({
-      title: title.trim(),
-      slug: generatedSlug,
-      description: description.trim(),
-      thumbnail: thumbnailData,
-      repository_url: repositoryUrl.trim() || undefined,
-      demo_url: demoUrl.trim() || undefined,
-    });
+    let res;
+    if (subView === "edit" && editingProjectId) {
+      res = await updateProject(editingProjectId, {
+        title: title.trim(),
+        slug: generatedSlug,
+        description: description.trim(),
+        thumbnail: thumbnailData,
+        repository_url: repositoryUrl.trim() || undefined,
+        demo_url: demoUrl.trim() || undefined,
+      });
+    } else {
+      res = await createProject({
+        title: title.trim(),
+        slug: generatedSlug,
+        description: description.trim(),
+        thumbnail: thumbnailData,
+        repository_url: repositoryUrl.trim() || undefined,
+        demo_url: demoUrl.trim() || undefined,
+      });
+    }
 
     setSaving(false);
 
     if (res.error) {
       setStatusMsg({ type: "error", text: res.error });
     } else {
-      setStatusMsg({ type: "success", text: "Proyek baru berhasil ditambahkan!" });
+      const isEdit = subView === "edit";
+      setStatusMsg({
+        type: "success",
+        text: isEdit ? "Proyek berhasil diperbarui!" : "Proyek baru berhasil ditambahkan!",
+      });
+
       if (res.project) {
         const formattedProject: ProjectItem = {
           ...res.project,
@@ -114,8 +161,14 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
               ? res.project.updated_at
               : (res.project.updated_at as Date).toISOString(),
         };
-        setProjects((prev) => [formattedProject, ...prev]);
+
+        if (isEdit) {
+          setProjects((prev) => prev.map((p) => (p.id === formattedProject.id ? formattedProject : p)));
+        } else {
+          setProjects((prev) => [formattedProject, ...prev]);
+        }
       }
+
       setTimeout(() => {
         setSubView("list");
         setTitle("");
@@ -123,28 +176,30 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
         setImages([]);
         setRepositoryUrl("");
         setDemoUrl("");
+        setEditingProjectId(null);
       }, 800);
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Top Header Bar for Proyek Panel */}
+      {/* Top Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-4 border-black dark:border-white">
         <div className="flex items-center gap-3">
           <span className="px-3.5 py-1.5 bg-[#166534] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
             <FolderKanban className="w-4 h-4 text-[#FFFF00]" />
-            {subView === "list" ? `KELOLA PROYEK (${projects.length})` : "TAMBAH PROYEK BARU"}
+            {subView === "list"
+              ? `KELOLA PROYEK (${projects.length})`
+              : subView === "edit"
+              ? "EDIT PROYEK"
+              : "TAMBAH PROYEK BARU"}
           </span>
         </div>
 
         {subView === "list" ? (
           <button
             type="button"
-            onClick={() => {
-              soundFx.playClick();
-              setSubView("tambah");
-            }}
+            onClick={handleStartTambah}
             className="px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all cursor-pointer flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
@@ -165,7 +220,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
         )}
       </div>
 
-      {/* Status Message Notification */}
+      {/* Status Notification */}
       {statusMsg && (
         <div
           className={`p-4 border-4 border-black font-mono font-black text-xs flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
@@ -218,7 +273,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
               </p>
               <button
                 type="button"
-                onClick={() => setSubView("tambah")}
+                onClick={handleStartTambah}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
@@ -227,80 +282,118 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
-              {filteredProjects.map((p) => (
-                <div
-                  key={p.id}
-                  className="p-5 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="relative w-20 h-20 bg-slate-200 dark:bg-slate-900 border-2 border-black dark:border-white shrink-0 overflow-hidden">
-                      {p.thumbnail ? (
-                        <Image src={p.thumbnail} alt={p.title} fill unoptimized className="object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                          <FolderGit2 className="w-6 h-6" />
-                        </div>
-                      )}
-                    </div>
+              {filteredProjects.map((p) => {
+                const mediaList = parseThumbnailUrls(p.thumbnail);
+                const firstMedia = mediaList.length > 0 ? mediaList[0] : null;
+                const isVid = firstMedia ? isVideoUrl(firstMedia) : false;
 
-                    <div className="space-y-1.5">
-                      <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">
-                        {p.title}
-                      </h3>
-                      <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-400 line-clamp-2 max-w-xl">
-                        {p.description}
-                      </p>
-
-                      <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-mono font-black">
-                        {p.repository_url && (
-                          <a
-                            href={p.repository_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-2 py-0.5 bg-[#FEF9C3] dark:bg-slate-800 text-black dark:text-white border border-black flex items-center gap-1"
-                          >
-                            <Code2 className="w-3 h-3 text-[#166534]" />
-                            <span>Repo GitHub</span>
-                          </a>
+                return (
+                  <div
+                    key={p.id}
+                    className="p-5 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-start gap-4">
+                      {/* Media Preview Thumbnail */}
+                      <div className="relative w-20 h-20 bg-slate-200 dark:bg-slate-900 border-2 border-black dark:border-white shrink-0 overflow-hidden flex items-center justify-center">
+                        {firstMedia ? (
+                          isVid ? (
+                            <video
+                              src={firstMedia}
+                              muted
+                              loop
+                              playsInline
+                              preload="metadata"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={firstMedia}
+                              alt={p.title}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                          )
+                        ) : (
+                          <FolderGit2 className="w-6 h-6 text-neutral-400" />
                         )}
-
-                        {p.demo_url && (
-                          <a
-                            href={p.demo_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-2 py-0.5 bg-[#DCFCE7] dark:bg-slate-800 text-black dark:text-white border border-black flex items-center gap-1"
-                          >
-                            <ExternalLink className="w-3 h-3 text-[#EAB308]" />
-                            <span>Live Deploy</span>
-                          </a>
+                        {mediaList.length > 1 && (
+                          <div className="absolute bottom-0 right-0 bg-black/80 text-[#FFFF00] text-[9px] font-mono px-1 border-t border-l border-black">
+                            +{mediaList.length - 1}
+                          </div>
                         )}
                       </div>
+
+                      {/* Info & Links */}
+                      <div className="space-y-1.5">
+                        <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">
+                          {p.title}
+                        </h3>
+                        <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-400 line-clamp-2 max-w-xl">
+                          {p.description}
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-mono font-black">
+                          {p.repository_url && (
+                            <a
+                              href={p.repository_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-2 py-0.5 bg-[#FEF9C3] dark:bg-slate-800 text-black dark:text-white border border-black flex items-center gap-1"
+                            >
+                              <Code2 className="w-3 h-3 text-[#166534]" />
+                              <span>Repo GitHub</span>
+                            </a>
+                          )}
+
+                          {p.demo_url && (
+                            <a
+                              href={p.demo_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-2 py-0.5 bg-[#DCFCE7] dark:bg-slate-800 text-black dark:text-white border border-black flex items-center gap-1"
+                            >
+                              <ExternalLink className="w-3 h-3 text-[#EAB308]" />
+                              <span>Live Deploy</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions: EDIT & HAPUS */}
+                    <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 border-slate-200 dark:border-slate-800 pt-3 md:pt-0">
+                      <button
+                        type="button"
+                        onClick={() => handleStartEdit(p)}
+                        className="px-3.5 py-2 bg-[#EAB308] text-black border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#d9a207] cursor-pointer flex items-center gap-1.5"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                        <span>EDIT</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(p.id, p.title)}
+                        disabled={deletingId === p.id}
+                        className="px-3.5 py-2 bg-red-600 text-white border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-800 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>HAPUS</span>
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 border-slate-200 dark:border-slate-800 pt-3 md:pt-0">
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(p.id, p.title)}
-                      disabled={deletingId === p.id}
-                      className="px-3 py-2 bg-red-600 text-white border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-800 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Hapus</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
       )}
 
-      {/* SUBVIEW 2: TAMBAH PROYEK FORM */}
-      {subView === "tambah" && (
+      {/* SUBVIEW 2 / 3: FORM TAMBAH / EDIT PROYEK */}
+      {(subView === "tambah" || subView === "edit") && (
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Card 1: Gambar Proyek (Hingga 5 Gambar Drag & Drop) */}
+          {/* Card 1: Gambar & Video Proyek (Multi-Media Drag & Drop) */}
           <ProjectImageUploader
             images={images}
             onChange={setImages}
@@ -394,8 +487,11 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={() => setSubView("list")}
-              className="px-6 py-3 border-3 border-black dark:border-white bg-slate-200 dark:bg-slate-900 text-black dark:text-white text-xs font-mono font-black uppercase hover:bg-slate-300 transition-colors"
+              onClick={() => {
+                soundFx.playClick();
+                setSubView("list");
+              }}
+              className="px-6 py-3 border-3 border-black dark:border-white bg-slate-200 dark:bg-slate-900 text-black dark:text-white text-xs font-mono font-black uppercase hover:bg-slate-300 transition-colors cursor-pointer"
             >
               BATAL
             </button>
@@ -406,7 +502,13 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
               className="px-8 py-3 bg-[#00FF66] text-black border-3 border-black font-mono font-black text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
               <Save className="w-4 h-4" />
-              <span>{saving ? "MENYIMPAN PROYEK..." : "SIMPAN PROYEK"}</span>
+              <span>
+                {saving
+                  ? "MENYIMPAN PROYEK..."
+                  : subView === "edit"
+                  ? "PERBARUI PROYEK"
+                  : "SIMPAN PROYEK"}
+              </span>
             </button>
           </div>
         </form>

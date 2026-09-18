@@ -9,3 +9,20 @@ export function ensurePublicSupabaseUrl(url: string): string {
   }
   return url;
 }
+
+/**
+ * Parsing data thumbnail (baik berupa string URL tunggal maupun JSON array string)
+ * menjadi array of URL yang valid dan dipastikan publik.
+ */
+export function parseThumbnailUrls(thumbnail: string | null | undefined): string[] {
+  if (!thumbnail) return [];
+  if (thumbnail.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(thumbnail);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((u: string) => ensurePublicSupabaseUrl(u));
+      }
+    } catch {}
+  }
+  return [ensurePublicSupabaseUrl(thumbnail)];
+}
