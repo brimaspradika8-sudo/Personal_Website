@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ExternalLink, Code2, CheckCircle2, Layers } from "lucide-react";
+import { X, ExternalLink, Code2, Layers } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -44,8 +43,12 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
     };
   }, [project, onClose]);
 
-  const defaultTechStack = ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "Supabase"];
-  const techList = project?.techStack || defaultTechStack;
+  const isLiveDemoValid = (url?: string | null) => {
+    if (!url) return false;
+    const trimmed = url.trim();
+    if (!trimmed || trimmed === "#") return false;
+    return trimmed.startsWith("http://") || trimmed.startsWith("https://");
+  };
 
   return (
     <AnimatePresence>
@@ -122,27 +125,9 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 </p>
               </div>
 
-              {/* Tech Stack Badges */}
-              <div className="space-y-2.5">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-white/50">
-                  {lang === "id" ? "TEKNOLOGI & STACK" : "TECHNOLOGIES & STACK"}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {techList.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#141416] text-white/90 border border-white/10 flex items-center gap-2 shadow-sm"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#166534]" />
-                      <span>{tech}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
               {/* Action Links */}
               <div className="pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-                {project.repository_url ? (
+                {project.repository_url && project.repository_url !== "#" ? (
                   <a
                     href={project.repository_url}
                     target="_blank"
@@ -157,9 +142,9 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                   <div />
                 )}
 
-                {project.demo_url && (
+                {isLiveDemoValid(project.demo_url) && (
                   <a
-                    href={project.demo_url}
+                    href={project.demo_url!}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => soundFx.playClick()}

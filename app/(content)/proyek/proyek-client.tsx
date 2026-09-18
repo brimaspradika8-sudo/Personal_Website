@@ -2,25 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowLeft,
-  FolderGit2,
-  ExternalLink,
-  Code2,
-  Eye,
-  Search,
-  Sparkles,
-  Layers,
-  Globe,
-  Terminal,
-  Cpu,
-  CheckCircle2,
-  Filter,
-  RefreshCw,
-  Mail,
-} from "lucide-react";
+import { ArrowLeft, FolderGit2, ExternalLink, Code2, Eye, Search, Sparkles, Filter, Mail } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { soundFx } from "@/lib/audio/sound";
 import Footer from "@/components/Footer";
@@ -39,7 +21,6 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     thumbnail: "/images/project1.png",
     demo_url: "https://brimaspradika.vercels.app",
     repository_url: "https://github.com/brimaspradika8-sudo/Personal_Website",
-    techStack: ["Next.js 15", "TypeScript", "Prisma", "Supabase", "Xendit", "ElevenLabs AI"],
   },
   {
     id: "proj-2",
@@ -48,16 +29,14 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     thumbnail: "/images/project2.png",
     demo_url: "https://brimaspradika.vercels.app/artikel",
     repository_url: "https://github.com/brimaspradika8-sudo/Personal_Website",
-    techStack: ["React 19", "Tiptap Editor", "Edge Neural TTS", "TailwindCSS", "PostgreSQL"],
   },
   {
     id: "proj-3",
     title: "Askyle Web Application System",
     description: "Sistem informasi berbasis PHP & MySQL dengan integrasi database terstruktur, antarmuka responsif, dan pengolahan data kueri performa tinggi.",
     thumbnail: "/images/project3.png",
-    demo_url: "http://localhost/Askyle",
+    demo_url: "",
     repository_url: "https://github.com/brimaspradika8-sudo/Askyle",
-    techStack: ["PHP 8", "MySQL", "Bootstrap", "JavaScript", "XAMPP"],
   },
 ];
 
@@ -82,13 +61,8 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
         title: p.title,
         description: p.description,
         thumbnail: p.thumbnail || "/images/project1.png",
-        demo_url: p.demo_url || "#",
-        repository_url: p.repository_url || "#",
-        techStack: p.description.includes("Laravel")
-          ? ["Laravel", "PHP", "MySQL"]
-          : p.description.includes("AI")
-          ? ["Next.js", "AI Agent", "TypeScript"]
-          : ["Next.js 15", "TypeScript", "Supabase", "Prisma"],
+        demo_url: p.demo_url || "",
+        repository_url: p.repository_url || "",
       }))
     : DEFAULT_PROJECTS;
 
@@ -96,19 +70,24 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
   const filteredProjects = projectsData.filter((p) => {
     const matchesSearch =
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.techStack?.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      p.description.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchesSearch) return false;
 
     if (selectedCategory === "Semua" || selectedCategory === "All") return true;
 
     const cat = selectedCategory.toLowerCase();
-    const stackStr = (p.techStack || []).join(" ").toLowerCase();
     const titleDesc = (p.title + " " + p.description).toLowerCase();
 
-    return stackStr.includes(cat) || titleDesc.includes(cat);
+    return titleDesc.includes(cat);
   });
+
+  const isLiveDemoValid = (url?: string | null) => {
+    if (!url) return false;
+    const trimmed = url.trim();
+    if (!trimmed || trimmed === "#") return false;
+    return trimmed.startsWith("http://") || trimmed.startsWith("https://");
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-black pb-28 sm:pb-20">
@@ -135,7 +114,6 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
 
         {/* 2. HERO HEADER BANNER (Brazil Neo-Brutalism Style) */}
         <section className="relative p-6 sm:p-10 rounded-none border-4 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] overflow-hidden">
-          {/* Background Accent Stripe */}
           <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#166534] border-4 border-black dark:border-white rotate-12 pointer-events-none opacity-20 dark:opacity-30" />
 
           <div className="relative z-10 space-y-4">
@@ -153,34 +131,19 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                 ? "Daftar aplikasi web nyata, integrasi sistem kecerdasan buatan (AI), arsitektur fullstack, dan repositori open-source yang telah dirancang & diimplementasikan."
                 : "A showcase of real-world web applications, AI system integrations, fullstack architectures, and open-source repositories."}
             </p>
-
-            {/* Quick Stats Badges */}
-            <div className="flex flex-wrap gap-2 pt-2">
-              <span className="px-3 py-1 bg-[#FEF9C3] dark:bg-[#121824] border-2 border-black dark:border-white text-[11px] font-mono font-black uppercase text-black dark:text-white">
-                🚀 Web Apps &amp; SaaS
-              </span>
-              <span className="px-3 py-1 bg-[#DCFCE7] dark:bg-[#121824] border-2 border-black dark:border-white text-[11px] font-mono font-black uppercase text-black dark:text-white">
-                🤖 AI Agents &amp; TTS Integration
-              </span>
-              <span className="px-3 py-1 bg-[#FEF9C3] dark:bg-[#121824] border-2 border-black dark:border-white text-[11px] font-mono font-black uppercase text-black dark:text-white">
-                ⚡ Next.js 15 &amp; Laravel
-              </span>
-            </div>
           </div>
         </section>
 
         {/* 3. SEARCH & FILTER CONTROLS BAR */}
         <div className="p-4 rounded-none border-4 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
-          
           <div className="flex flex-col sm:flex-row items-center gap-3">
-            {/* Live Search Input */}
             <div className="relative flex-1 w-full">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={lang === "id" ? "Cari nama proyek, teknologi, atau kata kunci..." : "Search project title, tech stack, keywords..."}
+                placeholder={lang === "id" ? "Cari nama proyek atau kata kunci..." : "Search project title or keywords..."}
                 className="w-full pl-10 pr-4 py-2.5 rounded-none border-3 border-black dark:border-white bg-slate-50 dark:bg-[#121824] text-xs font-mono font-bold text-black dark:text-white focus:outline-none focus:bg-white dark:focus:bg-black placeholder:text-neutral-400"
               />
               {searchQuery && (
@@ -194,13 +157,11 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
               )}
             </div>
 
-            {/* Total Results Count */}
             <div className="px-4 py-2.5 rounded-none border-3 border-black dark:border-white bg-[#166534] text-white text-xs font-mono font-black shrink-0 uppercase">
               {filteredProjects.length} {lang === "id" ? "Proyek Ditemukan" : "Projects Found"}
             </div>
           </div>
 
-          {/* Category Chips Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none pt-1">
             <span className="text-xs font-mono font-black uppercase text-neutral-500 shrink-0 flex items-center gap-1 mr-1">
               <Filter className="w-3.5 h-3.5" />
@@ -227,7 +188,6 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
               );
             })}
           </div>
-
         </div>
 
         {/* 4. PROJECTS GRID */}
@@ -300,55 +260,41 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                       </p>
                     </div>
 
-                    {/* Tech Stack Pills */}
-                    <div className="space-y-3 pt-2">
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.techStack?.map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 text-[10px] font-mono font-black border-2 border-black dark:border-white bg-[#FFFF00] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
+                    {/* Card Footer Links */}
+                    <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between text-xs font-mono font-black">
+                      {project.repository_url && project.repository_url !== "#" ? (
+                        <a
+                          href={project.repository_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            soundFx.playClick();
+                          }}
+                          className="text-black dark:text-white hover:text-[#166534] transition-colors flex items-center gap-1"
+                        >
+                          <Code2 className="w-3.5 h-3.5" />
+                          <span>CODE</span>
+                        </a>
+                      ) : (
+                        <span className="text-neutral-400 font-mono text-[10px] uppercase">PRIVATE REPO</span>
+                      )}
 
-                      {/* Card Footer Links */}
-                      <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between text-xs font-mono font-black">
-                        {project.repository_url && project.repository_url !== "#" ? (
-                          <a
-                            href={project.repository_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              soundFx.playClick();
-                            }}
-                            className="text-black dark:text-white hover:text-[#166534] transition-colors flex items-center gap-1"
-                          >
-                            <Code2 className="w-3.5 h-3.5" />
-                            <span>CODE</span>
-                          </a>
-                        ) : (
-                          <span className="text-neutral-400 font-mono text-[10px] uppercase">PRIVATE REPO</span>
-                        )}
-
-                        {project.demo_url && project.demo_url !== "#" && (
-                          <a
-                            href={project.demo_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              soundFx.playClick();
-                            }}
-                            className="text-[#166534] dark:text-[#00E676] font-black underline flex items-center gap-1"
-                          >
-                            <span>LIVE DEMO</span>
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                      </div>
+                      {isLiveDemoValid(project.demo_url) && (
+                        <a
+                          href={project.demo_url!}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            soundFx.playClick();
+                          }}
+                          className="text-[#166534] dark:text-[#00E676] font-black underline flex items-center gap-1"
+                        >
+                          <span>LIVE DEMO</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
                     </div>
 
                   </div>
