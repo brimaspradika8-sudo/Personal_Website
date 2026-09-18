@@ -137,20 +137,8 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
   };
 
   useEffect(() => {
-    async function syncClientAuth() {
-      try {
-        const res = await getCurrentProfile();
-        if (res.user) {
-          setCurrentUser(res.user);
-          if (res.dbUser) {
-            setCurrentDbUser(res.dbUser);
-          }
-        }
-      } catch (err) {
-        console.error("Profile client auth sync failed:", err);
-      }
-    }
-    syncClientAuth();
+    setCurrentUser(user);
+    setCurrentDbUser(dbUser);
   }, [user, dbUser]);
 
   const isAuthenticated = !!currentUser || !!user;
