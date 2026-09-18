@@ -4,6 +4,7 @@ import React from "react";
 import { FolderGit2, ExternalLink, Code2, Eye } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { ProjectData } from "@/components/ProjectModal";
+import { ProjectItem } from "@/lib/actions/project";
 import TiltCard from "@/components/TiltCard";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 
@@ -41,21 +42,21 @@ interface ProjectShowcaseProps {
   isNight: boolean;
   lang: "id" | "en";
   onSelectProject: (project: ProjectData) => void;
-  fetchedProjects?: Record<string, unknown>[];
+  fetchedProjects?: (ProjectItem | Record<string, unknown>)[];
 }
 
 export default function ProjectShowcase({ isNight, lang, onSelectProject, fetchedProjects }: ProjectShowcaseProps) {
   const projectsToUse = fetchedProjects && fetchedProjects.length > 0 ? fetchedProjects : null;
 
   const displayProjects: ProjectData[] = projectsToUse
-    ? projectsToUse.map((fp, i) => ({
+    ? projectsToUse.map((fp: any, i) => ({
         id: String(fp.id || `supa-${i}`),
         title: String(fp.title || "Untitled Project"),
         description: String(fp.description || "No description provided."),
         thumbnail: String(fp.thumbnail || `/images/project${(i % 3) + 1}.png`),
         demo_url: String(fp.demo_url || "#"),
         repository_url: String(fp.repository_url || "#"),
-        techStack: Array.isArray(fp.techStack) ? (fp.techStack as string[]) : ["Supabase", "Next.js", "TypeScript"],
+        techStack: Array.isArray(fp.techStack) ? (fp.techStack as string[]) : ["Next.js", "TypeScript", "Prisma"],
       }))
     : showcaseProjects;
 

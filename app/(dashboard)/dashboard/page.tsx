@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { checkIsAdmin } from "@/lib/actions/auth";
 import { getArticles } from "@/lib/actions/article";
+import { getProjects } from "@/lib/actions/project";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import DashboardClient from "./dashboard-client";
 
@@ -17,10 +18,11 @@ export default async function DashboardPage() {
     ? await prisma.user.findUnique({ where: { email: userEmail } }).catch(() => null)
     : null;
 
-  // 3. Pass dbUser.role langsung ke checkIsAdmin (tanpa query DB duplikat) + fetch artikel paralel
-  const [isAdmin, articles] = await Promise.all([
+  // 3. Pass dbUser.role langsung ke checkIsAdmin + fetch artikel & proyek paralel
+  const [isAdmin, articles, projects] = await Promise.all([
     checkIsAdmin(userEmail, dbUser?.role),
     getArticles(),
+    getProjects(),
   ]);
 
   return (
@@ -28,6 +30,7 @@ export default async function DashboardPage() {
       user={user}
       dbUser={dbUser}
       initialArticles={articles}
+      initialProjects={projects}
       isAdmin={isAdmin}
     />
   );

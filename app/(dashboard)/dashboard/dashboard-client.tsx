@@ -33,6 +33,7 @@ import TechStackBento from "@/components/TechStackBento";
 import Footer from "@/components/Footer";
 import { signOut } from "@/lib/actions/auth";
 import { ArticleItem } from "@/lib/actions/article";
+import { ProjectItem } from "@/lib/actions/project";
 import { getSavedTheme, saveTheme } from "@/lib/theme";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 
@@ -71,6 +72,7 @@ interface DashboardClientProps {
     created_at: Date | string;
   } | null;
   initialArticles?: ArticleItem[];
+  initialProjects?: ProjectItem[];
   isAdmin?: boolean;
 }
 
@@ -97,6 +99,7 @@ export default function DashboardClient({
   user,
   dbUser,
   initialArticles = [],
+  initialProjects = [],
   isAdmin = false,
 }: DashboardClientProps) {
   const { lang, toggleLang, dict } = useLanguage();
@@ -518,7 +521,8 @@ export default function DashboardClient({
       <ProjectShowcase
         isNight={isNight}
         lang={lang}
-        onSelectProject={(proj) => setSelectedProject(null)}
+        fetchedProjects={initialProjects}
+        onSelectProject={(proj) => setSelectedProject(proj)}
       />
 
       <ExperienceTimeline isNight={isNight} lang={lang} />
