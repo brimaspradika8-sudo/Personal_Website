@@ -1,12 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { unstable_noStore as noStore } from "next/cache";
 import { checkIsAdmin, getArticles } from "@/lib/actions/article";
 import { getProjects } from "@/lib/actions/project";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import AdminDashboard from "../admin-dashboard";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Kelola Artikel | Admin Dashboard",
@@ -14,42 +11,43 @@ export const metadata = {
 };
 
 export default async function AdminArticlesPage() {
-  noStore();
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
 
   if (!user) {
     redirect("/login?redirectedFrom=/admin/artikel");
   }
 
-  const userEmail = (user?.email ?? "").toLowerCase().trim();
-  const isAdmin = await checkIsAdmin(userEmail);
+  const userEmail = (user.email ?? "").toLowerCase().trim();
 
-  let dbUser = null;
-  if (userEmail) {
-    try {
-      dbUser = await prisma.user.findUnique({
-        where: { email: userEmail },
-      });
-    } catch {}
-  }
+  const dbUser = userEmail
+    ? await prisma.user.findUnique({ where: { email: userEmail } }).catch(() => null)
+    : null;
+
+  const isAdmin = await checkIsAdmin(userEmail, dbUser?.role);
 
   if (!isAdmin) {
     redirect("/dashboard/artikel");
   }
 
-  const projectsCount = await prisma.project.count().catch(() => 0);
-  const articlesCount = await prisma.article.count().catch(() => 0);
-  const usersCount = await prisma.user.count().catch(() => 0);
-  const commentsCount = await prisma.comment.count().catch(() => 0);
-
-  const recentProjectsRaw = await prisma.project.findMany({
-    take: 5,
-    orderBy: { created_at: "desc" },
-  }).catch(() => []);
+  const [
+    projectsCount,
+    articlesCount,
+    usersCount,
+    commentsCount,
+    recentProjectsRaw,
+    recentArticlesRaw,
+    allProjects,
+    allArticles,
+  ] = await Promise.all([
+    prisma.project.count().catch(() => 0),
+    prisma.article.count().catch(() => 0),
+    prisma.user.count().catch(() => 0),
+    prisma.comment.count().catch(() => 0),
+    prisma.project.findMany({ take: 5, orderBy: { created_at: "desc" } }).catch(() => []),
+    prisma.article.findMany({ take: 5, orderBy: { created_at: "desc" } }).catch(() => []),
+    getProjects().catch(() => []),
+    getArticles().catch(() => []),
+  ]);
 
   const recentProjects = recentProjectsRaw.map((p) => ({
     id: p.id,
@@ -58,20 +56,12 @@ export default async function AdminArticlesPage() {
     created_at: p.created_at ? p.created_at.toISOString() : new Date().toISOString(),
   }));
 
-  const recentArticlesRaw = await prisma.article.findMany({
-    take: 5,
-    orderBy: { created_at: "desc" },
-  }).catch(() => []);
-
   const recentArticles = recentArticlesRaw.map((a) => ({
     id: a.id,
     title: a.title,
     slug: a.slug,
     created_at: a.created_at ? a.created_at.toISOString() : new Date().toISOString(),
   }));
-
-  const allProjects = await getProjects().catch(() => []);
-  const allArticles = await getArticles().catch(() => []);
 
   const plainDbUser = dbUser ? { name: dbUser.name, avatar: dbUser.avatar } : null;
 

@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticles, incrementArticleViews } from "@/lib/actions/article";
-import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getEffectiveUserTier } from "@/lib/membership";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import ArticleClient from "./article-client";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -73,12 +73,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const supabase = await createClient();
 
   // Run view count increment asynchronously in background without blocking initial HTML render
   incrementArticleViews(slug).catch(() => {});
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
   const userEmail = user?.email ? user.email.toLowerCase().trim() : "";
 
   const [article, allArticles, dbUser] = await Promise.all([

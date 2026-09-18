@@ -1,52 +1,23 @@
-import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { checkIsAdmin } from "@/lib/actions/auth";
 import { getArticles } from "@/lib/actions/article";
-import { headers } from "next/headers";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import DashboardClient from "./dashboard-client";
 
+// Revalidate halaman dashboard setiap 60 detik (ISR) alih-alih force-dynamic di setiap request
+export const revalidate = 60;
+
 export default async function DashboardPage() {
-  const headerList = await headers();
-  const headerEmail = headerList.get("x-user-email");
-  const headerId = headerList.get("x-user-id");
-  const headerName = headerList.get("x-user-name");
-  const headerAvatar = headerList.get("x-user-avatar");
-
-  // Single Source of Truth: Gunakan user dari middleware headers jika tersedia (0ms network delay), atau fallback ke Supabase Auth
-  let user: { id: string; email: string; user_metadata: { full_name?: string; avatar_url?: string } } | null = null;
-
-  if (headerEmail) {
-    user = {
-      id: headerId || "",
-      email: headerEmail,
-      user_metadata: {
-        full_name: headerName ? decodeURIComponent(headerName) : "",
-        avatar_url: headerAvatar ? decodeURIComponent(headerAvatar) : "",
-      },
-    };
-  } else {
-    const supabase = await createClient();
-    const { data } = await supabase.auth.getUser();
-    if (data?.user?.email) {
-      user = {
-        id: data.user.id,
-        email: data.user.email,
-        user_metadata: {
-          full_name: data.user.user_metadata?.full_name || data.user.user_metadata?.name || "",
-          avatar_url: data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture || "",
-        },
-      };
-    }
-  }
-
+  // 1. Ambil user terautentikasi (0ms network delay via Middleware Headers)
+  const user = await getAuthenticatedUser();
   const userEmail = (user?.email ?? "").toLowerCase().trim();
 
-  // 1. Fetch DB User sekali saja
+  // 2. Fetch DB User sekali saja
   const dbUser = userEmail
     ? await prisma.user.findUnique({ where: { email: userEmail } }).catch(() => null)
     : null;
 
-  // 2. Pass dbUser.role langsung ke checkIsAdmin agar TIDAK melakukan query Prisma duplikat
+  // 3. Pass dbUser.role langsung ke checkIsAdmin (tanpa query DB duplikat) + fetch artikel paralel
   const [isAdmin, articles] = await Promise.all([
     checkIsAdmin(userEmail, dbUser?.role),
     getArticles(),
@@ -54,7 +25,7 @@ export default async function DashboardPage() {
 
   return (
     <DashboardClient
-      user={user as any}
+      user={user}
       dbUser={dbUser}
       initialArticles={articles}
       isAdmin={isAdmin}

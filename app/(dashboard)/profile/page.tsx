@@ -1,16 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import ProfileClient from "./profile-client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export default async function ProfilePage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getAuthenticatedUser();
   let dbUser = null;
 
   if (user?.email) {

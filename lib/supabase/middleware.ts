@@ -3,7 +3,17 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseEnv } from "./client";
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  // Anti-spoofing: Hapus header x-user-* jika ada di request awal dari client
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete("x-user-id");
+  requestHeaders.delete("x-user-email");
+  requestHeaders.delete("x-user-metadata");
+
+  let supabaseResponse = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
   const { supabaseUrl, supabaseAnonKey } = getSupabaseEnv();
 
@@ -24,7 +34,11 @@ export async function updateSession(request: NextRequest) {
               request.cookies.set(name, value)
             );
 
-            supabaseResponse = NextResponse.next({ request });
+            supabaseResponse = NextResponse.next({
+              request: {
+                headers: requestHeaders,
+              },
+            });
 
             cookiesToSet.forEach(({ name, value, options }) =>
               supabaseResponse.cookies.set(name, value, options)
@@ -76,21 +90,13 @@ export async function updateSession(request: NextRequest) {
       }
     }
 
-    // Teruskan data user yang tervalidasi via Request Headers untuk menghindari duplikasi getUser() di Server Components
+    // Teruskan data user ter-validasi ke Request Headers untuk Server Components
     if (user && user.email) {
-      const requestHeaders = new Headers(request.headers);
       requestHeaders.set("x-user-id", user.id);
       requestHeaders.set("x-user-email", user.email);
-      requestHeaders.set(
-        "x-user-name",
-        encodeURIComponent(user.user_metadata?.full_name || user.user_metadata?.name || "")
-      );
-      requestHeaders.set(
-        "x-user-avatar",
-        encodeURIComponent(user.user_metadata?.avatar_url || user.user_metadata?.picture || "")
-      );
+      requestHeaders.set("x-user-metadata", encodeURIComponent(JSON.stringify(user.user_metadata ?? {})));
 
-      const nextResponse = NextResponse.next({
+      const finalResponse = NextResponse.next({
         request: {
           headers: requestHeaders,
         },
@@ -98,10 +104,10 @@ export async function updateSession(request: NextRequest) {
 
       // Salin cookies jika ada pembaruan token dari Supabase Client
       supabaseResponse.cookies.getAll().forEach((cookie) => {
-        nextResponse.cookies.set(cookie);
+        finalResponse.cookies.set(cookie);
       });
 
-      return nextResponse;
+      return finalResponse;
     }
 
   } catch (err) {

@@ -1,26 +1,24 @@
-import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { checkIsAdmin } from "@/lib/actions/auth";
 import { canUserCreateArticle, getEffectiveUserTier, MEMBERSHIP_PLANS } from "@/lib/membership";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import TambahArtikelClient from "./tambah-client";
 import Link from "next/link";
 import { Lock, Crown, ArrowRight, ShieldAlert, Sparkles, Check } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
 export default async function TambahArtikelPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
 
   if (!user || !user.email) {
     redirect("/login?redirectedFrom=/admin/artikel/tambah");
   }
 
   const userEmail = user.email.toLowerCase().trim();
-  const isAdmin = await checkIsAdmin(userEmail);
 
-  let dbUser = await prisma.user.findUnique({ where: { email: userEmail } });
+  let dbUser = await prisma.user.findUnique({ where: { email: userEmail } }).catch(() => null);
+  const isAdmin = await checkIsAdmin(userEmail, dbUser?.role);
+
   if (!dbUser) {
     dbUser = await prisma.user.create({
       data: {
@@ -32,8 +30,10 @@ export default async function TambahArtikelPage() {
     });
   }
 
-  const effectiveTier = await getEffectiveUserTier(dbUser.id);
-  const permission = await canUserCreateArticle(dbUser.id, isAdmin);
+  const [effectiveTier, permission] = await Promise.all([
+    getEffectiveUserTier(dbUser.id),
+    canUserCreateArticle(dbUser.id, isAdmin),
+  ]);
 
   // Jika tidak diizinkan membuat artikel (FREE tier atau kuota habis)
   if (!permission.allowed) {

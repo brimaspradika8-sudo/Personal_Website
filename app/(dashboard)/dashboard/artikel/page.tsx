@@ -1,43 +1,31 @@
-import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { unstable_noStore as noStore } from "next/cache";
 import { checkIsAdmin, getUserArticles } from "@/lib/actions/article";
 import { canUserCreateArticle, getEffectiveUserTier } from "@/lib/membership";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import UserArticlesClient from "./user-articles-client";
 
-export const dynamic = "force-dynamic";
-
 export default async function UserArticlesPage() {
-  noStore();
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
 
   if (!user) {
     redirect("/login?redirectedFrom=/dashboard/artikel");
   }
 
-  const userEmail = (user?.email ?? "").toLowerCase().trim();
-  const isAdmin = await checkIsAdmin(userEmail);
+  const userEmail = (user.email ?? "").toLowerCase().trim();
 
-  let dbUser = null;
-  if (userEmail) {
-    try {
-      dbUser = await prisma.user.findUnique({
-        where: { email: userEmail },
-      });
-    } catch {}
-  }
+  const dbUser = userEmail
+    ? await prisma.user.findUnique({ where: { email: userEmail } }).catch(() => null)
+    : null;
 
+  const isAdmin = await checkIsAdmin(userEmail, dbUser?.role);
   const userId = dbUser?.id || "";
-  const effectiveTier = userId ? await getEffectiveUserTier(userId) : "FREE";
-  const permission = userId ? await canUserCreateArticle(userId, isAdmin) : { allowed: false, reason: "Harus terdaftar sebagai member." };
-  
-  // Ambil artikel khusus yang ditulis oleh pengguna ini
-  const userArticles = userId ? await getUserArticles(userId) : [];
+
+  const [effectiveTier, permission, userArticles] = await Promise.all([
+    userId ? getEffectiveUserTier(userId) : Promise.resolve("FREE" as const),
+    userId ? canUserCreateArticle(userId, isAdmin) : Promise.resolve({ allowed: false, reason: "Harus terdaftar sebagai member." }),
+    userId ? getUserArticles(userId) : Promise.resolve([]),
+  ]);
 
   return (
     <UserArticlesClient
