@@ -21,9 +21,6 @@ function formatAuthError(errorMsg: string): string {
   ) {
     return "Email atau password yang Anda masukkan salah. Silakan periksa kembali.";
   }
-  if (lower.includes("email not confirmed")) {
-    return "Email Anda belum dikonfirmasi. Silakan periksa inbox email Anda.";
-  }
   if (lower.includes("user not found")) {
     return "Akun dengan email ini tidak ditemukan.";
   }
@@ -300,16 +297,18 @@ export async function signUpWithPassword(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const siteUrl = await getSiteUrl();
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name: name }, // disimpan di user_metadata Supabase
-      emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });
+
+  if (error) {
+    return { error: formatAuthError(error.message) };
+  }
 
   if (data.user?.email) {
     await syncUserToDatabase(data.user.email, name);

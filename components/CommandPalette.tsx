@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Search, Compass, FolderGit2, BookOpen, User, Moon, Sun, Languages, X } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export default function CommandPalette({
 }: CommandPaletteProps) {
   const { lang, toggleLang } = useLanguage();
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 200);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -94,8 +96,8 @@ export default function CommandPalette({
   ];
 
   const filtered = actions.filter((item) =>
-    item.title.toLowerCase().includes(query.toLowerCase()) ||
-    item.category.toLowerCase().includes(query.toLowerCase())
+    item.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+    item.category.toLowerCase().includes(debouncedQuery.toLowerCase())
   );
 
   const handleSelect = (item: (typeof actions)[0]) => {

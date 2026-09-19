@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { ProjectItem, deleteProject, createProject, updateProject } from "@/lib/actions/project";
 import { soundFx } from "@/lib/audio/sound";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 import ProjectImageUploader, { isVideoUrl } from "@/components/admin/ProjectImageUploader";
 import { parseThumbnailUrls } from "@/lib/supabase/url";
 
@@ -35,6 +37,7 @@ export default function AdminProjectsClient({ initialProjects }: AdminProjectsCl
   const [subView, setSubView] = useState<"list" | "tambah" | "edit">("list");
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -51,8 +54,8 @@ export default function AdminProjectsClient({ initialProjects }: AdminProjectsCl
 
   const filteredProjects = projects.filter(
     (p) =>
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase())
+      p.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      p.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
   );
 
   const handleStartTambah = () => {
@@ -100,8 +103,7 @@ export default function AdminProjectsClient({ initialProjects }: AdminProjectsCl
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedSubmit = useDebouncedAction(async () => {
     setStatusMsg(null);
 
     if (!title.trim() || !description.trim()) {
@@ -182,6 +184,12 @@ export default function AdminProjectsClient({ initialProjects }: AdminProjectsCl
         router.refresh();
       }, 800);
     }
+  }, 700);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (saving) return;
+    await debouncedSubmit();
   };
 
   return (

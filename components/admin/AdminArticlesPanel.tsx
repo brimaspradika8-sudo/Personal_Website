@@ -27,6 +27,7 @@ import {
   AdminCommentItem,
 } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 import dynamic from "next/dynamic";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
@@ -46,6 +47,7 @@ interface AdminArticlesPanelProps {
 export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticlesPanelProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // Modal State (Create / Edit)
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,6 +55,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
 
   // Form State
   const [title, setTitle] = useState("");
+  const debouncedTitle = useDebounce(title, 400);
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
   const [thumbnail, setThumbnail] = useState("");
@@ -60,6 +63,18 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Auto-generate slug when debouncedTitle changes and not editing an existing article
+  React.useEffect(() => {
+    if (!editingArticle && debouncedTitle.trim()) {
+      const generatedSlug = debouncedTitle
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9 -]/g, "")
+        .replace(/\s+/g, "-");
+      setSlug(generatedSlug);
+    }
+  }, [debouncedTitle, editingArticle]);
 
   // Comments Moderation Modal State
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
@@ -110,14 +125,6 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    if (!editingArticle) {
-      const generatedSlug = val
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9 -]/g, "")
-        .replace(/\s+/g, "-");
-      setSlug(generatedSlug);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,8 +213,8 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
 
   const filteredArticles = articles.filter(
     (a) =>
-      a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.slug.toLowerCase().includes(searchQuery.toLowerCase())
+      a.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      a.slug.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
   );
 
   return (

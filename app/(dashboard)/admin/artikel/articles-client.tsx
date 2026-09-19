@@ -38,6 +38,8 @@ import {
 } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 import dynamic from "next/dynamic";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
@@ -59,6 +61,7 @@ interface ArticlesClientProps {
 export default function AdminArticlesClient({ initialArticles }: ArticlesClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [isNight, setIsNight] = useState<boolean>(false);
 
   useEffect(() => {
@@ -75,9 +78,22 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
   // Form State
   const [title, setTitle] = useState("");
+  const debouncedTitle = useDebounce(title, 400);
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
   const [thumbnail, setThumbnail] = useState("");
+
+  // Auto generate slug when title changes for new articles
+  useEffect(() => {
+    if (!editingArticle && debouncedTitle.trim()) {
+      const generatedSlug = debouncedTitle
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9 -]/g, "")
+        .replace(/\s+/g, "-");
+      setSlug(generatedSlug);
+    }
+  }, [debouncedTitle, editingArticle]);
   
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -182,18 +198,9 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    if (!editingArticle) {
-      const generatedSlug = val
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9 -]/g, "")
-        .replace(/\s+/g, "-");
-      setSlug(generatedSlug);
-    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedSubmit = useDebouncedAction(async () => {
     setStatusMsg(null);
 
     if (!title.trim() || !content.trim()) {
@@ -263,6 +270,12 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
     }
 
     setLoading(false);
+  }, 700);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    await debouncedSubmit();
   };
 
   const handleDelete = (id: string, title: string) => {
@@ -288,8 +301,8 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
   const filteredArticles = articles.filter(
     (a) =>
-      a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.slug.toLowerCase().includes(searchQuery.toLowerCase())
+      a.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      a.slug.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
   );
 
   return (

@@ -18,6 +18,7 @@ import {
 import dynamic from "next/dynamic";
 import { ArticleItem, updateArticle, uploadArticleImage } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
   ssr: false,
@@ -76,8 +77,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
     setUploadingThumbnail(false);
   };
 
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const debouncedSubmit = useDebouncedAction(async () => {
     setStatusMsg(null);
 
     if (!title.trim() || !slug.trim() || !content.trim()) {
@@ -105,7 +105,13 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
         router.refresh();
       }, 1000);
     }
-  }, [article.id, title, slug, content, thumbnail, router]);
+  }, 700);
+
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (loading) return;
+    await debouncedSubmit();
+  }, [loading, debouncedSubmit]);
 
   // Keyboard Shortcut (Ctrl+S / Cmd+S)
   useEffect(() => {

@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Mail, KeyRound, Lock, CheckCircle2, ShieldAlert, RefreshCw, Eye, EyeOff, ShieldCheck, Smartphone, Sparkles } from "lucide-react";
 import { sendForgotPasswordOtp, verifyOtpOnly, updatePasswordWithSession, verifyOtpAndResetPassword } from "@/lib/actions/auth";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -71,9 +72,7 @@ export default function ForgotPasswordPage() {
     inputRefs.current[targetIndex]?.focus();
   };
 
-  // Step 1: Send OTP to Email
-  const handleSendOtp = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const debouncedSendOtp = useDebouncedAction(async () => {
     setError(null);
     setSuccessMsg(null);
     setLoading(true);
@@ -92,11 +91,9 @@ export default function ForgotPasswordPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, 700);
 
-  // Step 2: Verify OTP Token ONLY
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedVerifyOtp = useDebouncedAction(async () => {
     setError(null);
     setSuccessMsg(null);
 
@@ -121,11 +118,9 @@ export default function ForgotPasswordPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, 700);
 
-  // Step 3: Save New Password (Atomic verification & update for 100% real-world reliability)
-  const handleSaveNewPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedSaveNewPassword = useDebouncedAction(async () => {
     setError(null);
     setSuccessMsg(null);
 
@@ -142,7 +137,6 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      // Perform atomic verification & password update using stored email + OTP + newPassword
       const res = await verifyOtpAndResetPassword(email, otpDigits.join(""), newPassword);
       if (res.error) {
         setError(res.error);
@@ -154,6 +148,24 @@ export default function ForgotPasswordPage() {
     } finally {
       setLoading(false);
     }
+  }, 700);
+
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (loading) return;
+    await debouncedSendOtp();
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    await debouncedVerifyOtp();
+  };
+
+  const handleSaveNewPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    await debouncedSaveNewPassword();
   };
 
   return (

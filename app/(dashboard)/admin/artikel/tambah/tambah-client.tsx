@@ -20,6 +20,8 @@ import {
 import dynamic from "next/dynamic";
 import { createArticle, uploadArticleImage } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
   ssr: false,
@@ -36,9 +38,22 @@ const DRAFT_KEY = "article_draft_new";
 export default function TambahArtikelClient() {
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const debouncedTitle = useDebounce(title, 400);
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
   const [thumbnail, setThumbnail] = useState("");
+
+  // Auto-generate slug when debouncedTitle changes
+  useEffect(() => {
+    if (debouncedTitle.trim()) {
+      const generatedSlug = debouncedTitle
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9 -]/g, "")
+        .replace(/\s+/g, "-");
+      setSlug(generatedSlug);
+    }
+  }, [debouncedTitle]);
 
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -106,12 +121,6 @@ export default function TambahArtikelClient() {
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    const generatedSlug = val
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9 -]/g, "")
-      .replace(/\s+/g, "-");
-    setSlug(generatedSlug);
   };
 
   // Upload thumbnail gambar ke Supabase Storage
@@ -137,8 +146,7 @@ export default function TambahArtikelClient() {
     setUploadingThumbnail(false);
   };
 
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const debouncedSubmit = useDebouncedAction(async () => {
     setStatusMsg(null);
 
     if (!title.trim() || !slug.trim() || !content.trim()) {
@@ -167,7 +175,13 @@ export default function TambahArtikelClient() {
         router.refresh();
       }, 1000);
     }
-  }, [title, slug, content, thumbnail, router]);
+  }, 700);
+
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (loading) return;
+    await debouncedSubmit();
+  }, [loading, debouncedSubmit]);
 
   // Keyboard Shortcut (Ctrl+S / Cmd+S)
   useEffect(() => {

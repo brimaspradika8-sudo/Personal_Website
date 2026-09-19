@@ -16,6 +16,7 @@ import {
 import { createProject } from "@/lib/actions/project";
 import { soundFx } from "@/lib/audio/sound";
 import ProjectImageUploader from "@/components/admin/ProjectImageUploader";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
 
 export default function TambahProyekClient() {
   const router = useRouter();
@@ -31,8 +32,7 @@ export default function TambahProyekClient() {
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedSubmit = useDebouncedAction(async () => {
     setStatusMsg(null);
 
     if (!title.trim() || !description.trim()) {
@@ -42,14 +42,12 @@ export default function TambahProyekClient() {
 
     setLoading(true);
 
-    // Auto-generate slug behind the scenes
     const generatedSlug = title
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9 -]/g, "")
       .replace(/\s+/g, "-");
 
-    // Serialize images list into JSON array string (or single url if only 1 image)
     const thumbnailData = images.length > 0 ? (images.length === 1 ? images[0] : JSON.stringify(images)) : undefined;
 
     const res = await createProject({
@@ -72,6 +70,12 @@ export default function TambahProyekClient() {
         router.refresh();
       }, 1000);
     }
+  }, 700);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    await debouncedSubmit();
   };
 
   return (

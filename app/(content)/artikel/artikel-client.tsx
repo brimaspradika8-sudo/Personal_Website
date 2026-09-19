@@ -25,6 +25,7 @@ import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { isBookmarked, toggleBookmark, subscribeBookmarks } from "@/lib/bookmarks";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 function BookmarkCardButton({ article }: { article: ArticleItem }) {
   const [saved, setSaved] = useState(false);
@@ -103,6 +104,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
   const { lang } = useLanguage();
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedTag, setSelectedTag] = useState<string>("SEMUA");
   const [sortBy, setSortBy] = useState<"latest" | "oldest" | "popular">("latest");
   const [isPending, startTransition] = useTransition();
@@ -130,7 +132,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
 
   const filteredArticles = articles
     .filter((article) => {
-      const q = searchQuery.toLowerCase();
+      const q = debouncedSearchQuery.toLowerCase();
       const matchesQuery =
         article.title.toLowerCase().includes(q) ||
         article.content.toLowerCase().includes(q) ||

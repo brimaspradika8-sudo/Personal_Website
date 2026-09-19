@@ -43,6 +43,7 @@ import {
   updateBannerPreset,
   getCurrentProfile,
 } from "@/lib/actions/profile";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
@@ -334,9 +335,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
     }
   };
 
-  // Save Name & Profile Details
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedSaveProfile = useDebouncedAction(async () => {
     if (!isAuthenticated) return;
     setSaving(true);
     setMessage(null);
@@ -355,11 +354,9 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         setActiveModal("none");
       }, 2000);
     }
-  };
+  }, 700);
 
-  // Change Account Password
-  const handleSavePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedSavePassword = useDebouncedAction(async () => {
     if (!isAuthenticated) return;
 
     if (!newPassword || newPassword.length < 6) {
@@ -390,6 +387,20 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
         setActiveModal("none");
       }, 2000);
     }
+  }, 700);
+
+  // Save Name & Profile Details
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (saving || updatingPassword) return;
+    await debouncedSaveProfile();
+  };
+
+  // Change Account Password
+  const handleSavePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (updatingPassword || saving) return;
+    await debouncedSavePassword();
   };
 
   const handleToggleSfxLocal = () => {

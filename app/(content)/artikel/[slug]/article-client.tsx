@@ -41,6 +41,7 @@ import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { isBookmarked, toggleBookmark, subscribeBookmarks } from "@/lib/bookmarks";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
 
 
 interface TocItem {
@@ -902,8 +903,7 @@ export default function ArticleClient({
       });
   };
 
-  const handleAddComment = (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedAddComment = useDebouncedAction(() => {
     if (!commentText.trim()) return;
 
     if (!user) {
@@ -931,7 +931,6 @@ export default function ArticleClient({
       },
     };
 
-    // Synchronous 0ms optimistic update
     setArticle((prev) => ({
       ...prev,
       commentCount: prev.commentCount + 1,
@@ -940,7 +939,6 @@ export default function ArticleClient({
 
     showToast("Komentar berhasil dikirim!");
 
-    // Background sync via REST API POST /api/comment (fallback to Server Action)
     fetch("/api/comment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -982,6 +980,11 @@ export default function ArticleClient({
           }
         });
       });
+  }, 700);
+
+  const handleAddComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    debouncedAddComment();
   };
 
   const handleDeleteComment = (commentId: string) => {

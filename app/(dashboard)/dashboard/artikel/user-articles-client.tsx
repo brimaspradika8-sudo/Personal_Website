@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { deleteArticle, ArticleItem } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 import MobileBottomNav from "@/components/MobileBottomNav";
 
 interface UserArticlesClientProps {
@@ -47,6 +48,7 @@ export default function UserArticlesClient({
 }: UserArticlesClientProps) {
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState<"latest" | "popular" | "likes">("latest");
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -62,9 +64,9 @@ export default function UserArticlesClient({
   const filteredArticles = articles
     .filter((art) => {
       const matchSearch =
-        art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        art.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (art.category && art.category.toLowerCase().includes(searchQuery.toLowerCase()));
+        art.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        art.slug.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        (art.category && art.category.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
 
       const matchCat =
         selectedCategory === "Semua" ||

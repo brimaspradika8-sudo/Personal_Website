@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, Mail, User, Eye, EyeOff } from "lucide-react";
 import { signUpWithPassword, signInWithGoogle, signInWithGithub } from "@/lib/actions/auth";
+import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
 
 const RiveTeddyAnimation = dynamic(
   () => import("@/components/RiveTeddyAnimation"),
@@ -32,7 +33,7 @@ function RegisterForm() {
     setEmailText(e.target.value);
   };
 
-  async function handleSubmit(formData: FormData) {
+  const debouncedRegister = useDebouncedAction(async (formData: FormData) => {
     setError(null);
     setSuccess(false);
     setLoading(true);
@@ -51,9 +52,9 @@ function RegisterForm() {
     } finally {
       setLoading(false);
     }
-  }
+  }, 700);
 
-  async function handleGoogleLogin() {
+  const debouncedGoogle = useDebouncedAction(async () => {
     setError(null);
     setGoogleLoading(true);
 
@@ -71,9 +72,9 @@ function RegisterForm() {
     } finally {
       setGoogleLoading(false);
     }
-  }
+  }, 700);
 
-  async function handleGithubLogin() {
+  const debouncedGithub = useDebouncedAction(async () => {
     setError(null);
     setGithubLoading(true);
 
@@ -91,6 +92,21 @@ function RegisterForm() {
     } finally {
       setGithubLoading(false);
     }
+  }, 700);
+
+  async function handleSubmit(formData: FormData) {
+    if (loading || googleLoading || githubLoading) return;
+    await debouncedRegister(formData);
+  }
+
+  async function handleGoogleLogin() {
+    if (loading || googleLoading || githubLoading) return;
+    await debouncedGoogle();
+  }
+
+  async function handleGithubLogin() {
+    if (loading || googleLoading || githubLoading) return;
+    await debouncedGithub();
   }
 
   const isAnyLoading = loading || googleLoading || githubLoading;

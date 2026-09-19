@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, FolderGit2, ExternalLink, Code2, Eye, Search, Sparkles, Mail } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 import { soundFx } from "@/lib/audio/sound";
 import Footer from "@/components/Footer";
 import MobileBottomNav from "@/components/MobileBottomNav";
@@ -47,6 +48,7 @@ interface ProyekClientProps {
 export default function ProyekClient({ initialProjects = [] }: ProyekClientProps) {
   const { lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedProjectModal, setSelectedProjectModal] = useState<ProjectData | null>(null);
 
   // Mapping backend ProjectItem to ProjectData
@@ -64,8 +66,8 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
   // Filter projects by search query
   const filteredProjects = projectsData.filter((p) => {
     return (
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase())
+      p.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      p.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
     );
   });
 

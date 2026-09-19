@@ -1,8 +1,33 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseEnv } from "./client";
+import { generateCsrfToken, CSRF_COOKIE_NAME } from "../security/csrf";
 
 export async function updateSession(request: NextRequest) {
+  // 1. Validation CSRF Origin untuk request mutasi (POST, PUT, PATCH, DELETE)
+  const method = request.method.toUpperCase();
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
+    const origin = request.headers.get("origin");
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+
+    if (origin && host) {
+      try {
+        const originHost = new URL(origin).host.toLowerCase().trim();
+        const serverHost = host.toLowerCase().trim();
+
+        if (originHost !== serverHost) {
+          console.warn(`[CSRF Protection] Mismatched Origin blocked: ${originHost} !== ${serverHost}`);
+          return new NextResponse(
+            JSON.stringify({ error: "Permintaan ditolak. Origin CSRF tidak cocok." }),
+            { status: 403, headers: { "Content-Type": "application/json" } }
+          );
+        }
+      } catch (err) {
+        console.warn("[CSRF Protection] Malformed origin header:", err);
+      }
+    }
+  }
+
   // Anti-spoofing: Hapus header x-user-* jika ada di request awal dari client
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete("x-user-id");
@@ -106,6 +131,15 @@ export async function updateSession(request: NextRequest) {
         finalResponse.cookies.set(cookie);
       });
 
+      if (!request.cookies.has(CSRF_COOKIE_NAME)) {
+        finalResponse.cookies.set(CSRF_COOKIE_NAME, generateCsrfToken(), {
+          path: "/",
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          httpOnly: false, // Memungkinkan akses JS untuk Double Submit Cookie pattern
+        });
+      }
+
       return finalResponse;
     }
 
@@ -114,6 +148,15 @@ export async function updateSession(request: NextRequest) {
       "Middleware Supabase Session Error:",
       err
     );
+  }
+
+  if (!request.cookies.has(CSRF_COOKIE_NAME)) {
+    supabaseResponse.cookies.set(CSRF_COOKIE_NAME, generateCsrfToken(), {
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: false,
+    });
   }
 
   return supabaseResponse;
