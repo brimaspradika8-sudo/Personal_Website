@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
 import { stripHtml } from "@/lib/security/sanitize";
+import { cleanText, normalizeEmail, validatePassword } from "@/lib/security/validation";
 
 function formatAuthError(errorMsg: string): string {
   const lower = errorMsg.toLowerCase();
@@ -240,11 +241,11 @@ export async function signInWithGithub() {
 // --- Login manual (email + password) ---
 export async function signInWithPassword(formData: FormData) {
   try {
-    const email = (formData.get("email") as string || "").trim().toLowerCase();
+    const email = normalizeEmail(formData.get("email"));
     const password = (formData.get("password") as string || "").trim();
 
     if (!email || !password) {
-      return { error: "Email dan password wajib diisi." };
+      return { error: "Email valid dan password wajib diisi." };
     }
 
     // Rate Limiting Guard
@@ -296,13 +297,22 @@ export async function signInWithPassword(formData: FormData) {
 
 // --- Register manual (nama, email, password) ---
 export async function signUpWithPassword(formData: FormData) {
-  const rawName = (formData.get("name") as string || "").trim();
-  const name = stripHtml(rawName);
-  const email = (formData.get("email") as string || "").trim().toLowerCase();
+  const rawName = cleanText(formData.get("name"), 80);
+  const name = rawName.value;
+  const email = normalizeEmail(formData.get("email"));
   const password = (formData.get("password") as string || "").trim();
 
+  if (rawName.error) {
+    return { error: rawName.error };
+  }
+
   if (!email || !password || !name) {
-    return { error: "Nama, email, dan password wajib diisi." };
+    return { error: "Nama, email valid, dan password wajib diisi." };
+  }
+
+  const passwordError = validatePassword(password);
+  if (passwordError) {
+    return { error: passwordError };
   }
 
   // Rate Limiting Guard
@@ -349,9 +359,9 @@ export async function signOut() {
 // --- Send Forgot Password OTP to Email ---
 export async function sendForgotPasswordOtp(email: string) {
   try {
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = normalizeEmail(email);
     if (!normalizedEmail) {
-      return { error: "Silakan masukkan alamat email Anda." };
+      return { error: "Silakan masukkan alamat email yang valid." };
     }
 
     // Rate Limiting Guard for OTP Request
@@ -395,7 +405,7 @@ export async function sendForgotPasswordOtp(email: string) {
 // --- Verify OTP Token Only (Step 2) ---
 export async function verifyOtpOnly(email: string, token: string) {
   try {
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = normalizeEmail(email);
     const sanitizedToken = token.trim();
 
     if (!normalizedEmail || !sanitizedToken) {
@@ -437,8 +447,9 @@ export async function verifyOtpOnly(email: string, token: string) {
 // --- Update Password After OTP Verified (Step 3) ---
 export async function updatePasswordWithSession(newPassword: string) {
   try {
-    if (!newPassword || newPassword.length < 6) {
-      return { error: "Kata sandi baru minimal 6 karakter." };
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      return { error: passwordError };
     }
 
     const supabase = await createClient();
@@ -463,15 +474,16 @@ export async function updatePasswordWithSession(newPassword: string) {
 // --- Verify OTP Token & Reset Password (Combined Fallback) ---
 export async function verifyOtpAndResetPassword(email: string, token: string, newPassword: string) {
   try {
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = normalizeEmail(email);
     const sanitizedToken = token.trim();
 
     if (!normalizedEmail || !sanitizedToken || !newPassword) {
       return { error: "Email, kode OTP 6-digit, dan kata sandi baru wajib diisi." };
     }
 
-    if (newPassword.length < 6) {
-      return { error: "Kata sandi baru minimal 6 karakter." };
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      return { error: passwordError };
     }
 
     const { isConfigured } = getSupabaseEnv();
@@ -518,5 +530,4 @@ export async function verifyOtpAndResetPassword(email: string, token: string, ne
 }
 
 // --- End of Auth Server Actions ---
-
 

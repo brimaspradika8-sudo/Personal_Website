@@ -5,6 +5,8 @@ import { syncUserToDatabase } from "@/lib/actions/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { stripHtml } from "@/lib/security/sanitize";
+import crypto from "crypto";
+import { sanitizeFileExtension, validateUploadBuffer } from "@/lib/security/file-validation";
 
 /**
  * Server Action: Update Profile Name & Avatar URL
@@ -67,7 +69,7 @@ export async function uploadAvatarFile(formData: FormData) {
   }
 
   if (!file.type.startsWith("image/")) {
-    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." };
+    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, GIF)." };
   }
 
   if (file.size > 5 * 1024 * 1024) {
@@ -76,11 +78,15 @@ export async function uploadAvatarFile(formData: FormData) {
 
   try {
     const fileExt = file.name.split(".").pop() || "png";
-    const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
-    const fileName = `${user.id}/${Date.now()}.${sanitizedExt}`;
+    const sanitizedExt = sanitizeFileExtension(fileExt);
+    const fileName = `${user.id}/${crypto.randomUUID()}.${sanitizedExt}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
+    const validation = validateUploadBuffer(fileBuffer, file.type, false);
+    if (!validation.valid) {
+      return { error: validation.error };
+    }
 
     const { error: uploadError } = await supabase.storage
       .from("avatars")
@@ -174,7 +180,7 @@ export async function uploadBannerFile(formData: FormData) {
   }
 
   if (!file.type.startsWith("image/")) {
-    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." };
+    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, GIF)." };
   }
 
   if (file.size > 8 * 1024 * 1024) {
@@ -183,11 +189,15 @@ export async function uploadBannerFile(formData: FormData) {
 
   try {
     const fileExt = file.name.split(".").pop() || "png";
-    const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
-    const fileName = `banners/${user.id}/${Date.now()}.${sanitizedExt}`;
+    const sanitizedExt = sanitizeFileExtension(fileExt);
+    const fileName = `banners/${user.id}/${crypto.randomUUID()}.${sanitizedExt}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
+    const validation = validateUploadBuffer(fileBuffer, file.type, false);
+    if (!validation.valid) {
+      return { error: validation.error };
+    }
 
     const { error: uploadError } = await supabase.storage
       .from("avatars")
@@ -292,4 +302,3 @@ export async function getCurrentProfile() {
     return { user: null, dbUser: null };
   }
 }
-

@@ -1,5 +1,7 @@
 import { createClient } from "./server";
 import { ensurePublicSupabaseUrl } from "./url";
+import crypto from "crypto";
+import { sanitizeFileExtension, sanitizeStorageFolder, validateUploadBuffer } from "@/lib/security/file-validation";
 
 export { ensurePublicSupabaseUrl };
 
@@ -22,6 +24,7 @@ interface UploadFileOptions {
   file: File;
   bucketName?: string;
   folder?: string;
+  allowVideo?: boolean;
 }
 
 /**
@@ -32,18 +35,24 @@ export async function uploadFileToSupabaseStorage({
   file,
   bucketName,
   folder = "article-images",
+  allowVideo = false,
 }: UploadFileOptions) {
   const { articleBucket } = getStorageBucketConfig();
 
   // Gunakan bucket khusus atau fallback ke variabel env NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET
   const targetBucket = bucketName || articleBucket;
 
+  const safeFolder = sanitizeStorageFolder(folder, ["article-images", "project-media"]);
   const fileExt = file.name.split(".").pop() || "png";
-  const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
-  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
+  const sanitizedExt = sanitizeFileExtension(fileExt);
+  const fileName = `${safeFolder}/${crypto.randomUUID()}.${sanitizedExt}`;
 
   const arrayBuffer = await file.arrayBuffer();
   const fileBuffer = Buffer.from(arrayBuffer);
+  const validation = validateUploadBuffer(fileBuffer, file.type, allowVideo);
+  if (!validation.valid) {
+    return { error: validation.error };
+  }
 
   let supabase = await createClient();
 

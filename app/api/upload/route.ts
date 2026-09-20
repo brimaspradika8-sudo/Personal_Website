@@ -4,7 +4,13 @@ import { getStorageBucketConfig, ensurePublicSupabaseUrl } from "@/lib/supabase/
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import { checkIsAdmin } from "@/lib/actions/auth";
 import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { guardMutationRequest, getClientIp, rejectLargeRequest } from "@/lib/security/request";
+import { sanitizeFileExtension, sanitizeStorageFolder, validateUploadBuffer } from "@/lib/security/file-validation";
 import sharp from "sharp";
+import crypto from "crypto";
+
+const MAX_UPLOAD_PAYLOAD_BYTES = 52 * 1024 * 1024;
+const ALLOWED_UPLOAD_FOLDERS = ["project-media", "article-images"];
 
 /**
  * API ROUTE ENDPOINT: POST /api/upload
@@ -13,6 +19,12 @@ import sharp from "sharp";
  */
 export async function POST(request: NextRequest) {
   try {
+    const guard = await guardMutationRequest(request);
+    if (guard) return guard;
+
+    const largeRequest = rejectLargeRequest(request, MAX_UPLOAD_PAYLOAD_BYTES);
+    if (largeRequest) return largeRequest;
+
     // 1. Authenticate user via fast header auth
     const user = await getAuthenticatedUser();
     if (!user) {
@@ -31,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate Limiting Guard for Uploads
-    const rateLimit = checkRateLimit(`upload:${user.id}`, RATE_LIMIT_PRESETS.API_UPLOAD.limit, RATE_LIMIT_PRESETS.API_UPLOAD.windowMs);
+    const rateLimit = checkRateLimit(`upload:${user.id}:${getClientIp(request)}`, RATE_LIMIT_PRESETS.API_UPLOAD.limit, RATE_LIMIT_PRESETS.API_UPLOAD.windowMs);
     if (!rateLimit.success) {
       const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
       return NextResponse.json(
@@ -43,7 +55,7 @@ export async function POST(request: NextRequest) {
     // 2. Extract file from FormData
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
-    const folder = (formData.get("folder") as string) || "project-media";
+    const folder = sanitizeStorageFolder((formData.get("folder") as string) || "project-media", ALLOWED_UPLOAD_FOLDERS);
 
     if (!file || file.size === 0) {
       return NextResponse.json(
@@ -74,6 +86,11 @@ export async function POST(request: NextRequest) {
 
     const arrayBuffer = await file.arrayBuffer();
     let fileBuffer = Buffer.from(arrayBuffer);
+    const validation = validateUploadBuffer(fileBuffer, file.type, true);
+    if (!validation.valid) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
     let finalContentType = file.type || "application/octet-stream";
     let fileNameExt = file.name.split(".").pop() || (isVideo ? "mp4" : "png");
 
@@ -88,8 +105,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const sanitizedExt = fileNameExt.replace(/[^a-zA-Z0-9]/g, "");
-    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
+    const sanitizedExt = sanitizeFileExtension(fileNameExt);
+    const fileName = `${folder}/${crypto.randomUUID()}.${sanitizedExt}`;
 
     const supabase = await createClient();
 
@@ -121,6 +138,11 @@ export async function POST(request: NextRequest) {
       bucket: targetBucket,
       path: fileName,
       convertedToWebp: isImage && !isGif,
+    }, {
+      headers: {
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-store",
+      },
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Terjadi kesalahan internal server.";

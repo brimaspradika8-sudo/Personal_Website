@@ -7,6 +7,15 @@ export async function updateSession(request: NextRequest) {
   // 1. Validation CSRF Origin untuk request mutasi (POST, PUT, PATCH, DELETE)
   const method = request.method.toUpperCase();
   if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
+    const secFetchSite = request.headers.get("sec-fetch-site");
+    if (secFetchSite === "cross-site") {
+      console.warn("[Fetch Metadata] Cross-site mutation blocked.");
+      return new NextResponse(
+        JSON.stringify({ error: "Permintaan lintas situs ditolak." }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const origin = request.headers.get("origin");
     const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
 
@@ -74,8 +83,13 @@ export async function updateSession(request: NextRequest) {
     );
 
     const pathname = request.nextUrl.pathname;
-    const isAdminRoute = pathname.startsWith("/admin");
-    const isOwnerAdminOnlyRoute = pathname === "/admin" || pathname.startsWith("/admin/projects") || pathname.startsWith("/admin/users");
+    const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/dashboard/admin");
+    const isOwnerAdminOnlyRoute =
+      pathname === "/admin" ||
+      pathname === "/dashboard/admin" ||
+      pathname.startsWith("/admin/projects") ||
+      pathname.startsWith("/admin/users") ||
+      pathname.startsWith("/dashboard/admin/proyek");
 
     // Fast-path: jika tidak ada cookie Supabase Auth dan bukan route /admin, hindari panggilan HTTP getUser()
     const hasAuthCookie = request.cookies.getAll().some((c) => c.name.startsWith("sb-") || c.name.includes("auth-token"));

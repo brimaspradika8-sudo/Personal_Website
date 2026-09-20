@@ -39,7 +39,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    dangerouslyAllowSVG: true,
+    dangerouslyAllowSVG: false,
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2592000,
     remotePatterns: [
@@ -92,7 +92,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+            value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()",
           },
           {
             key: "Strict-Transport-Security",
@@ -100,7 +100,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "X-XSS-Protection",
-            value: "1; mode=block",
+            value: "0",
           },
           {
             key: "X-DNS-Prefetch-Control",
@@ -110,6 +110,9 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self';",
+              "base-uri 'self';",
+              "object-src 'none';",
+              "form-action 'self';",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://cdn.jsdelivr.net;",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
               "img-src 'self' data: blob: https://*.googleusercontent.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://api.dicebear.com https://*.supabase.co https://*.unsplash.com https://images.unsplash.com;",
@@ -117,6 +120,7 @@ const nextConfig: NextConfig = {
               "connect-src 'self' https://*.supabase.co https://api.elevenlabs.io https://vitals.vercel-insights.com;",
               "media-src 'self' blob: https://*.supabase.co;",
               "frame-ancestors 'none';",
+              "upgrade-insecure-requests;",
             ].join(" "),
           },
         ],

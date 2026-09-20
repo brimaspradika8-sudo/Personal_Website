@@ -35,7 +35,6 @@ import {
   ArticleItem,
   toggleArticleReaction,
   addArticleComment,
-  deleteArticleComment,
 } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
@@ -71,12 +70,18 @@ export default function ArticleClient({
   const [article, setArticle] = useState<ArticleDetail>(initialArticle);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("id-ID-ArdiNeural");
   const [commentText, setCommentText] = useState("");
+  const [replyTargetId, setReplyTargetId] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [isTocOpen, setIsTocOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isSavedBookmark, setIsSavedBookmark] = useState(false);
+
+  const getCsrfToken = () => {
+    if (typeof document === "undefined") return "";
+    return document.cookie.split(";").map((part) => part.trim()).find((part) => part.startsWith("csrf-token="))?.split("=")[1] || "";
+  };
 
   useEffect(() => {
     setIsSavedBookmark(isBookmarked(initialArticle.id) || isBookmarked(initialArticle.slug));
@@ -530,7 +535,7 @@ export default function ArticleClient({
       const textToSpeak = `${article.title}. ${cleanTextForSpeech(article.content)}`;
       const res = await fetch("/api/tts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": getCsrfToken() },
         body: JSON.stringify({
           text: textToSpeak,
           engine: "edge",
@@ -882,7 +887,7 @@ export default function ArticleClient({
     // Sync via POST /api/reaction REST API route (fallback to Server Action if needed)
     fetch("/api/reaction", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-csrf-token": getCsrfToken() },
       body: JSON.stringify({ article_id: article.id, type }),
     })
       .then(async (res) => {
@@ -922,6 +927,10 @@ export default function ArticleClient({
       user_id: user.id,
       article_id: article.id,
       content: text,
+      parent_id: replyTargetId,
+      likeCount: 0,
+      likedByUser: false,
+      canDelete: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       user: {
@@ -941,8 +950,8 @@ export default function ArticleClient({
 
     fetch("/api/comment", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ article_id: article.id, content: text }),
+      headers: { "Content-Type": "application/json", "x-csrf-token": getCsrfToken() },
+      body: JSON.stringify({ article_id: article.id, content: text, parent_id: replyTargetId }),
     })
       .then(async (res) => {
         if (!res.ok) {
@@ -953,6 +962,11 @@ export default function ArticleClient({
             return;
           }
           if (data.error) showToast(data.error);
+          setArticle((prev) => ({
+            ...prev,
+            commentCount: Math.max(0, prev.commentCount - 1),
+            comments: prev.comments.filter((comment) => comment.id !== tempId),
+          }));
         } else {
           const data = await res.json();
           if (data.comment) {
@@ -960,11 +974,12 @@ export default function ArticleClient({
               ...prev,
               comments: prev.comments.map((c) => (c.id === tempId ? data.comment : c)),
             }));
+            setReplyTargetId(null);
           }
         }
       })
       .catch(() => {
-        addArticleComment(article.id, text).then((res) => {
+        addArticleComment(article.id, text, replyTargetId).then((res) => {
           if (res.error) {
             showToast(res.error);
             setArticle((prev) => ({
@@ -977,6 +992,7 @@ export default function ArticleClient({
               ...prev,
               comments: prev.comments.map((c) => (c.id === tempId ? res.comment! : c)),
             }));
+            setReplyTargetId(null);
           }
         });
       });
@@ -987,12 +1003,56 @@ export default function ArticleClient({
     debouncedAddComment();
   };
 
+  const handleLikeComment = (commentId: string) => {
+    if (!user) {
+      router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk menyukai komentar")}`);
+      return;
+    }
+    const target = article.comments.find((comment) => comment.id === commentId);
+    if (!target) return;
+    if (target.canDelete) {
+      showToast("Kamu tidak bisa menyukai komentar sendiri.");
+      return;
+    }
+    const liked = !target.likedByUser;
+    setArticle((prev) => ({
+      ...prev,
+      comments: prev.comments.map((comment) => comment.id === commentId
+        ? { ...comment, likedByUser: liked, likeCount: Math.max(0, comment.likeCount + (liked ? 1 : -1)) }
+        : comment),
+    }));
+    fetch("/api/reaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-csrf-token": getCsrfToken() },
+      body: JSON.stringify({ comment_id: commentId }),
+    }).then(async (response) => {
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Gagal menyukai komentar.");
+      if (typeof data.likeCount === "number") {
+        setArticle((prev) => ({
+          ...prev,
+          comments: prev.comments.map((comment) => comment.id === commentId
+            ? { ...comment, likedByUser: Boolean(data.liked), likeCount: data.likeCount }
+            : comment),
+        }));
+      }
+    }).catch((error: Error) => {
+      setArticle((prev) => ({
+        ...prev,
+        comments: prev.comments.map((comment) => comment.id === commentId
+          ? { ...comment, likedByUser: !liked, likeCount: Math.max(0, comment.likeCount + (liked ? -1 : 1)) }
+          : comment),
+      }));
+      showToast(error.message);
+    });
+  };
+
   const handleDeleteComment = (commentId: string) => {
     try { soundFx.playClick(); } catch {}
     const target = article.comments.find((c) => c.id === commentId);
     if (!target) return;
 
-    // Synchronous 0ms optimistic deletion
+    // The API re-checks ownership; this is only an optimistic UI update.
     setArticle((prev) => ({
       ...prev,
       commentCount: Math.max(0, prev.commentCount - 1),
@@ -1001,16 +1061,19 @@ export default function ArticleClient({
 
     showToast("Komentar telah dihapus.");
 
-    // Non-blocking background sync
-    deleteArticleComment(commentId).then((res) => {
-      if (res.error) {
-        showToast(res.error);
+    fetch("/api/comment", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", "x-csrf-token": getCsrfToken() },
+      body: JSON.stringify({ comment_id: commentId }),
+    }).then(async (response) => {
+      if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Gagal menghapus komentar.");
+    }).catch((error: Error) => {
+        showToast(error.message);
         setArticle((prev) => ({
           ...prev,
           commentCount: prev.commentCount + 1,
           comments: [target, ...prev.comments],
         }));
-      }
     });
   };
 
@@ -1456,12 +1519,12 @@ export default function ArticleClient({
             <form onSubmit={handleAddComment} className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
               <div className="flex items-center gap-2 text-xs font-mono font-bold text-black dark:text-white">
                 <span className="w-2.5 h-2.5 rounded-none bg-[#00FF66] border border-black" />
-                <span>MENULIS SEBAGAI <strong className="text-[#166534] dark:text-[#EAB308] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
+                <span>{replyTargetId ? "MEMBALAS KOMENTAR" : "MENULIS SEBAGAI"} <strong className="text-[#166534] dark:text-[#EAB308] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
               </div>
 
               <textarea
                 rows={3}
-                placeholder="TULISKAN PANDANGAN ANDA..."
+                placeholder={replyTargetId ? "TULISKAN BALASAN..." : "TULISKAN PANDANGAN ANDA..."}
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 className="w-full p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-xs font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all"
@@ -1476,6 +1539,11 @@ export default function ArticleClient({
                   <Send className="w-4 h-4" />
                   <span>KIRIM KOMENTAR</span>
                 </button>
+                {replyTargetId && (
+                  <button type="button" onClick={() => { setReplyTargetId(null); setCommentText(""); }} className="ml-3 text-xs font-black underline">
+                    BATAL BALAS
+                  </button>
+                )}
               </div>
             </form>
           ) : (
@@ -1511,7 +1579,7 @@ export default function ArticleClient({
                   return (
                     <div
                       key={comment.id}
-                      className={`p-5 rounded-none border-4 ${
+                      className={`${comment.parent_id ? "ml-4 sm:ml-10" : ""} p-5 rounded-none border-4 ${
                         isVipComment
                           ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
                           : "border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
@@ -1548,7 +1616,7 @@ export default function ArticleClient({
                           </div>
                         </div>
 
-                        {user && user.id === comment.user_id && (
+                        {comment.canDelete && (
                           <button
                             onClick={() => handleDeleteComment(comment.id)}
                             className="p-1 text-black dark:text-white hover:text-[#166534] transition-colors cursor-pointer"
@@ -1562,6 +1630,16 @@ export default function ArticleClient({
                       <p className="text-xs text-black dark:text-white font-mono font-medium leading-relaxed uppercase">
                         {comment.content}
                       </p>
+                      <div className="flex items-center gap-4 pt-1 text-[10px] font-black uppercase">
+                        <button type="button" onClick={() => handleLikeComment(comment.id)} className={`inline-flex items-center gap-1 ${comment.likedByUser ? "text-[#166534]" : "text-neutral-500"}`}>
+                          <ThumbsUp className="w-3.5 h-3.5" /> {comment.likeCount}
+                        </button>
+                        {user && (
+                          <button type="button" onClick={() => { setReplyTargetId(comment.id); setCommentText(""); }} className="inline-flex items-center gap-1 text-neutral-500 hover:text-[#166534]">
+                            <MessageSquare className="w-3.5 h-3.5" /> BALAS
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })

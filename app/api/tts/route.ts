@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { EdgeTTS } from "node-edge-tts";
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
+import { guardMutationRequest, getClientIp, rejectLargeRequest } from "@/lib/security/request";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 
 interface CacheEntry {
   buffer: ArrayBuffer;
@@ -42,29 +44,23 @@ function setToCache(key: string, buffer: ArrayBuffer) {
   ttsCache.set(key, { buffer, timestamp: Date.now() });
 }
 
-const requestLog = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 15;
-
-function isRateLimited(identifier: string): boolean {
-  const now = Date.now();
-  const timestamps = requestLog.get(identifier) || [];
-  const validTimestamps = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    return true;
-  }
-  validTimestamps.push(now);
-  requestLog.set(identifier, validTimestamps);
-  return false;
-}
+const MAX_REQUESTS_PER_WINDOW = 12;
+const MAX_TTS_PAYLOAD_BYTES = 20 * 1024;
+const VOICE_ID_PATTERN = /^[a-zA-Z0-9_-]{3,80}$/;
 
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const startTime = performance.now();
 
   try {
+    const guard = await guardMutationRequest(request);
+    if (guard) return guard;
+
+    const largeRequest = rejectLargeRequest(request, MAX_TTS_PAYLOAD_BYTES);
+    if (largeRequest) return largeRequest;
+
     const body = await request.json();
     const { text, voiceId, engine = "edge" } = body;
 
@@ -83,7 +79,12 @@ export async function POST(request: Request) {
     }
 
     // Rate Limiting Guard per User
-    if (isRateLimited(user.id || user.email)) {
+    const rateLimit = checkRateLimit(
+      `tts:${user.id || user.email}:${getClientIp(request)}`,
+      MAX_REQUESTS_PER_WINDOW,
+      RATE_LIMIT_WINDOW_MS
+    );
+    if (!rateLimit.success) {
       return NextResponse.json(
         { error: "Terlalu banyak permintaan audio dalam 1 menit. Silakan tunggu sebentar." },
         { status: 429 }
@@ -101,6 +102,9 @@ export async function POST(request: Request) {
     const selectedEngine = engine === "elevenlabs" ? "elevenlabs" : "edge";
     const defaultVoice = selectedEngine === "edge" ? "id-ID-ArdiNeural" : "1k39YpzqXZn52BgyLyGO";
     const targetVoiceId = voiceId || defaultVoice;
+    if (typeof targetVoiceId !== "string" || !VOICE_ID_PATTERN.test(targetVoiceId)) {
+      return NextResponse.json({ error: "Voice ID tidak valid." }, { status: 400 });
+    }
 
     const cacheKey = generateCacheKey(selectedEngine, cleanText, targetVoiceId);
     const cachedBuffer = getFromCache(cacheKey);
@@ -112,6 +116,7 @@ export async function POST(request: Request) {
         headers: {
           "Content-Type": "audio/mpeg",
           "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
+          "X-Content-Type-Options": "nosniff",
           "X-TTS-Engine": selectedEngine,
           "X-TTS-Cache": "HIT",
           "X-Response-Time": `${duration}ms`,
@@ -206,17 +211,19 @@ export async function POST(request: Request) {
       headers: {
         "Content-Type": "audio/mpeg",
         "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
+        "X-Content-Type-Options": "nosniff",
         "X-TTS-Engine": selectedEngine,
         "X-TTS-Cache": "MISS",
         "X-Response-Time": `${totalDuration}ms`,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     const totalDuration = (performance.now() - startTime).toFixed(1);
     console.error(`[TTS API] Error after ${totalDuration}ms:`, error);
+    const message = error instanceof Error ? error.message : "Gagal memproses AI Text-To-Speech";
     return NextResponse.json(
-      { error: error?.message || "Gagal memproses AI Text-To-Speech" },
-      { status: 500 }
+      { error: message },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
 }

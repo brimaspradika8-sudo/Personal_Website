@@ -29,6 +29,10 @@ export interface CommentItem {
   content: string;
   created_at: string;
   user_id: string;
+  parent_id: string | null;
+  likeCount: number;
+  likedByUser: boolean;
+  canDelete: boolean;
   user: {
     id: string;
     name: string;
@@ -319,6 +323,9 @@ const getArticleBySlugMemoized = cache(async (
                 avatar: true,
               },
             },
+            likes: {
+              select: { user_id: true },
+            },
           },
           orderBy: { created_at: "desc" },
         },
@@ -362,6 +369,10 @@ const getArticleBySlugMemoized = cache(async (
           content: c.content,
           created_at: c.created_at.toISOString(),
           user_id: c.user_id,
+          parent_id: c.parent_id,
+          likeCount: c.likes.length,
+          likedByUser: c.likes.some((like) => like.user_id === dbUserId),
+          canDelete: c.user_id === dbUserId,
           user: {
             id: c.user.id,
             name: c.user.name,
@@ -392,6 +403,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
 
 const isValidUuid = (str: string) =>
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
+
+const MAX_COMMENT_LENGTH = 1000;
 
 // Ambil detail artikel berdasarkan ID (untuk halaman Edit)
 export async function getArticleById(id: string): Promise<ArticleItem | null> {
@@ -458,7 +471,7 @@ export async function uploadArticleImage(formData: FormData) {
   }
 
   if (!file.type.startsWith("image/")) {
-    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG, GIF)." };
+    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, GIF)." };
   }
 
   if (file.size > 8 * 1024 * 1024) {
@@ -760,10 +773,13 @@ export async function toggleArticleReaction(
 }
 
 // 6. Tambah Komentar
-export async function addArticleComment(articleId: string, rawContent: string) {
+export async function addArticleComment(articleId: string, rawContent: string, parentId?: string | null) {
   const content = stripHtml(rawContent || "");
   if (!content || content.trim().length === 0) {
     return { error: "Komentar tidak boleh kosong atau hanya berisi tag HTML." };
+  }
+  if (content.length > MAX_COMMENT_LENGTH) {
+    return { error: `Komentar terlalu panjang. Maksimal ${MAX_COMMENT_LENGTH} karakter.` };
   }
 
   const supabase = await createClient();
@@ -823,14 +839,36 @@ export async function addArticleComment(articleId: string, rawContent: string) {
       return { error: "Artikel tidak ditemukan." };
     }
 
+    let validParentId: string | null = null;
+    if (parentId) {
+      if (!isValidUuid(parentId)) {
+        return { error: "Komentar yang dibalas tidak valid." };
+      }
+
+      const parent = await prisma.comment.findUnique({
+        where: { id: parentId },
+        select: { id: true, article_id: true, parent_id: true },
+      });
+
+      if (!parent || parent.article_id !== articleExists.id) {
+        return { error: "Komentar yang dibalas tidak ditemukan di artikel ini." };
+      }
+
+      validParentId = parent.parent_id || parent.id;
+    }
+
     const newComment = await prisma.comment.create({
       data: {
         article_id: articleExists.id,
         user_id: dbUser.id,
+        parent_id: validParentId,
         content: content.trim(),
       },
       include: {
         user: true,
+        likes: {
+          select: { user_id: true },
+        },
       },
     });
 
@@ -844,6 +882,10 @@ export async function addArticleComment(articleId: string, rawContent: string) {
         content: newComment.content,
         created_at: newComment.created_at.toISOString(),
         user_id: newComment.user_id,
+        parent_id: newComment.parent_id,
+        likeCount: newComment.likes.length,
+        likedByUser: false,
+        canDelete: true,
         user: {
           id: newComment.user.id,
           name: newComment.user.name,
@@ -890,6 +932,72 @@ export async function deleteArticleComment(commentId: string) {
   } catch (err: unknown) {
     console.error("Error deleting comment:", err);
     return { error: (err as Error)?.message || "Gagal menghapus komentar." };
+  }
+}
+
+// 7b. Like / Unlike Komentar
+export async function toggleCommentLike(commentId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user || !user.email) {
+    return { error: "Harus login terlebih dahulu untuk menyukai komentar." };
+  }
+
+  if (!isValidUuid(commentId)) {
+    return { error: "ID komentar tidak valid." };
+  }
+
+  try {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: user.email.toLowerCase().trim() },
+    });
+
+    if (!dbUser) {
+      return { error: "Akun pengguna tidak ditemukan." };
+    }
+
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { id: true, user_id: true },
+    });
+
+    if (!comment) {
+      return { error: "Komentar tidak ditemukan." };
+    }
+
+    if (comment.user_id === dbUser.id) {
+      return { error: "Anda tidak dapat menyukai komentar sendiri." };
+    }
+
+    const existing = await prisma.commentLike.findUnique({
+      where: {
+        user_id_comment_id: {
+          user_id: dbUser.id,
+          comment_id: commentId,
+        },
+      },
+    });
+
+    if (existing) {
+      await prisma.commentLike.delete({ where: { id: existing.id } });
+    } else {
+      await prisma.commentLike.create({
+        data: {
+          user_id: dbUser.id,
+          comment_id: commentId,
+        },
+      });
+    }
+
+    const likeCount = await prisma.commentLike.count({
+      where: { comment_id: commentId },
+    });
+
+    return { success: true, liked: !existing, likeCount };
+  } catch (err: unknown) {
+    console.error("Error toggling comment like:", err);
+    return { error: (err as Error)?.message || "Gagal memproses like komentar." };
   }
 }
 

@@ -89,13 +89,7 @@ const TIMELINE_EVENTS = [
 
 export default function AboutClient() {
   const { lang } = useLanguage();
-  const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedCert, setSelectedCert] = useState<string | null>(null);
-
-  const filteredTech = TECH_STACK_ITEMS.filter((item) => {
-    if (activeCategory === "all") return true;
-    return item.category === activeCategory;
-  });
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-black pb-28 sm:pb-20">
@@ -313,55 +307,86 @@ export default function AboutClient() {
                 {lang === "id" ? "TEKNOLOGI & STACK PILIHAN" : "TECHNOLOGY & FEATURED STACK"}
               </h2>
             </div>
-
-            {/* Category Filter Tabs */}
-            <div className="flex flex-wrap items-center gap-2">
-              {[
-                { id: "all", label: lang === "id" ? "SEMUA" : "ALL" },
-                { id: "frontend", label: "FRONTEND" },
-                { id: "backend", label: "BACKEND" },
-                { id: "ai", label: "AI & INTEGRATION" },
-                { id: "tools", label: "TOOLS" },
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => {
-                    soundFx.playClick();
-                    setActiveCategory(cat.id);
-                  }}
-                  className={`px-3 py-1.5 rounded-none border-2 border-black dark:border-white text-xs font-mono font-black uppercase transition-all cursor-pointer ${
-                    activeCategory === cat.id
-                      ? "bg-[#166534] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
-                      : "bg-white dark:bg-black text-black dark:text-white hover:bg-[#FEF9C3] dark:hover:bg-neutral-800"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
           </div>
 
-          {/* Tech Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {filteredTech.map((item, i) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.04 }}
-                className="p-4 rounded-none border-3 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <h4 className="font-mono font-black text-sm uppercase text-black dark:text-white">{item.name}</h4>
-                  <span className="px-2 py-0.5 bg-[#EAB308] text-black border border-black text-[9px] font-mono font-black uppercase">
-                    {item.level}
-                  </span>
+          {/* Scrolling Marquee Ticker */}
+          <div className="overflow-hidden border-y-3 border-black dark:border-white bg-[#166534] py-2.5 relative">
+            <motion.div
+              className="flex gap-6 whitespace-nowrap"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+            >
+              {[...TECH_STACK_ITEMS, ...TECH_STACK_ITEMS].map((item, i) => (
+                <span key={i} className="inline-flex items-center gap-2 text-[11px] font-mono font-black uppercase text-white shrink-0">
+                  <span className="text-[#EAB308]">▸</span>
+                  {item.name}
+                  <span className="text-white/40">·</span>
+                </span>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Category Rows with Skill Bars */}
+          <div className="space-y-0 border-3 border-black dark:border-white overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+            {[
+              { id: "frontend", label: "FRONTEND",          accent: "#EAB308", items: TECH_STACK_ITEMS.filter((t) => t.category === "frontend") },
+              { id: "backend",  label: "BACKEND",           accent: "#166534", items: TECH_STACK_ITEMS.filter((t) => t.category === "backend")  },
+              { id: "ai",       label: "AI & LLM",          accent: "#7C3AED", items: TECH_STACK_ITEMS.filter((t) => t.category === "ai")       },
+              { id: "tools",    label: "TOOLS & DEVOPS",    accent: "#0EA5E9", items: TECH_STACK_ITEMS.filter((t) => t.category === "tools")    },
+            ].map((cat, catIdx) => {
+              const levelMap: Record<string, number> = { Expert: 95, Advanced: 80, Intermediate: 60, Beginner: 35 };
+              return (
+                <div key={cat.id} className={catIdx !== 0 ? "border-t-3 border-black dark:border-white" : ""}>
+                  {/* Category Header */}
+                  <div className="flex items-center gap-3 px-5 py-3" style={{ backgroundColor: cat.accent }}>
+                    <span className="text-[11px] font-mono font-black uppercase text-white tracking-widest">{cat.label}</span>
+                    <span className="ml-auto text-[10px] font-mono font-black text-white/70 uppercase">{cat.items.length} TEKNOLOGI</span>
+                  </div>
+                  {/* Skills rows */}
+                  <div className="divide-y divide-black/10 dark:divide-white/10 bg-white dark:bg-[#0A0D14]">
+                    {cat.items.map((item, i) => {
+                      const pct = levelMap[item.level] ?? 60;
+                      return (
+                        <motion.div
+                          key={item.name}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.3, delay: i * 0.05 }}
+                          className="flex items-center gap-4 px-5 py-3 hover:bg-[#FEF9C3] dark:hover:bg-[#0D1526] transition-colors"
+                        >
+                          <span className="text-[10px] font-mono font-black text-neutral-400 dark:text-neutral-600 w-5 shrink-0 tabular-nums">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span className="font-mono font-black text-xs uppercase text-black dark:text-white w-36 shrink-0">
+                            {item.name}
+                          </span>
+                          <div className="flex-1 h-1.5 bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
+                            <motion.div
+                              className="h-full"
+                              style={{ backgroundColor: cat.accent }}
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${pct}%` }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 0.7, delay: i * 0.06, ease: "easeOut" }}
+                            />
+                          </div>
+                          <span
+                            className="text-[9px] font-mono font-black uppercase px-2 py-0.5 border shrink-0"
+                            style={{ color: cat.accent, borderColor: cat.accent }}
+                          >
+                            {item.level}
+                          </span>
+                          <span className="hidden lg:block text-[10px] font-mono text-neutral-500 dark:text-neutral-400 font-bold leading-snug max-w-[220px] truncate">
+                            {item.desc}
+                          </span>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <p className="text-[11px] font-mono text-neutral-600 dark:text-neutral-400 font-bold leading-snug">
-                  {item.desc}
-                </p>
-              </motion.div>
-            ))}
+              );
+            })}
           </div>
         </section>
         {/* 6. CERTIFICATIONS & ACHIEVEMENTS GALLERY */}

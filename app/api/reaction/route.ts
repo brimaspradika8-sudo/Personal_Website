@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { verifyCsrfToken, verifyRequestOrigin } from "@/lib/security/csrf";
 
 export async function POST(request: NextRequest) {
   try {
+    const origin = await verifyRequestOrigin();
+    if (!origin.valid || !(await verifyCsrfToken(request.headers.get("x-csrf-token")))) {
+      return NextResponse.json({ error: "Permintaan ditolak." }, { status: 403 });
+    }
     const user = await getAuthenticatedUser();
 
     if (!user || !user.email) {
@@ -25,7 +30,33 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json().catch(() => ({}));
-    const { article_id, type } = body;
+    const { article_id, type, comment_id: commentId } = body;
+
+    if (commentId !== undefined) {
+      if (typeof commentId !== "string" || !/^[0-9a-fA-F-]{36}$/.test(commentId)) {
+        return NextResponse.json({ error: "ID komentar tidak valid." }, { status: 400 });
+      }
+      const email = user.email.toLowerCase().trim();
+      const dbUser = await prisma.user.upsert({
+        where: { email },
+        update: {},
+        create: { email, name: email.split("@")[0] },
+      });
+      const comment = await prisma.comment.findUnique({ where: { id: commentId }, select: { id: true, user_id: true } });
+      if (!comment) return NextResponse.json({ error: "Komentar tidak ditemukan." }, { status: 404 });
+      if (comment.user_id === dbUser.id) {
+        return NextResponse.json({ error: "Kamu tidak bisa menyukai komentar sendiri." }, { status: 403 });
+      }
+      const existing = await prisma.commentLike.findUnique({ where: { user_id_comment_id: { user_id: dbUser.id, comment_id: commentId } } });
+      if (existing) {
+        await prisma.commentLike.delete({ where: { id: existing.id } });
+        const likeCount = await prisma.commentLike.count({ where: { comment_id: commentId } });
+        return NextResponse.json({ success: true, liked: false, likeCount });
+      }
+      await prisma.commentLike.create({ data: { user_id: dbUser.id, comment_id: commentId } });
+      const likeCount = await prisma.commentLike.count({ where: { comment_id: commentId } });
+      return NextResponse.json({ success: true, liked: true, likeCount });
+    }
 
     if (!article_id || !type || (type !== "LIKE" && type !== "DISLIKE")) {
       return NextResponse.json(

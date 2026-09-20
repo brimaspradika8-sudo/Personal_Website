@@ -90,7 +90,7 @@ export async function uploadProjectImage(formData: FormData) {
   const isImage = file.type.startsWith("image/");
 
   if (!isImage && !isVideo) {
-    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, SVG) atau video (MP4, WEBM, MOV)." };
+    return { error: "File harus berupa format gambar (JPG, PNG, WEBP, GIF) atau video (MP4, WEBM, MOV)." };
   }
 
   const maxBytes = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
@@ -99,7 +99,7 @@ export async function uploadProjectImage(formData: FormData) {
   }
 
   try {
-    const res = await uploadFileToSupabaseStorage({ file, folder: "project-media" });
+    const res = await uploadFileToSupabaseStorage({ file, folder: "project-media", allowVideo: true });
     return res;
   } catch (err: unknown) {
     return { error: (err as Error)?.message || "Gagal mengunggah file media proyek." };
