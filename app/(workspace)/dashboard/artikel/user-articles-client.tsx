@@ -18,6 +18,7 @@ import {
   TrendingUp,
   ThumbsUp,
   MessageSquare,
+  ArrowLeft,
   Filter,
   ArrowUpDown,
   Zap,
@@ -123,7 +124,15 @@ export default function UserArticlesClient({
             </p>
           </div>
 
-          {isAdmin && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/dashboard"
+              onClick={() => soundFx.playClick()}
+              className="inline-flex items-center justify-center gap-2 px-4 py-3 min-h-12 border-2 border-black dark:border-white font-black uppercase text-xs bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Kembali</span>
+            </Link>
             <Link
               href="/admin/artikel/tambah"
               onClick={() => soundFx.playClick()}
@@ -132,7 +141,7 @@ export default function UserArticlesClient({
               <PlusCircle className="w-5 h-5" />
               <span>Tambah Artikel</span>
             </Link>
-          )}
+          </div>
         </div>
 
 
@@ -225,7 +234,7 @@ export default function UserArticlesClient({
                 </p>
               </div>
 
-              {!searchQuery && isAdmin && (
+              {!searchQuery && (
                 <Link
                   href="/admin/artikel/tambah"
                   onClick={() => soundFx.playClick()}

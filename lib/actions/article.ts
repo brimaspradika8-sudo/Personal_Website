@@ -456,7 +456,7 @@ export async function uploadArticleImage(formData: FormData) {
         email: user.email,
         name: user.user_metadata?.full_name || user.email.split("@")[0],
         avatar: user.user_metadata?.avatar_url || null,
-        role: isAdmin ? "ADMIN" : "USER",
+        role: "USER",
       },
     });
   }
@@ -511,10 +511,6 @@ export async function createArticle(data: {
         role: isAdmin ? "ADMIN" : "USER",
       },
     });
-  }
-
-  if (!isAdmin) {
-    return { error: "Akses ditolak. Hanya Admin yang dapat membuat artikel." };
   }
 
   try {
