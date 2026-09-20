@@ -18,8 +18,6 @@ import {
   TrendingUp,
   ThumbsUp,
   MessageSquare,
-  ShieldAlert,
-  ArrowLeft,
   Filter,
   ArrowUpDown,
   Zap,
@@ -106,39 +104,6 @@ export default function UserArticlesClient({
       {/* Main Container */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 space-y-6">
         
-        {/* Navigation Back Buttons */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Link
-              href="/artikel"
-              onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-900 border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#EAB308] dark:hover:bg-[#EAB308] hover:text-black transition-all text-xs font-black uppercase"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Artikel Publik</span>
-            </Link>
-
-            <Link
-              href="/dashboard"
-              onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs font-black uppercase"
-            >
-              <span>Kembali ke Dashboard</span>
-            </Link>
-          </div>
-
-          {isAdmin && (
-            <Link
-              href="/admin/artikel"
-              onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#EAB308] text-black border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all text-xs font-black uppercase"
-            >
-              <ShieldAlert className="w-4 h-4" />
-              <span>Dashboard Admin</span>
-            </Link>
-          )}
-        </div>
-
         {/* Header Creator Studio Banner */}
         <div className="p-5 sm:p-7 bg-white dark:bg-[#0E131F] border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2">
@@ -159,16 +124,14 @@ export default function UserArticlesClient({
           </div>
 
           {isAdmin && (
-            <div className="z-10 shrink-0">
-              <Link
-                href="/admin/artikel/tambah"
-                onClick={() => soundFx.playClick()}
-                className="inline-flex items-center gap-2.5 px-6 py-4 border-4 border-black font-black uppercase text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-[#00FF66] text-slate-950 hover:bg-[#EAB308] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
-              >
-                <PlusCircle className="w-5 h-5" />
-                <span>Tulis Artikel</span>
-              </Link>
-            </div>
+            <Link
+              href="/admin/artikel/tambah"
+              onClick={() => soundFx.playClick()}
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-4 min-h-12 border-3 border-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-[#00FF66] text-slate-950 hover:bg-[#EAB308] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+            >
+              <PlusCircle className="w-5 h-5" />
+              <span>Tambah Artikel</span>
+            </Link>
           )}
         </div>
 

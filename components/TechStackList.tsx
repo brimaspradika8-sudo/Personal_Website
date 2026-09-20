@@ -4,117 +4,41 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Code2,
-  Cpu,
+  FileCode2,
+  Braces,
   Database,
-  Layers,
   Sparkles,
-  Terminal,
   Container,
-  Flame,
-  CheckCircle2,
+  Atom,
 } from "lucide-react";
-import { soundFx } from "@/lib/audio/sound";
 
 interface TechItem {
   id: string;
   name: string;
-  category: "Frontend" | "Backend" | "Database & Cloud" | "AI & Systems";
-  level: "Expert" | "Production Ready" | "Advanced" | "Specialized";
-  description: string;
-  useCase: string;
   icon: React.ElementType;
-  lightBg: string;
-  darkBg: string;
-  badgeBg: string;
-  span: string;
   logo: string;
 }
 
 const TECH_ITEMS: TechItem[] = [
+  { id: "php", name: "PHP", logo: "PHP", icon: Code2 },
+  { id: "html", name: "HTML", logo: "</>", icon: FileCode2 },
+  { id: "css", name: "CSS", logo: "#", icon: Braces },
+  { id: "javascript", name: "JavaScript", logo: "JS", icon: Braces },
+  { id: "react", name: "React", logo: "R", icon: Atom },
   {
     id: "nextjs",
-    name: "Next.js & React",
-    logo: "N/R",
-    category: "Frontend",
-    level: "Production Ready",
-    description: "App Router, Server Actions, Dynamic SSR, dan React Server Components.",
-    useCase: "Membangun web app skala besar dengan performa tinggi & SEO optimal.",
+    name: "Next.js",
+    logo: "N",
     icon: Code2,
-    lightBg: "bg-slate-950 text-white",
-    darkBg: "dark:bg-[#0E121D] dark:text-white",
-    badgeBg: "bg-[#FFE600] text-slate-950",
-    span: "col-span-1 md:col-span-2 lg:col-span-2",
   },
   {
     id: "laravel",
-    name: "Laravel & PHP",
-    logo: "L/P",
-    category: "Backend",
-    level: "Advanced",
-    description: "RESTful API Architecture, Eloquent ORM, Queue Workers & Middleware.",
-    useCase: "Sistem manajemen data, otentikasi enterprise, dan backend service.",
-    icon: Flame,
-    lightBg: "bg-emerald-600 text-white",
-    darkBg: "dark:bg-emerald-700 dark:text-white",
-    badgeBg: "bg-[#FFE600] text-slate-950",
-    span: "col-span-1 md:col-span-1 lg:col-span-1",
-  },
-  {
-    id: "ai-systems",
-    name: "AI & LLM",
-    logo: "AI",
-    category: "AI & Systems",
-    level: "Specialized",
-    description: "Agentic Workflows, OpenAI/Anthropic APIs, Prompt Engineering & Embeddings.",
-    useCase: "Otomatisasi alur kerja cerdas, chatbot kustom, dan analisis dokumen.",
-    icon: Cpu,
-    lightBg: "bg-[#FFE600] text-slate-950",
-    darkBg: "dark:bg-[#FFE600] dark:text-slate-950",
-    badgeBg: "bg-slate-950 text-white",
-    span: "col-span-1 md:col-span-1 lg:col-span-1",
-  },
-  {
-    id: "supabase",
-    name: "Supabase & PostgreSQL",
-    logo: "S/P",
-    category: "Database & Cloud",
-    level: "Production Ready",
-    description: "Row Level Security (RLS), Realtime Subscriptions, Storage & Auth.",
-    useCase: "Penyimpanan basis data relasional real-time & manajemen aset media.",
+    name: "Laravel",
+    logo: "L",
     icon: Database,
-    lightBg: "bg-emerald-400 text-slate-950",
-    darkBg: "dark:bg-emerald-500 dark:text-slate-950",
-    badgeBg: "bg-slate-950 text-white",
-    span: "col-span-1 md:col-span-2 lg:col-span-2",
   },
-  {
-    id: "tailwind",
-    name: "Tailwind CSS & Motion",
-    logo: "T/M",
-    category: "Frontend",
-    level: "Expert",
-    description: "Neo-Brutalism design system, mikro-animasi UI, dan responsif layout.",
-    useCase: "Menciptakan antarmuka yang bold, cepat, berani, dan modern.",
-    icon: Layers,
-    lightBg: "bg-[#00E676] text-slate-950",
-    darkBg: "dark:bg-[#00E676] dark:text-slate-950",
-    badgeBg: "bg-slate-950 text-white",
-    span: "col-span-1 md:col-span-1 lg:col-span-1",
-  },
-  {
-    id: "docker-prisma",
-    name: "Docker & Prisma",
-    logo: "D/P",
-    category: "Database & Cloud",
-    level: "Advanced",
-    description: "Containerization, Database Migrations, Schema Design & Indexing.",
-    useCase: "Isolasi lingkungan aplikasi & pengelolaan skema database bertipe aman.",
-    icon: Container,
-    lightBg: "bg-emerald-700 text-white",
-    darkBg: "dark:bg-emerald-800 dark:text-white",
-    badgeBg: "bg-[#FFE600] text-slate-950",
-    span: "col-span-1 md:col-span-2 lg:col-span-2",
-  },
+  { id: "docker", name: "Docker", logo: "D", icon: Container },
+  { id: "supabase", name: "Supabase", logo: "S", icon: Database },
 ];
 
 interface TechStackBentoProps {
@@ -122,16 +46,8 @@ interface TechStackBentoProps {
   lang: "id" | "en";
 }
 
-export default function TechStackList({ isNight, lang }: TechStackBentoProps) {
-  const [selectedFilter, setSelectedFilter] = useState<string>("Semua");
+export default function TechStackList({ lang }: TechStackBentoProps) {
   const [isPaused, setIsPaused] = useState(false);
-
-  const categories = ["Semua", "Frontend", "Backend", "Database & Cloud", "AI & Systems"];
-
-  const filteredItems = TECH_ITEMS.filter((item) => {
-    if (selectedFilter === "Semua") return true;
-    return item.category === selectedFilter;
-  });
 
   return (
     <section
@@ -157,25 +73,6 @@ export default function TechStackList({ isNight, lang }: TechStackBentoProps) {
             </p>
           </div>
 
-          {/* Filter Chips */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  soundFx.playClick();
-                  setSelectedFilter(cat);
-                }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold uppercase transition-all border-2 border-slate-900 dark:border-white cursor-pointer ${
-                  selectedFilter === cat
-                    ? "bg-[#00E676] text-slate-950 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
-                    : "bg-white dark:bg-[#0E121D] text-slate-950 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Continuous technology strip: compact, legible, and easy to scan. */}
@@ -189,7 +86,7 @@ export default function TechStackList({ isNight, lang }: TechStackBentoProps) {
             onFocus={() => setIsPaused(true)}
             onBlur={() => setIsPaused(false)}
           >
-          {[...filteredItems, ...filteredItems].map((item, index) => {
+          {[...TECH_ITEMS, ...TECH_ITEMS].map((item, index) => {
             const Icon = item.icon;
             return (
               <div key={`${item.id}-${index}`} className="flex items-center gap-2.5 min-w-[190px] px-3 py-2 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
