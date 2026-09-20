@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticles, incrementArticleViews } from "@/lib/actions/article";
 import { prisma } from "@/lib/prisma";
-import { getEffectiveUserTier } from "@/lib/membership";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import ArticleClient from "./article-client";
 
@@ -80,12 +79,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const user = await getAuthenticatedUser();
   const userEmail = user?.email ? user.email.toLowerCase().trim() : "";
 
-  const [article, allArticles, dbUser] = await Promise.all([
+  const [article, allArticles] = await Promise.all([
     getArticleBySlug(slug),
     getArticles(),
-    userEmail
-      ? prisma.user.findUnique({ where: { email: userEmail }, select: { id: true } }).catch(() => null)
-      : Promise.resolve(null),
   ]);
 
   if (!article) {
@@ -93,16 +89,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   const relatedArticles = allArticles.filter((a) => a.slug !== slug);
-  const userTier = dbUser
-    ? await getEffectiveUserTier(dbUser.id).catch(() => "FREE" as const)
-    : ("FREE" as const);
 
   return (
     <ArticleClient
       article={article}
       relatedArticles={relatedArticles}
       user={user}
-      userTier={userTier}
     />
   );
 }

@@ -158,11 +158,6 @@ export default function Footer({ isNight = false }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/upgrade" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
-                  [ MEMBERSHIP BRIMAS ]
-                </Link>
-              </li>
-              <li>
                 <Link href="/dashboard#projects" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ PROYEK UNGGULAN ]
                 </Link>

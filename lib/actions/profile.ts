@@ -4,11 +4,17 @@ import { createClient } from "@/lib/supabase/server";
 import { syncUserToDatabase } from "@/lib/actions/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { stripHtml } from "@/lib/security/sanitize";
 
 /**
  * Server Action: Update Profile Name & Avatar URL
  */
-export async function updateUserProfile(name: string, avatarUrl?: string) {
+export async function updateUserProfile(rawName: string, avatarUrl?: string) {
+  const name = stripHtml(rawName || "");
+  if (!name || name.trim().length === 0) {
+    return { error: "Nama profil tidak boleh kosong." };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -275,8 +281,6 @@ export async function getCurrentProfile() {
         email: true,
         name: true,
         avatar: true,
-        tier: true,
-        tier_expires_at: true,
         role: true,
         created_at: true,
       },

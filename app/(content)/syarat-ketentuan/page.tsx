@@ -291,10 +291,10 @@ export default function TermsPage() {
             </p>
             <div className="pt-3">
               <Link
-                href="/upgrade"
+                href="/artikel"
                 className="inline-block px-5 py-2.5 bg-black text-white border-2 border-black text-xs font-mono font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] transition-all"
               >
-                LIHAT PAKET MEMBERSHIP
+                JELAJAHI ARTIKEL
               </Link>
             </div>
           </section>

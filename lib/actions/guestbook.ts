@@ -2,6 +2,9 @@
 
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { stripHtml } from "@/lib/security/sanitize";
+import { checkIsAdmin } from "@/lib/actions/auth";
 
 export interface GuestbookEntry {
   id: string;
@@ -41,9 +44,10 @@ export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
   }
 }
 
-export async function createGuestbookEntry(message: string) {
-  if (!message || message.trim().length === 0) {
-    return { error: "Pesan tidak boleh kosong." };
+export async function createGuestbookEntry(rawMessage: string) {
+  const sanitizedMessage = stripHtml(rawMessage || "");
+  if (!sanitizedMessage || sanitizedMessage.trim().length === 0) {
+    return { error: "Pesan tidak boleh kosong atau hanya berisi tag HTML." };
   }
 
   const supabase = await createClient();
@@ -51,6 +55,13 @@ export async function createGuestbookEntry(message: string) {
 
   if (!user) {
     return { error: "Harus login terlebih dahulu untuk menulis di Buku Tamu." };
+  }
+
+  // Rate Limiting Guard
+  const rateLimit = checkRateLimit(`guestbook:${user.id || user.email}`, RATE_LIMIT_PRESETS.API_GUESTBOOK.limit, RATE_LIMIT_PRESETS.API_GUESTBOOK.windowMs);
+  if (!rateLimit.success) {
+    const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
+    return { error: `Terlalu banyak pesan buku tamu. Silakan tunggu ${waitSeconds} detik.` };
   }
 
   try {
@@ -72,7 +83,7 @@ export async function createGuestbookEntry(message: string) {
     const entry = await prisma.guestbook.create({
       data: {
         user_id: dbUser.id,
-        message: message.trim(),
+        message: sanitizedMessage.trim(),
       },
       include: {
         user: { select: { id: true, name: true, email: true, avatar: true } },
@@ -115,7 +126,7 @@ export async function deleteGuestbookEntry(id: string) {
       return { error: "Pesan tidak ditemukan." };
     }
 
-    const isAdmin = user.email?.toLowerCase().trim() === "brimaspradika8@gmail.com";
+    const isAdmin = await checkIsAdmin(user.email);
     if (existing.user_id !== dbUser?.id && !isAdmin) {
       return { error: "Anda tidak memiliki izin menghapus pesan ini." };
     }

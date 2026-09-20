@@ -96,7 +96,6 @@ function ArticleThumbnail({ src, title }: { src: string | null; title: string })
 interface ArtikelClientProps {
   initialArticles: ArticleItem[];
   user?: any;
-  userTier?: string;
   isAdmin?: boolean;
 }
 

@@ -380,9 +380,9 @@ export default function AboutClient() {
             
             {/* Certificate Card: BCT Trial Class 2026 */}
             <div className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4 group">
-              <div className="relative w-full h-56 bg-black border-3 border-black overflow-hidden relative cursor-pointer" onClick={() => setSelectedCert("/images/Sertifikat BCT X TRIAL CLASS 2026 72.png")}>
+              <div className="relative w-full h-56 bg-black border-3 border-black overflow-hidden relative cursor-pointer" onClick={() => setSelectedCert("/images/sertifikat-bct-2026.webp")}>
                 <Image
-                  src="/images/Sertifikat BCT X TRIAL CLASS 2026 72.png"
+                  src="/images/sertifikat-bct-2026.webp"
                   alt="Sertifikat BCT X Trial Class 2026"
                   fill
                   unoptimized

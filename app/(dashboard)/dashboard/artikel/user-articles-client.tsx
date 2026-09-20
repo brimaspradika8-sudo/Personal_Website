@@ -32,8 +32,6 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 interface UserArticlesClientProps {
   user: any;
   dbUser: any;
-  userTier: string;
-  permission: { allowed: boolean; reason?: string; currentCount?: number; maxLimit?: number };
   isAdmin: boolean;
   initialArticles: ArticleItem[];
 }
@@ -41,8 +39,6 @@ interface UserArticlesClientProps {
 export default function UserArticlesClient({
   user,
   dbUser,
-  userTier,
-  permission,
   isAdmin,
   initialArticles,
 }: UserArticlesClientProps) {
@@ -103,15 +99,6 @@ export default function UserArticlesClient({
     }
   };
 
-  const isKawan = userTier === "KAWAN_BRIMAS";
-  const isSahabat = userTier === "SAHABAT_BRIMAS";
-  const isFree = userTier === "FREE";
-
-  const quotaPercent = Math.min(
-    100,
-    Math.round(((permission.currentCount || 0) / (permission.maxLimit || 3)) * 100)
-  );
-
   return (
     <div className="min-h-screen bg-[#F4F4F0] dark:bg-[#05080E] text-black dark:text-white font-mono pb-24 sm:pb-16 antialiased">
       {/* Toast Notification */}
@@ -167,24 +154,8 @@ export default function UserArticlesClient({
             <div className="flex items-center gap-2 flex-wrap">
               <span className="inline-flex items-center gap-2 px-3 py-1 bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 <BookOpen className="w-4 h-4 text-[#EAB308]" />
-                <span>STUDIO PENULIS MEMBER</span>
+                <span>STUDIO PENULIS</span>
               </span>
-
-              {isKawan && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#166534] text-[#00FF66] border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <Crown className="w-4 h-4 fill-[#00FF66]" /> KAWAN BRIMAS
-                </span>
-              )}
-              {isSahabat && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EAB308] text-slate-950 border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <Crown className="w-4 h-4 fill-[#EAB308]" /> SAHABAT BRIMAS
-                </span>
-              )}
-              {isFree && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-200 text-slate-800 border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  FREE MEMBER
-                </span>
-              )}
             </div>
 
             <h1 className="font-serif font-black text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-black dark:text-white">
@@ -196,88 +167,21 @@ export default function UserArticlesClient({
             </p>
           </div>
 
-          <div className="z-10 shrink-0">
-            <Link
-              href={permission.allowed ? "/admin/artikel/tambah" : "/upgrade?reason=limit_reached"}
-              onClick={() => soundFx.playClick()}
-              className={`inline-flex items-center gap-2.5 px-6 py-4 border-4 border-black font-black uppercase text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all ${
-                permission.allowed
-                  ? "bg-[#00FF66] text-slate-950 hover:bg-[#EAB308]"
-                  : "bg-[#EAB308] text-slate-950 hover:bg-amber-400"
-              }`}
-            >
-              <PlusCircle className="w-5 h-5" />
-              <span>{permission.allowed ? "Tulis Artikel Baru" : "Upgrade Untuk Menulis"}</span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="p-5 sm:p-6 border-4 border-black dark:border-white bg-white dark:bg-[#0E131F] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
-          {isFree ? (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="inline-flex items-center gap-2 text-amber-600 dark:text-amber-400 font-black text-xs uppercase">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>AKSES GRATIS (HANYA BACA & KOMENTAR)</span>
-                </div>
-                <p className="text-xs font-mono text-slate-800 dark:text-slate-200">
-                  Anda belum berlangganan membership. Upgrade ke **Kawan Brimas** (Rp 5.000/bln) atau **Sahabat Brimas VIP** untuk membuka Studio Penulisan Artikel.
-                </p>
-              </div>
+          {isAdmin && (
+            <div className="z-10 shrink-0">
               <Link
-                href="/upgrade"
+                href="/admin/artikel/tambah"
                 onClick={() => soundFx.playClick()}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#EAB308] text-black border-3 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all shrink-0"
+                className="inline-flex items-center gap-2.5 px-6 py-4 border-4 border-black font-black uppercase text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-[#00FF66] text-slate-950 hover:bg-[#EAB308] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>PILIH MEMBERSHIP</span>
+                <PlusCircle className="w-5 h-5" />
+                <span>Tulis Artikel Baru</span>
               </Link>
-            </div>
-          ) : isSahabat ? (
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-3 text-[#166534] dark:text-[#00FF66]">
-                <CheckCircle2 className="w-6 h-6 text-[#EAB308] shrink-0" />
-                <div>
-                  <p className="text-xs font-black uppercase text-black dark:text-white tracking-wider">
-                    STATUS MEMBERSHIP: SAHABAT BRIMAS VIP (UNLIMITED PUBLISH)
-                  </p>
-                  <p className="text-[11px] font-mono text-slate-600 dark:text-slate-400">
-                    Akses tanpa batas untuk menulis, mengedit, dan mempublikasikan artikel kapan saja dengan fitur VIP lengkap.
-                  </p>
-                </div>
-              </div>
-              <span className="px-3 py-1 bg-[#EAB308] text-slate-950 border-2 border-black font-mono font-black text-xs uppercase">
-                BEBAS KUOTA ♾️
-              </span>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="space-y-0.5">
-                  <p className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
-                    <Crown className="w-4 h-4 text-[#00FF66]" />
-                    KUOTA PUBLIKASI ARTIKEL: {permission.currentCount || 0} / {permission.maxLimit || 3} (7 HARI ROLLING)
-                  </p>
-                  <p className="text-[11px] font-mono text-slate-600 dark:text-slate-400">
-                    {permission.reason || "Kawan Brimas berhak menerbitkan maksimal 3 artikel setiap 7 hari berjalan."}
-                  </p>
-                </div>
-                <span className="text-xs font-mono font-black text-slate-900 dark:text-amber-400 self-end sm:self-auto">
-                  {quotaPercent}% Kuota Terpakai
-                </span>
-              </div>
-
-              <div className="w-full bg-slate-200 dark:bg-slate-800 h-4 border-3 border-black dark:border-white relative overflow-hidden p-0.5">
-                <div
-                  className={`h-full transition-all duration-500 ${
-                    quotaPercent >= 100 ? "bg-red-500" : quotaPercent >= 66 ? "bg-amber-400" : "bg-[#00FF66]"
-                  }`}
-                  style={{ width: `${quotaPercent}%` }}
-                />
-              </div>
             </div>
           )}
         </div>
+
+
 
         {/* Member Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -388,9 +292,9 @@ export default function UserArticlesClient({
                 </p>
               </div>
 
-              {!searchQuery && selectedCategory === "Semua" && (
+              {!searchQuery && selectedCategory === "Semua" && isAdmin && (
                 <Link
-                  href={permission.allowed ? "/admin/artikel/tambah" : "/upgrade"}
+                  href="/admin/artikel/tambah"
                   onClick={() => soundFx.playClick()}
                   className="inline-flex items-center gap-2 px-5 py-3 bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all"
                 >

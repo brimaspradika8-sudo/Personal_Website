@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { hasAdminDashboardAccess } from "@/lib/membership";
+import { checkIsAdmin } from "@/lib/actions/article";
 import { getProjects } from "@/lib/actions/project";
 import { getArticles } from "@/lib/actions/article";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
@@ -20,19 +20,9 @@ export default async function AdminPage() {
     ? await prisma.user.findUnique({ where: { email: userEmail } }).catch(() => null)
     : null;
 
-  const envAdminEmails = (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
+  const isAdmin = await checkIsAdmin(userEmail, dbUser?.role);
 
-  const isAdmin =
-    userEmail === "brimaspradika8@gmail.com" ||
-    envAdminEmails.includes(userEmail) ||
-    dbUser?.role === "ADMIN";
-
-  const hasAccess = await hasAdminDashboardAccess(dbUser?.id, isAdmin);
-
-  if (!hasAccess) {
+  if (!isAdmin) {
     redirect("/dashboard");
   }
 

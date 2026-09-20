@@ -5,6 +5,8 @@ import { getSupabaseEnv } from "@/lib/supabase/client";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { stripHtml } from "@/lib/security/sanitize";
 
 function formatAuthError(errorMsg: string): string {
   const lower = errorMsg.toLowerCase();
@@ -238,11 +240,18 @@ export async function signInWithGithub() {
 // --- Login manual (email + password) ---
 export async function signInWithPassword(formData: FormData) {
   try {
-    const email = (formData.get("email") as string || "").trim();
+    const email = (formData.get("email") as string || "").trim().toLowerCase();
     const password = (formData.get("password") as string || "").trim();
 
     if (!email || !password) {
       return { error: "Email dan password wajib diisi." };
+    }
+
+    // Rate Limiting Guard
+    const rateLimit = checkRateLimit(`login:${email}`, RATE_LIMIT_PRESETS.AUTH_LOGIN.limit, RATE_LIMIT_PRESETS.AUTH_LOGIN.windowMs);
+    if (!rateLimit.success) {
+      const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return { error: `Terlalu banyak percakapan masuk. Silakan tunggu ${waitSeconds} detik sebelum mencoba lagi.` };
     }
 
     const { isConfigured } = getSupabaseEnv();
@@ -287,9 +296,21 @@ export async function signInWithPassword(formData: FormData) {
 
 // --- Register manual (nama, email, password) ---
 export async function signUpWithPassword(formData: FormData) {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const rawName = (formData.get("name") as string || "").trim();
+  const name = stripHtml(rawName);
+  const email = (formData.get("email") as string || "").trim().toLowerCase();
+  const password = (formData.get("password") as string || "").trim();
+
+  if (!email || !password || !name) {
+    return { error: "Nama, email, dan password wajib diisi." };
+  }
+
+  // Rate Limiting Guard
+  const rateLimit = checkRateLimit(`signup:${email}`, RATE_LIMIT_PRESETS.AUTH_SIGNUP.limit, RATE_LIMIT_PRESETS.AUTH_SIGNUP.windowMs);
+  if (!rateLimit.success) {
+    const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
+    return { error: `Terlalu banyak pendaftaran dari email ini. Silakan tunggu ${waitSeconds} detik.` };
+  }
 
   const { isConfigured } = getSupabaseEnv();
   if (!isConfigured) {
@@ -331,6 +352,13 @@ export async function sendForgotPasswordOtp(email: string) {
     const normalizedEmail = email.toLowerCase().trim();
     if (!normalizedEmail) {
       return { error: "Silakan masukkan alamat email Anda." };
+    }
+
+    // Rate Limiting Guard for OTP Request
+    const rateLimit = checkRateLimit(`otp:${normalizedEmail}`, RATE_LIMIT_PRESETS.AUTH_OTP.limit, RATE_LIMIT_PRESETS.AUTH_OTP.windowMs);
+    if (!rateLimit.success) {
+      const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return { error: `Permintaan OTP terlalu sering. Silakan tunggu ${waitSeconds} detik sebelum meminta lagi.` };
     }
 
     const { isConfigured } = getSupabaseEnv();

@@ -60,7 +60,6 @@ function isRateLimited(identifier: string): boolean {
 
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { getEffectiveUserTier } from "@/lib/membership";
 
 export async function POST(request: Request) {
   const startTime = performance.now();
@@ -78,7 +77,7 @@ export async function POST(request: Request) {
 
     if (!user || !user.email) {
       return NextResponse.json(
-        { error: "Silakan login dan upgrade membership untuk mendengarkan Narasi Suara AI." },
+        { error: "Silakan login untuk mendengarkan Narasi Suara AI." },
         { status: 401 }
       );
     }
@@ -88,16 +87,6 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Terlalu banyak permintaan audio dalam 1 menit. Silakan tunggu sebentar." },
         { status: 429 }
-      );
-    }
-
-    const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
-    const userTier = dbUser ? await getEffectiveUserTier(dbUser.id) : "FREE";
-
-    if (userTier === "FREE") {
-      return NextResponse.json(
-        { error: "Fitur Narasi Suara AI khusus untuk Kawan Brimas & Sahabat Brimas VIP." },
-        { status: 403 }
       );
     }
 
@@ -111,11 +100,7 @@ export async function POST(request: Request) {
 
     const selectedEngine = engine === "elevenlabs" ? "elevenlabs" : "edge";
     const defaultVoice = selectedEngine === "edge" ? "id-ID-ArdiNeural" : "1k39YpzqXZn52BgyLyGO";
-    let targetVoiceId = voiceId || defaultVoice;
-
-    if (targetVoiceId.includes("Gadis") && userTier !== "SAHABAT_BRIMAS") {
-      targetVoiceId = "id-ID-ArdiNeural";
-    }
+    const targetVoiceId = voiceId || defaultVoice;
 
     const cacheKey = generateCacheKey(selectedEngine, cleanText, targetVoiceId);
     const cachedBuffer = getFromCache(cacheKey);

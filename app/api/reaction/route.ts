@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
+import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,6 +11,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Kamu harus login dulu untuk memberikan reaksi" },
         { status: 401 }
+      );
+    }
+
+    // Rate Limiting Guard
+    const rateLimit = checkRateLimit(`reaction:${user.id || user.email}`, RATE_LIMIT_PRESETS.API_REACTION.limit, RATE_LIMIT_PRESETS.API_REACTION.windowMs);
+    if (!rateLimit.success) {
+      const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak reaksi dalam waktu singkat. Silakan tunggu ${waitSeconds} detik.` },
+        { status: 429 }
       );
     }
 

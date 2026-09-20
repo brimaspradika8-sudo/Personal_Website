@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
+import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { stripHtml } from "@/lib/security/sanitize";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,12 +15,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json().catch(() => ({}));
-    const { article_id, content } = body;
-
-    if (!article_id || !content || typeof content !== "string" || !content.trim()) {
+    // Rate Limiting Guard
+    const rateLimit = checkRateLimit(`comment:${user.id || user.email}`, RATE_LIMIT_PRESETS.API_COMMENT.limit, RATE_LIMIT_PRESETS.API_COMMENT.windowMs);
+    if (!rateLimit.success) {
+      const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
       return NextResponse.json(
-        { error: "article_id dan content komentar wajib diisi." },
+        { error: `Terlalu banyak komentar. Silakan tunggu ${waitSeconds} detik.` },
+        { status: 429 }
+      );
+    }
+
+    const body = await request.json().catch(() => ({}));
+    const { article_id, content: rawContent } = body;
+
+    const content = typeof rawContent === "string" ? stripHtml(rawContent) : "";
+
+    if (!article_id || !content || !content.trim()) {
+      return NextResponse.json(
+        { error: "article_id dan content komentar valid wajib diisi." },
         { status: 400 }
       );
     }
@@ -73,7 +87,6 @@ export async function POST(request: NextRequest) {
             id: true,
             name: true,
             avatar: true,
-            tier: true,
           },
         },
       },
@@ -90,7 +103,6 @@ export async function POST(request: NextRequest) {
           id: newComment.user.id,
           name: newComment.user.name,
           avatar: newComment.user.avatar,
-          tier: (newComment.user as any).tier || "FREE",
         },
       },
     });

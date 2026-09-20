@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { stripHtml } from "@/lib/security/sanitize";
 
 export interface ArticleItem {
   id: string;
@@ -315,7 +317,6 @@ const getArticleBySlugMemoized = cache(async (
                 id: true,
                 name: true,
                 avatar: true,
-                tier: true,
               },
             },
           },
@@ -365,7 +366,6 @@ const getArticleBySlugMemoized = cache(async (
             id: c.user.id,
             name: c.user.name,
             avatar: c.user.avatar,
-            tier: (c.user as any).tier || "FREE",
           },
         })),
       };
@@ -426,7 +426,6 @@ export async function getArticleById(id: string): Promise<ArticleItem | null> {
 }
 
 import { uploadFileToSupabaseStorage } from "@/lib/supabase/storage";
-import { canUserCreateArticle, getEffectiveUserTier } from "@/lib/membership";
 
 export async function uploadArticleImage(formData: FormData) {
   const supabase = await createClient();
@@ -449,9 +448,8 @@ export async function uploadArticleImage(formData: FormData) {
     });
   }
 
-  const effectiveTier = await getEffectiveUserTier(dbUser.id);
-  if (!isAdmin && effectiveTier === "FREE") {
-    return { error: "Akses ditolak. Silakan upgrade membership untuk mengunggah gambar artikel." };
+  if (!isAdmin) {
+    return { error: "Akses ditolak. Hanya Admin yang dapat mengunggah gambar artikel." };
   }
 
   const file = formData.get("file") as File | null;
@@ -502,10 +500,8 @@ export async function createArticle(data: {
     });
   }
 
-  // Cek Permission Pembuatan Artikel berbasis Tier Membership & Rolling Window Limit
-  const permission = await canUserCreateArticle(dbUser.id, isAdmin);
-  if (!permission.allowed) {
-    return { error: permission.reason || "Anda tidak diizinkan membuat artikel." };
+  if (!isAdmin) {
+    return { error: "Akses ditolak. Hanya Admin yang dapat membuat artikel." };
   }
 
   try {
@@ -562,12 +558,8 @@ export async function deleteArticle(articleId: string) {
     return { error: "Profil pengguna tidak ditemukan." };
   }
 
-  const effectiveTier = await getEffectiveUserTier(dbUser.id);
-  const isSahabat = effectiveTier === "SAHABAT_BRIMAS";
-  const isKawan = effectiveTier === "KAWAN_BRIMAS";
-
-  if (!isAdmin && !isSahabat && !isKawan) {
-    return { error: "Akses ditolak. Silakan upgrade membership Anda." };
+  if (!isAdmin) {
+    return { error: "Akses ditolak. Hanya Admin yang dapat menghapus artikel." };
   }
 
   try {
@@ -614,12 +606,8 @@ export async function updateArticle(
     return { error: "Profil pengguna tidak ditemukan." };
   }
 
-  const effectiveTier = await getEffectiveUserTier(dbUser.id);
-  const isSahabat = effectiveTier === "SAHABAT_BRIMAS";
-  const isKawan = effectiveTier === "KAWAN_BRIMAS";
-
-  if (!isAdmin && !isSahabat && !isKawan) {
-    return { error: "Akses ditolak. Silakan upgrade membership Anda." };
+  if (!isAdmin) {
+    return { error: "Akses ditolak. Hanya Admin yang dapat mengedit artikel." };
   }
 
   try {
@@ -772,9 +760,10 @@ export async function toggleArticleReaction(
 }
 
 // 6. Tambah Komentar
-export async function addArticleComment(articleId: string, content: string) {
+export async function addArticleComment(articleId: string, rawContent: string) {
+  const content = stripHtml(rawContent || "");
   if (!content || content.trim().length === 0) {
-    return { error: "Komentar tidak boleh kosong." };
+    return { error: "Komentar tidak boleh kosong atau hanya berisi tag HTML." };
   }
 
   const supabase = await createClient();
@@ -782,6 +771,13 @@ export async function addArticleComment(articleId: string, content: string) {
 
   if (!user) {
     return { error: "Harus login terlebih dahulu untuk menulis komentar." };
+  }
+
+  // Rate Limiting Guard
+  const rateLimit = checkRateLimit(`comment:${user.id || user.email}`, RATE_LIMIT_PRESETS.API_COMMENT.limit, RATE_LIMIT_PRESETS.API_COMMENT.windowMs);
+  if (!rateLimit.success) {
+    const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
+    return { error: `Terlalu banyak komentar. Silakan tunggu ${waitSeconds} detik.` };
   }
 
   try {

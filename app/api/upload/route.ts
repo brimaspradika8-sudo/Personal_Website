@@ -3,11 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { getStorageBucketConfig, ensurePublicSupabaseUrl } from "@/lib/supabase/storage";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import { checkIsAdmin } from "@/lib/actions/auth";
+import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import sharp from "sharp";
 
 /**
  * API ROUTE ENDPOINT: POST /api/upload
- * Menerima unggahan file dari client/frontend, mengunggah ke Supabase Storage,
- * dan selalu mengembalikan JSON respons yang valid (mencegah error 413 / HTML parse error).
+ * Menerima unggahan file dari client/frontend, mengonversi gambar ke WebP secara otomatis,
+ * mengunggah ke Supabase Storage, dan mengembalikan JSON respons yang valid.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -28,6 +30,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Rate Limiting Guard for Uploads
+    const rateLimit = checkRateLimit(`upload:${user.id}`, RATE_LIMIT_PRESETS.API_UPLOAD.limit, RATE_LIMIT_PRESETS.API_UPLOAD.windowMs);
+    if (!rateLimit.success) {
+      const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak unggahan file. Silakan tunggu ${waitSeconds} detik.` },
+        { status: 429 }
+      );
+    }
+
     // 2. Extract file from FormData
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -41,6 +53,8 @@ export async function POST(request: NextRequest) {
     }
 
     const isVideo = file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+    const isGif = file.type === "image/gif";
     const maxLimit = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
 
     if (file.size > maxLimit) {
@@ -58,12 +72,24 @@ export async function POST(request: NextRequest) {
     const { articleBucket } = getStorageBucketConfig();
     const targetBucket = articleBucket;
 
-    const fileExt = file.name.split(".").pop() || (isVideo ? "mp4" : "png");
-    const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, "");
-    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
-
     const arrayBuffer = await file.arrayBuffer();
-    const fileBuffer = Buffer.from(arrayBuffer);
+    let fileBuffer = Buffer.from(arrayBuffer);
+    let finalContentType = file.type || "application/octet-stream";
+    let fileNameExt = file.name.split(".").pop() || (isVideo ? "mp4" : "png");
+
+    // Convert non-GIF images to WebP for optimal compression
+    if (isImage && !isGif) {
+      try {
+        fileBuffer = await sharp(fileBuffer).webp({ quality: 82 }).toBuffer();
+        finalContentType = "image/webp";
+        fileNameExt = "webp";
+      } catch (convErr) {
+        console.warn("Sharp WebP conversion warning:", convErr);
+      }
+    }
+
+    const sanitizedExt = fileNameExt.replace(/[^a-zA-Z0-9]/g, "");
+    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${sanitizedExt}`;
 
     const supabase = await createClient();
 
@@ -71,7 +97,7 @@ export async function POST(request: NextRequest) {
     const { error: uploadError } = await supabase.storage
       .from(targetBucket)
       .upload(fileName, fileBuffer, {
-        contentType: file.type || "application/octet-stream",
+        contentType: finalContentType,
         upsert: true,
       });
 
@@ -94,6 +120,7 @@ export async function POST(request: NextRequest) {
       url: finalUrl,
       bucket: targetBucket,
       path: fileName,
+      convertedToWebp: isImage && !isGif,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Terjadi kesalahan internal server.";

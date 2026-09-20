@@ -73,8 +73,6 @@ interface ProfileClientProps {
     email: string;
     name: string | null;
     avatar: string | null;
-    tier?: string;
-    tier_expires_at?: Date | string | null;
     created_at: Date | string;
   } | null;
 }
@@ -159,9 +157,6 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       user?.user_metadata?.full_name ||
       (userEmail ? userEmail.split("@")[0] : "Pengguna")
     : "Tamu (Belum Login)";
-
-  const userTier = currentDbUser?.tier || dbUser?.tier || "FREE";
-  const tierExpiresAt = currentDbUser?.tier_expires_at || dbUser?.tier_expires_at;
 
   const defaultAvatar = isAuthenticated
     ? currentDbUser?.avatar ||
@@ -529,22 +524,8 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 </div>
               )}
 
-              {/* Verified / Membership Tier Avatar Corner Badge */}
-              {isAuthenticated && userTier === "SAHABAT_BRIMAS" ? (
-                <div
-                  className="absolute bottom-1 right-1 bg-black border-2 border-[#FFD700] p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                  title="Sahabat Brimas (VIP Gold)"
-                >
-                  <Crown className="w-4 h-4 text-[#FFD700] fill-[#FFD700]" />
-                </div>
-              ) : isAuthenticated && userTier === "KAWAN_BRIMAS" ? (
-                <div
-                  className="absolute bottom-1 right-1 bg-black border-2 border-[#00FF66] p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                  title="Kawan Brimas (Silver)"
-                >
-                  <Crown className="w-4 h-4 text-[#00FF66] fill-[#00FF66]" />
-                </div>
-              ) : (
+              {/* Verified Badge */}
+              {isAuthenticated && (
                 <div className="absolute bottom-1 right-1 bg-[#00FF66] border-2 border-black p-1 sm:p-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <Check className="w-4 h-4 text-black stroke-[3]" />
                 </div>
@@ -555,16 +536,6 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             <div className="mt-4 space-y-2 w-full max-w-lg">
               <h1 className="text-2xl sm:text-3xl font-mono font-black uppercase tracking-tight text-black flex items-center justify-center gap-2">
                 <span>{userName}</span>
-                {isAuthenticated && userTier === "SAHABAT_BRIMAS" && (
-                  <span title="Sahabat Brimas VIP">
-                    <Crown className="w-6 h-6 text-[#FFD700] fill-[#FFD700] drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] shrink-0" />
-                  </span>
-                )}
-                {isAuthenticated && userTier === "KAWAN_BRIMAS" && (
-                  <span title="Kawan Brimas">
-                    <Crown className="w-6 h-6 text-[#00FF66] fill-[#00FF66] drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] shrink-0" />
-                  </span>
-                )}
               </h1>
 
               <p className="text-xs sm:text-sm font-mono font-bold text-neutral-700 max-w-md mx-auto leading-relaxed flex items-center justify-center gap-1.5">
@@ -573,23 +544,6 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               </p>
 
               <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-                {isAuthenticated && userTier === "SAHABAT_BRIMAS" ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-black text-[#FFD700] font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                    <Crown className="w-4 h-4 text-[#FFD700] fill-[#FFD700]" />
-                    <span>SAHABAT BRIMAS (GOLD)</span>
-                  </span>
-                ) : isAuthenticated && userTier === "KAWAN_BRIMAS" ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-black text-[#00FF66] font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                    <Crown className="w-4 h-4 text-[#00FF66] fill-[#00FF66]" />
-                    <span>KAWAN BRIMAS (SILVER)</span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-[#FFFF00] text-black font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                    <span className="w-2.5 h-2.5 rounded-full bg-black animate-ping" />
-                    <span>{isAuthenticated ? "FREE TIER" : "GUEST SESSION"}</span>
-                  </span>
-                )}
-
                 {userEmail && isAuthenticated && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 rounded-none border-2 border-black bg-white text-black font-mono text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     {userEmail}
@@ -600,58 +554,6 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
           </div>
         </div>
-
-        {/* 1.5. PROMINENT MEMBERSHIP TIER CARD (Neo-Brutalist Banner - ONLY SHOWN WHEN LOGGED IN) */}
-        {isAuthenticated && (
-          <div className="rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono">
-            <div className="space-y-2 max-w-xl">
-              {userTier === "SAHABAT_BRIMAS" ? (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-[#FFD700] text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
-                  <Crown className="w-4 h-4 text-[#FFD700] fill-[#FFD700]" />
-                  <span>SAHABAT BRIMAS (VIP GOLD)</span>
-                </div>
-              ) : userTier === "KAWAN_BRIMAS" ? (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-[#00FF66] text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
-                  <Crown className="w-4 h-4 text-[#00FF66] fill-[#00FF66]" />
-                  <span>KAWAN BRIMAS (SILVER)</span>
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-black text-white text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
-                  <span>STATUS MEMBERSHIP SAYA</span>
-                </div>
-              )}
-
-              <h3 className="text-xl sm:text-2xl font-black uppercase leading-tight">
-                {userTier === "SAHABAT_BRIMAS"
-                  ? "SAHABAT BRIMAS (VIP GOLD)"
-                  : userTier === "KAWAN_BRIMAS"
-                  ? "KAWAN BRIMAS (SILVER)"
-                  : "FREE TIER (GRATIS)"}
-              </h3>
-              <p className="text-xs font-bold leading-relaxed">
-                {userTier === "SAHABAT_BRIMAS"
-                  ? "Akses VIP Admin Penuh, AI Voice ElevenLabs, & Publikasi Artikel Tanpa Batas."
-                  : userTier === "KAWAN_BRIMAS"
-                  ? "Dapat mempublikasikan hingga 3 artikel per 7 hari & Akses Fitur Eksklusif."
-                  : "Tingkat gratis. Upgrade ke Kawan atau Sahabat Brimas untuk membuka fitur eksklusif & publikasi artikel."}
-              </p>
-              {tierExpiresAt && (
-                <p className="text-[11px] font-black text-[#166534] uppercase pt-1">
-                  📅 Masa berlaku hingga: {new Date(tierExpiresAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
-                </p>
-              )}
-            </div>
-
-            <Link
-              href="/upgrade"
-              onClick={() => soundFx.playClick()}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-none bg-[#166534] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-[#FFFF00] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0"
-            >
-              <Crown className="w-4 h-4" />
-              <span>{userTier !== "FREE" ? "KELOLA MEMBERSHIP" : "UPGRADE MEMBERSHIP"}</span>
-            </Link>
-          </div>
-        )}
 
         {/* 2. DESKTOP 2-COLUMN GRID (Account Settings & Preferences Side-by-Side) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

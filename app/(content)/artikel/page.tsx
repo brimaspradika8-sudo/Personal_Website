@@ -1,7 +1,6 @@
 import { getArticles } from "@/lib/actions/article";
 import { checkIsAdmin } from "@/lib/actions/auth";
 import { prisma } from "@/lib/prisma";
-import { getEffectiveUserTier, MembershipTier } from "@/lib/membership";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import ArtikelClient from "./artikel-client";
 
@@ -18,16 +17,12 @@ export default async function ArtikelPage() {
     getArticles(),
   ]);
 
-  const [isAdmin, userTier] = await Promise.all([
-    checkIsAdmin(userEmail, dbUser?.role),
-    dbUser ? getEffectiveUserTier(dbUser.id).catch(() => "FREE" as const) : Promise.resolve("FREE" as const),
-  ]);
+  const isAdmin = await checkIsAdmin(userEmail, dbUser?.role);
 
   return (
     <ArtikelClient
       initialArticles={articles}
       user={user}
-      userTier={userTier as MembershipTier}
       isAdmin={isAdmin}
     />
   );
