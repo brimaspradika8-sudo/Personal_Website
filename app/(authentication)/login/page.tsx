@@ -149,10 +149,10 @@ function LoginForm() {
       </div>
 
       {/* Main Neo-Brutalist Auth Card */}
-      <div className="relative z-10 w-full max-w-4xl bg-white dark:bg-[#0E121D] border-3 sm:border-4 border-slate-900 dark:border-white rounded-3xl overflow-hidden flex flex-col md:flex-row my-auto shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
+      <div className="relative z-10 w-full max-w-4xl bg-white dark:bg-[#0E121D] border-2 sm:border-4 border-slate-900 dark:border-white rounded-none overflow-hidden flex flex-col md:flex-row my-auto shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
         
         {/* Left Rive Teddy Panel (Neo-Brutalist High Contrast Container) */}
-        <div className="w-full md:w-[46%] bg-amber-400/20 dark:bg-amber-400/10 p-6 sm:p-8 flex flex-col justify-center items-center border-b-3 md:border-b-0 md:border-r-3 border-slate-900 dark:border-white shrink-0 relative">
+        <div className="w-full md:w-[46%] bg-amber-400/20 dark:bg-amber-400/10 p-5 sm:p-8 flex flex-col justify-center items-center border-b-2 md:border-b-0 md:border-r-2 border-slate-900 dark:border-white shrink-0 relative">
           
           <div className="w-full max-w-xs h-44 sm:h-56 flex items-center justify-center relative">
             <RiveTeddyAnimation
@@ -203,7 +203,7 @@ function LoginForm() {
                 handleSubmit(formData);
               }}
               action={handleSubmit}
-              className="space-y-4"
+              className="space-y-5"
             >
               <div className="space-y-1.5">
                 <label htmlFor="email" className="block text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider">
@@ -218,7 +218,7 @@ function LoginForm() {
                     value={emailText}
                     onChange={handleEmailChange}
                     placeholder="nama@email.com"
-                    className="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-900 dark:border-white rounded-xl px-3.5 py-2.5 pl-9 text-xs font-mono font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-white dark:focus:bg-slate-950 focus:border-[#DC2626] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-900 dark:border-white rounded-none px-3.5 py-3 pl-9 text-sm font-mono text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-white dark:focus:bg-slate-950 focus:border-[#DC2626] transition-all"
                   />
                   <Mail className="w-4 h-4 text-slate-950 dark:text-white absolute left-3" />
                 </div>
@@ -237,7 +237,7 @@ function LoginForm() {
                     onFocus={() => setIsPasswordFocused(true)}
                     onBlur={() => setIsPasswordFocused(false)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-900 dark:border-white rounded-xl px-3.5 py-2.5 pl-9 pr-10 text-xs font-mono font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-white dark:focus:bg-slate-950 focus:border-[#DC2626] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-900 dark:border-white rounded-none px-3.5 py-3 pl-9 pr-10 text-sm font-mono text-slate-950 dark:text-white placeholder:text-slate-400 focus:outline-none focus:bg-white dark:focus:bg-slate-950 focus:border-[#DC2626] transition-all"
                   />
                   <Lock className="w-4 h-4 text-slate-950 dark:text-white absolute left-3" />
                   <button
@@ -269,7 +269,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={isAnyLoading}
-                  className="w-full rounded-xl bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white py-3 px-4 text-xs font-mono font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:bg-amber-400 hover:text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                  className="w-full rounded-none bg-[#DC2626] text-white border-2 border-slate-900 dark:border-white py-3 px-4 text-xs font-mono font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-amber-400 hover:text-slate-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
                   {loading && (
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

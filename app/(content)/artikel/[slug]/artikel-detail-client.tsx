@@ -38,6 +38,7 @@ import {
 } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import ConfirmModal from "@/components/ConfirmModal";
 import { isBookmarked, toggleBookmark, subscribeBookmarks } from "@/lib/bookmarks";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
@@ -77,6 +78,7 @@ export default function ArticleClient({
   const [isTocOpen, setIsTocOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isSavedBookmark, setIsSavedBookmark] = useState(false);
+  const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);
 
   const getCsrfToken = () => {
     if (typeof document === "undefined") return "";
@@ -1364,7 +1366,7 @@ export default function ArticleClient({
           
           {/* Combined Card: Daftar Isi & Font Resizer (Di Atas Konten Artikel pada Mobile - order-1) */}
           <aside className="lg:col-span-1 order-1">
-            <div className="sticky top-24 p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] font-mono">
+              <div className="sticky top-24 p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] font-mono">
               
               {/* Part 1: Daftar Isi Navigasi */}
               {toc.length > 0 && (
@@ -1432,7 +1434,7 @@ export default function ArticleClient({
 
           {/* Article Text Content (Order 2 di mobile) */}
           <main className={`${toc.length > 0 ? "lg:col-span-3 order-2" : "col-span-4 lg:col-span-3 order-2"}`}>
-            <article className="p-6 sm:p-10 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-6 text-black dark:text-white">
+            <article className="p-5 sm:p-10 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] space-y-6 text-black dark:text-white">
               {renderParsedBlocks(parsedBlocks)}
             </article>
           </main>
@@ -1440,11 +1442,11 @@ export default function ArticleClient({
         </div>
 
         {/* 5. REACTION & SOCIAL SHARE BAR */}
-        <div className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black flex flex-wrap items-center justify-between gap-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] font-mono">
-          <div className="flex items-center gap-3">
+        <div className="p-4 sm:p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] font-mono">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => handleReaction("LIKE")}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-none border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                 article.userReaction === "LIKE"
                   ? "bg-[#166534] text-white"
                   : "bg-white text-black hover:bg-[#FFFF00]"
@@ -1456,7 +1458,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleReaction("DISLIKE")}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-none border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                 article.userReaction === "DISLIKE"
                   ? "bg-neutral-800 text-white"
                   : "bg-white text-black hover:bg-neutral-200"
@@ -1468,7 +1470,7 @@ export default function ArticleClient({
           </div>
 
           {/* Social Media Share Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <span className="text-xs font-mono font-black uppercase text-black dark:text-white hidden sm:inline">BAGIKAN:</span>
             
             <button
@@ -1516,7 +1518,7 @@ export default function ArticleClient({
 
           {/* Add Comment Box - Form hanya tampil jika user sudah login */}
           {user ? (
-            <form onSubmit={handleAddComment} className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+            <form onSubmit={handleAddComment} className="p-4 sm:p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
               <div className="flex items-center gap-2 text-xs font-mono font-bold text-black dark:text-white">
                 <span className="w-2.5 h-2.5 rounded-none bg-[#00FF66] border border-black" />
                 <span>{replyTargetId ? "MEMBALAS KOMENTAR" : "MENULIS SEBAGAI"} <strong className="text-[#166534] dark:text-[#EAB308] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
@@ -1527,14 +1529,15 @@ export default function ArticleClient({
                 placeholder={replyTargetId ? "TULISKAN BALASAN..." : "TULISKAN PANDANGAN ANDA..."}
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                className="w-full p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-3 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-xs font-mono font-black uppercase focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all"
+                maxLength={1000}
+                className="w-full min-h-28 p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all resize-y"
               />
 
               <div className="flex justify-end">
                 <button
                   type="submit"
                   disabled={!commentText.trim()}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>KIRIM KOMENTAR</span>
@@ -1579,10 +1582,10 @@ export default function ArticleClient({
                   return (
                     <div
                       key={comment.id}
-                      className={`${comment.parent_id ? "ml-4 sm:ml-10" : ""} p-5 rounded-none border-4 ${
+                      className={`${comment.parent_id ? "ml-4 sm:ml-10 border-l-4" : ""} p-4 sm:p-5 rounded-none border-2 ${
                         isVipComment
                           ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
-                          : "border-black dark:border-white bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
+                          : "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
                       } space-y-3 text-left font-mono`}
                     >
                       <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
@@ -1618,8 +1621,8 @@ export default function ArticleClient({
 
                         {comment.canDelete && (
                           <button
-                            onClick={() => handleDeleteComment(comment.id)}
-                            className="p-1 text-black dark:text-white hover:text-[#166534] transition-colors cursor-pointer"
+                            onClick={() => setDeleteCommentId(comment.id)}
+                            className="p-2 -mr-2 text-black dark:text-white hover:text-red-600 transition-colors cursor-pointer"
                             title="Hapus komentar saya"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1631,11 +1634,11 @@ export default function ArticleClient({
                         {comment.content}
                       </p>
                       <div className="flex items-center gap-4 pt-1 text-[10px] font-black uppercase">
-                        <button type="button" onClick={() => handleLikeComment(comment.id)} className={`inline-flex items-center gap-1 ${comment.likedByUser ? "text-[#166534]" : "text-neutral-500"}`}>
+                        <button type="button" aria-label={`Sukai komentar ${comment.user.name}`} onClick={() => handleLikeComment(comment.id)} className={`inline-flex items-center gap-1 min-h-10 ${comment.likedByUser ? "text-[#166534]" : "text-neutral-500"}`}>
                           <ThumbsUp className="w-3.5 h-3.5" /> {comment.likeCount}
                         </button>
                         {user && (
-                          <button type="button" onClick={() => { setReplyTargetId(comment.id); setCommentText(""); }} className="inline-flex items-center gap-1 text-neutral-500 hover:text-[#166534]">
+                          <button type="button" aria-label={`Balas komentar ${comment.user.name}`} onClick={() => { setReplyTargetId(comment.id); setCommentText(""); }} className="inline-flex items-center gap-1 min-h-10 text-neutral-500 hover:text-[#166534]">
                             <MessageSquare className="w-3.5 h-3.5" /> BALAS
                           </button>
                         )}
@@ -1646,6 +1649,18 @@ export default function ArticleClient({
             )}
           </div>
         </section>
+
+        <ConfirmModal
+          isOpen={Boolean(deleteCommentId)}
+          title="Hapus komentar?"
+          description="Komentar dan balasan di bawahnya akan dihapus permanen. Tindakan ini tidak bisa dibatalkan."
+          confirmText="Hapus komentar"
+          onConfirm={() => {
+            if (deleteCommentId) handleDeleteComment(deleteCommentId);
+            setDeleteCommentId(null);
+          }}
+          onCancel={() => setDeleteCommentId(null)}
+        />
 
         {/* 7. RELATED ARTICLES */}
         {relatedArticles.length > 0 && (

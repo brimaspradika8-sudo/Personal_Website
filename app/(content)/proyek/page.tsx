@@ -1,5 +1,5 @@
 import { getProjects } from "@/lib/actions/project";
-import ProyekClient from "./proyek-client";
+import ProyekClient from "./proyek-list-client";
 
 export const dynamic = "force-dynamic";
 

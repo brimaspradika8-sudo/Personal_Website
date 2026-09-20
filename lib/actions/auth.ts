@@ -24,6 +24,9 @@ function formatAuthError(errorMsg: string): string {
   ) {
     return "Email atau password yang Anda masukkan salah. Silakan periksa kembali.";
   }
+  if (lower.includes("email not confirmed") || lower.includes("email_not_confirmed")) {
+    return "Konfirmasi email masih aktif di Supabase. Matikan Authentication > Providers > Email > Confirm email, lalu coba masuk lagi.";
+  }
   if (lower.includes("user not found")) {
     return "Akun dengan email ini tidak ditemukan.";
   }
@@ -345,7 +348,16 @@ export async function signUpWithPassword(formData: FormData) {
     await syncUserToDatabase(data.user.email, name);
   }
 
-  return { success: true };
+  if (!data.session) {
+    return {
+      error: "Pendaftaran berhasil, tetapi konfirmasi email masih aktif. Matikan Confirm email di Supabase Auth agar bisa langsung masuk.",
+    };
+  }
+
+  const isAdmin = await checkIsAdmin(data.user?.email);
+  revalidatePath("/dashboard");
+  revalidatePath("/", "layout");
+  return { success: true, targetPath: isAdmin ? "/admin" : "/dashboard" };
 }
 
 // --- Logout ---

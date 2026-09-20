@@ -41,6 +41,15 @@ export function stripHtml(str: string | null | undefined): string {
     .trim();
 }
 
+export function getCommentModerationError(content: string): string | null {
+  const normalized = content.toLowerCase().replace(/\s+/g, " ").trim();
+  if (normalized.length < 2) return "Komentar terlalu pendek.";
+  if (/(.)\1{11,}/u.test(normalized)) return "Komentar terdeteksi sebagai spam.";
+  if ((normalized.match(/https?:\/\//g) || []).length > 2) return "Komentar tidak boleh berisi terlalu banyak tautan.";
+  if (/(buy followers|free money|casino online|viagra)/i.test(normalized)) return "Komentar terdeteksi sebagai spam.";
+  return null;
+}
+
 /**
  * Sanitizes user-provided URL string to prevent javascript: pseudo-protocol XSS.
  *

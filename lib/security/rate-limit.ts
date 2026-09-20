@@ -76,6 +76,39 @@ export function checkRateLimit(
   };
 }
 
+export async function checkRateLimitDistributed(
+  key: string,
+  limit: number = 10,
+  windowMs: number = 60 * 1000
+): Promise<RateLimitResult> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return checkRateLimit(key, limit, windowMs);
+
+  try {
+    const response = await fetch(`${url}/pipeline`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify([
+        ["ZREMRANGEBYSCORE", key, 0, Date.now() - windowMs],
+        ["ZCARD", key],
+        ["ZADD", key, Date.now(), `${Date.now()}-${crypto.randomUUID()}`],
+        ["EXPIRE", key, Math.ceil(windowMs / 1000)],
+      ]),
+      cache: "no-store",
+    });
+    if (!response.ok) return checkRateLimit(key, limit, windowMs);
+    const results = await response.json() as Array<{ result: number }>;
+    const count = Number(results[1]?.result ?? 0);
+    if (count >= limit) {
+      return { success: false, limit, remaining: 0, resetMs: windowMs };
+    }
+    return { success: true, limit, remaining: Math.max(0, limit - count - 1), resetMs: windowMs };
+  } catch {
+    return checkRateLimit(key, limit, windowMs);
+  }
+}
+
 /**
  * Predefined Rate Limiting Preset Rules
  */

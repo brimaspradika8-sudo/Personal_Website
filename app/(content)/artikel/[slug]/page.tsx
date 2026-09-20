@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticles, incrementArticleViews } from "@/lib/actions/article";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
-import ArticleClient from "./article-client";
+import ArticleClient from "./artikel-detail-client";
 
 export const revalidate = 60;
 

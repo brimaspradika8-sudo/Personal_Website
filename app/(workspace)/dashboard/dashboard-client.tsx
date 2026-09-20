@@ -29,7 +29,7 @@ import dynamic from "next/dynamic";
 import type { ProjectData } from "@/components/ProjectModal";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
-import TechStackBento from "@/components/TechStackBento";
+import TechStackList from "@/components/TechStackList";
 import Footer from "@/components/Footer";
 import { signOut } from "@/lib/actions/auth";
 import { ArticleItem } from "@/lib/actions/article";
@@ -479,7 +479,7 @@ export default function DashboardClient({
         </div>
       </section>
 
-      <TechStackBento isNight={isNight} lang={lang} />
+      <TechStackList isNight={isNight} lang={lang} />
 
       <section
         id="articles"

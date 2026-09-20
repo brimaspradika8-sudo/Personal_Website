@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
-import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
-import { stripHtml } from "@/lib/security/sanitize";
+import { checkRateLimitDistributed, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { getCommentModerationError, stripHtml } from "@/lib/security/sanitize";
 import { verifyCsrfToken, verifyRequestOrigin } from "@/lib/security/csrf";
 
 const MAX_COMMENT_LENGTH = 1000;
@@ -33,6 +33,51 @@ async function guardRequest(request: NextRequest) {
   return null;
 }
 
+export async function GET(request: NextRequest) {
+  try {
+    const articleId = request.nextUrl.searchParams.get("article_id") || "";
+    const page = Math.max(1, Number(request.nextUrl.searchParams.get("page") || "1"));
+    const pageSize = Math.min(50, Math.max(1, Number(request.nextUrl.searchParams.get("page_size") || "20")));
+    const isValidUuid = (value: string) => /^[0-9a-fA-F-]{36}$/.test(value);
+    const article = isValidUuid(articleId)
+      ? await prisma.article.findUnique({ where: { id: articleId }, select: { id: true } })
+      : await prisma.article.findUnique({ where: { slug: articleId }, select: { id: true } });
+    if (!article) return NextResponse.json({ error: "Artikel tidak ditemukan." }, { status: 404 });
+
+    const user = await getAuthenticatedUser();
+    const dbUser = user?.email
+      ? await prisma.user.findUnique({ where: { email: user.email.toLowerCase().trim() }, select: { id: true } })
+      : null;
+    const [comments, total] = await Promise.all([
+      prisma.comment.findMany({
+        where: { article_id: article.id },
+        orderBy: { created_at: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: { user: { select: { id: true, name: true, avatar: true } }, likes: { select: { user_id: true } } },
+      }),
+      prisma.comment.count({ where: { article_id: article.id } }),
+    ]);
+    return NextResponse.json({
+      comments: comments.map((comment) => ({
+        id: comment.id,
+        content: comment.content,
+        created_at: comment.created_at.toISOString(),
+        user_id: comment.user_id,
+        parent_id: comment.parent_id,
+        likeCount: comment.likes.length,
+        likedByUser: Boolean(dbUser && comment.likes.some((like) => like.user_id === dbUser.id)),
+        canDelete: comment.user_id === dbUser?.id,
+        user: comment.user,
+      })),
+      pagination: { page, pageSize, total, hasMore: page * pageSize < total },
+    });
+  } catch (error) {
+    console.error("Error in GET /api/comment:", error);
+    return NextResponse.json({ error: "Gagal mengambil komentar." }, { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const guard = await guardRequest(request);
@@ -47,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate Limiting Guard
-    const rateLimit = checkRateLimit(`comment:${user.id || user.email}`, RATE_LIMIT_PRESETS.API_COMMENT.limit, RATE_LIMIT_PRESETS.API_COMMENT.windowMs);
+    const rateLimit = await checkRateLimitDistributed(`comment:${user.id || user.email}`, RATE_LIMIT_PRESETS.API_COMMENT.limit, RATE_LIMIT_PRESETS.API_COMMENT.windowMs);
     if (!rateLimit.success) {
       const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
       return NextResponse.json(
@@ -73,6 +118,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    const moderationError = getCommentModerationError(content);
+    if (moderationError) return NextResponse.json({ error: moderationError }, { status: 422 });
 
     const dbUser = await getDbUser(user);
     if (!dbUser) return NextResponse.json({ error: "Akun pengguna tidak valid." }, { status: 401 });
@@ -95,6 +142,12 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    const duplicate = await prisma.comment.findFirst({
+      where: { article_id: articleExists.id, user_id: dbUser.id, content: content.trim(), created_at: { gte: new Date(Date.now() - 60_000) } },
+      select: { id: true },
+    });
+    if (duplicate) return NextResponse.json({ error: "Komentar yang sama baru saja dikirim." }, { status: 409 });
 
     let validParentId: string | null = null;
     if (parentId !== undefined && parentId !== null && parentId !== "") {
