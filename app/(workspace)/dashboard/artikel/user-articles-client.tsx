@@ -23,6 +23,7 @@ import {
   Filter,
   ArrowUpDown,
   Zap,
+  Loader2,
 } from "lucide-react";
 import { deleteArticle, ArticleItem } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
@@ -45,7 +46,6 @@ export default function UserArticlesClient({
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
-  const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState<"latest" | "popular" | "likes">("latest");
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -55,8 +55,6 @@ export default function UserArticlesClient({
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const categories = ["Semua", "AI Systems", "Web Dev", "Tutorial", "Database"];
-
   const filteredArticles = articles
     .filter((art) => {
       const matchSearch =
@@ -64,11 +62,7 @@ export default function UserArticlesClient({
         art.slug.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
         (art.category && art.category.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
 
-      const matchCat =
-        selectedCategory === "Semua" ||
-        (art.category && art.category.toLowerCase() === selectedCategory.toLowerCase());
-
-      return matchSearch && matchCat;
+      return matchSearch;
     })
     .sort((a, b) => {
       if (sortBy === "popular") {
@@ -121,7 +115,7 @@ export default function UserArticlesClient({
               className="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-900 border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#EAB308] dark:hover:bg-[#EAB308] hover:text-black transition-all text-xs font-black uppercase"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Daftar Artikel Public</span>
+              <span>Artikel Publik</span>
             </Link>
 
             <Link
@@ -129,7 +123,7 @@ export default function UserArticlesClient({
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs font-black uppercase"
             >
-              <span>Dashboard User</span>
+              <span>Kembali ke Dashboard</span>
             </Link>
           </div>
 
@@ -146,15 +140,12 @@ export default function UserArticlesClient({
         </div>
 
         {/* Header Creator Studio Banner */}
-        <div className="p-6 sm:p-8 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] dark:shadow-[10px_10px_0px_0px_rgba(255,255,255,1)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-          {/* Subtle Neo Accent Background */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#166534]/10 dark:bg-[#EAB308]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-
-          <div className="space-y-3 z-10">
+        <div className="p-5 sm:p-7 bg-white dark:bg-[#0E131F] border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <span className="inline-flex items-center gap-2 px-3 py-1 bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-black uppercase">
                 <BookOpen className="w-4 h-4 text-[#EAB308]" />
-                <span>STUDIO PENULIS</span>
+                <span>RUANG KERJA ARTIKEL</span>
               </span>
             </div>
 
@@ -163,7 +154,7 @@ export default function UserArticlesClient({
             </h1>
             
             <p className="text-xs sm:text-sm font-mono text-slate-700 dark:text-slate-300 max-w-2xl leading-relaxed">
-              Ruang kerja pribadi Anda untuk mengelola artikel, memantau interaksi pembaca, dan mempublikasikan karya terbaik Anda ke platform.
+              Kelola tulisan, lihat respons pembaca, dan publikasikan artikel dari satu tempat.
             </p>
           </div>
 
@@ -175,7 +166,7 @@ export default function UserArticlesClient({
                 className="inline-flex items-center gap-2.5 px-6 py-4 border-4 border-black font-black uppercase text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-[#00FF66] text-slate-950 hover:bg-[#EAB308] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
               >
                 <PlusCircle className="w-5 h-5" />
-                <span>Tulis Artikel Baru</span>
+                <span>Tulis Artikel</span>
               </Link>
             </div>
           )}
@@ -226,27 +217,6 @@ export default function UserArticlesClient({
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
             
-            {/* Category Filter Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
-              <Filter className="w-4 h-4 text-slate-500 shrink-0 mr-1" />
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    soundFx.playClick();
-                    setSelectedCategory(cat);
-                  }}
-                  className={`px-3 py-1.5 text-xs font-mono font-black uppercase border-2 border-black transition-all shrink-0 cursor-pointer ${
-                    selectedCategory === cat
-                      ? "bg-[#166534] text-white dark:bg-[#EAB308] dark:text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                      : "bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-200"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
             {/* Search Input & Sort Dropdown */}
             <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
               <div className="relative w-full sm:w-64">
@@ -281,18 +251,18 @@ export default function UserArticlesClient({
               <BookOpen className="w-14 h-14 mx-auto text-slate-400" />
               <div className="space-y-1">
                 <h3 className="font-serif font-black text-xl uppercase text-black dark:text-white">
-                  {searchQuery || selectedCategory !== "Semua"
+                  {searchQuery
                     ? "Tidak ada artikel yang sesuai filter."
                     : "Belum Ada Artikel Dipublikasikan."}
                 </h3>
                 <p className="text-xs font-mono text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                  {searchQuery || selectedCategory !== "Semua"
-                    ? "Coba sesuaikan kata kunci pencarian atau kategori yang dipilih."
+                  {searchQuery
+                    ? "Coba sesuaikan kata kunci pencarian."
                     : "Mulai bagikan gagasan, tutorial, dan insight teknologi Anda lewat tulisan artikel."}
                 </p>
               </div>
 
-              {!searchQuery && selectedCategory === "Semua" && isAdmin && (
+              {!searchQuery && isAdmin && (
                 <Link
                   href="/admin/artikel/tambah"
                   onClick={() => soundFx.playClick()}
@@ -329,8 +299,8 @@ export default function UserArticlesClient({
 
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-2.5 py-0.5 bg-[#EAB308] text-black text-[10px] font-mono font-black uppercase border border-black">
-                          {art.category || "Tutorial"}
+                        <span className="px-2.5 py-0.5 bg-[#DCFCE7] text-emerald-900 text-[10px] font-mono font-black uppercase border border-emerald-900">
+                          PUBLISHED
                         </span>
                         <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
                           {new Date(art.created_at).toLocaleDateString("id-ID", {
@@ -380,9 +350,9 @@ export default function UserArticlesClient({
                       onClick={() => handleDelete(art.id, art.title)}
                       disabled={deletingId === art.id}
                       className="p-2.5 bg-red-100 dark:bg-red-950 border-2 border-black dark:border-white text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 cursor-pointer"
-                      title="Hapus Artikel"
+                      title={deletingId === art.id ? "Menghapus artikel" : "Hapus Artikel"}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      {deletingId === art.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>

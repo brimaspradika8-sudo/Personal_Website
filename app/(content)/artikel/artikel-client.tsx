@@ -104,14 +104,9 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
-  const [selectedTag, setSelectedTag] = useState<string>("SEMUA");
   const [sortBy, setSortBy] = useState<"latest" | "oldest" | "popular">("latest");
   const [isPending, startTransition] = useTransition();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-
-  const availableTags = lang === "id" 
-    ? ["SEMUA", "AI", "NEXTJS", "TUTORIAL", "FULLSTACK", "SYSTEMS"]
-    : ["ALL", "AI", "NEXTJS", "TUTORIAL", "FULLSTACK", "SYSTEMS"];
 
   const handleSeedArticles = () => {
     soundFx.playClick();
@@ -137,14 +132,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
         article.content.toLowerCase().includes(q) ||
         (article.category && article.category.toLowerCase().includes(q));
 
-      const tagUpper = selectedTag.toUpperCase();
-      const matchesTag =
-        tagUpper === "SEMUA" || tagUpper === "ALL" ||
-        (article.category && article.category.toUpperCase().includes(tagUpper)) ||
-        article.title.toUpperCase().includes(tagUpper) ||
-        article.content.toUpperCase().includes(tagUpper);
-
-      return matchesQuery && matchesTag;
+      return matchesQuery;
     })
     .sort((a, b) => {
       if (sortBy === "oldest") {
@@ -216,7 +204,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
               <input
                 type="text"
                 aria-label={lang === "id" ? "Cari judul artikel" : "Search article title"}
-                placeholder={lang === "id" ? "Cari judul artikel, topik, atau kata kunci..." : "Search article title, topic, or keywords..."}
+                placeholder={lang === "id" ? "Cari judul artikel atau kata kunci..." : "Search article title or keywords..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white placeholder:text-slate-400 text-xs font-mono font-bold focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all"
@@ -249,30 +237,6 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             </div>
           </div>
 
-          {/* Topic Tag Filter Chips */}
-          <div className="flex items-center gap-2 flex-wrap pt-1 font-mono">
-            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 mr-1 flex items-center gap-1">
-              <Tag className="w-3 h-3 text-[#166534] dark:text-[#EAB308]" />
-              {lang === "id" ? "TOPIK:" : "TOPICS:"}
-            </span>
-            {availableTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => {
-                  soundFx.playClick();
-                  setSelectedTag(tag);
-                }}
-                className={`px-3 py-1 rounded-xl text-[10px] font-bold border-2 border-slate-900 transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
-                  selectedTag === tag
-                    ? "bg-[#166534] text-white"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-[#EAB308] hover:text-slate-950"
-                }`}
-              >
-                #{tag}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* 4. ARTICLES GRID LIST */}
@@ -283,7 +247,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
               {lang === "id" ? "TIDAK ADA ARTIKEL DITEMUKAN" : "NO ARTICLES FOUND"}
             </h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium">
-              {lang === "id" ? "Coba kata kunci pencarian atau kategori lain." : "Try a different search query or topic filter."}
+              {lang === "id" ? "Coba kata kunci pencarian lain." : "Try a different search query."}
             </p>
             {searchQuery && (
               <button

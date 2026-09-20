@@ -28,6 +28,7 @@ import {
   Zap,
   CheckCircle2,
   BrainCircuit,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -79,6 +80,7 @@ export default function ArticleClient({
   const [isPending, startTransition] = useTransition();
   const [isSavedBookmark, setIsSavedBookmark] = useState(false);
   const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);
+  const [commentActionId, setCommentActionId] = useState<string | null>(null);
 
   const getCsrfToken = () => {
     if (typeof document === "undefined") return "";
@@ -604,12 +606,6 @@ export default function ArticleClient({
   };
 
   const handleToggleAudio = () => {
-    if (userTier === "FREE") {
-      soundFx.playClick();
-      showToast("🔒 Fitur Narasi Suara AI khusus untuk Member Kawan & Sahabat Brimas. Silakan upgrade!");
-      return;
-    }
-
     if (isPlayingAudio || isLoadingElevenLabs) {
       stopAllAudio();
       showToast("Pembacaan audio dihentikan.");
@@ -795,11 +791,6 @@ export default function ArticleClient({
   const handleGenerateAiSummary = () => {
     try { soundFx.playClick(); } catch {}
 
-    if (userTier === "FREE") {
-      showToast("🔒 Fitur Rangkuman AI khusus untuk Member Kawan & Sahabat Brimas. Silakan upgrade!");
-      return;
-    }
-
     setIsGeneratingSummary(true);
 
     setTimeout(() => {
@@ -823,29 +814,20 @@ export default function ArticleClient({
       const bullets: string[] = [];
       const titleClean = article.title.trim();
 
-      if (userTier === "SAHABAT_BRIMAS") {
-        const topicOverview = headings.length > 0 ? headings.slice(0, 3).join(", ") : "Konsep Utama & Arsitektur Sistem";
-        const leadInsight = textBlocks.length > 0 ? textBlocks[0] : "Pembahasan mendalam tentang arsitektur dan otomatisasi modern.";
-        const coreTakeaway = textBlocks.length > 1 ? textBlocks[Math.floor(textBlocks.length / 2)] : (textBlocks[0] || "Solusi praktis untuk meningkatkan performa alur kerja.");
-        const actionItem = textBlocks.length > 2 ? textBlocks[textBlocks.length - 1] : "Panduan langkah demi langkah dalam implementasi proyek.";
-
-        bullets.push(`👑 [DEEP EXECUTIVE SUMMARY] Ringkasan Mendalam Artikel "${titleClean}"`);
-        bullets.push(`📌 Topik Utama: Menjelaskan ${topicOverview}.`);
-        bullets.push(`💡 Key Insight: ${leadInsight}.`);
-        bullets.push(`🎯 Poin Pembelajaran Kunci: ${coreTakeaway}.`);
-        bullets.push(`🚀 Panduan Eksekusi: ${actionItem}.`);
-        bullets.push(`✨ Kesimpulan VIP: Mengoptimalkan efisiensi, keandalan, dan kecepatan skalabilitas sistem.`);
-      } else {
-        const topicOverview = headings.length > 0 ? headings.slice(0, 2).join(" & ") : titleClean;
-        bullets.push(`📌 Topik Utama: Menjelaskan ${topicOverview}.`);
-        if (textBlocks.length > 0) bullets.push(`💡 Key Takeaways: ${textBlocks[0]}.`);
-        if (textBlocks.length > 1) bullets.push(`🎯 Poin Penting: ${textBlocks[Math.floor(textBlocks.length / 2)]}.`);
-        if (bullets.length < 3) bullets.push(`🚀 Kesimpulan: Memberikan panduan praktis terkait ${titleClean}.`);
-      }
+      const topicOverview = headings.length > 0 ? headings.slice(0, 4).join(", ") : titleClean;
+      const leadInsight = textBlocks[0] || "Artikel membahas konsep dan praktik penting yang dapat diterapkan secara bertahap.";
+      const coreTakeaway = textBlocks.length > 1 ? textBlocks[Math.floor(textBlocks.length / 2)] : leadInsight;
+      const actionItem = textBlocks.length > 2 ? textBlocks[textBlocks.length - 1] : "Baca setiap bagian, uji contoh yang relevan, lalu sesuaikan dengan kebutuhan proyek.";
+      bullets.push(`Ringkasan inti: Artikel "${titleClean}" membahas ${topicOverview}.`);
+      bullets.push(`Konsep utama: ${leadInsight}.`);
+      bullets.push(`Hal yang perlu dipahami: ${coreTakeaway}.`);
+      bullets.push(`Langkah penerapan: ${actionItem}.`);
+      bullets.push("Catatan praktik: Terapkan perubahan secara bertahap, validasi hasilnya, dan perhatikan keamanan serta performa.");
+      bullets.push(`Kesimpulan: Materi ini memberi dasar yang jelas untuk memahami dan menerapkan ${titleClean} pada proyek nyata.`);
 
       setAiSummary(bullets);
       setIsGeneratingSummary(false);
-      showToast(userTier === "SAHABAT_BRIMAS" ? "Rangkuman Eksekutif AI VIP Berhasil Dibuat!" : "Ringkasan AI Berhasil Dibuat!");
+      showToast("Rangkuman detail berhasil dibuat.");
     }, 600);
   };
 
@@ -1006,6 +988,7 @@ export default function ArticleClient({
   };
 
   const handleLikeComment = (commentId: string) => {
+    if (commentActionId) return;
     if (!user) {
       router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk menyukai komentar")}`);
       return;
@@ -1017,6 +1000,7 @@ export default function ArticleClient({
       return;
     }
     const liked = !target.likedByUser;
+    setCommentActionId(commentId);
     setArticle((prev) => ({
       ...prev,
       comments: prev.comments.map((comment) => comment.id === commentId
@@ -1046,13 +1030,17 @@ export default function ArticleClient({
           : comment),
       }));
       showToast(error.message);
+    }).finally(() => {
+      setCommentActionId(null);
     });
   };
 
   const handleDeleteComment = (commentId: string) => {
+    if (commentActionId) return;
     try { soundFx.playClick(); } catch {}
     const target = article.comments.find((c) => c.id === commentId);
     if (!target) return;
+    setCommentActionId(commentId);
 
     // The API re-checks ownership; this is only an optimistic UI update.
     setArticle((prev) => ({
@@ -1076,6 +1064,8 @@ export default function ArticleClient({
           commentCount: prev.commentCount + 1,
           comments: [target, ...prev.comments],
         }));
+    }).finally(() => {
+      setCommentActionId(null);
     });
   };
 
@@ -1277,10 +1267,22 @@ export default function ArticleClient({
           {/* Controls: Voice & Speed Selectors */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
 
-            {/* Dual Voice Selector for SAHABAT_BRIMAS VIP */}
-            {userTier === "SAHABAT_BRIMAS" && (
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
+              <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">MODE:</span>
+              <select
+                value={useElevenLabs ? "neural" : "browser"}
+                onChange={(e) => setUseElevenLabs(e.target.value === "neural")}
+                className="bg-slate-900 text-[#EAB308] text-[11px] font-mono font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
+              >
+                <option value="browser">Browser</option>
+                <option value="neural">AI Neural</option>
+              </select>
+            </div>
+
+            {/* Voice selector is available for every reader */}
+            {useElevenLabs && (
               <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
-                <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">SUARA AI (VIP):</span>
+                <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">SUARA:</span>
                 <select
                   value={selectedVoiceId}
                   onChange={(e) => {
@@ -1621,8 +1623,9 @@ export default function ArticleClient({
 
                         {comment.canDelete && (
                           <button
-                            onClick={() => setDeleteCommentId(comment.id)}
-                            className="p-2 -mr-2 text-black dark:text-white hover:text-red-600 transition-colors cursor-pointer"
+                            onClick={() => !commentActionId && setDeleteCommentId(comment.id)}
+                            disabled={Boolean(commentActionId)}
+                            className="p-2 -mr-2 text-black dark:text-white hover:text-red-600 transition-colors cursor-pointer disabled:opacity-50"
                             title="Hapus komentar saya"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1634,8 +1637,8 @@ export default function ArticleClient({
                         {comment.content}
                       </p>
                       <div className="flex items-center gap-4 pt-1 text-[10px] font-black uppercase">
-                        <button type="button" aria-label={`Sukai komentar ${comment.user.name}`} onClick={() => handleLikeComment(comment.id)} className={`inline-flex items-center gap-1 min-h-10 ${comment.likedByUser ? "text-[#166534]" : "text-neutral-500"}`}>
-                          <ThumbsUp className="w-3.5 h-3.5" /> {comment.likeCount}
+                        <button type="button" aria-label={`Sukai komentar ${comment.user.name}`} disabled={Boolean(commentActionId)} onClick={() => handleLikeComment(comment.id)} className={`inline-flex items-center gap-1 min-h-10 disabled:opacity-50 ${comment.likedByUser ? "text-[#166534]" : "text-neutral-500"}`}>
+                          {commentActionId === comment.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ThumbsUp className="w-3.5 h-3.5" />} {comment.likeCount}
                         </button>
                         {user && (
                           <button type="button" aria-label={`Balas komentar ${comment.user.name}`} onClick={() => { setReplyTargetId(comment.id); setCommentText(""); }} className="inline-flex items-center gap-1 min-h-10 text-neutral-500 hover:text-[#166534]">

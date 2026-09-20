@@ -49,8 +49,6 @@ const MAX_REQUESTS_PER_WINDOW = 12;
 const MAX_TTS_PAYLOAD_BYTES = 20 * 1024;
 const VOICE_ID_PATTERN = /^[a-zA-Z0-9_-]{3,80}$/;
 
-import { createClient } from "@/lib/supabase/server";
-
 export async function POST(request: NextRequest) {
   const startTime = performance.now();
 
@@ -68,19 +66,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Teks tidak valid untuk audio" }, { status: 400 });
     }
 
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user || !user.email) {
-      return NextResponse.json(
-        { error: "Silakan login untuk mendengarkan Narasi Suara AI." },
-        { status: 401 }
-      );
-    }
-
-    // Rate Limiting Guard per User
+    // Audio is public; rate-limit by IP so anonymous readers are supported safely.
     const rateLimit = checkRateLimit(
-      `tts:${user.id || user.email}:${getClientIp(request)}`,
+      `tts:${getClientIp(request)}`,
       MAX_REQUESTS_PER_WINDOW,
       RATE_LIMIT_WINDOW_MS
     );

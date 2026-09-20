@@ -20,6 +20,8 @@ export default function MobileBottomNav() {
       ? "artikel"
       : pathname === "/about" || pathname?.startsWith("/about")
       ? "about"
+      : pathname === "/proyek" || pathname?.startsWith("/proyek")
+      ? "projects"
       : pathname === "/dashboard" || pathname === "/"
       ? "home"
       : ""
@@ -39,6 +41,7 @@ export default function MobileBottomNav() {
     router.prefetch("/artikel");
     router.prefetch("/about");
     router.prefetch("/dashboard");
+    router.prefetch("/proyek");
   }, [router]);
 
   const handleNav = (tabId: string, href: string) => {
@@ -60,6 +63,10 @@ export default function MobileBottomNav() {
       router.push(href);
     }
   };
+
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/dashboard/artikel")) {
+    return null;
+  }
 
   return (
     <div className="md:hidden fixed bottom-4 inset-x-3 z-50 pointer-events-auto">
