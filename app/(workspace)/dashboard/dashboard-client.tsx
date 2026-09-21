@@ -14,6 +14,7 @@ import {
   LogOut,
   Calendar,
   Clock,
+  BookOpen,
   ChevronRight,
   Menu,
   X,
@@ -515,6 +516,53 @@ export default function DashboardClient({
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
+
+          {initialArticles.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {initialArticles.slice(0, 3).map((article) => (
+                <Link
+                  key={article.id}
+                  href={`/artikel/${article.slug}`}
+                  onClick={() => soundFx.playClick()}
+                  className="group flex flex-col overflow-hidden rounded-2xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(22,101,52,1)] dark:hover:shadow-[6px_6px_0px_0px_rgba(234,179,8,1)] transition-all"
+                >
+                  <div className="relative h-36 overflow-hidden border-b-2 border-slate-900 dark:border-white bg-[#166534]">
+                    {article.thumbnail ? (
+                      <Image
+                        src={article.thumbnail}
+                        alt={article.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center px-5 text-center text-[#EAB308]">
+                        <BookOpen className="h-8 w-8" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-1 flex-col gap-3 p-4">
+                    <div className="flex items-center justify-between gap-3 text-[10px] font-mono font-bold uppercase text-slate-600 dark:text-slate-400">
+                      <span>{article.category || "Tutorial"}</span>
+                      <span>{article.readTime || "3 min read"}</span>
+                    </div>
+                    <h3 className="line-clamp-2 font-serif text-lg font-black uppercase leading-tight text-slate-950 dark:text-white group-hover:text-[#166534] dark:group-hover:text-[#EAB308]">
+                      {article.title}
+                    </h3>
+                    <div className="mt-auto flex items-center justify-between border-t-2 border-slate-900 pt-3 text-[11px] font-mono font-bold text-slate-700 dark:border-white dark:text-slate-300">
+                      <span>{new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
+                      <span className="inline-flex items-center gap-1 text-[#166534] dark:text-[#EAB308]">
+                        BACA <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-slate-900 p-6 text-center font-mono text-xs font-bold uppercase text-slate-600 dark:border-white dark:text-slate-400">
+              {lang === "id" ? "Belum ada artikel untuk ditampilkan." : "No articles to display yet."}
+            </div>
+          )}
         </div>
       </section>
 

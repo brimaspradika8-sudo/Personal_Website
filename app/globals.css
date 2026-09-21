@@ -45,10 +45,27 @@
     scroll-behavior: smooth;
     background-color: var(--bg);
     color: var(--text-primary);
+    font-family: var(--font-sans), "Segoe UI", sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
   body {
     background-color: var(--bg);
     color: var(--text-primary);
+    font-family: var(--font-sans), "Segoe UI", sans-serif;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  p, li, span, div, button, input, textarea, select {
+    font-family: inherit;
   }
 }
 
