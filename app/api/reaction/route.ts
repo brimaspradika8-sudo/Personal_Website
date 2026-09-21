@@ -137,11 +137,18 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    const [likeCount, dislikeCount] = await Promise.all([
+      prisma.reaction.count({ where: { article_id: articleExists.id, type: "LIKE" } }),
+      prisma.reaction.count({ where: { article_id: articleExists.id, type: "DISLIKE" } }),
+    ]);
+
     return NextResponse.json({
       success: true,
       action,
       type: finalType,
       article_id: articleExists.id,
+      likeCount,
+      dislikeCount,
     });
   } catch (error: unknown) {
     console.error("Error in POST /api/reaction:", error);

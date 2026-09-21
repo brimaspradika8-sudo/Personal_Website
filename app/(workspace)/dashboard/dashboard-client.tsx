@@ -316,10 +316,10 @@ export default function DashboardClient({
       <section id="hero" className="relative flex flex-col items-center justify-start pt-20 sm:pt-28 pb-6 sm:pb-12 overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
         <div className="absolute top-20 sm:top-24 inset-x-0 overflow-hidden py-1.5 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-bold text-[10px] sm:text-xs tracking-widest uppercase shadow-sm">
           <div className="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-8">
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
+            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
           </div>
         </div>
 

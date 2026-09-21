@@ -111,8 +111,8 @@ export default function AboutClient() {
               </h1>
               <p className="text-xs sm:text-lg font-bold text-black dark:text-white max-w-3xl leading-relaxed">
                 {lang === "id"
-                  ? "Junior Programmer & AI Systems Developer berpendidikan di SMK Bhakti Mulia Pare. Berfokus pada arsitektur web modern, integrasi kecerdasan buatan (AI), serta desain sistem performa tinggi."
-                  : "Junior Programmer & AI Systems Developer studying at SMK Bhakti Mulia Pare. Dedicated to modern web architecture, artificial intelligence integration, and high-performance system design."}
+                  ? "Junior Web Developer & AI Systems Developer berpendidikan di SMK Bhakti Mulia Pare. Berfokus pada arsitektur web modern, integrasi kecerdasan buatan (AI), serta desain sistem performa tinggi."
+                  : "Junior Web Developer & AI Systems Developer studying at SMK Bhakti Mulia Pare. Dedicated to modern web architecture, artificial intelligence integration, and high-performance system design."}
               </p>
             </div>
 

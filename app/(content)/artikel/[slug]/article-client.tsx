@@ -33,7 +33,6 @@ import {
 import {
   ArticleDetail,
   ArticleItem,
-  toggleArticleReaction,
   addArticleComment,
 } from "@/lib/actions/article";
 import { soundFx } from "@/lib/audio/sound";
@@ -179,6 +178,16 @@ const parseContentBlocks = (rawContent: string) => {
           blocks.push({
             key: `b-${keyIdx++}`,
             tag: "h3",
+            content: text,
+            cleanText: text + ". ",
+            id: anchorId,
+          });
+        } else if (trimmed.startsWith("#### ")) {
+          const text = trimmed.replace("#### ", "");
+          const anchorId = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
+          blocks.push({
+            key: `b-${keyIdx++}`,
+            tag: "h4",
             content: text,
             cleanText: text + ". ",
             id: anchorId,
@@ -354,7 +363,7 @@ function ArticleTocSidebar({
                     if (el) el.scrollIntoView({ behavior: "smooth" });
                   }}
                   className={`block py-1.5 px-2.5 rounded-none transition-colors border-l-3 border-transparent hover:border-[#166534] hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:text-[#166534] uppercase ${
-                    item.level === 3 ? "pl-4 text-[11px]" : "font-black text-xs"
+                    item.level >= 3 ? "pl-4 text-[11px]" : "font-black text-xs"
                   }`}
                 >
                   {item.text}
@@ -514,11 +523,14 @@ function ArticleComments({
               return (
                 <div
                   key={comment.id}
-                  className={`${comment.parent_id ? "ml-4 sm:ml-10 border-l-4" : ""} p-4 sm:p-5 rounded-none border-2 ${
-                    isVipComment
-                      ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
-                      : "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
-                  } space-y-3 text-left `}
+                  className={`${comment.parent_id
+                    ? "ml-4 sm:ml-10 border-l-4 border-y-0 border-r-0 bg-transparent dark:bg-transparent shadow-none p-3 sm:p-4"
+                    : `p-4 sm:p-5 rounded-none border-2 ${
+                        isVipComment
+                          ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
+                          : "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
+                      }`
+                  } space-y-3 text-left`}
                 >
                   <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
                     <div className="flex items-center gap-2.5">
@@ -679,51 +691,6 @@ export default function ArticleClient({
   const wordCount = article.content ? article.content.split(/\s+/).filter(Boolean).length : 0;
   const calculatedReadTime = Math.max(1, Math.ceil(wordCount / 180));
 
-  // Feature 2.3: Table of Contents State (Supports both Markdown and HTML Content)
-  const [toc] = useState<TocItem[]>(() => {
-    if (!initialArticle.content) return [];
-    const items: TocItem[] = [];
-
-    const isHtml = /^\s*<[a-z0-9]+/i.test(initialArticle.content) || initialArticle.content.includes("<p>") || initialArticle.content.includes("<h2>") || initialArticle.content.includes("<h3>");
-
-    if (isHtml) {
-      const headingRegex = /<h([23])\s*([^>]*)>(.*?)<\/h[23]>/gi;
-      let match;
-      while ((match = headingRegex.exec(initialArticle.content)) !== null) {
-        const level = parseInt(match[1], 10);
-        const attrs = match[2];
-        const innerText = match[3].replace(/<[^>]*>?/gm, "").trim();
-        
-        let id = "";
-        const idMatch = /id=["']([^"']+)["']/i.exec(attrs);
-        if (idMatch) {
-          id = idMatch[1];
-        } else {
-          id = innerText.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-        }
-        if (innerText) {
-          items.push({ id, text: innerText, level });
-        }
-      }
-    } else {
-      const lines = initialArticle.content.split("\n");
-      lines.forEach((line) => {
-        const trimmed = line.trim();
-        if (trimmed.startsWith("## ")) {
-          const text = trimmed.replace("## ", "").replace(/<[^>]*>?/gm, "").trim();
-          const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-          items.push({ id, text, level: 2 });
-        } else if (trimmed.startsWith("### ")) {
-          const text = trimmed.replace("### ", "").replace(/<[^>]*>?/gm, "").trim();
-          const id = text.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-");
-          items.push({ id, text, level: 3 });
-        }
-      });
-    }
-
-    return items;
-  });
-
   const stopAllAudio = () => {
     if (elevenLabsAudioRef.current) {
       elevenLabsAudioRef.current.pause();
@@ -778,6 +745,17 @@ export default function ArticleClient({
   }, [toastMsg]);
 
   const parsedBlocks = useMemo(() => parseContentBlocks(article.content), [article.content]);
+
+  const toc = useMemo<TocItem[]>(
+    () => parsedBlocks
+      .filter((block) => block.tag === "h2" || block.tag === "h3" || block.tag === "h4")
+      .map((block) => ({
+        id: block.id || block.cleanText.toLowerCase().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, "-"),
+        text: block.cleanText.replace(/\.\s*$/, "").trim(),
+        level: block.tag === "h2" ? 2 : block.tag === "h3" ? 3 : 4,
+      })),
+    [parsedBlocks]
+  );
 
   const lineRanges = useMemo(() => buildLineRanges(parsedBlocks), [parsedBlocks]);
 
@@ -1206,6 +1184,12 @@ export default function ArticleClient({
     // Play click sound effect instantly
     soundFx.playClick();
 
+    const previousState = {
+      likeCount: article.likeCount,
+      dislikeCount: article.dislikeCount,
+      userReaction: article.userReaction,
+    };
+
     // Synchronous optimistic state update
     setArticle((prev) => {
       const current = prev.userReaction;
@@ -1233,27 +1217,34 @@ export default function ArticleClient({
       };
     });
 
-    // Sync via POST /api/reaction REST API route (fallback to Server Action if needed)
     fetch("/api/reaction", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-csrf-token": getCsrfToken() },
       body: JSON.stringify({ article_id: article.id, type }),
     })
       .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           if (res.status === 401) {
             showToast("Kamu harus login dulu untuk memberikan reaksi");
             router.push(`/login?message=${encodeURIComponent("Kamu harus login dulu untuk memberikan reaksi")}`);
-            return;
           }
-          const actionRes = await toggleArticleReaction(article.id, type);
-          if (actionRes?.error) showToast(actionRes.error);
+          setArticle((prev) => ({ ...prev, ...previousState }));
+          if (res.status !== 401 && data.error) showToast(data.error);
+          return;
+        }
+        if (typeof data.likeCount === "number" && typeof data.dislikeCount === "number") {
+          setArticle((prev) => ({
+            ...prev,
+            likeCount: data.likeCount,
+            dislikeCount: data.dislikeCount,
+            userReaction: data.type ?? null,
+          }));
         }
       })
       .catch(() => {
-        toggleArticleReaction(article.id, type).then((res) => {
-          if (res?.error) showToast(res.error);
-        });
+        setArticle((prev) => ({ ...prev, ...previousState }));
+        showToast("Gagal memproses reaksi artikel.");
       });
   };
 
@@ -1825,7 +1816,7 @@ export default function ArticleClient({
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }}
                       className={`block py-2 px-3 rounded-none transition-colors border-l-3 border-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white uppercase ${
-                        item.level === 3 ? "pl-6 text-xs font-bold" : "text-xs font-black"
+                        item.level >= 3 ? "pl-6 text-xs font-bold" : "text-xs font-black"
                       }`}
                     >
                       {item.text}
