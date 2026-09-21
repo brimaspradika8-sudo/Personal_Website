@@ -178,7 +178,7 @@ export default function DashboardClient({
 
   return (
     <div
-      className={`min-h-screen font-sans antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
+      className={`min-h-screen antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-20 md:pb-0 ${
         isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F2F3F4] text-slate-900"
       }`}
     >
@@ -186,7 +186,7 @@ export default function DashboardClient({
       <ReadingProgressBar />
 
       {/* 1. TOP NAVBAR (Capsule Floating Pill Header) */}
-      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-6xl rounded-full border-2 sm:border-3 border-slate-900 dark:border-white bg-white/90 dark:bg-[#0E121D]/90 backdrop-blur-md transition-all duration-300 font-mono shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-3.5 sm:px-6 py-2 sm:py-2.5">
+      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-6xl rounded-full border-2 sm:border-3 border-slate-900 dark:border-white bg-white/90 dark:bg-[#0E121D]/90 backdrop-blur-md transition-all duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-3.5 sm:px-6 py-2 sm:py-2.5">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Left: Brand Logo & Capsule Icon */}
           <Link
@@ -194,10 +194,10 @@ export default function DashboardClient({
             onClick={() => soundFx.playClick()}
             className="flex items-center gap-2 group cursor-pointer shrink-0"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#EAB308] border-2 border-slate-900 text-slate-950 flex items-center justify-center font-mono font-black text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#EAB308] border-2 border-slate-900 text-slate-950 flex items-center justify-center font-black text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] group-hover:scale-105 transition-transform">
               B
             </div>
-            <span className="font-serif font-black text-xs sm:text-base tracking-tight uppercase text-slate-950 dark:text-white">
+            <span className="font-black text-xs sm:text-base tracking-tight uppercase text-slate-950 dark:text-white">
               BRIMAS<span className="text-[#166534]"> Pradika</span>
             </span>
           </Link>
@@ -207,28 +207,28 @@ export default function DashboardClient({
             <a
               href="#hero"
               onClick={() => soundFx.playClick()}
-              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
+              className="px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
             >
               {dict.nav.home.toUpperCase()}
             </a>
             <Link
               href="/about"
               onClick={() => soundFx.playClick()}
-              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
+              className="px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
             >
               {dict.nav.about.toUpperCase()}
             </Link>
             <Link
               href="/proyek"
               onClick={() => soundFx.playClick()}
-              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
+              className="px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
             >
               {dict.nav.projects.toUpperCase()}
             </Link>
             <Link
               href="/artikel"
               onClick={() => soundFx.playClick()}
-              className="px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
+              className="px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all"
             >
               {dict.nav.articles.toUpperCase()}
             </Link>
@@ -243,7 +243,7 @@ export default function DashboardClient({
                 soundFx.playClick();
                 toggleLang();
               }}
-              className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-mono font-bold border-2 border-slate-900 dark:border-white bg-[#EAB308] text-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+              className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold border-2 border-slate-900 dark:border-white bg-[#EAB308] text-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
             >
               {lang.toUpperCase()}
             </button>
@@ -254,7 +254,7 @@ export default function DashboardClient({
               <Link
                 href="/admin"
                 onClick={() => soundFx.playClick()}
-                className="px-2.5 sm:px-3 py-1 rounded-full bg-[#166534] text-white border-2 border-slate-900 dark:border-white text-xs font-mono font-bold flex items-center gap-1 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                className="px-2.5 sm:px-3 py-1 rounded-full bg-[#166534] text-white border-2 border-slate-900 dark:border-white text-xs font-bold flex items-center gap-1 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
                 title="Admin Panel"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-white" />
@@ -271,7 +271,7 @@ export default function DashboardClient({
                   className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border-2 border-slate-900 dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                   title="Profil Saya"
                 >
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#EAB308] text-slate-950 font-mono font-bold text-xs flex items-center justify-center overflow-hidden relative border border-slate-900 dark:border-white">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#EAB308] text-slate-950 font-bold text-xs flex items-center justify-center overflow-hidden relative border border-slate-900 dark:border-white">
                     {user?.user_metadata?.avatar_url || dbUser?.avatar ? (
                       <Image
                         src={user?.user_metadata?.avatar_url || dbUser?.avatar || ""}
@@ -283,7 +283,7 @@ export default function DashboardClient({
                       initialLetter
                     )}
                   </div>
-                  <span className="hidden lg:inline text-xs font-mono font-bold truncate max-w-[100px] text-slate-950 dark:text-white">
+                  <span className="hidden lg:inline text-xs font-bold truncate max-w-[100px] text-slate-950 dark:text-white">
                     {navUserName}
                   </span>
                 </Link>
@@ -303,7 +303,7 @@ export default function DashboardClient({
               <Link
                 href="/login"
                 onClick={() => soundFx.playClick()}
-                className="px-3.5 sm:px-4 py-1.5 rounded-full bg-[#EAB308] border-2 border-slate-900 dark:border-white text-slate-950 text-xs font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                className="px-3.5 sm:px-4 py-1.5 rounded-full bg-[#EAB308] border-2 border-slate-900 dark:border-white text-slate-950 text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
               >
                 {dict.nav.login.toUpperCase()}
               </Link>
@@ -314,7 +314,7 @@ export default function DashboardClient({
 
       {/* 2. HERO SECTION (Neo-Brutalism Style) */}
       <section id="hero" className="relative flex flex-col items-center justify-start pt-20 sm:pt-28 pb-6 sm:pb-12 overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
-        <div className="absolute top-20 sm:top-24 inset-x-0 overflow-hidden py-1.5 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-mono font-bold text-[10px] sm:text-xs tracking-widest uppercase shadow-sm">
+        <div className="absolute top-20 sm:top-24 inset-x-0 overflow-hidden py-1.5 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-bold text-[10px] sm:text-xs tracking-widest uppercase shadow-sm">
           <div className="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-8">
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR PROGRAMMER &amp; AI SYSTEMS DEVELOPER </span>
@@ -329,7 +329,7 @@ export default function DashboardClient({
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-12 sm:pt-14 pb-2 sm:pb-4 space-y-4 sm:space-y-6"
         >
-          <h1 className="font-serif font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-3 sm:space-y-4">
+          <h1 className="font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-3 sm:space-y-4">
             <span className="block min-h-[1.1em] overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.span
@@ -338,7 +338,7 @@ export default function DashboardClient({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -14 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-5 py-1.5 rounded-2xl font-sans font-bold"
+                  className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-5 py-1.5 rounded-2xl font-bold"
                 >
                   {GREETINGS[greetingIndex]}
                 </motion.span>
@@ -351,9 +351,9 @@ export default function DashboardClient({
             </span>
           </h1>
 
-          <p className="text-xs sm:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-sans font-medium pt-1">
+          <p className="text-xs sm:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-medium pt-1">
             Software &amp;{" "}
-            <span className="bg-[#EAB308] text-slate-950 px-2 py-0.5 border-2 border-slate-900 font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <span className="bg-[#EAB308] text-slate-950 px-2 py-0.5 border-2 border-slate-900 font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               AI SYSTEM
             </span>{" "}
             Developer berfokus pada arsitektur web modern, integrasi AI agent, dan solusi digital performa tinggi.
@@ -365,7 +365,7 @@ export default function DashboardClient({
               whileTap={{ scale: 0.96 }}
               href="#projects"
               onClick={() => soundFx.playClick()}
-              className="px-6 sm:px-8 py-3.5 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 sm:border-3 border-slate-900 dark:border-white text-slate-950 font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+              className="px-6 sm:px-8 py-3.5 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 sm:border-3 border-slate-900 dark:border-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
             >
               <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"} &rarr;</span>
             </motion.a>
@@ -375,7 +375,7 @@ export default function DashboardClient({
               whileTap={{ scale: 0.96 }}
               href="#about"
               onClick={() => soundFx.playClick()}
-              className="px-6 sm:px-8 py-3.5 rounded-xl bg-[#166534] hover:bg-[#14532D] border-2 sm:border-3 border-slate-900 dark:border-white text-white font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+              className="px-6 sm:px-8 py-3.5 rounded-xl bg-[#166534] hover:bg-[#14532D] border-2 sm:border-3 border-slate-900 dark:border-white text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
             >
               <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"} &rarr;</span>
             </motion.a>
@@ -407,19 +407,19 @@ export default function DashboardClient({
           </div>
 
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-xl bg-[#00E676] text-slate-950 border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-xs font-mono font-bold tracking-widest uppercase">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-xl bg-[#00E676] text-slate-950 border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-xs font-bold tracking-widest uppercase">
               <User className="w-3.5 h-3.5 text-slate-950" />
               <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
             </div>
 
             <div className="space-y-2 sm:space-y-3">
-              <h2 className="font-serif text-2xl sm:text-5xl font-black uppercase tracking-tight leading-none text-slate-950 dark:text-white">
+              <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight leading-none text-slate-950 dark:text-white">
                 BRIMAS <span className="text-[#00C853]">PRADIKA UTAMA</span>
               </h2>
-              <p className="text-xs sm:text-sm font-mono font-bold tracking-wide uppercase text-[#00C853]">
+              <p className="text-xs sm:text-sm font-bold tracking-wide uppercase text-[#00C853]">
                 Junior Progammer &bull; SMK Bhakti Mulia Pare
               </p>
-              <p className="text-xs sm:text-base font-sans font-medium leading-relaxed max-w-xl text-slate-800 dark:text-slate-200">
+              <p className="text-xs sm:text-base font-medium leading-relaxed max-w-xl text-slate-800 dark:text-slate-200">
                 {lang === "id"
                   ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi web end-to-end secara profesional. Berfokus pada Fullstack Development dengan PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, dan Docker."
                   : "Student at SMK Bhakti Mulia Pare actively building end-to-end web applications. Specialized in Fullstack Development with PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, and Docker."}
@@ -430,9 +430,9 @@ export default function DashboardClient({
               <div className="p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534]">
                   <MapPin className="w-4 h-4" />
-                  <span className="text-[11px] font-mono font-bold uppercase">{lang === "id" ? "SEKOLAH" : "SCHOOL"}</span>
+                  <span className="text-[11px] font-bold uppercase">{lang === "id" ? "SEKOLAH" : "SCHOOL"}</span>
                 </div>
-                <p className="text-xs font-sans font-bold truncate text-slate-950 dark:text-white">
+                <p className="text-xs font-bold truncate text-slate-950 dark:text-white">
                   SMK Bhakti Mulia
                 </p>
               </div>
@@ -440,9 +440,9 @@ export default function DashboardClient({
               <div className="p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534]">
                   <Code className="w-4 h-4" />
-                  <span className="text-[11px] font-mono font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
+                  <span className="text-[11px] font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
                 </div>
-                <p className="text-xs font-sans font-bold truncate text-slate-950 dark:text-white">
+                <p className="text-xs font-bold truncate text-slate-950 dark:text-white">
                   Junior Progammer
                 </p>
               </div>
@@ -450,9 +450,9 @@ export default function DashboardClient({
               <div className="p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534]">
                   <Layers className="w-4 h-4" />
-                  <span className="text-[11px] font-mono font-bold uppercase">STACK</span>
+                  <span className="text-[11px] font-bold uppercase">STACK</span>
                 </div>
-                <p className="text-xs font-sans font-bold truncate text-slate-950 dark:text-white">
+                <p className="text-xs font-bold truncate text-slate-950 dark:text-white">
                   Laravel &bull; Next.js
                 </p>
               </div>
@@ -462,7 +462,7 @@ export default function DashboardClient({
               <a
                 href="#projects"
                 onClick={() => soundFx.playClick()}
-                className="px-6 py-3 rounded-xl bg-[#EAB308] hover:bg-[#166534] hover:text-white border-2 border-slate-900 dark:border-white text-slate-950 font-mono font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-6 py-3 rounded-xl bg-[#EAB308] hover:bg-[#166534] hover:text-white border-2 border-slate-900 dark:border-white text-slate-950 font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -471,7 +471,7 @@ export default function DashboardClient({
               <Link
                 href="/profile"
                 onClick={() => soundFx.playClick()}
-                className="px-6 py-3 rounded-xl bg-white dark:bg-[#0E121D] border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white font-mono font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-6 py-3 rounded-xl bg-white dark:bg-[#0E121D] border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
               </Link>
@@ -490,17 +490,17 @@ export default function DashboardClient({
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 pb-2">
             <div className="space-y-2 sm:space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-[#166534] text-white border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-bold tracking-widest uppercase">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-[#166534] text-white border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-bold tracking-widest uppercase">
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               </div>
-              <h2 className="font-serif text-2xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
+              <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
                 {lang === "id" ? (
                   <>ARTIKEL &amp; <span className="text-[#166534] underline decoration-4 underline-offset-4">PANDUAN TEKNIS</span></>
                 ) : (
                   <>LATEST ARTICLES &amp; <span className="text-[#166534] underline decoration-4 underline-offset-4">TECHNICAL GUIDES</span></>
                 )}
               </h2>
-              <p className="text-xs sm:text-base text-slate-800 dark:text-slate-200 font-sans font-medium max-w-xl leading-relaxed">
+              <p className="text-xs sm:text-base text-slate-800 dark:text-slate-200 font-medium max-w-xl leading-relaxed">
                 {lang === "id"
                   ? "Tulisan teknis, catatan arsitektur perangkat lunak, otomatisasi AI, dan panduan backend/frontend."
                   : "Technical articles, software architecture notes, AI automation, and backend/frontend engineering guides."}
@@ -510,7 +510,7 @@ export default function DashboardClient({
             <Link
               href="/artikel"
               onClick={() => soundFx.playClick()}
-              className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-[#166534] hover:text-white dark:hover:bg-[#166534] dark:hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] w-fit cursor-pointer group shrink-0"
+              className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs uppercase tracking-wider transition-all hover:bg-[#166534] hover:text-white dark:hover:bg-[#166534] dark:hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] w-fit cursor-pointer group shrink-0"
             >
               <span>{lang === "id" ? "Lihat Semua Artikel" : "View All Articles"}</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -541,14 +541,14 @@ export default function DashboardClient({
                     )}
                   </div>
                   <div className="flex flex-1 flex-col gap-3 p-4">
-                    <div className="flex items-center justify-between gap-3 text-[10px] font-mono font-bold uppercase text-slate-600 dark:text-slate-400">
+                    <div className="flex items-center justify-between gap-3 text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">
                       <span>{article.category || "Tutorial"}</span>
                       <span>{article.readTime || "3 min read"}</span>
                     </div>
-                    <h3 className="line-clamp-2 font-serif text-lg font-black uppercase leading-tight text-slate-950 dark:text-white group-hover:text-[#166534] dark:group-hover:text-[#EAB308]">
+                    <h3 className="line-clamp-2 text-lg font-black uppercase leading-tight text-slate-950 dark:text-white group-hover:text-[#166534] dark:group-hover:text-[#EAB308]">
                       {article.title}
                     </h3>
-                    <div className="mt-auto flex items-center justify-between border-t-2 border-slate-900 pt-3 text-[11px] font-mono font-bold text-slate-700 dark:border-white dark:text-slate-300">
+                    <div className="mt-auto flex items-center justify-between border-t-2 border-slate-900 pt-3 text-[11px] font-bold text-slate-700 dark:border-white dark:text-slate-300">
                       <span>{new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
                       <span className="inline-flex items-center gap-1 text-[#166534] dark:text-[#EAB308]">
                         BACA <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
@@ -559,7 +559,7 @@ export default function DashboardClient({
               ))}
             </div>
           ) : (
-            <div className="border-2 border-dashed border-slate-900 p-6 text-center font-mono text-xs font-bold uppercase text-slate-600 dark:border-white dark:text-slate-400">
+            <div className="border-2 border-dashed border-slate-900 p-6 text-center text-xs font-bold uppercase text-slate-600 dark:border-white dark:text-slate-400">
               {lang === "id" ? "Belum ada artikel untuk ditampilkan." : "No articles to display yet."}
             </div>
           )}
@@ -576,7 +576,7 @@ export default function DashboardClient({
       <ExperienceTimeline isNight={isNight} lang={lang} />
 
       {toastMsg && (
-        <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#166534] text-white font-bold text-xs font-mono shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+        <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#166534] text-white font-bold text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
           {toastMsg}
         </div>
       )}

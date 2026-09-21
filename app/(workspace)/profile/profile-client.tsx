@@ -409,7 +409,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
   return (
     <div
-      className={`relative min-h-[100dvh] w-full font-mono antialiased pb-32 sm:pb-24 transition-colors duration-300 ${
+      className={`relative min-h-[100dvh] w-full antialiased pb-32 sm:pb-24 transition-colors duration-300 ${
         isNight ? "bg-black text-white" : "bg-[#F4F4F0] text-black"
       }`}
     >
@@ -462,7 +462,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             <Link
               href="/dashboard"
               onClick={() => soundFx.playClick()}
-              className="relative z-10 px-3 py-1.5 rounded-none bg-white text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] transition-all cursor-pointer flex items-center gap-1.5"
+              className="relative z-10 px-3 py-1.5 rounded-none bg-white text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] transition-all cursor-pointer flex items-center gap-1.5"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{lang === "id" ? "BERANDA" : "HOME"}</span>
@@ -477,7 +477,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     soundFx.playClick();
                     setActiveModal("banner");
                   }}
-                  className="px-3.5 py-1.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-none bg-[#FFFF00] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
                   title="Edit Gambar & Tema Cover Banner"
                 >
                   <Camera className="w-4 h-4" />
@@ -509,7 +509,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       unoptimized
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-[#166534] flex items-center justify-center text-4xl sm:text-5xl font-mono font-black text-white">
+                    <div className="w-full h-full rounded-full bg-[#166534] flex items-center justify-center text-4xl sm:text-5xl font-black text-white">
                       {initialLetter}
                     </div>
                   )}
@@ -534,18 +534,18 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
             {/* Profile Name & Tagline Quote */}
             <div className="mt-4 space-y-2 w-full max-w-lg">
-              <h1 className="text-2xl sm:text-3xl font-mono font-black uppercase tracking-tight text-black flex items-center justify-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-black flex items-center justify-center gap-2">
                 <span>{userName}</span>
               </h1>
 
-              <p className="text-xs sm:text-sm font-mono font-bold text-neutral-700 max-w-md mx-auto leading-relaxed flex items-center justify-center gap-1.5">
+              <p className="text-xs sm:text-sm font-bold text-neutral-700 max-w-md mx-auto leading-relaxed flex items-center justify-center gap-1.5">
                 <Quote className="w-4 h-4 text-[#166534] shrink-0 inline" />
                 <span>Work hard in silence. Let your success be the noise.</span>
               </p>
 
               <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
                 {userEmail && isAuthenticated && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-none border-2 border-black bg-white text-black font-mono text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-none border-2 border-black bg-white text-black text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     {userEmail}
                   </span>
                 )}
@@ -562,7 +562,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           {isAuthenticated ? (
             <div className="rounded-none border-4 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] divide-y-3 divide-black flex flex-col justify-between">
               <div>
-                <div className="p-4 bg-[#FFFF00] border-b-3 border-black text-black font-mono font-black text-xs uppercase flex items-center gap-2">
+                <div className="p-4 bg-[#FFFF00] border-b-3 border-black text-black font-black text-xs uppercase flex items-center gap-2">
                   <UserIcon className="w-4 h-4 stroke-[3]" />
                   <span>{lang === "id" ? "PENGATURAN AKUN & KEAMANAN" : "ACCOUNT & SECURITY SETTINGS"}</span>
                 </div>
@@ -580,10 +580,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       <ShieldCheck className="w-5 h-5 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
+                      <h3 className="text-sm font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                         {lang === "id" ? "Detail Status Akun" : "Account Status Details"}
                       </h3>
-                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      <p className="text-[11px] font-bold text-neutral-500">
                         {userEmail}
                       </p>
                     </div>
@@ -604,10 +604,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       <Edit3 className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
+                      <h3 className="text-sm font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                         {lang === "id" ? "Edit Nama & Foto Profil" : "Edit Name & Profile Photo"}
                       </h3>
-                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      <p className="text-[11px] font-bold text-neutral-500">
                         {lang === "id" ? "Perbarui nama tampilan & foto profil" : "Update display name & custom avatar"}
                       </p>
                     </div>
@@ -628,10 +628,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       <Key className="w-5 h-5 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
+                      <h3 className="text-sm font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                         {lang === "id" ? "Ubah Kata Sandi (Password)" : "Change Password"}
                       </h3>
-                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      <p className="text-[11px] font-bold text-neutral-500">
                         {lang === "id" ? "Perbarui kata sandi keamanan akun Anda" : "Update your account security password"}
                       </p>
                     </div>
@@ -652,10 +652,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                       <ImageIcon className="w-5 h-5 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
+                      <h3 className="text-sm font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                         {lang === "id" ? "Edit Cover Banner" : "Edit Cover Banner"}
                       </h3>
-                      <p className="text-[11px] font-mono font-bold text-neutral-500">
+                      <p className="text-[11px] font-bold text-neutral-500">
                         {lang === "id" ? "Unggah gambar kustom atau tema banner" : "Upload custom photo or select theme preset"}
                       </p>
                     </div>
@@ -666,7 +666,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             </div>
           ) : (
             /* Unauthenticated Prompt Box */
-            <div className="p-6 rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-5 font-mono flex flex-col justify-between">
+            <div className="p-6 rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-5 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-none bg-[#166534] border-2 border-black flex items-center justify-center text-white shrink-0 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
@@ -687,14 +687,14 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                 <Link
                   href="/login"
                   onClick={() => soundFx.playClick()}
-                  className="w-full py-3 px-4 text-center rounded-none bg-[#166534] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all cursor-pointer"
+                  className="w-full py-3 px-4 text-center rounded-none bg-[#166534] text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-all cursor-pointer"
                 >
                   {lang === "id" ? "MASUK / LOGIN" : "SIGN IN"}
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => soundFx.playClick()}
-                  className="w-full py-3 px-4 text-center rounded-none bg-white text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-all cursor-pointer"
+                  className="w-full py-3 px-4 text-center rounded-none bg-white text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-all cursor-pointer"
                 >
                   {lang === "id" ? "DAFTAR AKUN" : "REGISTER"}
                 </Link>
@@ -705,7 +705,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
           {/* RIGHT COLUMN: PREFERENSI & ANTARMUKA */}
           <div className="rounded-none border-4 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] divide-y-3 divide-black flex flex-col justify-between">
             <div>
-              <div className="p-4 bg-[#00FF66] border-b-3 border-black text-black font-mono font-black text-xs uppercase flex items-center gap-2">
+              <div className="p-4 bg-[#00FF66] border-b-3 border-black text-black font-black text-xs uppercase flex items-center gap-2">
                 <Globe className="w-4 h-4 stroke-[3]" />
                 <span>{lang === "id" ? "PREFERENSI & SISTEM" : "PREFERENCES & SYSTEM"}</span>
               </div>
@@ -717,10 +717,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <Bell className="w-5 h-5 text-black" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-mono font-black uppercase text-black">
+                    <h3 className="text-sm font-black uppercase text-black">
                       {lang === "id" ? "Notifikasi Email & Sistem" : "Notifications"}
                     </h3>
-                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                    <p className="text-[11px] font-bold text-neutral-500">
                       {notificationsEnabled ? (lang === "id" ? "Notifikasi Aktif" : "Enabled") : (lang === "id" ? "Notifikasi Dinonaktifkan" : "Disabled")}
                     </p>
                   </div>
@@ -728,7 +728,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
                 <button
                   onClick={toggleNotifications}
-                  className={`px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-none border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer ${
                     notificationsEnabled ? "bg-[#00FF66] text-black" : "bg-neutral-300 text-black"
                   }`}
                 >
@@ -743,10 +743,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     {sfxEnabled ? <Volume2 className="w-5 h-5 text-black" /> : <VolumeX className="w-5 h-5 text-black" />}
                   </div>
                   <div>
-                    <h3 className="text-sm font-mono font-black uppercase text-black">
+                    <h3 className="text-sm font-black uppercase text-black">
                       {lang === "id" ? "Efek Suara (SFX)" : "Sound Effects (SFX)"}
                     </h3>
-                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                    <p className="text-[11px] font-bold text-neutral-500">
                       {sfxEnabled ? (lang === "id" ? "Efek Suara Aktif" : "Sound Enabled") : (lang === "id" ? "Efek Suara Dibisukan" : "Sound Muted")}
                     </p>
                   </div>
@@ -754,7 +754,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
                 <button
                   onClick={handleToggleSfxLocal}
-                  className={`px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-none border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer ${
                     sfxEnabled ? "bg-[#00FF66] text-black" : "bg-neutral-300 text-black"
                   }`}
                 >
@@ -769,10 +769,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <Globe className="w-5 h-5 text-black" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-mono font-black uppercase text-black">
+                    <h3 className="text-sm font-black uppercase text-black">
                       {lang === "id" ? "Bahasa Antarmuka" : "Interface Language"}
                     </h3>
-                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                    <p className="text-[11px] font-bold text-neutral-500">
                       {lang === "id" ? "Bahasa Indonesia" : "English (US)"}
                     </p>
                   </div>
@@ -783,7 +783,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     soundFx.playClick();
                     toggleLang();
                   }}
-                  className="px-3 py-1.5 rounded-none border-2 border-black text-xs font-mono font-black uppercase bg-sky-400 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  className="px-3 py-1.5 rounded-none border-2 border-black text-xs font-black uppercase bg-sky-400 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                 >
                   {lang.toUpperCase()}
                 </button>
@@ -802,10 +802,10 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
                     <HelpCircle className="w-5 h-5 text-black" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-mono font-black uppercase text-black group-hover:text-[#166534] transition-colors">
+                    <h3 className="text-sm font-black uppercase text-black group-hover:text-[#166534] transition-colors">
                       {lang === "id" ? "Pusat Bantuan & FAQ" : "Help Center & FAQ"}
                     </h3>
-                    <p className="text-[11px] font-mono font-bold text-neutral-500">
+                    <p className="text-[11px] font-bold text-neutral-500">
                       {lang === "id" ? "Panduan penggunaan & pertanyaan umum" : "Usage guide & common questions"}
                     </p>
                   </div>
@@ -819,7 +819,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
 
         {/* 2.5. BOOKMARKED / SAVED ARTICLES SECTION (ONLY SHOWN WHEN LOGGED IN) */}
         {isAuthenticated && (
-          <div className="rounded-none border-4 border-black bg-white dark:bg-black text-black dark:text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-5 space-y-4 font-mono">
+          <div className="rounded-none border-4 border-black bg-white dark:bg-black text-black dark:text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-5 space-y-4 ">
             <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-none bg-[#FFFF00] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
@@ -905,7 +905,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               <button
                 type="submit"
                 onClick={() => soundFx.playClick()}
-                className="w-full py-4 rounded-none border-4 border-black bg-[#166534] text-white font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-none border-4 border-black bg-[#166534] text-white font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <LogOut className="w-5 h-5" />
                 <span>{lang === "id" ? "KELUAR DARI AKUN (SIGN OUT)" : "SIGN OUT FROM ACCOUNT"}</span>
@@ -915,7 +915,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             <Link
               href="/login"
               onClick={() => soundFx.playClick()}
-              className="w-full py-4 rounded-none border-4 border-black bg-[#FFFF00] text-black font-mono font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-none border-4 border-black bg-[#FFFF00] text-black font-black text-sm uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] hover:text-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <LogIn className="w-5 h-5" />
               <span>{lang === "id" ? "MASUK / LOGIN KE AKUN" : "SIGN IN / LOGIN TO ACCOUNT"}</span>
@@ -932,7 +932,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* MODAL 1: INFO STATUS AKUN */}
       {activeModal === "info" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative">
+          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] relative">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-[#166534]" />
@@ -947,7 +947,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
             </div>
 
             {isAuthenticated ? (
-              <div className="space-y-3 text-xs font-mono font-bold">
+              <div className="space-y-3 text-xs font-bold">
                 <div className="p-3 bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white flex justify-between items-center">
                   <span className="text-neutral-500 dark:text-neutral-400">STATUS SESI</span>
                   <span className="text-[#00FF66] font-black">TERAUTENTIKASI</span>
@@ -969,7 +969,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* MODAL 2: EDIT PROFILE FORM */}
       {activeModal === "edit" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative">
+          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] relative">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-[#166534]" />
@@ -1028,7 +1028,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* MODAL 3: EDIT COVER BANNER (UPLOAD FILE & PRESETS) */}
       {activeModal === "banner" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative max-h-[85vh] overflow-y-auto">
+          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] relative max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <ImageIcon className="w-5 h-5 text-sky-400" />
@@ -1107,7 +1107,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* MODAL 4: UBAH KATA SANDI (PASSWORD) */}
       {activeModal === "password" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative">
+          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] relative">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <Key className="w-5 h-5 text-amber-400" />
@@ -1182,7 +1182,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
       {/* MODAL 5: BANTUAN & FAQ */}
       {activeModal === "help" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono relative max-h-[80vh] overflow-y-auto">
+          <div className="w-full max-w-md rounded-none border-4 border-black dark:border-white bg-white dark:bg-black p-6 space-y-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] relative max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h3 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-[#166534]" />
@@ -1196,7 +1196,7 @@ export default function ProfileClient({ user, dbUser }: ProfileClientProps) {
               </button>
             </div>
 
-            <div className="space-y-4 text-xs font-mono">
+            <div className="space-y-4 text-xs ">
               <div className="p-3.5 bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white space-y-1.5">
                 <h4 className="font-black text-black dark:text-white uppercase">Bagaimana cara ganti Cover Banner?</h4>
                 <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">

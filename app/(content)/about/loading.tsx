@@ -1,6 +1,6 @@
 export default function AboutLoading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono antialiased pb-24 selection:bg-[#EAB308] selection:text-slate-950">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white antialiased pb-24 selection:bg-[#EAB308] selection:text-slate-950">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 space-y-10 animate-pulse">
         {/* Top Hero Banner & Profile Header Skeleton */}
         <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">

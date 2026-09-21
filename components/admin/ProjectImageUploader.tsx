@@ -77,7 +77,7 @@ function ImageSlotItem({
         />
       )}
 
-      <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/80 text-[#FFFF00] text-[9px] font-mono font-black border border-black z-10 pointer-events-none flex items-center gap-1">
+      <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/80 text-[#FFFF00] text-[9px] font-black border border-black z-10 pointer-events-none flex items-center gap-1">
         {isVid ? <Video className="w-2.5 h-2.5 text-[#00FF66]" /> : null}
         <span>#{index + 1}</span>
       </div>
@@ -277,11 +277,11 @@ export default function ProjectImageUploader({
   return (
     <div className="p-6 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
       <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
-        <span className="text-xs font-mono font-black uppercase text-black dark:text-white flex items-center gap-2">
+        <span className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
           <Images className="w-4 h-4 text-[#166534] dark:text-[#EAB308]" />
           01. MEDIA PROYEK ({images.length}/5 GAMBAR / VIDEO CAROUSEL)
         </span>
-        <span className="text-[10px] font-mono font-bold text-neutral-500 uppercase">
+        <span className="text-[10px] font-bold text-neutral-500 uppercase">
           MAKSIMAL 5 MEDIA
         </span>
       </div>
@@ -318,7 +318,7 @@ export default function ProjectImageUploader({
             >
               <div className="text-center p-2 space-y-1">
                 <UploadCloud className="w-5 h-5 text-neutral-400 mx-auto opacity-60" />
-                <span className="text-[9px] font-mono font-bold text-neutral-400 uppercase block">
+                <span className="text-[9px] font-bold text-neutral-400 uppercase block">
                   SLOT #{slotNum}
                 </span>
               </div>
@@ -328,7 +328,7 @@ export default function ProjectImageUploader({
       </div>
 
       {images.length > 1 && (
-        <p className="text-[10px] font-mono text-neutral-500 flex items-center gap-1">
+        <p className="text-[10px] text-neutral-500 flex items-center gap-1">
           <GripVertical className="w-3 h-3 text-[#166534] dark:text-[#EAB308]" />
           Tahan ikon grip untuk menggeser urutan carousel (hanya slot terisi yang dapat digeser).
         </p>
@@ -339,10 +339,10 @@ export default function ProjectImageUploader({
         {/* File Upload Box */}
         <label className="border-3 border-dashed border-black dark:border-white bg-slate-50 dark:bg-slate-900 hover:bg-amber-50 dark:hover:bg-slate-800 p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all min-h-[100px]">
           <UploadCloud className="w-6 h-6 text-[#166534] dark:text-[#EAB308] mb-1" />
-          <span className="text-xs font-mono font-black text-black dark:text-white uppercase">
+          <span className="text-xs font-black text-black dark:text-white uppercase">
             {uploadingImage ? "MENGUNGGAH MEDIA..." : "UNGGAH FOTO / VIDEO PROYEK"}
           </span>
-          <span className="text-[10px] font-mono text-neutral-500">
+          <span className="text-[10px] text-neutral-500">
             Foto max 10MB / Video max 50MB (pilih hingga {5 - images.length} lagi)
           </span>
           <input
@@ -357,7 +357,7 @@ export default function ProjectImageUploader({
 
         {/* Paste URL Box */}
         <div className="space-y-2 flex flex-col justify-center">
-          <label className="block text-[11px] font-mono font-black uppercase text-neutral-600 dark:text-neutral-400">
+          <label className="block text-[11px] font-black uppercase text-neutral-600 dark:text-neutral-400">
             ATAU TAMBAH VIA URL (GAMBAR / VIDEO MP4)
           </label>
           <div className="flex items-center gap-2">
@@ -366,13 +366,13 @@ export default function ProjectImageUploader({
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
               placeholder="https://domain.com/video.mp4 atau /gambar.png"
-              className="flex-1 px-3 py-2 border-2 border-black dark:border-white bg-white dark:bg-slate-900 text-black dark:text-white text-xs font-mono focus:outline-none"
+              className="flex-1 px-3 py-2 border-2 border-black dark:border-white bg-white dark:bg-slate-900 text-black dark:text-white text-xs focus:outline-none"
             />
             <button
               type="button"
               onClick={handleAddUrl}
               disabled={images.length >= 5 || !urlInput.trim()}
-              className="px-3 py-2 bg-[#166534] text-white border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#14532D] disabled:opacity-50 cursor-pointer"
+              className="px-3 py-2 bg-[#166534] text-white border-2 border-black font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#14532D] disabled:opacity-50 cursor-pointer"
             >
               Tambah
             </button>

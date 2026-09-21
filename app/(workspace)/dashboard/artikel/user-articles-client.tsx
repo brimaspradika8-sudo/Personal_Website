@@ -93,10 +93,10 @@ export default function UserArticlesClient({
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F4F0] dark:bg-[#05080E] text-black dark:text-white font-mono pb-24 sm:pb-16 antialiased">
+    <div className="min-h-screen bg-[#F4F4F0] dark:bg-[#05080E] text-black dark:text-white pb-24 sm:pb-16 antialiased">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-4 z-50 bg-[#EAB308] text-black border-4 border-black px-5 py-3 rounded-none font-mono font-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-bounce flex items-center gap-2">
+        <div className="fixed top-20 right-4 z-50 bg-[#EAB308] text-black border-4 border-black px-5 py-3 rounded-none font-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-bounce flex items-center gap-2">
           <Zap className="w-5 h-5 fill-black" />
           <span>{toastMessage}</span>
         </div>
@@ -115,23 +115,23 @@ export default function UserArticlesClient({
               </span>
             </div>
 
-            <h1 className="font-serif font-black text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-black dark:text-white">
+            <h1 className="font-black text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-black dark:text-white">
               STUDIO ARTIKEL SAYA
             </h1>
             
-            <p className="text-xs sm:text-sm font-mono text-slate-700 dark:text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 max-w-2xl leading-relaxed">
               Kelola tulisan, lihat respons pembaca, dan publikasikan artikel dari satu tempat.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <Link
-              href="/dashboard"
+              href="/artikel"
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center justify-center gap-2 px-4 py-3 min-h-12 border-2 border-black dark:border-white font-black uppercase text-xs bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Kembali</span>
+              <span>Kembali ke Artikel</span>
             </Link>
             <Link
               href="/admin/artikel/tambah"
@@ -153,7 +153,7 @@ export default function UserArticlesClient({
               <p className="text-[11px] font-black uppercase text-slate-600 dark:text-slate-400 tracking-wider">
                 Artikel Dipublikasikan
               </p>
-              <p className="text-3xl font-black text-black dark:text-white font-mono">{articles.length}</p>
+              <p className="text-3xl font-black text-black dark:text-white ">{articles.length}</p>
             </div>
             <div className="p-3 bg-[#166534]/10 dark:bg-[#166534]/30 border-2 border-black dark:border-white">
               <BookOpen className="w-7 h-7 text-[#166534] dark:text-[#EAB308]" />
@@ -165,7 +165,7 @@ export default function UserArticlesClient({
               <p className="text-[11px] font-black uppercase text-slate-600 dark:text-slate-400 tracking-wider">
                 Total Apresiasi Suka
               </p>
-              <p className="text-3xl font-black text-black dark:text-white font-mono">{totalLikes}</p>
+              <p className="text-3xl font-black text-black dark:text-white ">{totalLikes}</p>
             </div>
             <div className="p-3 bg-emerald-500/10 dark:bg-emerald-500/30 border-2 border-black dark:border-white">
               <ThumbsUp className="w-7 h-7 text-[#00FF66]" />
@@ -177,7 +177,7 @@ export default function UserArticlesClient({
               <p className="text-[11px] font-black uppercase text-slate-600 dark:text-slate-400 tracking-wider">
                 Total Komentar Pembaca
               </p>
-              <p className="text-3xl font-black text-black dark:text-white font-mono">{totalComments}</p>
+              <p className="text-3xl font-black text-black dark:text-white ">{totalComments}</p>
             </div>
             <div className="p-3 bg-amber-500/10 dark:bg-amber-500/30 border-2 border-black dark:border-white">
               <MessageSquare className="w-7 h-7 text-[#EAB308]" />
@@ -198,7 +198,7 @@ export default function UserArticlesClient({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari artikel..."
-                  className="w-full pl-9 pr-4 py-2 border-2 border-black dark:border-white bg-white dark:bg-[#05080E] text-xs font-mono font-bold focus:outline-none focus:bg-amber-50 dark:focus:bg-slate-900"
+                  className="w-full pl-9 pr-4 py-2 border-2 border-black dark:border-white bg-white dark:bg-[#05080E] text-xs font-bold focus:outline-none focus:bg-amber-50 dark:focus:bg-slate-900"
                 />
               </div>
 
@@ -207,7 +207,7 @@ export default function UserArticlesClient({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-3 py-2 border-2 border-black dark:border-white bg-white dark:bg-[#05080E] text-xs font-mono font-bold cursor-pointer focus:outline-none"
+                  className="px-3 py-2 border-2 border-black dark:border-white bg-white dark:bg-[#05080E] text-xs font-bold cursor-pointer focus:outline-none"
                 >
                   <option value="latest">Terbaru</option>
                   <option value="popular">Terpopuler</option>
@@ -222,12 +222,12 @@ export default function UserArticlesClient({
             <div className="p-12 text-center bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
               <BookOpen className="w-14 h-14 mx-auto text-slate-400" />
               <div className="space-y-1">
-                <h3 className="font-serif font-black text-xl uppercase text-black dark:text-white">
+                <h3 className="font-black text-xl uppercase text-black dark:text-white">
                   {searchQuery
                     ? "Tidak ada artikel yang sesuai filter."
                     : "Belum Ada Artikel Dipublikasikan."}
                 </h3>
-                <p className="text-xs font-mono text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
                   {searchQuery
                     ? "Coba sesuaikan kata kunci pencarian."
                     : "Mulai bagikan gagasan, tutorial, dan insight teknologi Anda lewat tulisan artikel."}
@@ -264,17 +264,17 @@ export default function UserArticlesClient({
                         />
                       </div>
                     ) : (
-                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-[#166534] border-3 border-black dark:border-white shrink-0 hidden sm:flex items-center justify-center text-white font-mono font-black text-2xl">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-[#166534] border-3 border-black dark:border-white shrink-0 hidden sm:flex items-center justify-center text-white font-black text-2xl">
                         {art.title.charAt(0)}
                       </div>
                     )}
 
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-2.5 py-0.5 bg-[#DCFCE7] text-emerald-900 text-[10px] font-mono font-black uppercase border border-emerald-900">
+                        <span className="px-2.5 py-0.5 bg-[#DCFCE7] text-emerald-900 text-[10px] font-black uppercase border border-emerald-900">
                           PUBLISHED
                         </span>
-                        <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">
                           {new Date(art.created_at).toLocaleDateString("id-ID", {
                             day: "numeric",
                             month: "long",
@@ -283,11 +283,11 @@ export default function UserArticlesClient({
                         </span>
                       </div>
 
-                      <h3 className="font-serif font-black text-lg sm:text-xl uppercase text-black dark:text-white line-clamp-1">
+                      <h3 className="font-black text-lg sm:text-xl uppercase text-black dark:text-white line-clamp-1">
                         {art.title}
                       </h3>
 
-                      <div className="flex items-center gap-4 text-xs font-mono text-slate-600 dark:text-slate-400 pt-1">
+                      <div className="flex items-center gap-4 text-xs text-slate-600 dark:text-slate-400 pt-1">
                         <span className="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300">
                           <ThumbsUp className="w-3.5 h-3.5" /> {art.likeCount} Suka
                         </span>

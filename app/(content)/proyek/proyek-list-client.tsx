@@ -79,7 +79,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-black pb-28 sm:pb-20">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white selection:bg-[#EAB308] selection:text-black pb-28 sm:pb-20">
       
       {/* Container Wrapper */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 space-y-8 sm:space-y-12">
@@ -89,13 +89,13 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#166534] dark:text-[#EAB308]" />
             <span>{lang === "id" ? "KEMBALI KE BERANDA" : "BACK TO HOME"}</span>
           </Link>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-[#EAB308] text-black border-2 border-black font-mono font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-[#EAB308] text-black border-2 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             <FolderGit2 className="w-4 h-4 text-black" />
             <span>{projectsData.length} {lang === "id" ? "PROYEK TERPOPULER" : "TOTAL PROJECTS"}</span>
           </div>
@@ -106,16 +106,16 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
           <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#166534] border-4 border-black dark:border-white rotate-12 pointer-events-none opacity-20 dark:opacity-30" />
 
           <div className="relative z-10 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs font-mono font-black uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs font-black uppercase tracking-wider">
               <Sparkles className="w-4 h-4 text-[#FFFF00]" />
               <span>{lang === "id" ? "PORTOFOLIO REKAYASA PERANGKAT LUNAK" : "SOFTWARE ENGINEERING PORTFOLIO"}</span>
             </div>
 
-            <h1 className="font-serif font-black text-3xl sm:text-6xl uppercase tracking-tight text-black dark:text-white leading-tight">
+            <h1 className="font-black text-3xl sm:text-6xl uppercase tracking-tight text-black dark:text-white leading-tight">
               PROYEK &amp; <span className="text-[#166534] dark:text-[#00E676] bg-[#FFFF00] text-black px-2 py-0.5 border-3 border-black">PORTOFOLIO</span>
             </h1>
 
-            <p className="text-xs sm:text-base font-mono font-bold text-black dark:text-white max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-base font-bold text-black dark:text-white max-w-3xl leading-relaxed">
               {lang === "id"
                 ? "Daftar aplikasi web nyata, integrasi sistem kecerdasan buatan (AI), arsitektur fullstack, dan repositori open-source yang telah dirancang & diimplementasikan."
                 : "A showcase of real-world web applications, AI system integrations, fullstack architectures, and open-source repositories."}
@@ -133,20 +133,20 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={lang === "id" ? "Cari nama proyek atau kata kunci..." : "Search project title or keywords..."}
-                className="w-full pl-10 pr-4 py-2.5 rounded-none border-3 border-black dark:border-white bg-slate-50 dark:bg-[#121824] text-xs font-mono font-bold text-black dark:text-white focus:outline-none focus:bg-white dark:focus:bg-black placeholder:text-neutral-400"
+                className="w-full pl-10 pr-4 py-2.5 rounded-none border-3 border-black dark:border-white bg-slate-50 dark:bg-[#121824] text-xs font-bold text-black dark:text-white focus:outline-none focus:bg-white dark:focus:bg-black placeholder:text-neutral-400"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-black text-neutral-400 hover:text-black dark:hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black text-neutral-400 hover:text-black dark:hover:text-white"
                 >
                   [CLEAR]
                 </button>
               )}
             </div>
 
-            <div className="px-4 py-2.5 rounded-none border-3 border-black dark:border-white bg-[#166534] text-white text-xs font-mono font-black shrink-0 uppercase">
+            <div className="px-4 py-2.5 rounded-none border-3 border-black dark:border-white bg-[#166534] text-white text-xs font-black shrink-0 uppercase">
               {filteredProjects.length} {lang === "id" ? "Proyek Ditemukan" : "Projects Found"}
             </div>
           </div>
@@ -159,10 +159,10 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
           <div className="p-12 rounded-none border-4 border-black dark:border-white text-center space-y-4 bg-white dark:bg-[#0A0D14] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
             <FolderGit2 className="w-10 h-10 text-[#166534] mx-auto opacity-80" />
             <div className="space-y-1">
-              <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">
+              <h3 className="text-base font-black uppercase text-black dark:text-white">
                 {lang === "id" ? "TIDAK ADA PROYEK DITEMUKAN" : "NO PROJECTS FOUND"}
               </h3>
-              <p className="text-xs font-mono text-neutral-500 font-bold">
+              <p className="text-xs text-neutral-500 font-bold">
                 {lang === "id" ? `Tidak ada proyek yang sesuai dengan pencarian "${searchQuery}".` : `No projects match search query "${searchQuery}".`}
               </p>
             </div>
@@ -172,7 +172,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                 soundFx.playClick();
                 setSearchQuery("");
               }}
-              className="px-5 py-2 bg-[#EAB308] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
+              className="px-5 py-2 bg-[#EAB308] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
             >
               {lang === "id" ? "RESET PENCARIAN" : "RESET SEARCH"}
             </button>
@@ -205,7 +205,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                         soundFx.playClick();
                         setSelectedProjectModal(project);
                       }}
-                      className="absolute bottom-3 right-3 z-20 px-3 py-1.5 bg-[#166534] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                      className="absolute bottom-3 right-3 z-20 px-3 py-1.5 bg-[#166534] text-white text-xs font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>{lang === "id" ? "DETAIL PROYEK" : "VIEW DETAILS"}</span>
@@ -215,16 +215,16 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                   {/* Card Body */}
                   <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
                     <div className="space-y-2">
-                      <h3 className="text-lg font-mono font-black uppercase text-black dark:text-white leading-snug group-hover:text-[#166534] transition-colors">
+                      <h3 className="text-lg font-black uppercase text-black dark:text-white leading-snug group-hover:text-[#166534] transition-colors">
                         {project.title}
                       </h3>
-                      <p className="text-xs font-mono font-bold text-neutral-700 dark:text-neutral-300 leading-relaxed line-clamp-3">
+                      <p className="text-xs font-bold text-neutral-700 dark:text-neutral-300 leading-relaxed line-clamp-3">
                         {project.description}
                       </p>
                     </div>
 
                     {/* Card Footer Links */}
-                    <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between text-xs font-mono font-black">
+                    <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between text-xs font-black">
                       {project.repository_url && project.repository_url !== "#" ? (
                         <a
                           href={project.repository_url}
@@ -240,7 +240,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
                           <span>CODE</span>
                         </a>
                       ) : (
-                        <span className="text-neutral-400 font-mono text-[10px] uppercase">PRIVATE REPO</span>
+                        <span className="text-neutral-400 text-[10px] uppercase">PRIVATE REPO</span>
                       )}
 
                       {isLiveDemoValid(project.demo_url) && (
@@ -271,14 +271,14 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
         {/* 5. COLLABORATION CTA BANNER */}
         <section className="p-8 sm:p-12 rounded-none border-4 border-black dark:border-white bg-[#166534] text-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-6 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-3 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               <Sparkles className="w-3.5 h-3.5 text-black" />
               <span>KOLABORASI &amp; IDE BARU</span>
             </div>
-            <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase leading-tight text-white">
+            <h2 className="font-black text-2xl sm:text-4xl uppercase leading-tight text-white">
               INGIN MEMBANGUN PROYEK SERUPA?
             </h2>
-            <p className="text-xs sm:text-sm font-mono font-bold leading-relaxed text-slate-100">
+            <p className="text-xs sm:text-sm font-bold leading-relaxed text-slate-100">
               Terbuka untuk konsultasi pembuatan sistem web custom, integrasi AI Agent, arsitektur database, atau diskusi proyek open-source.
             </p>
           </div>
@@ -286,7 +286,7 @@ export default function ProyekClient({ initialProjects = [] }: ProyekClientProps
           <a
             href="mailto:brimaspradika8@gmail.com"
             onClick={() => soundFx.playClick()}
-            className="w-full sm:w-auto px-6 py-3 rounded-none bg-[#EAB308] hover:bg-[#d9a207] text-black border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2 shrink-0"
+            className="w-full sm:w-auto px-6 py-3 rounded-none bg-[#EAB308] hover:bg-[#d9a207] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2 shrink-0"
           >
             <Mail className="w-4 h-4" />
             <span>KIRIM EMAIL DISKUSI</span>

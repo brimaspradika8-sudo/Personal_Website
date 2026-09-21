@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ExternalLink, Code2, Layers } from "lucide-react";
+import { X, ExternalLink, Code2 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -97,30 +97,25 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 <X className="w-4 h-4" />
               </button>
 
-              {/* Tag / Category Badge */}
-              <div className="absolute bottom-3 left-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAB308] text-slate-950 text-[11px] font-mono font-bold uppercase tracking-wider backdrop-blur-md shadow-md">
-                <Layers className="w-3 h-3 text-slate-950" />
-                <span>Case Study & Architecture</span>
-              </div>
             </div>
 
             {/* Content Body Section */}
             <div className="p-6 sm:p-7 overflow-y-auto space-y-6 flex-1">
               <div className="space-y-1">
-                <h2 className="font-display text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-snug">
+                <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-snug">
                   {project.title}
                 </h2>
-                <p className="text-xs font-mono text-[#166534] uppercase font-bold tracking-wider">
+                <p className="text-xs text-[#166534] uppercase font-bold tracking-wider">
                   {lang === "id" ? "Proyek Software System" : "Software System Project"}
                 </p>
               </div>
 
               {/* Overview / Description */}
               <div className="space-y-2">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-white/50">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-white/50">
                   {lang === "id" ? "DESKRIPSI PROYEK" : "PROJECT OVERVIEW"}
                 </h3>
-                <p className="text-sm text-white/90 leading-relaxed font-sans font-normal break-words">
+                <p className="text-sm text-white/90 leading-relaxed font-normal break-words">
                   {project.description}
                 </p>
               </div>

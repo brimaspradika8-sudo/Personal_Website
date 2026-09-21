@@ -46,7 +46,7 @@ export default function QuickContactFAB() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleOpen}
-          className="px-4 py-3 rounded-2xl bg-[#EAB308] border-2 sm:border-3 border-slate-900 text-slate-950 font-mono font-bold text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex items-center gap-2 cursor-pointer transition-all hover:bg-[#166534] hover:text-white"
+          className="px-4 py-3 rounded-2xl bg-[#EAB308] border-2 sm:border-3 border-slate-900 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex items-center gap-2 cursor-pointer transition-all hover:bg-[#166534] hover:text-white"
         >
           {isOpen ? (
             <>
@@ -90,14 +90,14 @@ export default function QuickContactFAB() {
 
               {/* Header */}
               <div className="space-y-1.5">
-                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-lg bg-[#166534] text-white border-2 border-slate-900 text-[10px] font-mono font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-lg bg-[#166534] text-white border-2 border-slate-900 text-[10px] font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <Sparkles className="w-3 h-3 text-white" />
                   <span>{lang === "id" ? "RESPON CEPAT" : "FAST RESPONSE"}</span>
                 </div>
-                <h3 className="font-serif font-black text-2xl uppercase tracking-tight text-slate-950 dark:text-white leading-none">
+                <h3 className="font-black text-2xl uppercase tracking-tight text-slate-950 dark:text-white leading-none">
                   {lang === "id" ? "KIRIM PESAN & DISKUSI" : "SEND MESSAGE & DISCUSS"}
                 </h3>
-                <p className="text-xs font-sans font-medium text-slate-700 dark:text-slate-300">
+                <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
                   {lang === "id"
                     ? "Terbuka untuk kesempatan freelance, proyek AI/Web, atau konsultasi arsitektur perangkat lunak."
                     : "Open for freelance projects, AI/Web development, or software architecture consulting."}
@@ -112,13 +112,13 @@ export default function QuickContactFAB() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => soundFx.playClick()}
-                  className="w-full p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-[#166534] text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer"
+                  className="w-full p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-[#166534] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
                     <Send className="w-4 h-4" />
                     <span>CHAT WHATSAPP</span>
                   </div>
-                  <span className="text-[10px] bg-slate-950 text-white px-2 py-0.5 rounded border border-slate-900 font-sans font-semibold">
+                  <span className="text-[10px] bg-slate-950 text-white px-2 py-0.5 rounded border border-slate-900 font-semibold">
                     {lang === "id" ? "AKTIF" : "ACTIVE"}
                   </span>
                 </a>
@@ -127,31 +127,31 @@ export default function QuickContactFAB() {
                 <a
                   href="mailto:brimaspradika08@gmail.com"
                   onClick={() => soundFx.playClick()}
-                  className="w-full p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-[#EAB308] text-slate-950 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer"
+                  className="w-full p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-[#EAB308] text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
                     <Mail className="w-4 h-4" />
                     <span>DIRECT EMAIL</span>
                   </div>
-                  <span className="text-[11px] font-sans font-semibold">Brimaspradika8@gmail.com</span>
+                  <span className="text-[11px] font-semibold">Brimaspradika8@gmail.com</span>
                 </a>
 
                 {/* Copy Email Button */}
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="w-full p-3 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 text-slate-950 dark:text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                  className="w-full p-3 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 text-slate-950 dark:text-white font-bold text-xs uppercase tracking-wider flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
                     {copiedEmail ? <Check className="w-4 h-4 text-[#166534]" /> : <Copy className="w-4 h-4" />}
                     <span>{lang === "id" ? "SALIN EMAIL" : "COPY EMAIL"}</span>
                   </div>
-                  <span className="text-[11px] font-mono text-slate-500 lowercase">brimaspradika8@gmail.com</span>
+                  <span className="text-[11px] text-slate-500 lowercase">brimaspradika8@gmail.com</span>
                 </button>
               </div>
 
               {/* Social Links Footer */}
-              <div className="pt-3 border-t-2 border-slate-900 dark:border-white flex items-center justify-between text-xs font-mono">
+              <div className="pt-3 border-t-2 border-slate-900 dark:border-white flex items-center justify-between text-xs ">
                 <span className="text-slate-600 dark:text-slate-400">{lang === "id" ? "MEDIA SOSIAL:" : "SOCIAL MEDIA:"}</span>
                 <div className="flex items-center gap-2">
                   <a
@@ -170,7 +170,7 @@ export default function QuickContactFAB() {
 
               {/* Toast Feedback */}
               {toastMsg && (
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-[#166534] text-white font-mono font-bold text-xs border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl bg-[#166534] text-white font-bold text-xs border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   {toastMsg}
                 </div>
               )}

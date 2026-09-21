@@ -1,32 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Cinzel, Press_Start_2P, Silkscreen } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const montserrat = Montserrat({
+  weight: ["500", "600", "700", "800", "900"],
   subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
-});
-
-const pressStart2P = Press_Start_2P({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-press-start",
-  display: "swap",
-});
-
-const silkscreen = Silkscreen({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-pixel",
+  variable: "--",
   display: "swap",
 });
 
@@ -102,7 +83,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="id" className={`${plusJakartaSans.variable} ${cinzel.variable} ${pressStart2P.variable} ${silkscreen.variable}`}>
+    <html lang="id" className={montserrat.variable}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -123,7 +104,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${plusJakartaSans.className} antialiased min-h-screen bg-[var(--bg)] text-[var(--text-primary)] transition-colors duration-500 overflow-x-hidden`}>
+      <body className={`${montserrat.className} antialiased min-h-screen bg-[var(--bg)] text-[var(--text-primary)] transition-colors duration-500 overflow-x-hidden`}>
         <LanguageProvider>
           {children}
         </LanguageProvider>

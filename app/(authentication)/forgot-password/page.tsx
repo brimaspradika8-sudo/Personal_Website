@@ -169,7 +169,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 sm:p-6 font-mono text-slate-900 bg-[#F2F3F4] dark:bg-[#0B0F17] dark:text-white selection:bg-[#DC2626] selection:text-white">
+    <div className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 sm:p-6 text-slate-900 bg-[#F2F3F4] dark:bg-[#0B0F17] dark:text-white selection:bg-[#DC2626] selection:text-white">
       
       {/* Background Neo-Brutalist Grid Pattern */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-30 bg-[radial-gradient(#000000_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -178,7 +178,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-lg mb-6 relative z-10 flex items-center justify-between">
         <Link
           href="/login"
-          className="px-4 py-2.5 bg-white dark:bg-black text-black dark:text-white text-xs font-mono font-black uppercase flex items-center gap-2 border-4 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 cursor-pointer"
+          className="px-4 py-2.5 bg-white dark:bg-black text-black dark:text-white text-xs font-black uppercase flex items-center gap-2 border-4 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 text-[#FF0000]" />
           <span>← KEMBALI KE LOGIN</span>
@@ -190,13 +190,13 @@ export default function ForgotPasswordPage() {
         
         {/* Step Indicator Header (Neo-Brutalist High Contrast Badge) */}
         <div className="flex items-center justify-between pb-3 border-b-4 border-black dark:border-white gap-2 flex-wrap">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFFF00] text-black border-2 border-black font-mono text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFFF00] text-black border-2 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             <KeyRound className="w-4 h-4 stroke-[3]" />
             <span>RESET PASSWORD PORTAL</span>
           </div>
 
           {step <= 3 && (
-            <span className="text-xs font-mono font-black uppercase bg-[#FF0000] text-white px-3 py-1 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            <span className="text-xs font-black uppercase bg-[#FF0000] text-white px-3 py-1 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
               STEP {step} / 3
             </span>
           )}
@@ -204,7 +204,7 @@ export default function ForgotPasswordPage() {
 
         {/* Error Alert */}
         {error && (
-          <div className="border-4 border-black bg-[#FF0000] text-white p-4 text-xs font-mono font-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3">
+          <div className="border-4 border-black bg-[#FF0000] text-white p-4 text-xs font-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3">
             <ShieldAlert className="w-6 h-6 shrink-0 stroke-[3]" />
             <span className="leading-relaxed uppercase">{error}</span>
           </div>
@@ -212,7 +212,7 @@ export default function ForgotPasswordPage() {
 
         {/* Success Alert */}
         {successMsg && (
-          <div className="border-4 border-black bg-[#00FF66] text-black p-4 text-xs font-mono font-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3">
+          <div className="border-4 border-black bg-[#00FF66] text-black p-4 text-xs font-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3">
             <CheckCircle2 className="w-6 h-6 shrink-0 stroke-[3]" />
             <span className="leading-relaxed uppercase">{successMsg}</span>
           </div>
@@ -227,17 +227,17 @@ export default function ForgotPasswordPage() {
               <div className="w-20 h-20 bg-[#FFFF00] border-4 border-black flex items-center justify-center mx-auto shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <Mail className="w-10 h-10 text-black stroke-[3]" />
               </div>
-              <h1 className="font-mono text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
                 Lupa Kata Sandi?
               </h1>
-              <p className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 max-w-xs mx-auto uppercase">
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-300 max-w-xs mx-auto uppercase">
                 Masukkan email terdaftar Anda untuk menerima kode OTP 6-digit.
               </p>
             </div>
 
             <form onSubmit={handleSendOtp} className="space-y-5">
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-xs font-mono font-black text-slate-950 dark:text-white uppercase tracking-wider">
+                <label htmlFor="email" className="block text-xs font-black text-slate-950 dark:text-white uppercase tracking-wider">
                   ALAMAT EMAIL TERDAFTAR
                 </label>
                 <div className="relative flex items-center">
@@ -248,7 +248,7 @@ export default function ForgotPasswordPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="NAMA@EMAIL.COM"
-                    className="w-full bg-slate-50 dark:bg-slate-900 border-4 border-black dark:border-white px-4 py-3.5 pl-12 text-xs font-mono font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border-4 border-black dark:border-white px-4 py-3.5 pl-12 text-xs font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
                   />
                   <Mail className="w-5 h-5 text-slate-950 dark:text-white absolute left-4 stroke-[2.5]" />
                 </div>
@@ -257,7 +257,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#FF0000] text-white border-4 border-black dark:border-white py-4 px-4 text-xs font-mono font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] hover:text-black active:translate-x-1 active:translate-y-1 active:shadow-none"
+                className="w-full bg-[#FF0000] text-white border-4 border-black dark:border-white py-4 px-4 text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] hover:text-black active:translate-x-1 active:translate-y-1 active:shadow-none"
               >
                 {loading ? (
                   <>
@@ -291,13 +291,13 @@ export default function ForgotPasswordPage() {
 
             {/* Title & Email Badge */}
             <div className="space-y-2">
-              <h1 className="font-mono text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
                 VERIFIKASI OTP
               </h1>
-              <p className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 uppercase">
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">
                 HALO, MASUKKAN KODE OTP 6-DIGIT YANG DIKIRIMKAN KE EMAIL:
               </p>
-              <div className="bg-[#FFFF00] text-black border-2 border-black py-1 px-3.5 text-xs font-mono font-black inline-block uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-[#FFFF00] text-black border-2 border-black py-1 px-3.5 text-xs font-black inline-block uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 {email}
               </div>
             </div>
@@ -317,13 +317,13 @@ export default function ForgotPasswordPage() {
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    className="w-11 h-14 sm:w-13 sm:h-16 bg-white dark:bg-black border-4 border-black dark:border-white text-center font-mono text-2xl font-black text-[#FF0000] dark:text-[#00FF66] focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black focus:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
+                    className="w-11 h-14 sm:w-13 sm:h-16 bg-white dark:bg-black border-4 border-black dark:border-white text-center text-2xl font-black text-[#FF0000] dark:text-[#00FF66] focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black focus:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
                   />
                 ))}
               </div>
 
               {/* Resend OTP Block */}
-              <div className="bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white p-3 text-xs font-mono font-black uppercase flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white p-3 text-xs font-black uppercase flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 <span className="text-slate-700 dark:text-slate-300">OTP BELUM DITERIMA?</span>
                 {resendTimer > 0 ? (
                   <span className="text-[#FF0000] bg-white dark:bg-black px-2 py-0.5 border border-black">
@@ -345,7 +345,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading || otpDigits.join("").length < 6}
-                  className="w-full bg-[#00FF66] text-black border-4 border-black dark:border-white py-4 px-4 text-xs font-mono font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] active:translate-x-1 active:translate-y-1 active:shadow-none"
+                  className="w-full bg-[#00FF66] text-black border-4 border-black dark:border-white py-4 px-4 text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] active:translate-x-1 active:translate-y-1 active:shadow-none"
                 >
                   {loading ? (
                     <>
@@ -363,7 +363,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="w-full text-center text-xs font-mono font-black text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white uppercase pt-1 cursor-pointer"
+                  className="w-full text-center text-xs font-black text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white uppercase pt-1 cursor-pointer"
                 >
                   ← GANTI ALAMAT EMAIL
                 </button>
@@ -381,10 +381,10 @@ export default function ForgotPasswordPage() {
               <div className="w-20 h-20 bg-[#00FF66] border-4 border-black flex items-center justify-center mx-auto shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <Lock className="w-10 h-10 text-black stroke-[3]" />
               </div>
-              <h1 className="font-mono text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
                 Buat Kata Sandi Baru
               </h1>
-              <p className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 max-w-xs mx-auto uppercase">
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-300 max-w-xs mx-auto uppercase">
                 Kode OTP terverifikasi! Silakan masukkan kata sandi baru untuk akun Anda.
               </p>
             </div>
@@ -392,7 +392,7 @@ export default function ForgotPasswordPage() {
             <form onSubmit={handleSaveNewPassword} className="space-y-5">
               {/* New Password */}
               <div className="space-y-2">
-                <label htmlFor="newPassword" className="block text-xs font-mono font-black text-slate-950 dark:text-white uppercase tracking-wider">
+                <label htmlFor="newPassword" className="block text-xs font-black text-slate-950 dark:text-white uppercase tracking-wider">
                   KATA SANDI BARU
                 </label>
                 <div className="relative flex items-center">
@@ -404,7 +404,7 @@ export default function ForgotPasswordPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="MINIMAL 6 KARAKTER..."
-                    className="w-full bg-slate-50 dark:bg-slate-900 border-4 border-black dark:border-white px-4 py-3.5 pl-12 pr-12 text-xs font-mono font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border-4 border-black dark:border-white px-4 py-3.5 pl-12 pr-12 text-xs font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
                   />
                   <Lock className="w-5 h-5 text-slate-950 dark:text-white absolute left-4 stroke-[2.5]" />
                   <button
@@ -419,7 +419,7 @@ export default function ForgotPasswordPage() {
 
               {/* Confirm Password */}
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-xs font-mono font-black text-slate-950 dark:text-white uppercase tracking-wider">
+                <label htmlFor="confirmPassword" className="block text-xs font-black text-slate-950 dark:text-white uppercase tracking-wider">
                   KONFIRMASI KATA SANDI BARU
                 </label>
                 <div className="relative flex items-center">
@@ -431,7 +431,7 @@ export default function ForgotPasswordPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="ULANGI KATA SANDI BARU..."
-                    className="w-full bg-slate-50 dark:bg-slate-900 border-4 border-black dark:border-white px-4 py-3.5 pl-12 text-xs font-mono font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border-4 border-black dark:border-white px-4 py-3.5 pl-12 text-xs font-bold text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-[#FFFF00] focus:text-black focus:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] uppercase transition-all"
                   />
                   <Lock className="w-5 h-5 text-slate-950 dark:text-white absolute left-4 stroke-[2.5]" />
                 </div>
@@ -441,7 +441,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#00FF66] text-black border-4 border-black dark:border-white py-4 px-4 text-xs font-mono font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] active:translate-x-1 active:translate-y-1 active:shadow-none"
+                  className="w-full bg-[#00FF66] text-black border-4 border-black dark:border-white py-4 px-4 text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] active:translate-x-1 active:translate-y-1 active:shadow-none"
                 >
                   {loading ? (
                     <>
@@ -470,17 +470,17 @@ export default function ForgotPasswordPage() {
             </div>
 
             <div className="space-y-3">
-              <h2 className="text-2xl font-mono font-black uppercase text-slate-950 dark:text-white">
+              <h2 className="text-2xl font-black uppercase text-slate-950 dark:text-white">
                 RESET PASSWORD SUKSES!
               </h2>
-              <p className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 max-w-sm mx-auto uppercase">
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-300 max-w-sm mx-auto uppercase">
                 Kata sandi akun Anda telah berhasil diperbarui. Anda sekarang dapat masuk menggunakan kata sandi baru Anda.
               </p>
             </div>
 
             <Link
               href="/login"
-              className="w-full inline-flex items-center justify-center gap-2 bg-[#FF0000] text-white border-4 border-black dark:border-white py-4 px-4 text-xs font-mono font-black uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black transition-all"
+              className="w-full inline-flex items-center justify-center gap-2 bg-[#FF0000] text-white border-4 border-black dark:border-white py-4 px-4 text-xs font-black uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black transition-all"
             >
               <span>MASUK SEKARANG (LOGIN) →</span>
             </Link>

@@ -1,6 +1,6 @@
 export default function ArticleDetailLoading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono antialiased pb-24 selection:bg-[#EAB308] selection:text-slate-950">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white antialiased pb-24 selection:bg-[#EAB308] selection:text-slate-950">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8 animate-pulse">
         {/* 1. TOP NAV BREADCRUMB SKELETON */}
         <div className="flex items-center justify-between">

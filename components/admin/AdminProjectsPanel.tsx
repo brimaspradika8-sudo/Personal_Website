@@ -188,7 +188,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
       {/* Top Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-4 border-black dark:border-white">
         <div className="flex items-center gap-3">
-          <span className="px-3.5 py-1.5 bg-[#166534] text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+          <span className="px-3.5 py-1.5 bg-[#166534] text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
             <FolderKanban className="w-4 h-4 text-[#FFFF00]" />
             {subView === "list"
               ? `KELOLA PROYEK (${projects.length})`
@@ -202,7 +202,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
           <button
             type="button"
             onClick={handleStartTambah}
-            className="px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all cursor-pointer flex items-center gap-1.5"
+            className="px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all cursor-pointer flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>TAMBAH PROYEK</span>
@@ -214,7 +214,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
               soundFx.playClick();
               setSubView("list");
             }}
-            className="px-5 py-2.5 bg-slate-200 dark:bg-slate-900 text-black dark:text-white border-3 border-black dark:border-white font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] hover:text-black transition-all cursor-pointer flex items-center gap-1.5"
+            className="px-5 py-2.5 bg-slate-200 dark:bg-slate-900 text-black dark:text-white border-3 border-black dark:border-white font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] hover:text-black transition-all cursor-pointer flex items-center gap-1.5"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>KEMBALI KE DAFTAR</span>
@@ -225,7 +225,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
       {/* Status Notification */}
       {statusMsg && (
         <div
-          className={`p-4 border-4 border-black font-mono font-black text-xs flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+          className={`p-4 border-4 border-black font-black text-xs flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
             statusMsg.type === "success" ? "bg-[#00FF66] text-slate-950" : "bg-red-500 text-white"
           }`}
         >
@@ -250,7 +250,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari judul atau deskripsi proyek..."
-                className="w-full pl-9 pr-4 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs font-mono text-black dark:text-white focus:outline-none"
+                className="w-full pl-9 pr-4 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs text-black dark:text-white focus:outline-none"
               />
             </div>
 
@@ -258,7 +258,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
               href="/proyek"
               target="_blank"
               onClick={() => soundFx.playClick()}
-              className="px-3.5 py-2 border-2 border-black dark:border-white bg-[#EAB308] text-black text-xs font-mono font-black uppercase flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#d9a207]"
+              className="px-3.5 py-2 border-2 border-black dark:border-white bg-[#EAB308] text-black text-xs font-black uppercase flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#d9a207]"
             >
               <Globe className="w-3.5 h-3.5 text-black" />
               <span>Lihat Halaman Publik</span>
@@ -270,13 +270,13 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
           {filteredProjects.length === 0 ? (
             <div className="p-12 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white text-center space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <FolderGit2 className="w-10 h-10 text-[#166534] mx-auto opacity-70" />
-              <p className="text-xs font-mono font-black uppercase text-black dark:text-white">
+              <p className="text-xs font-black uppercase text-black dark:text-white">
                 BELUM ADA PROYEK DALAM DATABASE
               </p>
               <button
                 type="button"
                 onClick={handleStartTambah}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>TAMBAH PROYEK PERTAMA</span>
@@ -320,7 +320,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                           <FolderGit2 className="w-6 h-6 text-neutral-400" />
                         )}
                         {mediaList.length > 1 && (
-                          <div className="absolute bottom-0 right-0 bg-black/80 text-[#FFFF00] text-[9px] font-mono px-1 border-t border-l border-black">
+                          <div className="absolute bottom-0 right-0 bg-black/80 text-[#FFFF00] text-[9px] px-1 border-t border-l border-black">
                             +{mediaList.length - 1}
                           </div>
                         )}
@@ -328,14 +328,14 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
 
                       {/* Info & Links */}
                       <div className="space-y-1.5">
-                        <h3 className="text-base font-mono font-black uppercase text-black dark:text-white">
+                        <h3 className="text-base font-black uppercase text-black dark:text-white">
                           {p.title}
                         </h3>
-                        <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-400 line-clamp-2 max-w-xl">
+                        <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 line-clamp-2 max-w-xl">
                           {p.description}
                         </p>
 
-                        <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-mono font-black">
+                        <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-black">
                           {p.repository_url && (
                             <a
                               href={p.repository_url}
@@ -368,7 +368,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                       <button
                         type="button"
                         onClick={() => handleStartEdit(p)}
-                        className="px-3.5 py-2 bg-[#EAB308] text-black border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#d9a207] cursor-pointer flex items-center gap-1.5"
+                        className="px-3.5 py-2 bg-[#EAB308] text-black border-2 border-black font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#d9a207] cursor-pointer flex items-center gap-1.5"
                       >
                         <Edit className="w-3.5 h-3.5" />
                         <span>EDIT</span>
@@ -378,7 +378,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                         type="button"
                         onClick={() => handleDelete(p.id, p.title)}
                         disabled={deletingId === p.id}
-                        className="px-3.5 py-2 bg-red-600 text-white border-2 border-black font-mono font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-800 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                        className="px-3.5 py-2 bg-red-600 text-white border-2 border-black font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-800 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>HAPUS</span>
@@ -409,16 +409,16 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
           {/* Card 2: Detail Proyek */}
           <div className="p-6 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
             <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
-              <span className="text-xs font-mono font-black uppercase text-black dark:text-white flex items-center gap-2">
+              <span className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <FileText className="w-4 h-4 text-[#166534] dark:text-[#EAB308]" />
                 02. DETAIL PROYEK
               </span>
-              <span className="text-[10px] font-mono font-bold text-red-500 uppercase">* WAJIB DIISI</span>
+              <span className="text-[10px] font-bold text-red-500 uppercase">* WAJIB DIISI</span>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-mono font-black uppercase text-black dark:text-white mb-1">
+                <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
                   JUDUL PROYEK <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -427,12 +427,12 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Contoh: Portfolio & Article Studio Platform"
-                  className="w-full px-4 py-2.5 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-sm font-mono font-bold focus:outline-none"
+                  className="w-full px-4 py-2.5 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-sm font-bold focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono font-black uppercase text-black dark:text-white mb-1">
+                <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
                   DESKRIPSI PROYEK <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -441,7 +441,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tuliskan gambaran umum proyek, fitur utama, teknologi yang digunakan..."
-                  className="w-full p-4 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs font-mono font-medium focus:outline-none leading-relaxed"
+                  className="w-full p-4 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs font-medium focus:outline-none leading-relaxed"
                 />
               </div>
             </div>
@@ -450,16 +450,16 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
           {/* Card 3: Tautan Repositori & Deploy */}
           <div className="p-6 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
             <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
-              <span className="text-xs font-mono font-black uppercase text-black dark:text-white flex items-center gap-2">
+              <span className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <Code2 className="w-4 h-4 text-[#166534] dark:text-[#EAB308]" />
                 03. TAUTAN REPOSITORI & DEPLOY
               </span>
-              <span className="text-[10px] font-mono font-bold text-neutral-500 uppercase">OPSIONAL</span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase">OPSIONAL</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono font-black uppercase text-black dark:text-white mb-1">
+                <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
                   LINK REPO GITHUB
                 </label>
                 <input
@@ -467,12 +467,12 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                   value={repositoryUrl}
                   onChange={(e) => setRepositoryUrl(e.target.value)}
                   placeholder="https://github.com/username/repository"
-                  className="w-full px-4 py-2.5 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs font-mono focus:outline-none"
+                  className="w-full px-4 py-2.5 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono font-black uppercase text-black dark:text-white mb-1">
+                <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
                   LINK DEPLOY / LIVE DEMO
                 </label>
                 <input
@@ -480,7 +480,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                   value={demoUrl}
                   onChange={(e) => setDemoUrl(e.target.value)}
                   placeholder="https://proyek-saya.vercel.app"
-                  className="w-full px-4 py-2.5 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs font-mono focus:outline-none"
+                  className="w-full px-4 py-2.5 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs focus:outline-none"
                 />
               </div>
             </div>
@@ -493,7 +493,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                 soundFx.playClick();
                 setSubView("list");
               }}
-              className="px-6 py-3 border-3 border-black dark:border-white bg-slate-200 dark:bg-slate-900 text-black dark:text-white text-xs font-mono font-black uppercase hover:bg-slate-300 transition-colors cursor-pointer"
+              className="px-6 py-3 border-3 border-black dark:border-white bg-slate-200 dark:bg-slate-900 text-black dark:text-white text-xs font-black uppercase hover:bg-slate-300 transition-colors cursor-pointer"
             >
               BATAL
             </button>
@@ -501,7 +501,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             <button
               type="submit"
               disabled={saving}
-              className="px-8 py-3 bg-[#00FF66] text-black border-3 border-black font-mono font-black text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+              className="px-8 py-3 bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
               <Save className="w-4 h-4" />
               <span>

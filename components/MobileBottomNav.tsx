@@ -91,7 +91,7 @@ export default function MobileBottomNav() {
                   title={item.label}
                 >
                   <IconComponent className="w-6 h-6 stroke-[2.5]" />
-                  <span className="text-[8px] font-mono font-black uppercase tracking-tighter leading-none mt-0.5">
+                  <span className="text-[8px] font-black uppercase tracking-tighter leading-none mt-0.5">
                     {item.label}
                   </span>
                 </button>
@@ -119,7 +119,7 @@ export default function MobileBottomNav() {
               )}
               
               <IconComponent className={`w-4 h-4 relative z-10 ${isActive ? "text-white" : "text-neutral-400"}`} />
-              <span className={`text-[9px] font-mono font-black uppercase tracking-tighter truncate max-w-[54px] relative z-10 ${isActive ? "text-white" : "text-neutral-400"}`}>
+              <span className={`text-[9px] font-black uppercase tracking-tighter truncate max-w-[54px] relative z-10 ${isActive ? "text-white" : "text-neutral-400"}`}>
                 {item.label}
               </span>
             </button>

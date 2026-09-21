@@ -91,12 +91,12 @@ export default function ConfirmModal({
         </div>
 
         {/* Description Text */}
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-sans mb-6">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
           {description}
         </p>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 font-sans">
+        <div className="flex items-center justify-end gap-3 ">
           <button
             type="button"
             onClick={onCancel}

@@ -163,7 +163,7 @@ export default function CommandPalette({
                       </span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#0A0A0B] text-[#A8A79C] border border-[#26262A]">
+                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-[#0A0A0B] text-[#A8A79C] border border-[#26262A]">
                     ↵ {lang === "id" ? "Pilih" : "Select"}
                   </span>
                 </button>
@@ -181,9 +181,9 @@ export default function CommandPalette({
         {/* Footer info */}
         <div className="px-4 py-2.5 bg-[#0A0A0B] border-t border-[#26262A] flex items-center justify-between text-[11px] text-[#A8A79C]">
           <div className="flex items-center gap-2">
-            <span className="px-1.5 py-0.5 rounded bg-[#121214] border border-[#26262A] font-mono">↑↓</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#121214] border border-[#26262A] ">↑↓</span>
             <span>{lang === "id" ? "Navigasi" : "Navigate"}</span>
-            <span className="px-1.5 py-0.5 rounded bg-[#121214] border border-[#26262A] font-mono ml-2">ESC</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#121214] border border-[#26262A] ml-2">ESC</span>
             <span>{lang === "id" ? "Tutup" : "Close"}</span>
           </div>
         </div>

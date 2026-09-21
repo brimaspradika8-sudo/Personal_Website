@@ -23,7 +23,7 @@ import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-72 border-4 border-black dark:border-white bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center text-xs font-mono text-slate-500 gap-2">
+    <div className="w-full h-72 border-4 border-black dark:border-white bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center text-xs text-slate-500 gap-2">
       <div className="w-6 h-6 border-3 border-[#166534] border-t-transparent animate-spin" />
       <span>MEMUAT EDITOR ARTIKEL...</span>
     </div>
@@ -126,7 +126,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
   }, [handleSubmit]);
 
   return (
-    <div className="min-h-screen bg-[#F4F4F0] dark:bg-[#05080E] text-black dark:text-white font-mono antialiased pb-24">
+    <div className="min-h-screen bg-[#F4F4F0] dark:bg-[#05080E] text-black dark:text-white antialiased pb-24">
       
       {/* Sticky Header Navigation */}
       <header className="h-16 border-b-4 border-black dark:border-white px-4 sm:px-8 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-[#0E131F]/95 backdrop-blur-md z-30">
@@ -165,7 +165,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
         {/* Status Message Notification */}
         {statusMsg && (
           <div
-            className={`p-4 border-4 border-black font-mono font-black text-xs flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+            className={`p-4 border-4 border-black font-black text-xs flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
               statusMsg.type === "success"
                 ? "bg-[#00FF66] text-slate-950"
                 : "bg-red-500 text-white"
@@ -191,7 +191,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
               {/* Field Judul Artikel */}
               <div className="p-6 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
                 <div>
-                  <label className="block text-xs font-mono font-black uppercase text-slate-600 dark:text-slate-400 mb-1">
+                  <label className="block text-xs font-black uppercase text-slate-600 dark:text-slate-400 mb-1">
                     JUDUL ARTIKEL <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -200,12 +200,12 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
                     value={title}
                     onChange={(e) => handleTitleChange(e.target.value)}
                     placeholder="Tulis Judul Artikel..."
-                    className="w-full bg-transparent text-2xl sm:text-3xl font-serif font-black text-black dark:text-white placeholder:text-slate-400 focus:outline-none py-2 border-b-3 border-black dark:border-white"
+                    className="w-full bg-transparent text-2xl sm:text-3xl font-black text-black dark:text-white placeholder:text-slate-400 focus:outline-none py-2 border-b-3 border-black dark:border-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono font-black uppercase text-slate-600 dark:text-slate-400 mb-1">
+                  <label className="block text-[11px] font-black uppercase text-slate-600 dark:text-slate-400 mb-1">
                     URL SLUG <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -214,7 +214,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
                     placeholder="slug-url-artikel"
-                    className="w-full px-4 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs font-mono focus:outline-none focus:bg-amber-50 dark:focus:bg-slate-800"
+                    className="w-full px-4 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs focus:outline-none focus:bg-amber-50 dark:focus:bg-slate-800"
                   />
                 </div>
               </div>
@@ -222,11 +222,11 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
               {/* Field Editor Konten Artikel */}
               <div className="p-4 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-3">
                 <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
-                  <span className="text-xs font-mono font-black uppercase text-slate-900 dark:text-white">
+                  <span className="text-xs font-black uppercase text-slate-900 dark:text-white">
                     KONTEN ARTIKEL &amp; DOKUMENTASI
                   </span>
 
-                  <div className="flex items-center gap-4 text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400">
+                  <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">
                     <span className="flex items-center gap-1">
                       <FileText className="w-3.5 h-3.5 text-[#166534] dark:text-[#00FF66]" /> {wordCount} Kata
                     </span>
@@ -250,7 +250,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
               
               {/* Section 01: COVER IMAGE DROPZONE */}
               <div className="p-5 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
-                <div className="text-xs font-mono font-black uppercase text-slate-900 dark:text-white border-b-2 border-black dark:border-white pb-2">
+                <div className="text-xs font-black uppercase text-slate-900 dark:text-white border-b-2 border-black dark:border-white pb-2">
                   01 FOTO COVER ARTIKEL
                 </div>
 
@@ -260,7 +260,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
                       <div className="relative w-full h-40 border-2 border-black overflow-hidden">
                         <Image src={thumbnail} alt="Cover preview" fill className="object-cover" />
                         <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <span className="text-xs font-mono font-black text-black bg-[#EAB308] px-3 py-1.5 border-2 border-black">
+                          <span className="text-xs font-black text-black bg-[#EAB308] px-3 py-1.5 border-2 border-black">
                             Ganti Gambar
                           </span>
                         </div>
@@ -270,10 +270,10 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
                         <div className="w-10 h-10 bg-[#166534] border-2 border-black flex items-center justify-center text-white mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                           <Plus className="w-5 h-5" />
                         </div>
-                        <span className="text-xs font-mono font-black text-black dark:text-white">
+                        <span className="text-xs font-black text-black dark:text-white">
                           {uploadingThumbnail ? "MENGUNGGAH GAMBAR..." : "UNGGAH FOTO COVER"}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-500 mt-1">
+                        <span className="text-[10px] text-slate-500 mt-1">
                           JPG, PNG atau WebP (Maks 5MB)
                         </span>
                       </>
@@ -293,14 +293,14 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
                     value={thumbnail}
                     onChange={(e) => setThumbnail(e.target.value)}
                     placeholder="Atau tempel URL gambar di sini..."
-                    className="w-full px-3 py-2 border-2 border-black dark:border-white bg-white dark:bg-slate-900 text-xs font-mono focus:outline-none"
+                    className="w-full px-3 py-2 border-2 border-black dark:border-white bg-white dark:bg-slate-900 text-xs focus:outline-none"
                   />
 
                   {thumbnail && (
                     <button
                       type="button"
                       onClick={() => setThumbnail("")}
-                      className="text-[11px] font-mono font-bold text-red-600 dark:text-red-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
+                      className="text-[11px] font-bold text-red-600 dark:text-red-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" /> Hapus Cover Image
                     </button>
@@ -310,11 +310,11 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
 
               {/* Section 02: UPDATE CARD */}
               <div className="p-5 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
-                <div className="text-xs font-mono font-black uppercase text-slate-900 dark:text-white border-b-2 border-black dark:border-white pb-2">
+                <div className="text-xs font-black uppercase text-slate-900 dark:text-white border-b-2 border-black dark:border-white pb-2">
                   02 SIMPAN PERUBAHAN
                 </div>
 
-                <div className="space-y-2 text-xs font-mono">
+                <div className="space-y-2 text-xs ">
                   <div className="flex items-center justify-between py-1 border-b border-slate-200 dark:border-slate-800">
                     <span className="text-slate-500">Status</span>
                     <span className="font-bold text-[#166534] dark:text-[#00FF66] flex items-center gap-1">
@@ -327,7 +327,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3 bg-[#00FF66] text-black border-3 border-black font-mono font-black text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     <span>{loading ? "MENYIMPAN..." : "SIMPAN PERUBAHAN"}</span>
@@ -335,7 +335,7 @@ export default function EditArtikelClient({ article }: EditArtikelClientProps) {
 
                   <Link
                     href="/dashboard/artikel"
-                    className="block w-full py-2.5 text-center border-2 border-black dark:border-white bg-slate-100 dark:bg-slate-900 text-xs font-mono font-bold text-black dark:text-white hover:bg-slate-200 transition-colors"
+                    className="block w-full py-2.5 text-center border-2 border-black dark:border-white bg-slate-100 dark:bg-slate-900 text-xs font-bold text-black dark:text-white hover:bg-slate-200 transition-colors"
                   >
                     Batal &amp; Kembali
                   </Link>

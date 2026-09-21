@@ -66,10 +66,10 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
         
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-xl">
-            <h2 className="font-mono text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
+            <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
               PROYEK &amp; <span className="bg-[#FFFF00] text-black px-2 py-0.5 border-3 border-black">PORTFOLIO</span>
             </h2>
-            <p className="text-xs sm:text-base text-black dark:text-white leading-relaxed font-mono font-bold">
+            <p className="text-xs sm:text-base text-black dark:text-white leading-relaxed font-bold">
               {lang === "id"
                 ? "Eksplorasi aplikasi web dan implementasi sistem AI yang dibangun secara nyata."
                 : "Real-world web application projects and AI system implementations."}
@@ -81,7 +81,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
         {displayProjects.length === 0 ? (
           <div className="p-10 rounded-none border-4 border-black dark:border-white text-center space-y-3 bg-white dark:bg-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
             <FolderGit2 className="w-8 h-8 text-[#166534] mx-auto opacity-80" />
-            <p className="text-xs font-mono font-black uppercase text-black dark:text-white">
+            <p className="text-xs font-black uppercase text-black dark:text-white">
               {lang === "id" ? "BELUM ADA PROYEK TERSEDIA." : "NO PROJECTS AVAILABLE."}
             </p>
           </div>
@@ -118,7 +118,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                         soundFx.playClick();
                         onSelectProject(project);
                       }}
-                      className="absolute bottom-3 right-3 z-20 px-3 py-1.5 rounded-none bg-[#166534] text-white text-xs font-mono font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                      className="absolute bottom-3 right-3 z-20 px-3 py-1.5 rounded-none bg-[#166534] text-white text-xs font-black flex items-center gap-1.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>{lang === "id" ? "DETAIL PROYEK" : "VIEW CASE STUDY"}</span>
@@ -128,10 +128,10 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                   {/* Card Body */}
                   <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
                     <div className="space-y-2">
-                      <h3 className="text-lg font-mono font-black uppercase text-black dark:text-white leading-snug group-hover:text-[#166534] transition-colors">
+                      <h3 className="text-lg font-black uppercase text-black dark:text-white leading-snug group-hover:text-[#166534] transition-colors">
                         {project.title}
                       </h3>
-                      <p className="text-xs text-black dark:text-white leading-relaxed font-mono font-bold line-clamp-3">
+                      <p className="text-xs text-black dark:text-white leading-relaxed font-bold line-clamp-3">
                         {project.description}
                       </p>
                     </div>
@@ -142,7 +142,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                         {project.techStack?.map((tech) => (
                           <span
                             key={tech}
-                            className="px-2.5 py-1 rounded-none text-[10px] font-mono font-black border-2 border-black dark:border-white bg-[#FFFF00] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
+                            className="px-2.5 py-1 rounded-none text-[10px] font-black border-2 border-black dark:border-white bg-[#FFFF00] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
                           >
                             {tech}
                           </span>
@@ -150,7 +150,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                       </div>
 
                       {/* Card Bottom Links */}
-                      <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between gap-2 text-xs font-mono font-black">
+                      <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between gap-2 text-xs font-black">
                         {project.repository_url && (
                           <a
                             href={project.repository_url}

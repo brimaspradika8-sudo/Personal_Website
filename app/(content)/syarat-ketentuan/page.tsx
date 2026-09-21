@@ -11,21 +11,21 @@ export default function TermsPage() {
   const lastUpdated = "17 September 2026";
 
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-[#0A0D14] text-slate-950 dark:text-white py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#EAB308] selection:text-slate-950">
+    <main className="min-h-screen bg-neutral-50 dark:bg-[#0A0D14] text-slate-950 dark:text-white py-12 px-4 sm:px-6 lg:px-8 selection:bg-[#EAB308] selection:text-slate-950">
       <div className="max-w-4xl mx-auto space-y-8">
         
         {/* Navigation & Header */}
         <div className="space-y-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#166534] dark:text-[#EAB308]" />
             <span>KEMBALI KE BERANDA</span>
           </Link>
 
-          <div className="p-6 sm:p-8 rounded-none border-4 border-black dark:border-white bg-[#166534] text-white space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black font-mono font-black text-xs border-2 border-black uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="p-6 sm:p-8 rounded-none border-4 border-black dark:border-white bg-[#166534] text-white space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] ">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black font-black text-xs border-2 border-black uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               <Scale className="w-4 h-4 text-black" />
               <span>DOKUMEN LEGAL RESMI</span>
             </div>
@@ -37,13 +37,13 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <div className="p-5 rounded-none border-3 border-black dark:border-white bg-[#FFFF00] text-black font-mono text-xs font-bold leading-relaxed uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="p-5 rounded-none border-3 border-black dark:border-white bg-[#FFFF00] text-black text-xs font-bold leading-relaxed uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             DOKUMEN INI MENJELASKAN SYARAT DAN KETENTUAN PENGGUNAAN LAYANAN KEANGGOTAAN BERBAYAR (&quot;MEMBERSHIP&quot;) PADA PLATFORM BRIMAS PRADIKA UTAMA (&quot;PLATFORM&quot;, &quot;KAMI&quot;). DENGAN MENDAFTAR, MEMBAYAR, ATAU MENGGUNAKAN SALAH SATU TINGKAT KEANGGOTAAN DI BAWAH INI, ANDA (&quot;PENGGUNA&quot;, &quot;ANDA&quot;) DIANGGAP TELAH MEMBACA, MEMAHAMI, DAN MENYETUJUI SELURUH ISI DOKUMEN INI.
           </div>
         </div>
 
         {/* Content Sections */}
-        <div className="space-y-6 font-mono text-xs sm:text-sm leading-relaxed">
+        <div className="space-y-6 text-xs sm:text-sm leading-relaxed">
           
           {/* PASAL 1: DEFINISI */}
           <section className="p-6 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
@@ -275,7 +275,7 @@ export default function TermsPage() {
           </section>
 
           {/* PASAL 12: KONTAK */}
-          <section className="p-6 rounded-none border-4 border-black dark:border-white bg-[#FFFF00] text-black space-y-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] font-mono uppercase font-black">
+          <section className="p-6 rounded-none border-4 border-black dark:border-white bg-[#FFFF00] text-black space-y-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] uppercase font-black">
             <div className="flex items-center gap-3 pb-2 border-b-2 border-black">
               <div className="p-2 bg-black text-white font-black text-sm">12</div>
               <h2 className="text-base sm:text-lg font-black uppercase flex items-center gap-2">
@@ -292,7 +292,7 @@ export default function TermsPage() {
             <div className="pt-3">
               <Link
                 href="/artikel"
-                className="inline-block px-5 py-2.5 bg-black text-white border-2 border-black text-xs font-mono font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] transition-all"
+                className="inline-block px-5 py-2.5 bg-black text-white border-2 border-black text-xs font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#166534] transition-all"
               >
                 JELAJAHI ARTIKEL
               </Link>

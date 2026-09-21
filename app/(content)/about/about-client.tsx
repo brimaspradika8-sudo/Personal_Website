@@ -33,22 +33,7 @@ import { soundFx } from "@/lib/audio/sound";
 import Footer from "@/components/Footer";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import QuickContactFAB from "@/components/QuickContactFAB";
-
-// Tech stack items data
-const TECH_STACK_ITEMS = [
-  { name: "Next.js 15", category: "frontend", level: "Expert", desc: "App Router, Server Actions, SSR & Streaming" },
-  { name: "React 19", category: "frontend", level: "Advanced", desc: "Hooks, Server Components, Custom State" },
-  { name: "TypeScript", category: "frontend", level: "Advanced", desc: "Strict Type Safety, Interfaces & Generics" },
-  { name: "TailwindCSS", category: "frontend", level: "Expert", desc: "Custom Utilities, Neo-Brutalist Layouts" },
-  { name: "Framer Motion", category: "frontend", level: "Advanced", desc: "Layout Animations, Micro-interactions" },
-  { name: "Node.js", category: "backend", level: "Advanced", desc: "RESTful APIs, Async Workflows, Runtime" },
-  { name: "Supabase", category: "backend", level: "Advanced", desc: "PostgreSQL, Auth, Storage, RLS Policies" },
-  { name: "Prisma ORM", category: "backend", level: "Intermediate", desc: "Schema Design, Migrations, Query Engine" },
-  { name: "AI Agents & LLM", category: "ai", level: "Advanced", desc: "OpenAI & Gemini API, Prompt Engineering" },
-  { name: "Git & GitHub", category: "tools", level: "Advanced", desc: "Version Control, CI/CD, Branching Strategy" },
-  { name: "Vercel & Cloud", category: "tools", level: "Advanced", desc: "Automated Deployments, Edge Functions" },
-  { name: "Postman", category: "tools", level: "Intermediate", desc: "API Testing, Mocking & Documentation" },
-];
+import { TECH_STACK_ITEMS } from "@/lib/tech-stack";
 
 // Timeline milestones
 const TIMELINE_EVENTS = [
@@ -92,7 +77,7 @@ export default function AboutClient() {
   const [selectedCert, setSelectedCert] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-black pb-28 sm:pb-20">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white selection:bg-[#EAB308] selection:text-black pb-28 sm:pb-20">
       
       {/* Container wrapper */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 space-y-10 sm:space-y-14">
@@ -102,7 +87,7 @@ export default function AboutClient() {
           <Link
             href="/dashboard"
             onClick={() => soundFx.playClick()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#166534] dark:text-[#EAB308]" />
             <span>{lang === "id" ? "KEMBALI KE BERANDA" : "BACK TO HOME"}</span>
@@ -115,16 +100,16 @@ export default function AboutClient() {
           <div className="absolute -top-12 -right-12 w-44 h-44 bg-[#EAB308] border-4 border-black dark:border-white rotate-12 pointer-events-none opacity-20 dark:opacity-30" />
           
           <div className="relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-none bg-[#EAB308] text-black border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs font-mono font-black uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-none bg-[#EAB308] text-black border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs font-black uppercase tracking-wider">
               <User className="w-4 h-4 text-black" />
               <span>{lang === "id" ? "PROFIL DIRI & REKAM JEJAK" : "PERSONAL PROFILE & BIOGRAPHY"}</span>
             </div>
 
             <div className="space-y-3">
-              <h1 className="font-serif font-black text-3xl sm:text-6xl uppercase tracking-tight text-black dark:text-white leading-tight">
+              <h1 className="font-black text-3xl sm:text-6xl uppercase tracking-tight text-black dark:text-white leading-tight">
                 BRIMAS <span className="text-[#166534] dark:text-[#00E676] underline decoration-4 underline-offset-4">PRADIKA UTAMA</span>
               </h1>
-              <p className="text-xs sm:text-lg font-mono font-bold text-black dark:text-white max-w-3xl leading-relaxed">
+              <p className="text-xs sm:text-lg font-bold text-black dark:text-white max-w-3xl leading-relaxed">
                 {lang === "id"
                   ? "Junior Programmer & AI Systems Developer berpendidikan di SMK Bhakti Mulia Pare. Berfokus pada arsitektur web modern, integrasi kecerdasan buatan (AI), serta desain sistem performa tinggi."
                   : "Junior Programmer & AI Systems Developer studying at SMK Bhakti Mulia Pare. Dedicated to modern web architecture, artificial intelligence integration, and high-performance system design."}
@@ -136,33 +121,33 @@ export default function AboutClient() {
               <div className="p-3.5 rounded-none border-3 border-black dark:border-white bg-[#FEF9C3] dark:bg-[#121824] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534] dark:text-[#EAB308]">
                   <GraduationCap className="w-4 h-4" />
-                  <span className="text-[10px] font-mono font-black uppercase">{lang === "id" ? "SEKOLAH" : "SCHOOL"}</span>
+                  <span className="text-[10px] font-black uppercase">{lang === "id" ? "SEKOLAH" : "SCHOOL"}</span>
                 </div>
-                <p className="text-xs font-mono font-black truncate text-black dark:text-white">SMK Bhakti Mulia Pare</p>
+                <p className="text-xs font-black truncate text-black dark:text-white">SMK Bhakti Mulia Pare</p>
               </div>
 
               <div className="p-3.5 rounded-none border-3 border-black dark:border-white bg-[#DCFCE7] dark:bg-[#121824] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534] dark:text-[#00E676]">
                   <Code2 className="w-4 h-4" />
-                  <span className="text-[10px] font-mono font-black uppercase">{lang === "id" ? "JURUSAN" : "MAJOR"}</span>
+                  <span className="text-[10px] font-black uppercase">{lang === "id" ? "JURUSAN" : "MAJOR"}</span>
                 </div>
-                <p className="text-xs font-mono font-black truncate text-black dark:text-white">Rekayasa Perangkat Lunak (RPL)</p>
+                <p className="text-xs font-black truncate text-black dark:text-white">Rekayasa Perangkat Lunak (RPL)</p>
               </div>
 
               <div className="p-3.5 rounded-none border-3 border-black dark:border-white bg-[#FEF9C3] dark:bg-[#121824] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534] dark:text-[#EAB308]">
                   <MapPin className="w-4 h-4" />
-                  <span className="text-[10px] font-mono font-black uppercase">{lang === "id" ? "LOKASI" : "LOCATION"}</span>
+                  <span className="text-[10px] font-black uppercase">{lang === "id" ? "LOKASI" : "LOCATION"}</span>
                 </div>
-                <p className="text-xs font-mono font-black truncate text-black dark:text-white">Kediri, Jawa Timur, ID</p>
+                <p className="text-xs font-black truncate text-black dark:text-white">Kediri, Jawa Timur, ID</p>
               </div>
 
               <div className="p-3.5 rounded-none border-3 border-black dark:border-white bg-[#DCFCE7] dark:bg-[#121824] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534] dark:text-[#00E676]">
                   <Cpu className="w-4 h-4" />
-                  <span className="text-[10px] font-mono font-black uppercase">FOKUS</span>
+                  <span className="text-[10px] font-black uppercase">FOKUS</span>
                 </div>
-                <p className="text-xs font-mono font-black truncate text-black dark:text-white">Next.js &amp; AI Agents</p>
+                <p className="text-xs font-black truncate text-black dark:text-white">Next.js &amp; AI Agents</p>
               </div>
             </div>
 
@@ -171,7 +156,7 @@ export default function AboutClient() {
               <a
                 href="mailto:brimaspradika8@gmail.com"
                 onClick={() => soundFx.playClick()}
-                className="px-5 py-2.5 rounded-none bg-[#166534] hover:bg-[#14532D] text-white border-3 border-black dark:border-white font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-5 py-2.5 rounded-none bg-[#166534] hover:bg-[#14532D] text-white border-3 border-black dark:border-white font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <Mail className="w-4 h-4" />
                 <span>{lang === "id" ? "HUBUNGI EMAIL" : "CONTACT EMAIL"}</span>
@@ -182,7 +167,7 @@ export default function AboutClient() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => soundFx.playClick()}
-                className="px-5 py-2.5 rounded-none bg-[#EAB308] hover:bg-[#d9a207] text-black border-3 border-black dark:border-white font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-5 py-2.5 rounded-none bg-[#EAB308] hover:bg-[#d9a207] text-black border-3 border-black dark:border-white font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <Globe className="w-4 h-4" />
                 <span>GITHUB REPOSITORY</span>
@@ -207,15 +192,15 @@ export default function AboutClient() {
                 />
                 
                 {/* Badge Overlay */}
-                <div className="absolute top-3 left-3 bg-black text-white px-3 py-1 border-2 border-white text-[10px] font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+                <div className="absolute top-3 left-3 bg-black text-white px-3 py-1 border-2 border-white text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
                   SMK BM PARE &bull; RPL
                 </div>
               </div>
 
               {/* Card Footer Caption */}
               <div className="pt-3 text-center">
-                <h3 className="font-serif font-black text-xl uppercase text-black">BRIMAS PRADIKA UTAMA</h3>
-                <p className="text-xs font-mono font-black text-slate-900 uppercase">SOFTWARE &amp; AI SYSTEMS DEVELOPER</p>
+                <h3 className="font-black text-xl uppercase text-black">BRIMAS PRADIKA UTAMA</h3>
+                <p className="text-xs font-black text-slate-900 uppercase">SOFTWARE &amp; AI SYSTEMS DEVELOPER</p>
               </div>
             </div>
 
@@ -223,9 +208,9 @@ export default function AboutClient() {
             <div className="p-5 rounded-none border-4 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] space-y-2">
               <div className="flex items-center gap-2 text-[#166534] dark:text-[#EAB308]">
                 <Sparkles className="w-4 h-4" />
-                <span className="text-xs font-mono font-black uppercase">{lang === "id" ? "FILOSOFI REKAYASA" : "ENGINEERING PHILOSOPHY"}</span>
+                <span className="text-xs font-black uppercase">{lang === "id" ? "FILOSOFI REKAYASA" : "ENGINEERING PHILOSOPHY"}</span>
               </div>
-              <p className="text-xs font-mono font-bold leading-relaxed text-black dark:text-white italic">
+              <p className="text-xs font-bold leading-relaxed text-black dark:text-white italic">
                 &ldquo;{lang === "id"
                   ? "Membangun perangkat lunak bukan sekadar menulis baris kode, melainkan menciptakan solusi yang efisien, terstruktur, dan memberikan dampak nyata bagi pengguna."
                   : "Building software is not just about writing lines of code, but about creating efficient, structured solutions that deliver real user impact."}&rdquo;
@@ -236,32 +221,32 @@ export default function AboutClient() {
           {/* Bio Text & Details */}
           <div className="lg:col-span-7 space-y-6">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 <FileText className="w-3.5 h-3.5 text-white" />
                 <span>{lang === "id" ? "BIOGRAFI LENGKAP" : "FULL BIOGRAPHY"}</span>
               </div>
-              <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
+              <h2 className="font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
                 {lang === "id" ? "EKSPLORASI TEKNOLOGI & PERJALANAN CODING" : "TECHNOLOGY EXPLORATION & CODING JOURNEY"}
               </h2>
             </div>
 
-            <div className="space-y-4 text-xs sm:text-sm font-mono leading-relaxed text-black dark:text-white">
+            <div className="space-y-4 text-xs sm:text-sm leading-relaxed text-black dark:text-white">
               <p className="p-4 rounded-none border-3 border-black dark:border-white bg-[#FEF9C3] dark:bg-[#121824] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] font-bold">
-                {lang === "id"
-                  ? "Halo! Gua Brimas Pradika Utama, developer muda dari Pare, Kediri! 🚀 Sekarang lagi seru-serunya belajar Rekayasa Perangkat Lunak (RPL) di SMK Bhakti Mulia Pare."
-                  : "Hey there! I'm Brimas Pradika Utama, a tech enthusiast & developer from Pare, Kediri! 🚀 Currently diving deep into Software Engineering at SMK Bhakti Mulia Pare."}
+                  {lang === "id"
+                    ? "Saya Brimas Pradika Utama, pengembang perangkat lunak dari Pare, Kediri. Saat ini saya menempuh pendidikan Rekayasa Perangkat Lunak (RPL) di SMK Bhakti Mulia Pare."
+                    : "I am Brimas Pradika Utama, a software developer from Pare, Kediri. I am currently studying Software Engineering at SMK Bhakti Mulia Pare."}
               </p>
 
               <p>
                 {lang === "id"
-                  ? "Sehari-hari gua paling hobi ngulik arsitektur web modern, ngeracik AI Agent yang pinter, dan bikin antarmuka web yang bersih, kenceng, plus estetik. Stack andalan gua saat ini: Next.js 15, TypeScript, Prisma, dan Supabase."
-                  : "I love building fast web applications, crafting smart AI Agents, and designing super clean, aesthetic interfaces. My main stack of choice: Next.js 15, TypeScript, Prisma, and Supabase."}
+                    ? "Saya berfokus pada arsitektur web modern, integrasi AI Agent, serta pengembangan antarmuka yang terstruktur dan mudah digunakan. Teknologi utama yang saya gunakan meliputi Next.js 15, TypeScript, Prisma, dan Supabase."
+                    : "I focus on modern web architecture, AI Agent integration, and structured, usable interfaces. My primary technologies are Next.js 15, TypeScript, Prisma, and Supabase."}
               </p>
 
               <p>
                 {lang === "id"
-                  ? "Selain belajar di sekolah, gua juga aktif ikut event tech & pelatihan kayak BCT Trial Class 2026, plus terus bikin proyek-proyek seru buat ngasah skill fullstack & AI engineering!"
-                  : "Besides school, I love joining tech workshops like BCT Trial Class 2026 and shipping cool side projects to hone my fullstack & AI skills!"}
+                    ? "Di luar kegiatan sekolah, saya mengikuti pelatihan dan kegiatan teknologi seperti BCT Trial Class 2026, serta mengembangkan proyek fullstack dan AI sebagai bagian dari penguatan kompetensi."
+                    : "Outside school, I participate in technology training such as BCT Trial Class 2026 and develop fullstack and AI projects to strengthen my skills."}
               </p>
             </div>
 
@@ -270,9 +255,9 @@ export default function AboutClient() {
               <div className="p-4 rounded-none border-3 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] space-y-2">
                 <div className="flex items-center gap-2 text-[#166534] dark:text-[#00E676]">
                   <Zap className="w-4 h-4" />
-                  <h4 className="font-mono font-black text-xs uppercase">{lang === "id" ? "KODE BERSIH & PERFORMA" : "CLEAN CODE & SPEED"}</h4>
+                  <h4 className="font-black text-xs uppercase">{lang === "id" ? "KODE BERSIH & PERFORMA" : "CLEAN CODE & SPEED"}</h4>
                 </div>
-                <p className="text-[11px] font-mono leading-relaxed text-black dark:text-white">
+                <p className="text-[11px] leading-relaxed text-black dark:text-white">
                   {lang === "id"
                     ? "Menulis kode yang terstruktur, bermemori efisien, dan mudah dipelihara dalam jangka panjang."
                     : "Writing structured, memory-efficient code that is maintainable for the long term."}
@@ -282,9 +267,9 @@ export default function AboutClient() {
               <div className="p-4 rounded-none border-3 border-black dark:border-white bg-white dark:bg-[#0A0D14] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] space-y-2">
                 <div className="flex items-center gap-2 text-[#EAB308]">
                   <Cpu className="w-4 h-4" />
-                  <h4 className="font-mono font-black text-xs uppercase">{lang === "id" ? "INTEGRASI AI AGENT" : "AI AGENT INTEGRATION"}</h4>
+                  <h4 className="font-black text-xs uppercase">{lang === "id" ? "INTEGRASI AI AGENT" : "AI AGENT INTEGRATION"}</h4>
                 </div>
-                <p className="text-[11px] font-mono leading-relaxed text-black dark:text-white">
+                <p className="text-[11px] leading-relaxed text-black dark:text-white">
                   {lang === "id"
                     ? "Memanfaatkan LLM dan otomatisasi cerdas untuk meningkatkan produktivitas dan alur kerja aplikasi."
                     : "Leveraging LLMs and smart automation to boost application productivity and workflows."}
@@ -299,11 +284,11 @@ export default function AboutClient() {
         <section className="space-y-6 pt-4">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b-4 border-black dark:border-white pb-4">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 <Layers className="w-3.5 h-3.5 text-black" />
                 <span>{lang === "id" ? "MATRIKS KEAHLIAN TEKNIS" : "TECHNICAL SKILL MATRIX"}</span>
               </div>
-              <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
+              <h2 className="font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
                 {lang === "id" ? "TEKNOLOGI & STACK PILIHAN" : "TECHNOLOGY & FEATURED STACK"}
               </h2>
             </div>
@@ -317,7 +302,7 @@ export default function AboutClient() {
               transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
             >
               {[...TECH_STACK_ITEMS, ...TECH_STACK_ITEMS].map((item, i) => (
-                <span key={i} className="inline-flex items-center gap-2 text-[11px] font-mono font-black uppercase text-white shrink-0">
+                <span key={i} className="inline-flex items-center gap-2 text-[11px] font-black uppercase text-white shrink-0">
                   <span className="text-[#EAB308]">▸</span>
                   {item.name}
                   <span className="text-white/40">·</span>
@@ -339,8 +324,8 @@ export default function AboutClient() {
                 <div key={cat.id} className={catIdx !== 0 ? "border-t-3 border-black dark:border-white" : ""}>
                   {/* Category Header */}
                   <div className="flex items-center gap-3 px-5 py-3" style={{ backgroundColor: cat.accent }}>
-                    <span className="text-[11px] font-mono font-black uppercase text-white tracking-widest">{cat.label}</span>
-                    <span className="ml-auto text-[10px] font-mono font-black text-white/70 uppercase">{cat.items.length} TEKNOLOGI</span>
+                    <span className="text-[11px] font-black uppercase text-white tracking-widest">{cat.label}</span>
+                    <span className="ml-auto text-[10px] font-black text-white/70 uppercase">{cat.items.length} TEKNOLOGI</span>
                   </div>
                   {/* Skills rows */}
                   <div className="divide-y divide-black/10 dark:divide-white/10 bg-white dark:bg-[#0A0D14]">
@@ -355,10 +340,10 @@ export default function AboutClient() {
                           transition={{ duration: 0.3, delay: i * 0.05 }}
                           className="flex items-center gap-4 px-5 py-3 hover:bg-[#FEF9C3] dark:hover:bg-[#0D1526] transition-colors"
                         >
-                          <span className="text-[10px] font-mono font-black text-neutral-400 dark:text-neutral-600 w-5 shrink-0 tabular-nums">
+                          <span className="text-[10px] font-black text-neutral-400 dark:text-neutral-600 w-5 shrink-0 tabular-nums">
                             {String(i + 1).padStart(2, "0")}
                           </span>
-                          <span className="font-mono font-black text-xs uppercase text-black dark:text-white w-36 shrink-0">
+                          <span className="font-black text-xs uppercase text-black dark:text-white w-36 shrink-0">
                             {item.name}
                           </span>
                           <div className="flex-1 h-1.5 bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
@@ -372,12 +357,12 @@ export default function AboutClient() {
                             />
                           </div>
                           <span
-                            className="text-[9px] font-mono font-black uppercase px-2 py-0.5 border shrink-0"
+                            className="text-[9px] font-black uppercase px-2 py-0.5 border shrink-0"
                             style={{ color: cat.accent, borderColor: cat.accent }}
                           >
                             {item.level}
                           </span>
-                          <span className="hidden lg:block text-[10px] font-mono text-neutral-500 dark:text-neutral-400 font-bold leading-snug max-w-[220px] truncate">
+                          <span className="hidden lg:block text-[10px] text-neutral-500 dark:text-neutral-400 font-bold leading-snug max-w-[220px] truncate">
                             {item.desc}
                           </span>
                         </motion.div>
@@ -392,11 +377,11 @@ export default function AboutClient() {
         {/* 6. CERTIFICATIONS & ACHIEVEMENTS GALLERY */}
         <section className="space-y-6 pt-4">
           <div className="space-y-2 border-b-4 border-black dark:border-white pb-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
               <Award className="w-3.5 h-3.5 text-black" />
               <span>{lang === "id" ? "SERTIFIKASI & PENGHARGAAN" : "CERTIFICATIONS & AWARDS"}</span>
             </div>
-            <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
+            <h2 className="font-black text-2xl sm:text-4xl uppercase tracking-tight text-black dark:text-white">
               {lang === "id" ? "GALERI SERTIFIKAT RESMI" : "OFFICIAL CERTIFICATE GALLERY"}
             </h2>
           </div>
@@ -414,7 +399,7 @@ export default function AboutClient() {
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <div className="px-4 py-2 bg-[#EAB308] text-black border-2 border-black font-mono font-black text-xs uppercase flex items-center gap-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="px-4 py-2 bg-[#EAB308] text-black border-2 border-black font-black text-xs uppercase flex items-center gap-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                     <Maximize2 className="w-4 h-4" />
                     <span>{lang === "id" ? "PERBESAR GAMBAR" : "ZOOM IMAGE"}</span>
                   </div>
@@ -423,19 +408,19 @@ export default function AboutClient() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-0.5 bg-[#166534] text-white border border-black text-[10px] font-mono font-black uppercase">
+                  <span className="px-2.5 py-0.5 bg-[#166534] text-white border border-black text-[10px] font-black uppercase">
                     {lang === "id" ? "TAHUN 2025" : "YEAR 2025"}
                   </span>
-                  <span className="text-xs font-mono font-black text-[#166534] dark:text-[#00E676] flex items-center gap-1">
+                  <span className="text-xs font-black text-[#166534] dark:text-[#00E676] flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     VERIFIED CERTIFICATE
                   </span>
                 </div>
 
-                <h3 className="font-serif font-black text-xl uppercase text-black dark:text-white">
+                <h3 className="font-black text-xl uppercase text-black dark:text-white">
                   SERTIFIKAT BCT X TRIAL CLASS 2025
                 </h3>
-                <p className="text-xs font-mono text-neutral-600 dark:text-neutral-400 font-bold leading-relaxed">
+                <p className="text-xs text-neutral-600 dark:text-neutral-400 font-bold leading-relaxed">
                   {lang === "id"
                     ? "Sertifikat resmi mengikuti program Basic Coding Training X Trial Class 2025"
                     : "Official certificate for participating in Basic Coding Training X Trial Class 2025"}
@@ -449,14 +434,14 @@ export default function AboutClient() {
         {/* 7. CONTACT & COLLABORATION BANNER */}
         <section className="p-8 sm:p-12 rounded-none border-4 border-black dark:border-white bg-[#166534] text-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-6 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-3 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-2 border-black text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-[#EAB308] text-black border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               <Sparkles className="w-3.5 h-3.5 text-black" />
               <span>{lang === "id" ? "MARI BERKOLABORASI" : "LET'S COLLABORATE"}</span>
             </div>
-            <h2 className="font-serif font-black text-2xl sm:text-4xl uppercase leading-tight text-white">
+            <h2 className="font-black text-2xl sm:text-4xl uppercase leading-tight text-white">
               {lang === "id" ? "PUNYA PROYEK ATAU IDE DISKUSI TEKNOLOGI?" : "HAVE A PROJECT OR TECHNICAL DISCUSSION IDEA?"}
             </h2>
-            <p className="text-xs sm:text-sm font-mono font-bold leading-relaxed text-slate-100">
+            <p className="text-xs sm:text-sm font-bold leading-relaxed text-slate-100">
               {lang === "id"
                 ? "Terbuka untuk diskusi arsitektur perangkat lunak, proyek pembuatan website, integrasi AI agent, atau kesempatan konsultasi."
                 : "Open for software architecture discussions, web development projects, AI agent integrations, or consulting opportunities."}
@@ -467,7 +452,7 @@ export default function AboutClient() {
             <a
               href="mailto:brimaspradika8@gmail.com"
               onClick={() => soundFx.playClick()}
-              className="w-full sm:w-auto px-6 py-3 rounded-none bg-[#EAB308] hover:bg-[#d9a207] text-black border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 rounded-none bg-[#EAB308] hover:bg-[#d9a207] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
             >
               <Mail className="w-4 h-4" />
               <span>{lang === "id" ? "KIRIM PESAN EMAIL" : "SEND EMAIL MESSAGE"}</span>
@@ -488,7 +473,7 @@ export default function AboutClient() {
               className="relative max-w-4xl w-full bg-white dark:bg-black border-4 border-black dark:border-white p-4 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] dark:shadow-[10px_10px_0px_0px_rgba(255,255,255,1)] space-y-4"
             >
               <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
-                <h3 className="font-serif font-black text-lg uppercase text-black dark:text-white">
+                <h3 className="font-black text-lg uppercase text-black dark:text-white">
                   {lang === "id" ? "PRINTPREVIEW: SERTIFIKAT BCT X TRIAL CLASS 2026" : "PRINT PREVIEW: BCT X TRIAL CLASS CERTIFICATE"}
                 </h3>
                 <button

@@ -45,7 +45,7 @@
     scroll-behavior: smooth;
     background-color: var(--bg);
     color: var(--text-primary);
-    font-family: var(--font-sans), "Segoe UI", sans-serif;
+    font-family: var(--font-sans), "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -54,9 +54,10 @@
   body {
     background-color: var(--bg);
     color: var(--text-primary);
-    font-family: var(--font-sans), "Segoe UI", sans-serif;
+    font-family: var(--font-sans), "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
     line-height: 1.6;
-    letter-spacing: -0.01em;
+    font-weight: 500;
+    letter-spacing: 0;
   }
 
   *, *::before, *::after {
@@ -69,16 +70,36 @@
   }
 }
 
-.font-display {
-  font-family: var(--font-serif), Georgia, 'Times New Roman', serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans), "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  letter-spacing: -0.02em;
 }
 
-.font-pixel {
-  font-family: var(--font-pixel), 'Silkscreen', monospace;
+h1 {
+  font-weight: 800;
+  line-height: 1.05;
 }
 
-.font-press-start {
-  font-family: var(--font-press-start), 'Press Start 2P', monospace;
+h2 {
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+p {
+  letter-spacing: 0;
 }
 
 /* Pixel Art Box & Border Utilities */

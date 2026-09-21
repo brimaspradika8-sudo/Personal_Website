@@ -1,6 +1,6 @@
 export default function AdminLoading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono flex">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex">
       {/* Sidebar Skeleton */}
       <aside className="hidden lg:flex w-64 flex-col border-r-4 border-black dark:border-white bg-white dark:bg-black p-5 space-y-6 shrink-0">
         <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-white animate-pulse">

@@ -1,6 +1,6 @@
 export default function ArticlesLoading() {
   return (
-    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0A0D14] text-slate-900 dark:text-white font-sans selection:bg-[#EAB308] selection:text-slate-950 pb-28 sm:pb-20">
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0A0D14] text-slate-900 dark:text-white selection:bg-[#EAB308] selection:text-slate-950 pb-28 sm:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 space-y-8 animate-pulse">
         
         <div className="flex items-center justify-between flex-wrap gap-3">

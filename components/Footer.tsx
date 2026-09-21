@@ -115,25 +115,25 @@ export default function Footer({ isNight = false }: FooterProps) {
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-none bg-[#166534] border-2 border-black dark:border-white flex items-center justify-center text-white font-mono font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <div className="w-8 h-8 rounded-none bg-[#166534] border-2 border-black dark:border-white flex items-center justify-center text-white font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 B
               </div>
               <div>
-                <h3 className={`text-base font-mono font-black uppercase ${textColor}`}>
+                <h3 className={`text-base font-black uppercase ${textColor}`}>
                   Brimas Pradika Utama
                 </h3>
-                <p className="text-xs font-mono font-black text-[#166534] dark:text-[#EAB308] uppercase">[ AI Systems &amp; Fullstack Developer ]</p>
+                <p className="text-xs font-black text-[#166534] dark:text-[#EAB308] uppercase">[ AI Systems &amp; Fullstack Developer ]</p>
               </div>
             </Link>
 
-            <p className={`text-xs leading-relaxed max-w-sm font-mono font-bold ${textMuted}`}>
+            <p className={`text-xs leading-relaxed max-w-sm font-bold ${textMuted}`}>
               Membangun aplikasi web generasi terbaru, sistem berbasis kecerdasan buatan, serta antarmuka digital performa tinggi.
             </p>
 
             <div className="flex items-center gap-2 pt-1">
               <a
                 href="mailto:brimaspradika8@gmail.com"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none border-2 border-black dark:border-white text-xs font-mono font-black bg-[#FFFF00] text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none border-2 border-black dark:border-white text-xs font-black bg-[#FFFF00] text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
               >
                 <Mail className="w-3.5 h-3.5 text-black" />
                 <span>brimaspradika8@gmail.com</span>
@@ -143,10 +143,10 @@ export default function Footer({ isNight = false }: FooterProps) {
 
           {/* Quick Navigation Links Column */}
           <div className="md:col-span-3 space-y-3">
-            <h4 className={`text-xs font-mono font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
+            <h4 className={`text-xs font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
               NAVIGASI CEPAT
             </h4>
-            <ul className="space-y-2 text-xs font-mono font-black">
+            <ul className="space-y-2 text-xs font-black">
               <li>
                 <Link href="/dashboard" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
                   [ BERANDA ]
@@ -182,10 +182,10 @@ export default function Footer({ isNight = false }: FooterProps) {
 
           {/* Social Media Column */}
           <div className="md:col-span-4 space-y-3">
-            <h4 className={`text-xs font-mono font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
+            <h4 className={`text-xs font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
               MEDIA SOSIAL
             </h4>
-            <p className={`text-xs leading-relaxed font-mono font-bold ${textMuted}`}>
+            <p className={`text-xs leading-relaxed font-bold ${textMuted}`}>
               Hubungi saya atau ikuti pembaruan proyek terbaru melalui saluran media sosial berikut.
             </p>
 
@@ -211,8 +211,8 @@ export default function Footer({ isNight = false }: FooterProps) {
         </div>
 
         {/* Bottom Footer Border & Copyright */}
-        <div className={`pt-8 border-t-3 ${borderColor} flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono font-black ${textColor} uppercase`}>
-          <p className="flex items-center gap-1.5 font-mono">
+        <div className={`pt-8 border-t-3 ${borderColor} flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-black ${textColor} uppercase`}>
+          <p className="flex items-center gap-1.5 ">
             <span>© {new Date().getFullYear()} BRIMAS PRADIKA UTAMA. MADE WITH</span>
             <span>IN INDONESIA.</span>
           </p>

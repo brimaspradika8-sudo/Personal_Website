@@ -101,7 +101,7 @@ export default function ProjectImageCarousel({
 
       {/* Counter Badge if multiple images */}
       {displayImages.length > 1 && (
-        <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-black/80 text-[#FFFF00] border border-black text-[10px] font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+        <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-black/80 text-[#FFFF00] border border-black text-[10px] font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
           {currentIndex + 1} / {displayImages.length}
         </div>
       )}

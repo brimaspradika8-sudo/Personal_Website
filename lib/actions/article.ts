@@ -545,6 +545,7 @@ export async function createArticle(data: {
 
     revalidatePath("/artikel");
     revalidatePath("/admin/artikel");
+    revalidatePath("/dashboard");
     return { success: true, article: newArt };
   } catch (err: unknown) {
     console.error("Error creating article:", err);
@@ -671,6 +672,7 @@ export async function updateArticle(
     revalidatePath("/artikel");
     revalidatePath(`/artikel/${slugFormatted}`);
     revalidatePath("/admin/artikel");
+    revalidatePath("/dashboard");
     return { success: true, article: updatedArt };
   } catch (err: unknown) {
     console.error("Error updating article:", err);

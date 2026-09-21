@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
+import { TECH_STACK_ITEMS } from "@/lib/tech-stack";
 
 interface TechItem {
   id: string;
@@ -119,17 +120,23 @@ function SupabaseLogo() {
   );
 }
 
-const TECH_ITEMS: TechItem[] = [
-  { id: "php", name: "PHP", logo: <PhpLogo /> },
-  { id: "html", name: "HTML", logo: <HtmlLogo /> },
-  { id: "css", name: "CSS", logo: <CssLogo /> },
-  { id: "javascript", name: "JavaScript", logo: <JsLogo /> },
-  { id: "react", name: "React", logo: <ReactLogo /> },
-  { id: "nextjs", name: "Next.js", logo: <NextLogo /> },
-  { id: "laravel", name: "Laravel", logo: <LaravelLogo /> },
-  { id: "docker", name: "Docker", logo: <DockerLogo /> },
-  { id: "supabase", name: "Supabase", logo: <SupabaseLogo /> },
-];
+const TECH_LOGOS: Record<string, React.ReactNode> = {
+  "Next.js 15": <NextLogo />,
+  "React 19": <ReactLogo />,
+  Supabase: <SupabaseLogo />,
+};
+
+const TECH_ITEMS: TechItem[] = TECH_STACK_ITEMS.map((item) => ({
+  id: item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+  name: item.name,
+  logo: TECH_LOGOS[item.name] || (
+    <SvgWrap>
+      <span className="text-[10px] font-black text-slate-950 dark:text-white" aria-hidden="true">
+        {item.name.slice(0, 2).toUpperCase()}
+      </span>
+    </SvgWrap>
+  ),
+}));
 
 interface TechStackBentoProps {
   isNight: boolean;
@@ -149,14 +156,14 @@ export default function TechStackList({ lang }: TechStackBentoProps) {
         {/* Section Title Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2 sm:space-y-3 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-xl bg-[#00E676] text-slate-950 border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-mono font-bold tracking-widest uppercase">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-xl bg-[#00E676] text-slate-950 border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-[11px] font-bold tracking-widest uppercase">
               <Sparkles className="w-3.5 h-3.5 text-slate-950" />
               <span>TEKNOLOGI &amp; KAPABILITAS</span>
             </div>
-            <h2 className="font-serif text-2xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
+            <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
               STACK &amp; <span className="text-[#00C853]">KEAHLIAN UTAMA</span>
             </h2>
-            <p className="text-xs sm:text-base text-slate-800 dark:text-slate-200 font-sans font-medium leading-relaxed">
+            <p className="text-xs sm:text-base text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
               {lang === "id"
                 ? "Ekosistem alat pengembangan modern dan teknologi teruji yang saya gunakan untuk membangun sistem perangkat lunak scalable."
                 : "Modern development tools and battle-tested technologies used to build scalable software."}
@@ -179,7 +186,7 @@ export default function TechStackList({ lang }: TechStackBentoProps) {
           {[...TECH_ITEMS, ...TECH_ITEMS].map((item, index) => (
             <div key={`${item.id}-${index}`} className="flex items-center gap-2.5 min-w-47.5 px-3 py-2 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
               {item.logo}
-              <span className="whitespace-nowrap text-xs font-mono font-black text-slate-950 dark:text-white">{item.name}</span>
+              <span className="whitespace-nowrap text-xs font-black text-slate-950 dark:text-white">{item.name}</span>
             </div>
           ))}
           </motion.div>

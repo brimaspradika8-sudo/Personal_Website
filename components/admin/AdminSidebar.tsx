@@ -76,16 +76,16 @@ export default function AdminSidebar({
               onClick={() => soundFx.playClick()}
               className="flex items-center gap-2.5 group overflow-hidden"
             >
-              <div className="w-8 h-8 rounded-none bg-black text-white flex items-center justify-center font-mono font-black text-sm border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
+              <div className="w-8 h-8 rounded-none bg-black text-white flex items-center justify-center font-black text-sm border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0">
                 B
               </div>
-              <span className="font-serif font-black text-base tracking-tight uppercase truncate">
+              <span className="font-black text-base tracking-tight uppercase truncate">
                 BRIMAS <span className="underline">ADMIN</span>
               </span>
             </Link>
           ) : (
             <div className="w-full flex items-center justify-center">
-              <div className="w-8 h-8 rounded-none bg-black text-white flex items-center justify-center font-mono font-black text-sm border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <div className="w-8 h-8 rounded-none bg-black text-white flex items-center justify-center font-black text-sm border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 B
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function AdminSidebar({
 
         <nav className="flex-1 px-3 py-6 space-y-3 overflow-y-auto">
           {!isCollapsed && (
-            <div className="text-[10px] font-mono font-black text-neutral-500 uppercase tracking-widest px-1">
+            <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest px-1">
               MENU UTAMA
             </div>
           )}
@@ -128,7 +128,7 @@ export default function AdminSidebar({
                   onClick={() => soundFx.playClick()}
                   className={`flex items-center ${
                     isCollapsed ? "justify-center px-2" : "justify-between px-4"
-                  } py-3 rounded-none border-3 border-black dark:border-white text-xs font-mono font-black uppercase transition-all cursor-pointer bg-white dark:bg-[#0E131F] text-black dark:text-white hover:bg-[#FEF9C3] dark:hover:bg-slate-800 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]`}
+                  } py-3 rounded-none border-3 border-black dark:border-white text-xs font-black uppercase transition-all cursor-pointer bg-white dark:bg-[#0E131F] text-black dark:text-white hover:bg-[#FEF9C3] dark:hover:bg-slate-800 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]`}
                   title={isCollapsed ? item.label : undefined}
                 >
                   <div className="flex items-center gap-2.5">
@@ -151,7 +151,7 @@ export default function AdminSidebar({
                 }}
                 className={`w-full flex items-center ${
                   isCollapsed ? "justify-center px-2" : "justify-between px-4"
-                } py-3 rounded-none border-3 border-black dark:border-white text-xs font-mono font-black uppercase transition-all cursor-pointer ${
+                } py-3 rounded-none border-3 border-black dark:border-white text-xs font-black uppercase transition-all cursor-pointer ${
                   isActive
                     ? "bg-[#FFFF00] text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     : "bg-white dark:bg-[#0E131F] text-black dark:text-white hover:bg-[#FEF9C3] dark:hover:bg-slate-800 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
@@ -178,8 +178,8 @@ export default function AdminSidebar({
                 {avatarSrc ? <Image src={avatarSrc} alt={displayName} fill unoptimized className="object-cover" /> : initial}
               </div>
               <div className="truncate">
-                <p className="text-xs font-mono font-black truncate text-black dark:text-white uppercase">{displayName}</p>
-                <p className="text-[10px] text-neutral-500 font-mono font-bold truncate uppercase">ADMINISTRATOR</p>
+                <p className="text-xs font-black truncate text-black dark:text-white uppercase">{displayName}</p>
+                <p className="text-[10px] text-neutral-500 font-bold truncate uppercase">ADMINISTRATOR</p>
               </div>
             </div>
           ) : (
@@ -198,7 +198,7 @@ export default function AdminSidebar({
             }}
             className={`w-full flex items-center justify-center gap-2 ${
               isCollapsed ? "p-2.5" : "px-3 py-2"
-            } rounded-none bg-red-600 text-white border-3 border-black font-mono font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-red-800 transition-all cursor-pointer`}
+            } rounded-none bg-red-600 text-white border-3 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-red-800 transition-all cursor-pointer`}
             title="Keluar (Logout)"
           >
             <LogOut className="w-4 h-4" />

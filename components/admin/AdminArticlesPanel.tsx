@@ -33,7 +33,7 @@ import dynamic from "next/dynamic";
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-72 rounded-none border-3 border-black bg-slate-100 dark:bg-slate-900 flex flex-col items-center justify-center text-xs font-mono gap-2">
+    <div className="w-full h-72 rounded-none border-3 border-black bg-slate-100 dark:bg-slate-900 flex flex-col items-center justify-center text-xs gap-2">
       <div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin" />
       <span>Memuat Editor Artikel...</span>
     </div>
@@ -222,7 +222,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
       {/* Top Bar Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-4 border-black dark:border-white">
         <div className="flex items-center gap-3">
-          <span className="px-3.5 py-1.5 bg-[#FFFF00] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+          <span className="px-3.5 py-1.5 bg-[#FFFF00] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
             <FileText className="w-4 h-4 text-black" />
             KELOLA ARTIKEL ({articles.length})
           </span>
@@ -232,7 +232,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
           <button
             type="button"
             onClick={handleOpenCommentsModal}
-            className="px-4 py-2 bg-white dark:bg-[#0E131F] text-black dark:text-white border-3 border-black dark:border-white font-mono font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FEF9C3] dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
+            className="px-4 py-2 bg-white dark:bg-[#0E131F] text-black dark:text-white border-3 border-black dark:border-white font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FEF9C3] dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
           >
             <MessageSquare className="w-4 h-4 text-red-600" />
             <span>MODERASI KOMENTAR</span>
@@ -241,7 +241,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
           <button
             type="button"
             onClick={handleOpenCreateModal}
-            className="px-5 py-2 bg-[#166534] hover:bg-[#14532D] text-white border-3 border-black dark:border-white font-mono font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] transition-all cursor-pointer flex items-center gap-1.5"
+            className="px-5 py-2 bg-[#166534] hover:bg-[#14532D] text-white border-3 border-black dark:border-white font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] transition-all cursor-pointer flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>ARTIKEL BARU</span>
@@ -250,7 +250,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
       </div>
 
       {/* Action & Filter Bar */}
-      <div className="p-4 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+      <div className="p-4 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col sm:flex-row items-center justify-between gap-4 ">
         <div className="relative w-full sm:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
           <input
@@ -258,7 +258,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari judul artikel atau slug..."
-            className="w-full pl-9 pr-4 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs font-mono text-black dark:text-white focus:outline-none"
+            className="w-full pl-9 pr-4 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs text-black dark:text-white focus:outline-none"
           />
         </div>
 
@@ -268,7 +268,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
       </div>
 
       {/* Articles Table */}
-      <div className="bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] overflow-hidden font-mono">
+      <div className="bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] overflow-hidden ">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -367,7 +367,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
 
       {/* Comments Moderation Modal */}
       {isCommentsModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto font-mono">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto ">
           <div className="w-full max-w-2xl bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white p-6 space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h2 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
@@ -405,7 +405,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed font-sans">{com.content}</p>
+                    <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed ">{com.content}</p>
                     <div className="text-[10px] text-neutral-500 font-bold uppercase pt-1">
                       ARTIKEL: {com.article.title}
                     </div>
@@ -419,7 +419,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
 
       {/* Editor Modal Overlay for Create/Edit */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-white dark:bg-[#05080E] text-black dark:text-white overflow-y-auto font-mono p-4 sm:p-6 lg:p-10 space-y-6">
+        <div className="fixed inset-0 z-50 bg-white dark:bg-[#05080E] text-black dark:text-white overflow-y-auto p-4 sm:p-6 lg:p-10 space-y-6">
           <div className="flex items-center justify-between pb-4 border-b-4 border-black dark:border-white max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
               <button
@@ -447,7 +447,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
           {statusMsg && (
             <div className="max-w-7xl mx-auto">
               <div
-                className={`p-4 border-4 border-black font-mono font-black text-xs flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+                className={`p-4 border-4 border-black font-black text-xs flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
                   statusMsg.type === "success" ? "bg-[#00FF66] text-slate-950" : "bg-red-500 text-white"
                 }`}
               >
@@ -465,7 +465,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8 space-y-4">
                 <div>
-                  <label className="block text-xs font-mono font-black uppercase text-black dark:text-white mb-1">
+                  <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
                     JUDUL ARTIKEL <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -476,13 +476,13 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                     placeholder="Judul artikel utama..."
                     className="w-full px-4 py-3 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-base sm:text-lg font-black focus:outline-none"
                   />
-                  <div className="text-[11px] font-mono text-neutral-500 pt-1">
+                  <div className="text-[11px] text-neutral-500 pt-1">
                     Slug Preview: <span className="text-[#166534] font-bold">/artikel/{slug || "judul-artikel"}</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono font-black uppercase text-black dark:text-white mb-1">
+                  <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
                     KONTEN ARTIKEL <span className="text-red-500">*</span>
                   </label>
                   <div className="border-3 border-black dark:border-white bg-white dark:bg-[#0E131F] p-1">
@@ -493,7 +493,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
 
               <div className="lg:col-span-4 space-y-6">
                 <div className="p-5 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] space-y-4">
-                  <div className="text-xs font-mono font-black uppercase text-black dark:text-white border-b-2 border-black dark:border-white pb-2">
+                  <div className="text-xs font-black uppercase text-black dark:text-white border-b-2 border-black dark:border-white pb-2">
                     01 COVER THUMBNAIL
                   </div>
 
@@ -509,10 +509,10 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                       value={thumbnail}
                       onChange={(e) => setThumbnail(e.target.value)}
                       placeholder="URL Gambar Thumbnail..."
-                      className="w-full px-3 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs font-mono"
+                      className="w-full px-3 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs "
                     />
 
-                    <label className="block w-full py-2.5 bg-[#FFFF00] text-black border-2 border-black text-center text-xs font-mono font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-colors cursor-pointer">
+                    <label className="block w-full py-2.5 bg-[#FFFF00] text-black border-2 border-black text-center text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-colors cursor-pointer">
                       {uploadingThumbnail ? "MENGUNGGAH..." : "UNGGAH GAMBAR COVER"}
                       <input
                         type="file"
@@ -540,7 +540,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-5 py-2.5 border-3 border-black text-xs font-mono font-black uppercase bg-slate-200 text-black hover:bg-slate-300"
+                    className="px-5 py-2.5 border-3 border-black text-xs font-black uppercase bg-slate-200 text-black hover:bg-slate-300"
                   >
                     BATAL
                   </button>
@@ -548,7 +548,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-6 py-2.5 bg-[#00FF66] text-black border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] cursor-pointer disabled:opacity-50"
+                    className="px-6 py-2.5 bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] cursor-pointer disabled:opacity-50"
                   >
                     {loading ? "MENYIMPAN..." : "SIMPAN ARTIKEL"}
                   </button>

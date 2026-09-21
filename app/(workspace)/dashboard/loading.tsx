@@ -1,16 +1,16 @@
 export default function DashboardLoading() {
   return (
-    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0A0D14] text-slate-900 dark:text-white font-sans antialiased pb-28 sm:pb-20 selection:bg-[#EAB308] selection:text-slate-950">
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0A0D14] text-slate-900 dark:text-white antialiased pb-28 sm:pb-20 selection:bg-[#EAB308] selection:text-slate-950">
       
       {/* 1. CAPSULE FLOATING TOP NAVBAR (SOLID & STABLE) */}
-      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-6xl rounded-full border-2 sm:border-3 border-slate-900 dark:border-white bg-white/90 dark:bg-[#0E121D]/90 backdrop-blur-md font-mono shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-3.5 sm:px-6 py-2 sm:py-2.5">
+      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-6xl rounded-full border-2 sm:border-3 border-slate-900 dark:border-white bg-white/90 dark:bg-[#0E121D]/90 backdrop-blur-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-3.5 sm:px-6 py-2 sm:py-2.5">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#EAB308] border-2 border-slate-900 text-slate-950 flex items-center justify-center font-mono font-black text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#EAB308] border-2 border-slate-900 text-slate-950 flex items-center justify-center font-black text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               B
             </div>
-            <span className="font-serif font-black text-xs sm:text-base tracking-tight uppercase text-slate-950 dark:text-white">
+            <span className="font-black text-xs sm:text-base tracking-tight uppercase text-slate-950 dark:text-white">
               BRIMAS<span className="text-[#166534]"> Pradika</span>
             </span>
           </div>

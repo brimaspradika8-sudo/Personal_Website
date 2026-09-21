@@ -315,13 +315,13 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
             <div className="w-7 h-7 rounded-lg bg-[#D32F2F] flex items-center justify-center text-white font-bold text-xs shadow-xs">
               B
             </div>
-            <span className="font-bold text-sm tracking-tight font-sans text-slate-900 dark:text-slate-100">
+            <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-slate-100">
               Brimas <span className="font-normal text-slate-500 dark:text-slate-400">Admin</span>
             </span>
           </Link>
         </div>
 
-        <nav className="flex-1 px-4 py-8 space-y-2 font-sans">
+        <nav className="flex-1 px-4 py-8 space-y-2 ">
           <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Utama</div>
           
           <Link
@@ -367,7 +367,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 font-sans">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 ">
           <button
             onClick={async () => {
               soundFx.playClick();
@@ -398,7 +398,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
             </h1>
           </div>
 
-          <div className="flex items-center gap-2.5 font-sans">
+          <div className="flex items-center gap-2.5 ">
             <button
               onClick={handleOpenCommentsModal}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
@@ -429,7 +429,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
           <div className="max-w-6xl mx-auto space-y-6">
             
             {/* Search & Actions Bar */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between font-sans">
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between ">
               <div className="relative w-full sm:w-80">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
@@ -437,11 +437,11 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari judul artikel atau slug..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-sans focus:outline-none focus:border-[#D32F2F] transition-all shadow-xs"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-[#D32F2F] transition-all shadow-xs"
                 />
               </div>
 
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-sans font-medium">
+              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">
                 Total Artikel: <span className="font-extrabold text-slate-900 dark:text-slate-100">{filteredArticles.length}</span>
               </div>
             </div>
@@ -449,7 +449,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
             {/* Articles Table */}
             <div className={`rounded-2xl border overflow-hidden ${isNight ? "bg-[#0E1015] border-slate-800" : "bg-white border-slate-200 shadow-xs"}`}>
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse font-sans">
+                <table className="w-full text-left border-collapse ">
                   <thead>
                     <tr className={`border-b text-xs font-bold uppercase tracking-wider ${isNight ? "border-slate-800 text-slate-300 bg-slate-900/80" : "border-slate-200 text-slate-700 bg-slate-100/80"}`}>
                       <th className="py-4 px-4">Artikel</th>
@@ -488,7 +488,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                           </td>
 
                           {/* Column 2: Slug */}
-                          <td className="py-4 px-4 font-mono text-xs text-slate-600 dark:text-slate-400 font-medium">
+                          <td className="py-4 px-4 text-xs text-slate-600 dark:text-slate-400 font-medium">
                             {art.slug}
                           </td>
 
@@ -558,7 +558,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
       {/* Modal Moderasi Komentar */}
       {isCommentsModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto font-sans">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto ">
           <div className={`w-full max-w-2xl rounded-3xl border p-6 space-y-6 shadow-2xl ${isNight ? "bg-[#0E1015] border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"}`}>
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
               <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
@@ -581,7 +581,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="font-bold text-xs">{com.user.name}</span>
-                        <span className="text-[11px] text-slate-500 font-sans ml-2">({com.user.email})</span>
+                        <span className="text-[11px] text-slate-500 ml-2">({com.user.email})</span>
                       </div>
                       <button
                         onClick={() => handleDeleteComment(com.id)}
@@ -591,8 +591,8 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">{com.content}</p>
-                    <div className="text-[11px] text-slate-400 font-mono pt-1">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{com.content}</p>
+                    <div className="text-[11px] text-slate-400 pt-1">
                       Artikel: {com.article.title}
                     </div>
                   </div>
@@ -605,7 +605,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
 
       {/* Full-Page Overlay Editor Form Create / Edit Artikel (Image 1 Structure - Light Theme) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-[#F8F9FA] text-slate-900 overflow-y-auto font-sans p-4 sm:p-6 lg:p-10 space-y-8">
+        <div className="fixed inset-0 z-50 bg-[#F8F9FA] text-slate-900 overflow-y-auto p-4 sm:p-6 lg:p-10 space-y-8">
           
           {/* Top Bar Navigation */}
           <div className="flex items-center justify-between border-b border-slate-200 pb-4 max-w-7xl mx-auto">
@@ -618,14 +618,14 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-700">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] text-slate-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 EDITOR / {editingArticle ? "EDIT ENTRY" : "NEW ENTRY"}
               </span>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-sans text-amber-800 font-medium">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs text-amber-800 font-medium">
                 <span className="w-2 h-2 rounded-full bg-amber-500" />
                 <span>{editingArticle ? "Mengedit artikel" : "Draft baru (belum terbit)"}</span>
               </div>
@@ -644,7 +644,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               {editingArticle ? "Edit Artikel" : "Tulis Artikel Baru"}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
               Tuangkan pemikiran, dokumentasikan insight baru, atau bagikan eksperimen teknis kamu.
             </p>
           </div>
@@ -687,7 +687,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                     placeholder="Ketik judul artikel..."
                     className="w-full bg-transparent text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all py-1 border-b border-transparent focus:border-slate-300"
                   />
-                  <div className="flex items-center gap-2 text-xs font-mono text-slate-500 pt-1">
+                  <div className="flex items-center gap-2 text-xs text-slate-500 pt-1">
                     <span className="font-semibold text-slate-400">URL Preview:</span>
                     <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[#D32F2F] font-bold border border-slate-200">
                       /artikel/{slug || "judul-artikel"}
@@ -713,7 +713,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                 
                 {/* Section 01: COVER IMAGE */}
                 <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white space-y-4 shadow-xs">
-                  <div className="text-[11px] font-bold text-slate-500 font-mono tracking-wider">
+                  <div className="text-[11px] font-bold text-slate-500 tracking-wider">
                     01 COVER IMAGE
                   </div>
 
@@ -737,7 +737,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                           <span className="text-xs font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
                             {uploadingThumbnail ? "Mengunggah..." : "Unggah gambar cover"}
                           </span>
-                          <span className="text-[10px] text-slate-500 font-mono mt-1">
+                          <span className="text-[10px] text-slate-500 mt-1">
                             JPG, PNG atau WebP sampai 5MB
                           </span>
                         </>
@@ -792,18 +792,18 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
                     )}
                   </div>
 
-                  <p className="text-[11px] text-slate-500 font-sans leading-relaxed pt-1">
+                  <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
                     Gambar cover akan ditampilkan di header artikel, kartu daftar jurnal, dan OpenGraph preview.
                   </p>
                 </div>
 
                 {/* Section 02: PUBLIKASI */}
                 <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white space-y-4 shadow-xs">
-                  <div className="text-[11px] font-bold text-slate-500 font-mono tracking-wider">
+                  <div className="text-[11px] font-bold text-slate-500 tracking-wider">
                     02 PUBLIKASI
                   </div>
 
-                  <div className="space-y-3 font-sans text-xs">
+                  <div className="space-y-3 text-xs">
                     <div className="flex items-center justify-between py-1 border-b border-slate-100">
                       <span className="text-slate-500">Status</span>
                       <span className="font-medium text-emerald-600 flex items-center gap-1.5">

@@ -644,12 +644,12 @@ export default function ArticleClient({
                 id={`line-${b.key}`}
                 className="my-6 rounded-none border-4 border-black dark:border-white bg-black text-white overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
               >
-                <div className="px-4 py-2.5 bg-[#FFFF00] text-black border-b-3 border-black flex items-center justify-between font-mono text-xs font-black uppercase">
-                  <span className="font-mono text-black font-black">{b.codeLang || "CODE"}</span>
+                <div className="px-4 py-2.5 bg-[#FFFF00] text-black border-b-3 border-black flex items-center justify-between text-xs font-black uppercase">
+                  <span className="text-black font-black">{b.codeLang || "CODE"}</span>
                   <button
                     type="button"
                     onClick={() => handleCopyCode(b.content, Number(b.key.replace("b-", "")))}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white hover:bg-[#166534] transition-all cursor-pointer text-xs font-mono font-black border-2 border-black"
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white hover:bg-[#166534] transition-all cursor-pointer text-xs font-black border-2 border-black"
                   >
                     {copiedCodeIndex === Number(b.key.replace("b-", "")) ? (
                       <>
@@ -664,7 +664,7 @@ export default function ArticleClient({
                     )}
                   </button>
                 </div>
-                <pre className="p-4 sm:p-5 text-xs sm:text-sm font-mono text-neutral-100 overflow-x-auto leading-relaxed bg-black">
+                <pre className="p-4 sm:p-5 text-xs sm:text-sm text-neutral-100 overflow-x-auto leading-relaxed bg-black">
                   <code>{b.content}</code>
                 </pre>
               </div>
@@ -680,12 +680,12 @@ export default function ArticleClient({
               <h2
                 key={b.key}
                 id={`line-${b.key}`}
-                className={`font-mono text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-24 transition-all duration-300 ${
+                className={`text-xl sm:text-2xl font-black uppercase tracking-tight text-black dark:text-white pt-6 border-b-3 border-black dark:border-white pb-2 scroll-mt-24 transition-all duration-300 ${
                   isActiveReading ? "bg-[#FFFF00] text-black p-3 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" : ""
                 }`}
               >
                 {isActiveReading && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max">
                     <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                     BAGIAN ARTIKEL SEDANG DIBACA
                   </span>
@@ -700,12 +700,12 @@ export default function ArticleClient({
               <h3
                 key={b.key}
                 id={`line-${b.key}`}
-                className={`font-mono text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-24 transition-all duration-300 ${
+                className={`text-base sm:text-lg font-black uppercase text-black dark:text-white pt-4 scroll-mt-24 transition-all duration-300 ${
                   isActiveReading ? "bg-[#FFFF00] text-black p-3 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" : ""
                 }`}
               >
                 {isActiveReading && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max">
                     <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                     BAGIAN ARTIKEL SEDANG DIBACA
                   </span>
@@ -720,14 +720,14 @@ export default function ArticleClient({
               <li
                 key={b.key}
                 id={`line-${b.key}`}
-                className={`ml-5 list-disc ${fontClass} text-slate-800 dark:text-slate-200 font-sans transition-all duration-300 ${
+                className={`ml-5 list-disc ${fontClass} text-slate-800 dark:text-slate-200 transition-all duration-300 ${
                   isActiveReading
                     ? "bg-[#FFFF00] text-slate-950 p-3 rounded-none border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] list-none font-bold"
                     : "font-normal"
                 }`}
               >
                 {isActiveReading && (
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] mr-2">
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-black uppercase mb-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] mr-2">
                     <Volume2 className="w-3 h-3 animate-pulse" />
                     BAGIAN ARTIKEL SEDANG DIBACA
                   </span>
@@ -742,14 +742,14 @@ export default function ArticleClient({
               <blockquote
                 key={b.key}
                 id={`line-${b.key}`}
-                className={`border-l-4 border-[#166534] pl-4 italic ${fontClass} font-sans transition-all duration-300 ${
+                className={`border-l-4 border-[#166534] pl-4 italic ${fontClass} transition-all duration-300 ${
                   isActiveReading
                     ? "bg-[#FFFF00] text-slate-950 p-3 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold not-italic"
                     : "text-slate-700 dark:text-slate-300"
                 }`}
               >
                 {isActiveReading && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max not-italic">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] block w-max not-italic">
                     <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                     BAGIAN ARTIKEL SEDANG DIBACA
                   </span>
@@ -770,13 +770,13 @@ export default function ArticleClient({
               }`}
             >
               {isActiveReading && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-mono font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#166534] text-white text-[10px] font-black uppercase mb-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                   BAGIAN ARTIKEL SEDANG DIBACA
                 </span>
               )}
               <p
-                className={`${fontClass} font-sans ${
+                className={`${fontClass} ${
                   isActiveReading ? "font-bold text-black" : "text-slate-800 dark:text-slate-200 font-normal"
                 }`}
                 dangerouslySetInnerHTML={{ __html: b.content }}
@@ -1119,7 +1119,7 @@ export default function ArticleClient({
 
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-mono selection:bg-[#EAB308] selection:text-slate-950 pb-28 sm:pb-20">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white selection:bg-[#EAB308] selection:text-slate-950 pb-28 sm:pb-20">
       
       {/* Feature 2.1: Fixed Reading Progress Bar Top Indicator */}
       <div
@@ -1134,7 +1134,7 @@ export default function ArticleClient({
           <Link
             href="/artikel"
             onClick={() => soundFx.playClick()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-mono font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#166534]" />
             <span>KEMBALI KE ARTIKEL</span>
@@ -1159,7 +1159,7 @@ export default function ArticleClient({
               title={isSavedBookmark ? "Tersimpan" : "Simpan Artikel"}
             >
               <Bookmark className={`w-4 h-4 ${isSavedBookmark ? "fill-black text-black" : ""}`} />
-              <span className="text-xs font-mono font-black uppercase hidden sm:inline">
+              <span className="text-xs font-black uppercase hidden sm:inline">
                 {isSavedBookmark ? "TERSIMPAN" : "SIMPAN"}
               </span>
             </button>
@@ -1177,7 +1177,7 @@ export default function ArticleClient({
 
         {/* 2. ARTICLE HEADER META */}
         <div className="space-y-4 text-left">
-          <div className="flex flex-wrap items-center gap-3 text-xs font-mono font-black">
+          <div className="flex flex-wrap items-center gap-3 text-xs font-black">
             {article.readTime && (
               <span className="px-3 py-1 rounded-none bg-[#FFFF00] text-black border-2 border-black flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
                 <Clock className="w-3.5 h-3.5 text-black" />
@@ -1191,7 +1191,7 @@ export default function ArticleClient({
             </span>
           </div>
 
-          <h1 className="font-mono text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-tight">
+          <h1 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-tight">
             {article.title}
           </h1>
 
@@ -1207,10 +1207,10 @@ export default function ArticleClient({
               />
             </div>
             <div className="space-y-0.5">
-              <p className="font-mono font-black text-sm sm:text-base uppercase text-black dark:text-white leading-tight">
+              <p className="font-black text-sm sm:text-base uppercase text-black dark:text-white leading-tight">
                 {article.authorName || "Penulis Platform"}
               </p>
-              <p className="text-xs font-mono font-bold text-neutral-600 dark:text-neutral-400 uppercase">
+              <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase">
                 {article.authorName?.toLowerCase().includes("brimas")
                   ? "AI Systems Developer · SMK Bhakti Mulia Pare"
                   : "Penulis Member Platform · Member Studio"}
@@ -1238,7 +1238,7 @@ export default function ArticleClient({
             <button
               type="button"
               onClick={handleToggleAudio}
-              className="px-4 py-2.5 rounded-xl border-2 border-slate-900 bg-slate-950 text-white font-mono font-bold text-xs uppercase flex items-center gap-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#DC2626] transition-all cursor-pointer shrink-0"
+              className="px-4 py-2.5 rounded-xl border-2 border-slate-900 bg-slate-950 text-white font-bold text-xs uppercase flex items-center gap-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#DC2626] transition-all cursor-pointer shrink-0"
             >
               {isPlayingAudio ? (
                 <>
@@ -1254,11 +1254,11 @@ export default function ArticleClient({
             </button>
 
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 font-mono font-black text-xs uppercase tracking-tight">
+              <div className="flex items-center gap-1.5 font-black text-xs uppercase tracking-tight">
                 <Volume2 className="w-4 h-4 text-slate-950" />
                 <span>AUDIO PLAYER SYNTHESIS</span>
               </div>
-              <p className="text-[11px] font-sans font-semibold text-slate-800">
+              <p className="text-[11px] font-semibold text-slate-800">
                 {isPlayingAudio ? "🔊 Sedang membaca artikel..." : `Siap diputar (${calculatedReadTime} min · ${wordCount} kata)`}
               </p>
             </div>
@@ -1267,12 +1267,12 @@ export default function ArticleClient({
           {/* Controls: Voice & Speed Selectors */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
 
-            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
               <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">MODE:</span>
               <select
                 value={useElevenLabs ? "neural" : "browser"}
                 onChange={(e) => setUseElevenLabs(e.target.value === "neural")}
-                className="bg-slate-900 text-[#EAB308] text-[11px] font-mono font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
+                className="bg-slate-900 text-[#EAB308] text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
               >
                 <option value="browser">Browser</option>
                 <option value="neural">AI Neural</option>
@@ -1281,7 +1281,7 @@ export default function ArticleClient({
 
             {/* Voice selector is available for every reader */}
             {useElevenLabs && (
-              <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
+              <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
                 <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">SUARA:</span>
                 <select
                   value={selectedVoiceId}
@@ -1289,7 +1289,7 @@ export default function ArticleClient({
                     setSelectedVoiceId(e.target.value);
                     showToast(`Suara AI diubah ke: ${e.target.value.includes("Gadis") ? "Wanita (Gadis)" : "Pria (Ardi)"}`);
                   }}
-                  className="bg-slate-900 text-[#EAB308] text-[11px] font-mono font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
+                  className="bg-slate-900 text-[#EAB308] text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
                 >
                   <option value="id-ID-ArdiNeural">🎙️ Ardi (Pria AI)</option>
                   <option value="id-ID-GadisNeural">🎙️ Gadis (Wanita AI)</option>
@@ -1298,7 +1298,7 @@ export default function ArticleClient({
             )}
 
             {/* Audio Speed Selector */}
-            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white font-mono text-xs">
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
               <span className="px-1.5 text-[10px] font-bold text-amber-400 uppercase">KECEPATAN:</span>
               {[0.75, 1, 1.25, 1.5, 2].map((spd) => (
                 <button
@@ -1326,10 +1326,10 @@ export default function ArticleClient({
                 <BrainCircuit className="w-4 h-4 text-slate-950" />
               </div>
               <div>
-                <h4 className="font-mono font-black text-sm uppercase text-slate-950 dark:text-white leading-none">
+                <h4 className="font-black text-sm uppercase text-slate-950 dark:text-white leading-none">
                   AI SUMMARY &amp; KEY TAKEAWAYS
                 </h4>
-                <span className="text-[10px] font-mono text-slate-500 font-bold">
+                <span className="text-[10px] text-slate-500 font-bold">
                   RANGKUMAN INTI ARTIKEL DENGAN AI
                 </span>
               </div>
@@ -1339,7 +1339,7 @@ export default function ArticleClient({
               type="button"
               onClick={handleGenerateAiSummary}
               disabled={isGeneratingSummary}
-              className="px-3.5 py-1.5 rounded-xl border-2 border-slate-900 dark:border-white bg-emerald-400 text-slate-950 font-mono font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-amber-400 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3.5 py-1.5 rounded-xl border-2 border-slate-900 dark:border-white bg-emerald-400 text-slate-950 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-amber-400 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
             >
               <Sparkles className={`w-3.5 h-3.5 ${isGeneratingSummary ? "animate-spin" : ""}`} />
               <span>{isGeneratingSummary ? "PROSES AI..." : (aiSummary ? "RANGKUM ULANG" : "RANGKUM DENGAN AI")}</span>
@@ -1347,7 +1347,7 @@ export default function ArticleClient({
           </div>
 
           {aiSummary ? (
-            <ul className="space-y-2.5 font-sans text-xs sm:text-sm text-slate-800 dark:text-slate-200">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
               {aiSummary.map((bullet, bIdx) => (
                 <li key={bIdx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-900/20 dark:border-white/20">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -1356,7 +1356,7 @@ export default function ArticleClient({
               ))}
             </ul>
           ) : (
-            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-800 text-center text-xs font-mono text-slate-500 font-semibold flex items-center justify-center gap-2">
+            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500 font-semibold flex items-center justify-center gap-2">
               <Zap className="w-4 h-4 text-amber-500" />
               <span>Klik tombol "RANGKUM DENGAN AI" untuk mengekstrak poin-poin utama artikel ini.</span>
             </div>
@@ -1368,7 +1368,7 @@ export default function ArticleClient({
           
           {/* Combined Card: Daftar Isi & Font Resizer (Di Atas Konten Artikel pada Mobile - order-1) */}
           <aside className="lg:col-span-1 order-1">
-              <div className="sticky top-24 p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] font-mono">
+              <div className="sticky top-24 p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] ">
               
               {/* Part 1: Daftar Isi Navigasi */}
               {toc.length > 0 && (
@@ -1377,7 +1377,7 @@ export default function ArticleClient({
                     <List className="w-4 h-4 text-[#166534]" />
                     <span>DAFTAR ISI</span>
                   </div>
-                  <nav className="space-y-1.5 text-xs font-mono font-bold max-h-56 overflow-y-auto pr-1">
+                  <nav className="space-y-1.5 text-xs font-bold max-h-56 overflow-y-auto pr-1">
                     {toc.map((item) => (
                       <a
                         key={item.id}
@@ -1399,7 +1399,7 @@ export default function ArticleClient({
               )}
 
               {/* Part 2: Pengaturan Ukuran Font Artikel (Terintegrasi 1 Card) */}
-              <div className={`${toc.length > 0 ? "pt-3 border-t-3 border-black dark:border-white" : ""} space-y-2 font-mono`}>
+              <div className={`${toc.length > 0 ? "pt-3 border-t-3 border-black dark:border-white" : ""} space-y-2 `}>
                 <div className="flex items-center justify-between text-xs font-black uppercase text-black dark:text-white">
                   <span className="flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5 text-[#166534]" />
@@ -1418,7 +1418,7 @@ export default function ArticleClient({
                         setFontSizeScale(sz);
                         showToast(`Ukuran font diubah ke: ${sz === "sm" ? "Kecil" : sz === "base" ? "Normal" : sz === "lg" ? "Besar" : "Sangat Besar"}`);
                       }}
-                      className={`py-1 rounded-none text-center font-mono font-black text-xs uppercase transition-all cursor-pointer ${
+                      className={`py-1 rounded-none text-center font-black text-xs uppercase transition-all cursor-pointer ${
                         fontSizeScale === sz
                           ? "bg-[#166534] text-white dark:bg-[#EAB308] dark:text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
                           : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800"
@@ -1444,11 +1444,11 @@ export default function ArticleClient({
         </div>
 
         {/* 5. REACTION & SOCIAL SHARE BAR */}
-        <div className="p-4 sm:p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] font-mono">
+        <div className="p-4 sm:p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] ">
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => handleReaction("LIKE")}
-              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                 article.userReaction === "LIKE"
                   ? "bg-[#166534] text-white"
                   : "bg-white text-black hover:bg-[#FFFF00]"
@@ -1460,7 +1460,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleReaction("DISLIKE")}
-              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                 article.userReaction === "DISLIKE"
                   ? "bg-neutral-800 text-white"
                   : "bg-white text-black hover:bg-neutral-200"
@@ -1473,11 +1473,11 @@ export default function ArticleClient({
 
           {/* Social Media Share Buttons */}
           <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-            <span className="text-xs font-mono font-black uppercase text-black dark:text-white hidden sm:inline">BAGIKAN:</span>
+            <span className="text-xs font-black uppercase text-black dark:text-white hidden sm:inline">BAGIKAN:</span>
             
             <button
               onClick={() => handleSocialShare("wa")}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-[#00FF66] text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-[#00FF66] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
               title="Bagikan ke WhatsApp"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -1488,7 +1488,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleSocialShare("tw")}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-sky-400 text-black border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-sky-400 text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
               title="Bagikan ke X (Twitter)"
             >
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -1499,7 +1499,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleSocialShare("li")}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-blue-600 text-white border-3 border-black text-xs font-mono font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#166534] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-blue-600 text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#166534] transition-all"
               title="Bagikan ke LinkedIn"
             >
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -1512,8 +1512,8 @@ export default function ArticleClient({
 
 
         {/* 6. COMMENTS SECTION */}
-        <section className="space-y-6 pt-4 font-mono">
-          <div className="flex items-center gap-2 text-xl font-mono font-black uppercase text-black dark:text-white">
+        <section className="space-y-6 pt-4 ">
+          <div className="flex items-center gap-2 text-xl font-black uppercase text-black dark:text-white">
             <MessageSquare className="w-5 h-5 text-[#166534]" />
             <span>KOMENTAR ({article.commentCount})</span>
           </div>
@@ -1521,7 +1521,7 @@ export default function ArticleClient({
           {/* Add Comment Box - Form hanya tampil jika user sudah login */}
           {user ? (
             <form onSubmit={handleAddComment} className="p-4 sm:p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
-              <div className="flex items-center gap-2 text-xs font-mono font-bold text-black dark:text-white">
+              <div className="flex items-center gap-2 text-xs font-bold text-black dark:text-white">
                 <span className="w-2.5 h-2.5 rounded-none bg-[#00FF66] border border-black" />
                 <span>{replyTargetId ? "MEMBALAS KOMENTAR" : "MENULIS SEBAGAI"} <strong className="text-[#166534] dark:text-[#EAB308] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
               </div>
@@ -1532,14 +1532,14 @@ export default function ArticleClient({
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 maxLength={1000}
-                className="w-full min-h-28 p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all resize-y"
+                className="w-full min-h-28 p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all resize-y"
               />
 
               <div className="flex justify-end">
                 <button
                   type="submit"
                   disabled={!commentText.trim()}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-mono font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>KIRIM KOMENTAR</span>
@@ -1552,7 +1552,7 @@ export default function ArticleClient({
               </div>
             </form>
           ) : (
-            <div className="p-4 sm:p-5 rounded-none bg-[#FFFF00] text-black border-4 border-black text-xs font-mono font-black flex items-center justify-between shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <div className="p-4 sm:p-5 rounded-none bg-[#FFFF00] text-black border-4 border-black text-xs font-black flex items-center justify-between shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <Link
                 href={`/login?message=${encodeURIComponent("Kamu harus login dulu untuk berkomentar")}`}
                 className="hover:underline flex items-center gap-2 text-black font-black uppercase cursor-pointer"
@@ -1565,7 +1565,7 @@ export default function ArticleClient({
           {/* Comments List */}
           <div className="space-y-4">
             {article.comments.length === 0 ? (
-              <div className="p-6 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black text-center text-black dark:text-white font-mono font-bold text-xs uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+              <div className="p-6 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black text-center text-black dark:text-white font-bold text-xs uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
                 BELUM ADA KOMENTAR.
               </div>
             ) : (
@@ -1588,7 +1588,7 @@ export default function ArticleClient({
                         isVipComment
                           ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
                           : "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
-                      } space-y-3 text-left font-mono`}
+                      } space-y-3 text-left `}
                     >
                       <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
                         <div className="flex items-center gap-2.5">
@@ -1598,24 +1598,24 @@ export default function ArticleClient({
                               : isKawanComment
                               ? "bg-[#166534] text-white"
                               : "bg-neutral-800 text-white"
-                          } font-mono font-black text-xs border-2 border-black flex items-center justify-center uppercase`}>
+                          } font-black text-xs border-2 border-black flex items-center justify-center uppercase`}>
                             {comment.user.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className="flex items-center gap-1.5">
-                              <p className="font-mono font-black text-xs uppercase text-black dark:text-white">{comment.user.name}</p>
+                              <p className="font-black text-xs uppercase text-black dark:text-white">{comment.user.name}</p>
                               {isVipComment && (
-                                <span className="px-1.5 py-0.5 rounded-none bg-[#EAB308] text-black font-mono font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                <span className="px-1.5 py-0.5 rounded-none bg-[#EAB308] text-black font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
                                   👑 VIP PINNED
                                 </span>
                               )}
                               {isKawanComment && (
-                                <span className="px-1.5 py-0.5 rounded-none bg-[#166534] text-white font-mono font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                <span className="px-1.5 py-0.5 rounded-none bg-[#166534] text-white font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
                                   🟢 KAWAN
                                 </span>
                               )}
                             </div>
-                            <p className="text-[10px] font-mono text-neutral-500 font-bold uppercase">
+                            <p className="text-[10px] text-neutral-500 font-bold uppercase">
                               {new Date(comment.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                             </p>
                           </div>
@@ -1633,7 +1633,7 @@ export default function ArticleClient({
                         )}
                       </div>
 
-                      <p className="text-xs text-black dark:text-white font-mono font-medium leading-relaxed uppercase">
+                      <p className="text-xs text-black dark:text-white font-medium leading-relaxed uppercase">
                         {comment.content}
                       </p>
                       <div className="flex items-center gap-4 pt-1 text-[10px] font-black uppercase">
@@ -1667,8 +1667,8 @@ export default function ArticleClient({
 
         {/* 7. RELATED ARTICLES */}
         {relatedArticles.length > 0 && (
-          <section className="space-y-4 pt-8 border-t-4 border-black dark:border-white font-mono">
-            <h3 className="text-xl font-mono font-black uppercase text-black dark:text-white">
+          <section className="space-y-4 pt-8 border-t-4 border-black dark:border-white ">
+            <h3 className="text-xl font-black uppercase text-black dark:text-white">
               ARTIKEL TERKAIT
             </h3>
 
@@ -1690,10 +1690,10 @@ export default function ArticleClient({
                     )}
                   </div>
                   <div className="space-y-1">
-                    <h4 className="font-mono font-black text-xs text-black dark:text-white group-hover:text-[#166534] transition-colors line-clamp-2 uppercase">
+                    <h4 className="font-black text-xs text-black dark:text-white group-hover:text-[#166534] transition-colors line-clamp-2 uppercase">
                       {rel.title}
                     </h4>
-                    <p className="text-[10px] font-mono font-bold text-neutral-500 uppercase">{rel.readTime || "5 min read"}</p>
+                    <p className="text-[10px] font-bold text-neutral-500 uppercase">{rel.readTime || "5 min read"}</p>
                   </div>
                 </Link>
               ))}
@@ -1705,7 +1705,7 @@ export default function ArticleClient({
 
       {/* Toast Popup Notification */}
       {toastMsg && (
-        <div className="fixed bottom-24 right-6 z-50 px-4 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black font-mono font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="fixed bottom-24 right-6 z-50 px-4 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           {toastMsg}
         </div>
       )}
@@ -1719,7 +1719,7 @@ export default function ArticleClient({
               try { soundFx.playClick(); } catch {}
               setIsTocOpen(!isTocOpen);
             }}
-            className="lg:hidden fixed bottom-24 left-4 z-50 px-4 py-2.5 rounded-none bg-[#FFFF00] text-black text-xs font-mono font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black flex items-center gap-2 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+            className="lg:hidden fixed bottom-24 left-4 z-50 px-4 py-2.5 rounded-none bg-[#FFFF00] text-black text-xs font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black flex items-center gap-2 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
           >
             <List className="w-4 h-4 text-black" />
             <span>DAFTAR ISI ({toc.length})</span>
@@ -1727,16 +1727,16 @@ export default function ArticleClient({
 
           {isTocOpen && (
             <div className="lg:hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end justify-center p-4">
-              <div className="w-full max-w-md bg-white dark:bg-black border-4 border-black dark:border-white rounded-none p-5 space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] font-mono">
+              <div className="w-full max-w-md bg-white dark:bg-black border-4 border-black dark:border-white rounded-none p-5 space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] ">
                 <div className="flex items-center justify-between border-b-3 pb-3 border-black dark:border-white">
-                  <div className="flex items-center gap-2 font-mono font-black text-sm uppercase text-black dark:text-white">
+                  <div className="flex items-center gap-2 font-black text-sm uppercase text-black dark:text-white">
                     <List className="w-4 h-4 text-[#166534]" />
                     <span>DAFTAR ISI ARTIKEL</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setIsTocOpen(false)}
-                    className="w-8 h-8 rounded-none bg-[#166534] text-white border-2 border-black font-mono font-black text-xs flex items-center justify-center cursor-pointer"
+                    className="w-8 h-8 rounded-none bg-[#166534] text-white border-2 border-black font-black text-xs flex items-center justify-center cursor-pointer"
                   >
                     ✕
                   </button>
@@ -1754,7 +1754,7 @@ export default function ArticleClient({
                         const el = document.getElementById(item.id);
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className={`block py-2 px-3 rounded-none transition-colors border-l-3 border-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white font-mono uppercase ${
+                      className={`block py-2 px-3 rounded-none transition-colors border-l-3 border-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white uppercase ${
                         item.level === 3 ? "pl-6 text-xs font-bold" : "text-xs font-black"
                       }`}
                     >
