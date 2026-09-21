@@ -106,6 +106,15 @@ export default function UserArticlesClient({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 space-y-6">
         
         {/* Header Creator Studio Banner */}
+        <Link
+          href="/artikel"
+          onClick={() => soundFx.playClick()}
+          className="inline-flex items-center justify-center gap-2 px-4 py-3 min-h-12 border-2 border-black dark:border-white font-black uppercase text-xs bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Kembali ke Artikel</span>
+        </Link>
+
         <div className="p-5 sm:p-7 bg-white dark:bg-[#0E131F] border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
@@ -125,14 +134,6 @@ export default function UserArticlesClient({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/artikel"
-              onClick={() => soundFx.playClick()}
-              className="inline-flex items-center justify-center gap-2 px-4 py-3 min-h-12 border-2 border-black dark:border-white font-black uppercase text-xs bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Kembali ke Artikel</span>
-            </Link>
             <Link
               href="/admin/artikel/tambah"
               onClick={() => soundFx.playClick()}

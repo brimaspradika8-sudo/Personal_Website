@@ -16,7 +16,6 @@ const showcaseProjects: ProjectData[] = [
     thumbnail: "/images/project1.png",
     demo_url: "https://brimaspradika.vercels.app",
     repository_url: "https://github.com/brimaspradika8-sudo/Personal_Website",
-    techStack: ["Next.js 15", "TypeScript", "Prisma", "Supabase", "TailwindCSS"],
   },
   {
     id: "proj-2",
@@ -25,7 +24,6 @@ const showcaseProjects: ProjectData[] = [
     thumbnail: "/images/project2.png",
     demo_url: "https://brimaspradika.vercels.app/artikel",
     repository_url: "https://github.com/brimaspradika8-sudo/Personal_Website",
-    techStack: ["Next.js", "Edge Neural AI", "TypeScript", "TailwindCSS"],
   },
   {
     id: "proj-3",
@@ -34,7 +32,6 @@ const showcaseProjects: ProjectData[] = [
     thumbnail: "/images/project3.png",
     demo_url: "",
     repository_url: "https://github.com/brimaspradika8-sudo/Askyle",
-    techStack: ["PHP", "MySQL", "JavaScript", "Bootstrap"],
   },
 ];
 
@@ -56,7 +53,6 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
         thumbnail: String(fp.thumbnail || `/images/project${(i % 3) + 1}.png`),
         demo_url: String(fp.demo_url || "#"),
         repository_url: String(fp.repository_url || "#"),
-        techStack: Array.isArray(fp.techStack) ? (fp.techStack as string[]) : ["Next.js", "TypeScript", "Prisma"],
       }))
     : showcaseProjects;
 
@@ -136,19 +132,7 @@ export default function ProjectShowcase({ isNight, lang, onSelectProject, fetche
                       </p>
                     </div>
 
-                    {/* Tech Stack Badges */}
                     <div className="space-y-3 pt-2">
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.techStack?.map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2.5 py-1 rounded-none text-[10px] font-black border-2 border-black dark:border-white bg-[#FFFF00] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
                       {/* Card Bottom Links */}
                       <div className="pt-3 border-t-3 border-black dark:border-white flex items-center justify-between gap-2 text-xs font-black">
                         {project.repository_url && (

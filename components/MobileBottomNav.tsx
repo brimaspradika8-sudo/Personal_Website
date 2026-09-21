@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FolderGit2, BookOpen, Home, User, UserCheck } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -35,14 +35,6 @@ export default function MobileBottomNav() {
     { id: "about", label: lang === "id" ? "TENTANG" : "ABOUT", href: "/about", Icon: User, isCenter: false },
     { id: "profile", label: lang === "id" ? "PROFIL" : "PROFILE", href: "/profile", Icon: UserCheck, isCenter: false },
   ];
-
-  useEffect(() => {
-    router.prefetch("/profile");
-    router.prefetch("/artikel");
-    router.prefetch("/about");
-    router.prefetch("/dashboard");
-    router.prefetch("/proyek");
-  }, [router]);
 
   const handleNav = (tabId: string, href: string) => {
     soundFx.playClick();
@@ -83,6 +75,8 @@ export default function MobileBottomNav() {
                 <button
                   type="button"
                   onClick={() => handleNav(item.id, item.href)}
+                  onPointerEnter={() => router.prefetch(item.href)}
+                  onFocus={() => router.prefetch(item.href)}
                   className={`w-14 h-14 rounded-full border-4 border-black dark:border-white flex flex-col items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all cursor-pointer ${
                     isActive
                       ? "bg-[#FFFF00] text-black scale-110 ring-4 ring-[#166534]"
@@ -105,6 +99,8 @@ export default function MobileBottomNav() {
               key={item.id}
               type="button"
               onClick={() => handleNav(item.id, item.href)}
+              onPointerEnter={() => router.prefetch(item.href)}
+              onFocus={() => router.prefetch(item.href)}
               className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-200 relative ${
                 isActive ? "text-white font-black" : "text-neutral-400 hover:text-white"
               }`}

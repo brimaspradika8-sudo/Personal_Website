@@ -121,7 +121,7 @@ function SupabaseLogo() {
 }
 
 const TECH_LOGOS: Record<string, React.ReactNode> = {
-  "Next.js 15": <NextLogo />,
+  "Next.js": <NextLogo />,
   "React 19": <ReactLogo />,
   Supabase: <SupabaseLogo />,
 };

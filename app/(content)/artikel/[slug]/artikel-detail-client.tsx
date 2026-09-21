@@ -105,7 +105,6 @@ export default function ArticleClient({
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>("");
-  const [useElevenLabs, setUseElevenLabs] = useState<boolean>(true);
   const [isLoadingElevenLabs, setIsLoadingElevenLabs] = useState<boolean>(false);
 
   // Feature: Dedicated Smooth Auto-Scroll Hook - Only triggers ONCE per line change after DOM reflow
@@ -612,12 +611,7 @@ export default function ArticleClient({
       return;
     }
 
-    if (useElevenLabs) {
-      playElevenLabsAudio();
-    } else {
-      startSpeech(audioSpeed);
-      showToast("Memulai pembacaan suara browser...");
-    }
+    playElevenLabsAudio();
   };
 
   const handleSpeedChange = (speed: number) => {
@@ -1116,6 +1110,25 @@ export default function ArticleClient({
     }
   }, [fontSizeScale]);
 
+  const commentsByParent = new Map<string | null, ArticleDetail["comments"]>();
+  for (const comment of article.comments) {
+    const parentId = comment.parent_id || null;
+    const siblings = commentsByParent.get(parentId) || [];
+    siblings.push(comment);
+    commentsByParent.set(parentId, siblings);
+  }
+
+  const orderedComments: ArticleDetail["comments"] = [];
+  const appendThread = (parentId: string | null) => {
+    const siblings = [...(commentsByParent.get(parentId) || [])].sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+    for (const comment of siblings) {
+      orderedComments.push(comment);
+      appendThread(comment.id);
+    }
+  };
+  appendThread(null);
 
 
   return (
@@ -1267,21 +1280,8 @@ export default function ArticleClient({
           {/* Controls: Voice & Speed Selectors */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
 
-            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
-              <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">MODE:</span>
-              <select
-                value={useElevenLabs ? "neural" : "browser"}
-                onChange={(e) => setUseElevenLabs(e.target.value === "neural")}
-                className="bg-slate-900 text-[#EAB308] text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
-              >
-                <option value="browser">Browser</option>
-                <option value="neural">AI Neural</option>
-              </select>
-            </div>
-
             {/* Voice selector is available for every reader */}
-            {useElevenLabs && (
-              <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
                 <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">SUARA:</span>
                 <select
                   value={selectedVoiceId}
@@ -1294,8 +1294,7 @@ export default function ArticleClient({
                   <option value="id-ID-ArdiNeural">🎙️ Ardi (Pria AI)</option>
                   <option value="id-ID-GadisNeural">🎙️ Gadis (Wanita AI)</option>
                 </select>
-              </div>
-            )}
+            </div>
 
             {/* Audio Speed Selector */}
             <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
@@ -1569,14 +1568,7 @@ export default function ArticleClient({
                 BELUM ADA KOMENTAR.
               </div>
             ) : (
-              [...article.comments]
-                .sort((a, b) => {
-                  const aIsVip = (a.user as any)?.tier === "SAHABAT_BRIMAS";
-                  const bIsVip = (b.user as any)?.tier === "SAHABAT_BRIMAS";
-                  if (aIsVip && !bIsVip) return -1;
-                  if (!aIsVip && bIsVip) return 1;
-                  return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                })
+              orderedComments
                 .map((comment) => {
                   const isVipComment = (comment.user as any)?.tier === "SAHABAT_BRIMAS";
                   const isKawanComment = (comment.user as any)?.tier === "KAWAN_BRIMAS";

@@ -34,6 +34,7 @@ const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
 });
 
 const DRAFT_KEY = "article_draft_new";
+const MAX_DRAFT_BYTES = 750_000;
 
 export default function TambahArtikelClient() {
   const router = useRouter();
@@ -80,15 +81,14 @@ export default function TambahArtikelClient() {
     } catch {}
   }, []);
 
-  // Save to localStorage automatically on state change
+  // Keep the draft durable without allowing large editor content to grow storage indefinitely.
   useEffect(() => {
     if (title || content || slug || thumbnail) {
       const timer = setTimeout(() => {
         try {
-          localStorage.setItem(
-            DRAFT_KEY,
-            JSON.stringify({ title, slug, content, thumbnail, updatedAt: new Date().toISOString() })
-          );
+          const draft = JSON.stringify({ title, slug, content, thumbnail });
+          if (new Blob([draft]).size > MAX_DRAFT_BYTES) return;
+          localStorage.setItem(DRAFT_KEY, draft);
           setLastSavedTime(new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }));
         } catch {}
       }, 1000);

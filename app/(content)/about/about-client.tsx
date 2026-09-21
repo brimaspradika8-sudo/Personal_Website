@@ -316,7 +316,6 @@ export default function AboutClient() {
             {[
               { id: "frontend", label: "FRONTEND",          accent: "#EAB308", items: TECH_STACK_ITEMS.filter((t) => t.category === "frontend") },
               { id: "backend",  label: "BACKEND",           accent: "#166534", items: TECH_STACK_ITEMS.filter((t) => t.category === "backend")  },
-              { id: "ai",       label: "AI & LLM",          accent: "#7C3AED", items: TECH_STACK_ITEMS.filter((t) => t.category === "ai")       },
               { id: "tools",    label: "TOOLS & DEVOPS",    accent: "#0EA5E9", items: TECH_STACK_ITEMS.filter((t) => t.category === "tools")    },
             ].map((cat, catIdx) => {
               const levelMap: Record<string, number> = { Expert: 95, Advanced: 80, Intermediate: 60, Beginner: 35 };

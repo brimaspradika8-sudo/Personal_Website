@@ -7,7 +7,7 @@ import "./globals.css";
 const montserrat = Montserrat({
   weight: ["500", "600", "700", "800", "900"],
   subsets: ["latin"],
-  variable: "--",
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -90,9 +90,9 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  localStorage.setItem("theme_mode", "day");
-                  localStorage.setItem("landscape_mode", "day");
-                  localStorage.setItem("dashboard_theme", "day");
+                  if (localStorage.getItem("theme_mode") !== "day") localStorage.setItem("theme_mode", "day");
+                  if (localStorage.getItem("landscape_mode") !== "day") localStorage.setItem("landscape_mode", "day");
+                  if (localStorage.getItem("dashboard_theme") !== "day") localStorage.setItem("dashboard_theme", "day");
                   document.documentElement.classList.remove("dark");
                 } catch (e) {}
               })();
