@@ -16,30 +16,21 @@ interface TimelineItem {
 const timelineData: TimelineItem[] = [
   {
     id: "time-1",
-    year: "2024 - PRESENT",
+    year: "2024 - 2026",
     title: "Student & AI Systems Developer",
     organization: "SMK Bhakti Mulia Pare",
     description: "Membangun aplikasi berbasis kecerdasan buatan, integrasi LLM API, RESTful API backend, serta arsitektur antarmuka modern yang scalable.",
     icon: GraduationCap,
-    highlights: ["AI Systems & LLM Integration", "PHP & Laravel 11", "React & Next.js App Router", "Python & Supabase"],
+    highlights: ["html" , "css", "javascript", "PHP", "MySQL"],
   },
   {
     id: "time-2",
-    year: "2024",
-    title: "Backend Architecture & Database Engineering",
-    organization: "Project Engineering",
-    description: "Perancangan database relasional terstruktur, ORM Prisma, integrasi Supabase Realtime, serta keamanan REST API.",
+    year: "2026",
+    title: "Internship",
+    organization: "Language Center & IT",
+    description: "Pengalaman kerja praktik di bidang teknologi informasi, termasuk pengembangan aplikasi web, manajemen database, dan pemeliharaan sistem.",
     icon: Code2,
-    highlights: ["Prisma ORM", "Supabase BaaS", "RESTful API Security", "Database Indexing"],
-  },
-  {
-    id: "time-3",
-    year: "2023",
-    title: "Frontend Development & Web Fundamentals",
-    organization: "Web Development",
-    description: "Penguasaan dasar-dasar web development, JavaScript ES6+, Vanilla CSS & Tailwind CSS, serta arsitektur komponen React.",
-    icon: Award,
-    highlights: ["JavaScript ES6+", "Tailwind CSS", "React Components", "UI Micro-interactions"],
+    highlights: ["Laravel", "Next.js", "React Native EXPO", "PostgreSQL", "Prisma ORM", "Docker", "Supabase", "node.js", "Github", "Vercel", "Figma",],
   },
 ];
 
