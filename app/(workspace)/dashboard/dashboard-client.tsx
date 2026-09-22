@@ -417,7 +417,7 @@ export default function DashboardClient({
                 BRIMAS <span className="text-[#00C853]">PRADIKA UTAMA</span>
               </h2>
               <p className="text-xs sm:text-sm font-bold tracking-wide uppercase text-[#00C853]">
-                Junior Progammer &bull; SMK Bhakti Mulia Pare
+                Junior Developer &bull; SMK Bhakti Mulia Pare
               </p>
               <p className="text-xs sm:text-base font-medium leading-relaxed max-w-xl text-slate-800 dark:text-slate-200">
                 {lang === "id"
@@ -443,7 +443,7 @@ export default function DashboardClient({
                   <span className="text-[11px] font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
                 </div>
                 <p className="text-xs font-bold truncate text-slate-950 dark:text-white">
-                  Junior Progammer
+                  Junior Developer
                 </p>
               </div>
 

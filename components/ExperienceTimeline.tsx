@@ -19,7 +19,7 @@ const timelineData: TimelineItem[] = [
     year: "2024 - 2026",
     title: "Student & AI Systems Developer",
     organization: "SMK Bhakti Mulia Pare",
-    description: "Membangun aplikasi berbasis kecerdasan buatan, integrasi LLM API, RESTful API backend, serta arsitektur antarmuka modern yang scalable.",
+    description: "Membangun aplikasi berbasis web dan menggunakan teknologi AI untuk pengembangan sistem cerdas, termasuk pemrograman web, manajemen database,",
     icon: GraduationCap,
     highlights: ["html" , "css", "javascript", "PHP", "MySQL"],
   },
