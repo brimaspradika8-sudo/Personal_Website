@@ -349,7 +349,7 @@ export default function AdminArticlesClient({ initialArticles }: ArticlesClientP
           >
             <div className="flex items-center gap-3">
               <BookOpen className="w-4 h-4 text-[#EAB308]" />
-              <span className="text-xs font-semibold">Studio Artikel Member</span>
+              <span className="text-xs font-semibold">Studio Artikel</span>
             </div>
           </Link>
 

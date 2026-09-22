@@ -147,7 +147,7 @@ export default function UserArticlesClient({
 
 
 
-        {/* Member Analytics Cards */}
+        {/* Article Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-5 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex items-center justify-between">
             <div className="space-y-1">

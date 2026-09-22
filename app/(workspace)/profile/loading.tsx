@@ -42,16 +42,6 @@ export default function ProfileLoading() {
           </div>
         </div>
 
-        {/* 1.5. PROMINENT MEMBERSHIP TIER CARD SKELETON */}
-        <div className="rounded-none border-4 border-black bg-[#FFFF00] text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ">
-          <div className="space-y-2 max-w-xl w-full">
-            <div className="w-36 h-5 rounded-none bg-black" />
-            <div className="w-64 h-7 rounded-none bg-black/80" />
-            <div className="w-full max-w-md h-4 rounded-none bg-black/30" />
-          </div>
-          <div className="w-full sm:w-auto px-6 py-3.5 rounded-none bg-[#166534] border-3 border-black text-xs font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0 h-11" />
-        </div>
-
         {/* 2. DESKTOP 2-COLUMN GRID (Account Settings & Preferences Side-by-Side) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* LEFT COLUMN: INFORMASI AKUN & KEAMANAN (4 Items) */}

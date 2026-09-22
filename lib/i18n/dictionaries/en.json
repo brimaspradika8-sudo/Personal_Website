@@ -4,7 +4,6 @@
     "about": "About",
     "projects": "Projects",
     "articles": "Articles",
-    "membership": "Membership",
     "contact": "Contact",
     "profile": "Profile",
     "login": "Sign In"
@@ -53,7 +52,6 @@
     "settingsTab": "Settings",
     "helpTab": "Help & FAQ",
     "accountStatus": "Account Status",
-    "memberSince": "Joined Since",
     "primaryEmail": "Primary Email",
     "authProvider": "Login Provider",
     "editTabDesc": "Customize your display name and pick your favorite avatar preset or custom picture!",

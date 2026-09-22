@@ -19,15 +19,6 @@ export default function StudioArticlesLoading() {
           <div className="w-48 h-14 bg-[#00FF66] border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shrink-0" />
         </div>
 
-        {/* Membership Quota Box Skeleton */}
-        <div className="p-5 border-4 border-black dark:border-white bg-white dark:bg-[#0E131F] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-3">
-          <div className="flex justify-between items-center">
-            <div className="w-64 h-5 bg-slate-300 dark:bg-slate-800" />
-            <div className="w-24 h-5 bg-amber-400 border border-black" />
-          </div>
-          <div className="w-full h-4 bg-slate-200 dark:bg-slate-800 border-2 border-black" />
-        </div>
-
         {/* Stat Cards Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (

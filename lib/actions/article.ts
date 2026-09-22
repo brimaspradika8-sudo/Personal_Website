@@ -240,7 +240,7 @@ export async function getArticles(params?: {
   return getArticlesMemoized(params);
 }
 
-// 1b. Ambil daftar artikel khusus karya penulis pengguna (Member Workspace)
+// 1b. Ambil daftar artikel karya penulis pengguna
 export async function getUserArticles(authorId: string): Promise<ArticleItem[]> {
   if (!authorId) return [];
   try {
@@ -282,7 +282,7 @@ export async function getUserArticles(authorId: string): Promise<ArticleItem[]> 
           likeCount,
           dislikeCount,
           commentCount: art.comments.length,
-          authorName: art.author?.name || "Penulis Member",
+          authorName: art.author?.name || "Penulis Platform",
           authorAvatar: art.author?.avatar || "/images/avatar.webp",
         };
       });
@@ -553,7 +553,7 @@ export async function createArticle(data: {
   }
 }
 
-// 4. Hapus Artikel (Admin Asli & SAHABAT_BRIMAS boleh hapus semua; KAWAN_BRIMAS hanya miliknya sendiri)
+// 4. Hapus Artikel (hanya admin)
 export async function deleteArticle(articleId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -576,7 +576,7 @@ export async function deleteArticle(articleId: string) {
     if (isValidUuid(articleId)) {
       const existingArt = await prisma.article.findUnique({ where: { id: articleId } });
       if (existingArt) {
-        // Super Admin bisa hapus semua artikel; Member hanya boleh hapus artikel karya sendiri
+        // Admin dapat menghapus artikel apa pun.
         if (!isAdmin && existingArt.author_id !== dbUser.id) {
           return { error: "Anda hanya diizinkan menghapus artikel karya Anda sendiri." };
         }
@@ -593,7 +593,7 @@ export async function deleteArticle(articleId: string) {
   }
 }
 
-// 4b. Update / Edit Artikel (Admin Asli & SAHABAT_BRIMAS boleh edit semua; KAWAN_BRIMAS hanya miliknya sendiri)
+// 4b. Update / Edit Artikel (hanya admin)
 export async function updateArticle(
   articleId: string,
   data: {

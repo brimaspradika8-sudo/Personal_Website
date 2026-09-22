@@ -58,14 +58,12 @@ interface ArticleClientProps {
     email?: string;
     user_metadata?: { full_name?: string; avatar_url?: string };
   } | null;
-  userTier?: "FREE" | "KAWAN_BRIMAS" | "SAHABAT_BRIMAS";
 }
 
 export default function ArticleClient({
   article: initialArticle,
   relatedArticles,
   user,
-  userTier = "FREE",
 }: ArticleClientProps) {
   const router = useRouter();
   const [article, setArticle] = useState<ArticleDetail>(initialArticle);
@@ -1214,7 +1212,7 @@ export default function ArticleClient({
               <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase">
                 {article.authorName?.toLowerCase().includes("brimas")
                   ? "AI Systems Developer · SMK Bhakti Mulia Pare"
-                  : "Penulis Member Platform · Member Studio"}
+                  : "Penulis Platform · Studio Artikel"}
               </p>
             </div>
           </div>
@@ -1558,45 +1556,26 @@ export default function ArticleClient({
             ) : (
               orderedComments
                 .map((comment) => {
-                  const isVipComment = (comment.user as any)?.tier === "SAHABAT_BRIMAS";
-                  const isKawanComment = (comment.user as any)?.tier === "KAWAN_BRIMAS";
-
                   return (
                     <div
                       key={comment.id}
                       className={`${comment.parent_id
                         ? "ml-4 sm:ml-10 border-l-4 border-y-0 border-r-0 bg-transparent dark:bg-transparent shadow-none p-3 sm:p-4"
                         : `p-4 sm:p-5 rounded-none border-2 ${
-                            isVipComment
-                              ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
-                              : "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
+                            "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
                           }`
                       } space-y-3 text-left`}
                     >
                       <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
                         <div className="flex items-center gap-2.5">
                           <div className={`w-8 h-8 rounded-none ${
-                            isVipComment
-                              ? "bg-[#EAB308] text-black ring-2 ring-[#FFD700] shadow-[0_0_8px_rgba(234,179,8,0.6)]"
-                              : isKawanComment
-                              ? "bg-[#166534] text-white"
-                              : "bg-neutral-800 text-white"
+                            "bg-neutral-800 text-white"
                           } font-black text-xs border-2 border-black flex items-center justify-center uppercase`}>
                             {comment.user.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className="flex items-center gap-1.5">
                               <p className="font-black text-xs uppercase text-black dark:text-white">{comment.user.name}</p>
-                              {isVipComment && (
-                                <span className="px-1.5 py-0.5 rounded-none bg-[#EAB308] text-black font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                                  👑 VIP PINNED
-                                </span>
-                              )}
-                              {isKawanComment && (
-                                <span className="px-1.5 py-0.5 rounded-none bg-[#166534] text-white font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                                  🟢 KAWAN
-                                </span>
-                              )}
                             </div>
                             <p className="text-[10px] text-neutral-500 font-bold uppercase">
                               {new Date(comment.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}

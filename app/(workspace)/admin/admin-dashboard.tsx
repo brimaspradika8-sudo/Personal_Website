@@ -241,7 +241,7 @@ export default function AdminDashboard({
                       {stats.usersCount}
                     </div>
                     <div className="inline-block px-2 py-0.5 bg-[#FEF9C3] text-black border border-black text-[10px] font-black uppercase">
-                      MEMBERS
+                      AKUN
                     </div>
                   </div>
 

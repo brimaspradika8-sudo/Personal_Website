@@ -57,7 +57,6 @@ interface ArticleClientProps {
     email?: string;
     user_metadata?: { full_name?: string; avatar_url?: string };
   } | null;
-  userTier?: "FREE" | "KAWAN_BRIMAS" | "SAHABAT_BRIMAS";
 }
 
 const READING_LABEL = "BAGIAN ARTIKEL SEDANG DIBACA";
@@ -324,7 +323,7 @@ function ArticleHeader({
           <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase">
             {article.authorName?.toLowerCase().includes("brimas")
               ? "AI Systems Developer · SMK Bhakti Mulia Pare"
-              : "Penulis Member Platform · Member Studio"}
+              : "Penulis Platform · Studio Artikel"}
           </p>
         </div>
       </div>
@@ -510,52 +509,29 @@ function ArticleComments({
         ) : (
           [...article.comments]
             .sort((a, b) => {
-              const aIsVip = (a.user as any)?.tier === "SAHABAT_BRIMAS";
-              const bIsVip = (b.user as any)?.tier === "SAHABAT_BRIMAS";
-              if (aIsVip && !bIsVip) return -1;
-              if (!aIsVip && bIsVip) return 1;
               return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
             })
             .map((comment) => {
-              const isVipComment = (comment.user as any)?.tier === "SAHABAT_BRIMAS";
-              const isKawanComment = (comment.user as any)?.tier === "KAWAN_BRIMAS";
-
               return (
                 <div
                   key={comment.id}
                   className={`${comment.parent_id
                     ? "ml-4 sm:ml-10 border-l-4 border-y-0 border-r-0 bg-transparent dark:bg-transparent shadow-none p-3 sm:p-4"
                     : `p-4 sm:p-5 rounded-none border-2 ${
-                        isVipComment
-                          ? "border-[#EAB308] bg-[#FEF08A]/10 dark:bg-[#EAB308]/10 shadow-[6px_6px_0px_0px_rgba(234,179,8,1)]"
-                          : "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
+                        "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
                       }`
                   } space-y-3 text-left`}
                 >
                   <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
                     <div className="flex items-center gap-2.5">
                       <div className={`w-8 h-8 rounded-none ${
-                        isVipComment
-                          ? "bg-[#EAB308] text-black ring-2 ring-[#FFD700] shadow-[0_0_8px_rgba(234,179,8,0.6)]"
-                          : isKawanComment
-                          ? "bg-[#166534] text-white"
-                          : "bg-neutral-800 text-white"
+                        "bg-neutral-800 text-white"
                       } font-black text-xs border-2 border-black flex items-center justify-center uppercase`}>
                         {comment.user.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
                           <p className="font-black text-xs uppercase text-black dark:text-white">{comment.user.name}</p>
-                          {isVipComment && (
-                            <span className="px-1.5 py-0.5 rounded-none bg-[#EAB308] text-black font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                              👑 VIP PINNED
-                            </span>
-                          )}
-                          {isKawanComment && (
-                            <span className="px-1.5 py-0.5 rounded-none bg-[#166534] text-white font-black text-[9px] border border-black uppercase flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                              🟢 KAWAN
-                            </span>
-                          )}
                         </div>
                         <p className="text-[10px] text-neutral-500 font-bold uppercase">
                           {new Date(comment.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
@@ -609,7 +585,6 @@ export default function ArticleClient({
   article: initialArticle,
   relatedArticles,
   user,
-  userTier = "FREE",
 }: ArticleClientProps) {
   const router = useRouter();
   const [article, setArticle] = useState<ArticleDetail>(initialArticle);
@@ -947,12 +922,6 @@ export default function ArticleClient({
   };
 
   const handleToggleAudio = () => {
-    if (userTier === "FREE") {
-      soundFx.playClick();
-      showToast("🔒 Fitur Narasi Suara AI khusus untuk Member Kawan & Sahabat Brimas. Silakan upgrade!");
-      return;
-    }
-
     if (isPlayingAudio || isLoadingElevenLabs) {
       stopAllAudio();
       showToast("Pembacaan audio dihentikan.");
@@ -1120,11 +1089,6 @@ export default function ArticleClient({
   const handleGenerateAiSummary = () => {
     try { soundFx.playClick(); } catch {}
 
-    if (userTier === "FREE") {
-      showToast("🔒 Fitur Rangkuman AI khusus untuk Member Kawan & Sahabat Brimas. Silakan upgrade!");
-      return;
-    }
-
     setIsGeneratingSummary(true);
 
     setTimeout(() => {
@@ -1148,29 +1112,15 @@ export default function ArticleClient({
       const bullets: string[] = [];
       const titleClean = article.title.trim();
 
-      if (userTier === "SAHABAT_BRIMAS") {
-        const topicOverview = headings.length > 0 ? headings.slice(0, 3).join(", ") : "Konsep Utama & Arsitektur Sistem";
-        const leadInsight = textBlocks.length > 0 ? textBlocks[0] : "Pembahasan mendalam tentang arsitektur dan otomatisasi modern.";
-        const coreTakeaway = textBlocks.length > 1 ? textBlocks[Math.floor(textBlocks.length / 2)] : (textBlocks[0] || "Solusi praktis untuk meningkatkan performa alur kerja.");
-        const actionItem = textBlocks.length > 2 ? textBlocks[textBlocks.length - 1] : "Panduan langkah demi langkah dalam implementasi proyek.";
-
-        bullets.push(`👑 [DEEP EXECUTIVE SUMMARY] Ringkasan Mendalam Artikel "${titleClean}"`);
-        bullets.push(`📌 Topik Utama: Menjelaskan ${topicOverview}.`);
-        bullets.push(`💡 Key Insight: ${leadInsight}.`);
-        bullets.push(`🎯 Poin Pembelajaran Kunci: ${coreTakeaway}.`);
-        bullets.push(`🚀 Panduan Eksekusi: ${actionItem}.`);
-        bullets.push(`✨ Kesimpulan VIP: Mengoptimalkan efisiensi, keandalan, dan kecepatan skalabilitas sistem.`);
-      } else {
-        const topicOverview = headings.length > 0 ? headings.slice(0, 2).join(" & ") : titleClean;
-        bullets.push(`📌 Topik Utama: Menjelaskan ${topicOverview}.`);
-        if (textBlocks.length > 0) bullets.push(`💡 Key Takeaways: ${textBlocks[0]}.`);
-        if (textBlocks.length > 1) bullets.push(`🎯 Poin Penting: ${textBlocks[Math.floor(textBlocks.length / 2)]}.`);
-        if (bullets.length < 3) bullets.push(`🚀 Kesimpulan: Memberikan panduan praktis terkait ${titleClean}.`);
-      }
+      const topicOverview = headings.length > 0 ? headings.slice(0, 2).join(" & ") : titleClean;
+      bullets.push(`📌 Topik Utama: Menjelaskan ${topicOverview}.`);
+      if (textBlocks.length > 0) bullets.push(`💡 Poin Utama: ${textBlocks[0]}.`);
+      if (textBlocks.length > 1) bullets.push(`🎯 Poin Penting: ${textBlocks[Math.floor(textBlocks.length / 2)]}.`);
+      if (bullets.length < 3) bullets.push(`🚀 Kesimpulan: Memberikan panduan praktis terkait ${titleClean}.`);
 
       setAiSummary(bullets);
       setIsGeneratingSummary(false);
-      showToast(userTier === "SAHABAT_BRIMAS" ? "Rangkuman Eksekutif AI VIP Berhasil Dibuat!" : "Ringkasan AI Berhasil Dibuat!");
+      showToast("Ringkasan AI Berhasil Dibuat!");
     }, 600);
   };
 
@@ -1541,24 +1491,6 @@ export default function ArticleClient({
 
           {/* Controls: Voice & Speed Selectors */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-
-            {/* Dual Voice Selector for SAHABAT_BRIMAS VIP */}
-            {userTier === "SAHABAT_BRIMAS" && (
-              <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">
-                <span className="px-1.5 text-[10px] font-bold text-[#EAB308] uppercase">SUARA AI (VIP):</span>
-                <select
-                  value={selectedVoiceId}
-                  onChange={(e) => {
-                    setSelectedVoiceId(e.target.value);
-                    showToast(`Suara AI diubah ke: ${e.target.value.includes("Gadis") ? "Wanita (Gadis)" : "Pria (Ardi)"}`);
-                  }}
-                  className="bg-slate-900 text-[#EAB308] text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
-                >
-                  <option value="id-ID-ArdiNeural">🎙️ Ardi (Pria AI)</option>
-                  <option value="id-ID-GadisNeural">🎙️ Gadis (Wanita AI)</option>
-                </select>
-              </div>
-            )}
 
             {/* Audio Speed Selector */}
             <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border-2 border-slate-900 text-white text-xs">

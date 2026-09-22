@@ -20,7 +20,7 @@ const showcaseProjects: ProjectData[] = [
   {
     id: "proj-2",
     title: "Article Studio & AI Text-to-Speech Engine",
-    description: "Sistem studio editor artikel ala Microsoft Word dengan fitur AI Assistant, Edge Neural TTS voice generator, kontrol akses bertingkat (VIP Member), dan reaksi/komentar 0ms Optimistic UI.",
+    description: "Sistem studio editor artikel ala Microsoft Word dengan fitur AI Assistant, Edge Neural TTS voice generator, dan reaksi/komentar 0ms Optimistic UI.",
     thumbnail: "/images/project2.png",
     demo_url: "https://brimaspradika.vercels.app/artikel",
     repository_url: "https://github.com/brimaspradika8-sudo/Personal_Website",

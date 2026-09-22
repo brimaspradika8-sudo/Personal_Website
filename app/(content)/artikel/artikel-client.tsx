@@ -165,7 +165,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
               onClick={() => soundFx.playClick()}
               aria-label={lang === "id" ? "Studio Artikel Saya" : "My Article Studio"}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EAB308] text-slate-950 border-2 border-slate-900 text-xs font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer uppercase hover:bg-amber-400"
-              title={lang === "id" ? "Studio Artikel Saya (Ruang Kerja Member)" : "My Article Studio (Member Workspace)"}
+                  title={lang === "id" ? "Studio Artikel Saya" : "My Article Studio"}
             >
               <LayoutDashboard className="w-4 h-4 text-slate-950" />
               <span>{lang === "id" ? "STUDIO ARTIKEL SAYA" : "MY ARTICLE STUDIO"}</span>
