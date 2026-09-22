@@ -75,12 +75,12 @@ export default function Footer({ isNight = false }: FooterProps) {
     },
     {
       name: "LinkedIn",
-      href: "https://linkedin.com/in/brimaspradika",
+      href: "www.linkedin.com/in/brimas-pradika-utama-4a8361422",
       icon: LinkedInIcon,
     },
     {
       name: "Instagram",
-      href: "https://instagram.com/Kluweks02",
+      href: "https://instagram.com/Kluweks_02",
       icon: InstagramIcon,
     },
     {
@@ -213,7 +213,7 @@ export default function Footer({ isNight = false }: FooterProps) {
           </p>
 
           <div className="flex items-center gap-4">
-            <span className="hidden sm:inline">BUILT WITH NEXT.JS 16 &amp; PURE BRUTALISM</span>
+            <span className="hidden sm:inline">BUILT WITH NEXT.JS</span>
             {isAllowedPage && (
               <button
                 onClick={scrollToTop}
