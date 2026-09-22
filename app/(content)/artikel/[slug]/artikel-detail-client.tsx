@@ -1277,8 +1277,8 @@ export default function ArticleClient({
                   }}
                   className="bg-slate-900 text-[#EAB308] text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-700 outline-none cursor-pointer"
                 >
-                  <option value="id-ID-ArdiNeural">🎙️ Ardi (Pria AI)</option>
-                  <option value="id-ID-GadisNeural">🎙️ Gadis (Wanita AI)</option>
+                  <option value="id-ID-ArdiNeural">🎙️ Rahull (Pria)</option>
+                  <option value="id-ID-GadisNeural">🎙️Putri Padang(Wanita)</option>
                 </select>
             </div>
 
