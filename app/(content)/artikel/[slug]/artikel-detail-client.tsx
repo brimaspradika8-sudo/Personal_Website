@@ -1107,7 +1107,7 @@ export default function ArticleClient({
   const orderedComments: ArticleDetail["comments"] = [];
   const appendThread = (parentId: string | null) => {
     const siblings = [...(commentsByParent.get(parentId) || [])].sort(
-      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
     for (const comment of siblings) {
       orderedComments.push(comment);
