@@ -1,0 +1,9 @@
+.swipe-row{position:relative;height:var(--sr-h);overflow:hidden;opacity:1;transition:height var(--sr-collapse) ease,opacity var(--sr-collapse) ease;margin-bottom:8px}
+.swipe-row__clip{position:relative;height:var(--sr-h);border-radius:var(--sr-r);overflow:hidden;background:var(--sr-row)}
+.swipe-row__rail{position:absolute;inset:0;background:var(--sr-drawer)}
+.swipe-row__action{position:absolute;top:0;display:grid;place-items:center;width:var(--sr-a);height:100%;border:0;margin:0;padding:0;color:#fff;font:inherit;cursor:pointer;z-index:0}
+.swipe-row__glyph{display:grid;justify-items:center;gap:4px;font-size:11px;font-weight:600;line-height:1}
+.swipe-row__icon{display:inline-flex}
+.swipe-row__surface{position:relative;z-index:1;display:flex;align-items:center;gap:12px;height:100%;padding:0 16px;background:var(--sr-row);color:var(--sr-text);touch-action:pan-y;user-select:none;cursor:grab;transition:transform 180ms cubic-bezier(.23,1,.32,1)}
+.swipe-row[data-dragging] .swipe-row__surface{cursor:grabbing;transition:none}
+@media (prefers-reduced-motion:reduce){.swipe-row__surface{transition:none}}
