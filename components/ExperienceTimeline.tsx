@@ -46,7 +46,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
         
         {/* Header */}
         <div className="space-y-3 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-black tracking-widest uppercase">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-lg bg-[#166534] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-black tracking-widest uppercase">
             <GraduationCap className="w-3.5 h-3.5 text-white" />
           </div>
           <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
@@ -67,12 +67,12 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
               <div key={item.id} className="relative group">
                 
                 {/* Node Marker */}
-                <div className="absolute -left-[38px] sm:-left-[54px] top-2 w-8 h-8 rounded-none bg-[#166534] text-white border-3 border-black dark:border-white flex items-center justify-center font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                <div className="absolute -left-[38px] sm:-left-[54px] top-2 w-8 h-8 rounded-lg bg-[#166534] text-white border-3 border-black dark:border-white flex items-center justify-center font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                   <IconComponent className="w-4 h-4 text-white" />
                 </div>
 
                 {/* Content Area */}
-                <div className={`p-4 sm:p-6 rounded-none border-4 border-black dark:border-white transition-all duration-150 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] ${
+                <div className={`p-4 sm:p-6 rounded-3xl border-4 border-black dark:border-white transition-all duration-150 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] ${
                   isNight
                     ? "bg-black"
                     : "bg-white"
@@ -85,7 +85,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
                       </span>
                       <h3 className="text-lg font-black uppercase text-black dark:text-white mt-0.5">{item.title}</h3>
                     </div>
-                    <span className="text-xs font-black text-black bg-[#FFFF00] px-3 py-1 rounded-none border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] self-start sm:self-auto uppercase">
+                    <span className="text-xs font-black text-black bg-[#FFFF00] px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] self-start sm:self-auto uppercase">
                       {item.organization}
                     </span>
                   </div>
@@ -98,7 +98,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
                     {item.highlights.map((badge) => (
                       <span
                         key={badge}
-                        className="px-2.5 py-1 rounded-none text-[10px] font-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] uppercase"
+                        className="px-2.5 py-1 rounded-lg text-[10px] font-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] uppercase"
                       >
                         {badge}
                       </span>

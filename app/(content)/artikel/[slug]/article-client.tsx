@@ -257,7 +257,7 @@ function ArticleHeader({
         <Link
           href="/artikel"
           onClick={() => soundFx.playClick()}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-black border-3 border-black dark:border-white text-xs font-black text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer group uppercase"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#166534]" />
           <span>KEMBALI KE ARTIKEL</span>
@@ -267,7 +267,7 @@ function ArticleHeader({
           <button
             type="button"
             onClick={onBookmarkToggle}
-            className={`px-3.5 py-2 rounded-none border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 rounded-xl border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5 ${
               isSavedBookmark ? "bg-[#FFFF00] text-black" : "bg-white dark:bg-black text-black dark:text-white"
             }`}
             title={isSavedBookmark ? "Tersimpan" : "Simpan Artikel"}
@@ -280,7 +280,7 @@ function ArticleHeader({
 
           <button
             onClick={onShare}
-            className="p-2.5 rounded-none bg-white dark:bg-black border-3 border-black dark:border-white text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+            className="p-2.5 rounded-xl bg-white dark:bg-black border-3 border-black dark:border-white text-black dark:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
             title="Salin Link Artikel"
           >
             {isCopied ? <Check className="w-4 h-4 text-[#00FF66]" /> : <Share2 className="w-4 h-4" />}
@@ -290,13 +290,13 @@ function ArticleHeader({
 
       <div className="flex flex-wrap items-center gap-3 text-xs font-black">
         {article.readTime && (
-          <span className="px-3 py-1 rounded-none bg-[#FFFF00] text-black border-2 border-black flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
+          <span className="px-3 py-1 rounded-lg bg-[#FFFF00] text-black border-2 border-black flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
             <Clock className="w-3.5 h-3.5 text-black" />
             <span>{article.readTime}</span>
           </span>
         )}
 
-        <span className="px-3 py-1 rounded-none bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white border-2 border-black dark:border-white flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] uppercase">
+        <span className="px-3 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white border-2 border-black dark:border-white flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] uppercase">
           <Calendar className="w-3.5 h-3.5 text-[#166534]" />
           <span>{new Date(article.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
         </span>
@@ -307,7 +307,7 @@ function ArticleHeader({
       </h1>
 
       <div className="flex items-center gap-3.5 pt-3 pb-5 border-b-4 border-black dark:border-white">
-        <div className="relative w-12 h-12 rounded-none border-3 border-black dark:border-white bg-[#166534] overflow-hidden shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] shrink-0">
+        <div className="relative w-12 h-12 rounded-2xl border-3 border-black dark:border-white bg-[#166534] overflow-hidden shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] shrink-0">
           <Image
             src={article.authorAvatar || "/images/avatar.webp"}
             alt={article.authorName || "Author"}
@@ -344,7 +344,7 @@ function ArticleTocSidebar({
 }) {
   return (
     <aside className="lg:col-span-1 order-1">
-      <div className="sticky top-24 p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] ">
+      <div className="sticky top-24 p-5 rounded-2xl border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] ">
         {toc.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-black dark:text-white pb-2 border-b-3 border-black dark:border-white">
@@ -361,7 +361,7 @@ function ArticleTocSidebar({
                     const el = document.getElementById(item.id);
                     if (el) el.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className={`block py-1.5 px-2.5 rounded-none transition-colors border-l-3 border-transparent hover:border-[#166534] hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:text-[#166534] uppercase ${
+                  className={`block py-1.5 px-2.5 rounded-lg transition-colors border-l-3 border-transparent hover:border-[#166534] hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-800 dark:text-neutral-200 hover:text-[#166534] uppercase ${
                     item.level >= 3 ? "pl-4 text-[11px]" : "font-black text-xs"
                   }`}
                 >
@@ -391,7 +391,7 @@ function ArticleTocSidebar({
                   setFontSizeScale(sz);
                   showToast(`Ukuran font diubah ke: ${sz === "sm" ? "Kecil" : sz === "base" ? "Normal" : sz === "lg" ? "Besar" : "Sangat Besar"}`);
                 }}
-                className={`py-1 rounded-none text-center font-black text-xs uppercase transition-all cursor-pointer ${
+                className={`py-1 rounded-lg text-center font-black text-xs uppercase transition-all cursor-pointer ${
                   fontSizeScale === sz
                     ? "bg-[#166534] text-white dark:bg-[#EAB308] dark:text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
                     : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800"
@@ -417,7 +417,7 @@ function ArticleContent({
 }) {
   return (
     <main className="lg:col-span-3 order-2">
-      <article className="p-5 sm:p-10 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] space-y-6 text-black dark:text-white">
+      <article className="p-5 sm:p-10 rounded-3xl border-2 border-black dark:border-white bg-white dark:bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] space-y-6 text-black dark:text-white">
         {renderParsedBlocks(parsedBlocks)}
       </article>
     </main>
@@ -459,9 +459,9 @@ function ArticleComments({
       </div>
 
       {user ? (
-        <form onSubmit={onCommentSubmit} className="p-4 sm:p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
+        <form onSubmit={onCommentSubmit} className="p-4 sm:p-5 rounded-2xl border-2 border-black dark:border-white bg-white dark:bg-black space-y-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
           <div className="flex items-center gap-2 text-xs font-bold text-black dark:text-white">
-            <span className="w-2.5 h-2.5 rounded-none bg-[#00FF66] border border-black" />
+            <span className="w-2.5 h-2.5 rounded-sm bg-[#00FF66] border border-black" />
             <span>{replyTargetId ? "MEMBALAS KOMENTAR" : "MENULIS SEBAGAI"} <strong className="text-[#166534] dark:text-[#EAB308] uppercase">{user.user_metadata?.full_name || user.email?.split("@")[0]}</strong></span>
           </div>
 
@@ -471,14 +471,14 @@ function ArticleComments({
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             maxLength={1000}
-            className="w-full min-h-28 p-3.5 rounded-none bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all resize-y"
+            className="w-full min-h-28 p-3.5 rounded-xl bg-neutral-100 dark:bg-neutral-900 border-2 border-black dark:border-white text-black dark:text-white placeholder:text-neutral-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#166534] transition-all resize-y"
           />
 
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={!commentText.trim()}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#166534] text-white border-2 border-black dark:border-white text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 cursor-pointer"
             >
               <Send className="w-4 h-4" />
               <span>KIRIM KOMENTAR</span>
@@ -491,7 +491,7 @@ function ArticleComments({
           </div>
         </form>
       ) : (
-        <div className="p-4 sm:p-5 rounded-none bg-[#FFFF00] text-black border-4 border-black text-xs font-black flex items-center justify-between shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FFFF00] text-black border-4 border-black text-xs font-black flex items-center justify-between shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <Link
             href={`/login?message=${encodeURIComponent("Kamu harus login dulu untuk berkomentar")}`}
             className="hover:underline flex items-center gap-2 text-black font-black uppercase cursor-pointer"
@@ -503,7 +503,7 @@ function ArticleComments({
 
       <div className="space-y-4">
         {article.comments.length === 0 ? (
-          <div className="p-6 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black text-center text-black dark:text-white font-bold text-xs uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+          <div className="p-6 rounded-2xl border-4 border-black dark:border-white bg-white dark:bg-black text-center text-black dark:text-white font-bold text-xs uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
             BELUM ADA KOMENTAR.
           </div>
         ) : (
@@ -517,14 +517,14 @@ function ArticleComments({
                   key={comment.id}
                   className={`${comment.parent_id
                     ? "ml-4 sm:ml-10 border-l-4 border-y-0 border-r-0 bg-transparent dark:bg-transparent shadow-none p-3 sm:p-4"
-                    : `p-4 sm:p-5 rounded-none border-2 ${
+                    : `p-4 sm:p-5 rounded-2xl border-2 ${
                         "border-black dark:border-white bg-white dark:bg-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
                       }`
                   } space-y-3 text-left`}
                 >
                   <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2">
                     <div className="flex items-center gap-2.5">
-                      <div className={`w-8 h-8 rounded-none ${
+                      <div className={`w-8 h-8 rounded-xl ${
                         "bg-neutral-800 text-white"
                       } font-black text-xs border-2 border-black flex items-center justify-center uppercase`}>
                         {comment.user.name.charAt(0).toUpperCase()}
@@ -948,7 +948,7 @@ export default function ArticleClient({
   };
 
   const renderReadingBadge = (className = "") => (
-    <span className={`inline-flex w-max items-center gap-1.5 rounded-none bg-[#166534] text-white text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${className}`}>
+    <span className={`inline-flex w-max items-center gap-1.5 rounded-lg bg-[#166534] text-white text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${className}`}>
       <Volume2 className="w-3.5 h-3.5 animate-pulse" />
       {READING_LABEL}
     </span>
@@ -965,14 +965,14 @@ export default function ArticleClient({
               <div
                 key={b.key}
                 id={`line-${b.key}`}
-                className="my-6 rounded-none border-4 border-black dark:border-white bg-black text-white overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
+                className="my-6 rounded-2xl border-4 border-black dark:border-white bg-black text-white overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
               >
                 <div className="px-4 py-2.5 bg-[#FFFF00] text-black border-b-3 border-black flex items-center justify-between text-xs font-black uppercase">
                   <span className="text-black font-black">{b.codeLang || "CODE"}</span>
                   <button
                     type="button"
                     onClick={() => handleCopyCode(b.content, Number(b.key.replace("b-", "")))}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white hover:bg-[#166534] transition-all cursor-pointer text-xs font-black border-2 border-black"
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black text-white hover:bg-[#166534] transition-all cursor-pointer text-xs font-black border-2 border-black"
                   >
                     {copiedCodeIndex === Number(b.key.replace("b-", "")) ? (
                       <>
@@ -1035,7 +1035,7 @@ export default function ArticleClient({
                 id={`line-${b.key}`}
                 className={`ml-5 list-disc ${fontClass} text-slate-800 dark:text-slate-200 transition-all duration-300 ${
                   isActiveReading
-                    ? "bg-[#FFFF00] text-slate-950 p-3 rounded-none border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] list-none font-bold"
+                    ? "bg-[#FFFF00] text-slate-950 p-3 rounded-xl border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] list-none font-bold"
                     : "font-normal"
                 }`}
               >
@@ -1066,7 +1066,7 @@ export default function ArticleClient({
             <div
               key={b.key}
               id={`line-${b.key}`}
-              className={`transition-all duration-300 rounded-none ${
+              className={`transition-all duration-300 rounded-xl ${
                 isActiveReading
                   ? "bg-[#FFFF00] text-slate-950 p-3 sm:p-4 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
                   : ""
@@ -1446,7 +1446,7 @@ export default function ArticleClient({
 
         {/* 3. HERO THUMBNAIL IMAGE */}
         {article.thumbnail && (
-          <div className="relative w-full h-64 sm:h-96 rounded-none overflow-hidden border-4 border-black dark:border-white bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
+          <div className="relative w-full h-64 sm:h-96 rounded-3xl overflow-hidden border-4 border-black dark:border-white bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
             <Image
               src={article.thumbnail}
               alt={article.title}
@@ -1573,11 +1573,11 @@ export default function ArticleClient({
         </div>
 
         {/* 5. REACTION & SOCIAL SHARE BAR */}
-        <div className="p-4 sm:p-5 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] ">
+        <div className="p-4 sm:p-5 rounded-2xl border-2 border-black dark:border-white bg-white dark:bg-black flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] ">
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => handleReaction("LIKE")}
-              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl border-2 border-black text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                 article.userReaction === "LIKE"
                   ? "bg-[#166534] text-white"
                   : "bg-white text-black hover:bg-[#FFFF00]"
@@ -1589,7 +1589,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleReaction("DISLIKE")}
-              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-none border-2 border-black text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl border-2 border-black text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                 article.userReaction === "DISLIKE"
                   ? "bg-neutral-800 text-white"
                   : "bg-white text-black hover:bg-neutral-200"
@@ -1606,7 +1606,7 @@ export default function ArticleClient({
             
             <button
               onClick={() => handleSocialShare("wa")}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-[#00FF66] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#00FF66] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
               title="Bagikan ke WhatsApp"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -1617,7 +1617,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleSocialShare("tw")}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-sky-400 text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-400 text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#FFFF00] transition-all"
               title="Bagikan ke X (Twitter)"
             >
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -1628,7 +1628,7 @@ export default function ArticleClient({
 
             <button
               onClick={() => handleSocialShare("li")}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-none bg-blue-600 text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#166534] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-[#166534] transition-all"
               title="Bagikan ke LinkedIn"
             >
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -1671,9 +1671,9 @@ export default function ArticleClient({
                   key={rel.id}
                   href={`/artikel/${rel.slug}`}
                   onClick={() => soundFx.playClick()}
-                  className="p-4 rounded-none border-4 border-black dark:border-white bg-white dark:bg-black hover:-translate-x-1 hover:-translate-y-1 transition-all flex gap-4 items-center group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:shadow-[8px_8px_0px_0px_rgba(22,101,52,1)] cursor-pointer"
+                  className="p-4 rounded-2xl border-4 border-black dark:border-white bg-white dark:bg-black hover:-translate-x-1 hover:-translate-y-1 transition-all flex gap-4 items-center group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:shadow-[8px_8px_0px_0px_rgba(22,101,52,1)] cursor-pointer"
                 >
-                  <div className="relative w-20 h-16 rounded-none bg-black border-2 border-black overflow-hidden shrink-0">
+                  <div className="relative w-20 h-16 rounded-xl bg-black border-2 border-black overflow-hidden shrink-0">
                     {rel.thumbnail ? (
                       <Image src={rel.thumbnail} alt={rel.title} fill className="object-cover group-hover:scale-105 transition-transform" unoptimized />
                     ) : (
@@ -1698,7 +1698,7 @@ export default function ArticleClient({
 
       {/* Toast Popup Notification */}
       {toastMsg && (
-        <div className="fixed bottom-24 right-6 z-50 px-4 py-2.5 rounded-none bg-[#166534] text-white border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="fixed bottom-24 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#166534] text-white border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           {toastMsg}
         </div>
       )}
@@ -1712,7 +1712,7 @@ export default function ArticleClient({
               try { soundFx.playClick(); } catch {}
               setIsTocOpen(!isTocOpen);
             }}
-            className="lg:hidden fixed bottom-24 left-4 z-50 px-4 py-2.5 rounded-none bg-[#FFFF00] text-black text-xs font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black flex items-center gap-2 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+            className="lg:hidden fixed bottom-24 left-4 z-50 px-4 py-2.5 rounded-xl bg-[#FFFF00] text-black text-xs font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-3 border-black flex items-center gap-2 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
           >
             <List className="w-4 h-4 text-black" />
             <span>DAFTAR ISI ({toc.length})</span>
@@ -1720,7 +1720,7 @@ export default function ArticleClient({
 
           {isTocOpen && (
             <div className="lg:hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end justify-center p-4">
-              <div className="w-full max-w-md bg-white dark:bg-black border-4 border-black dark:border-white rounded-none p-5 space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] ">
+              <div className="w-full max-w-md bg-white dark:bg-black border-4 border-black dark:border-white rounded-3xl p-5 space-y-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] ">
                 <div className="flex items-center justify-between border-b-3 pb-3 border-black dark:border-white">
                   <div className="flex items-center gap-2 font-black text-sm uppercase text-black dark:text-white">
                     <List className="w-4 h-4 text-[#166534]" />
@@ -1729,7 +1729,7 @@ export default function ArticleClient({
                   <button
                     type="button"
                     onClick={() => setIsTocOpen(false)}
-                    className="w-8 h-8 rounded-none bg-[#166534] text-white border-2 border-black font-black text-xs flex items-center justify-center cursor-pointer"
+                    className="w-8 h-8 rounded-xl bg-[#166534] text-white border-2 border-black font-black text-xs flex items-center justify-center cursor-pointer"
                   >
                     ✕
                   </button>
@@ -1747,7 +1747,7 @@ export default function ArticleClient({
                         const el = document.getElementById(item.id);
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className={`block py-2 px-3 rounded-none transition-colors border-l-3 border-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white uppercase ${
+                      className={`block py-2 px-3 rounded-xl transition-colors border-l-3 border-black bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white uppercase ${
                         item.level >= 3 ? "pl-6 text-xs font-bold" : "text-xs font-black"
                       }`}
                     >
