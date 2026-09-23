@@ -38,6 +38,7 @@ import {
 import { soundFx } from "@/lib/audio/sound";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import ConfirmModal from "@/components/ConfirmModal";
+import SwipeRow from "@/components/SwipeRow";
 import { isBookmarked, toggleBookmark, subscribeBookmarks } from "@/lib/bookmarks";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useDebouncedAction } from "@/lib/hooks/useDebouncedAction";
@@ -540,13 +541,34 @@ function ArticleComments({
                     </div>
 
                     {comment.canDelete && (
-                      <button
-                        onClick={() => setDeleteCommentId(comment.id)}
-                        className="p-2 -mr-2 text-black dark:text-white hover:text-red-600 transition-colors cursor-pointer"
-                        title="Hapus komentar saya"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="w-20 shrink-0">
+                        <SwipeRow
+                          actions={[
+                            {
+                              id: "delete",
+                              label: "Hapus",
+                              icon: <Trash2 className="w-4 h-4" />,
+                            },
+                          ]}
+                          onAction={() => setDeleteCommentId(comment.id)}
+                          actionColor="#e5484d"
+                          drawerColor="#3f3f46"
+                          rowColor="transparent"
+                          textColor="transparent"
+                          height={40}
+                          radius={10}
+                          actionWidth={72}
+                          direction="left"
+                          snapBounce={0.2}
+                          resistance={0.55}
+                          collapseMs={200}
+                          commitAt={0.6}
+                          fullSwipe
+                          style={{ marginBottom: 0 }}
+                        >
+                          <span className="sr-only">Hapus komentar</span>
+                        </SwipeRow>
+                      </div>
                     )}
                   </div>
 
