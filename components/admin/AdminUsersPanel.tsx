@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Crown, Search, ShieldCheck, UserRound, Users } from "lucide-react";
+import { Crown, Search, ShieldCheck, Trash2, UserRound, Users } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
-import { updateUserRole } from "@/lib/actions/auth";
+import { deleteUser, updateUserRole } from "@/lib/actions/auth";
 
 export type AdminUserItem = {
   id: string;
@@ -23,6 +23,7 @@ export default function AdminUsersPanel({ initialUsers = [] }: AdminUsersPanelPr
   const [searchQuery, setSearchQuery] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const filteredUsers = useMemo(() => {
     const normalized = searchQuery.toLowerCase();
@@ -54,6 +55,26 @@ export default function AdminUsersPanel({ initialUsers = [] }: AdminUsersPanelPr
       prev.map((user) => (user.id === userId ? { ...user, role: nextRole } : user))
     );
     setStatusMsg({ type: "success", text: `Role pengguna berhasil diubah menjadi ${nextRole}.` });
+  };
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    const confirmed = window.confirm(`Apakah Anda yakin ingin menghapus user "${userName}"? Aksi ini tidak bisa dibatalkan.`);
+    if (!confirmed) return;
+
+    soundFx.playClick();
+    setDeletingId(userId);
+    setStatusMsg(null);
+
+    const result = await deleteUser(userId);
+    setDeletingId(null);
+
+    if (result.error) {
+      setStatusMsg({ type: "error", text: result.error });
+      return;
+    }
+
+    setUsers((prev) => prev.filter((user) => user.id !== userId));
+    setStatusMsg({ type: "success", text: `User "${userName}" berhasil dihapus.` });
   };
 
   return (
@@ -147,18 +168,28 @@ export default function AdminUsersPanel({ initialUsers = [] }: AdminUsersPanelPr
                       </span>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-end">
                       <button
                         type="button"
                         disabled={busyId === user.id}
                         onClick={() => handleToggleRole(user.id, user.role)}
-                        className={`w-full rounded-xl border px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] transition ${
+                        className={`w-full rounded-xl border px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] transition md:w-auto ${
                           isAdmin
                             ? "border-[#f4d7d7] bg-[#fff1f1] text-[#b42318] hover:bg-[#ffe4e4]"
                             : "border-[#cfe6d8] bg-[#edf9f1] text-[#1F6F52] hover:bg-[#e4f6eb]"
                         } disabled:cursor-not-allowed disabled:opacity-60`}
                       >
                         {busyId === user.id ? "Proses..." : isAdmin ? "Jadikan User" : "Jadikan Admin"}
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={deletingId === user.id}
+                        onClick={() => handleDeleteUser(user.id, user.name || user.email)}
+                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#f4d7d7] bg-[#fff1f1] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#b42318] transition hover:bg-[#ffe4e4] disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        {deletingId === user.id ? "Menghapus..." : "Hapus"}
                       </button>
                     </div>
                   </div>

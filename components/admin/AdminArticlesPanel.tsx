@@ -267,102 +267,92 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
         </div>
       </div>
 
-      {/* Articles Table */}
-      <div className="bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] overflow-hidden ">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b-4 border-black dark:border-white text-xs font-black uppercase tracking-wider bg-[#FFFF00] text-black">
-                <th className="py-3.5 px-4 border-r-2 border-black">Artikel</th>
-                <th className="py-3.5 px-4 border-r-2 border-black">Tanggal</th>
-                <th className="py-3.5 px-4 border-r-2 border-black text-center">Interaksi</th>
-                <th className="py-3.5 px-4 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y-2 divide-black dark:divide-white text-xs">
-              {filteredArticles.length > 0 ? (
-                filteredArticles.map((art) => (
-                  <tr key={art.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 border-2 border-black bg-slate-200 dark:bg-slate-900 relative shrink-0 overflow-hidden">
-                          {art.thumbnail ? (
-                            <Image src={art.thumbnail} alt={art.title} fill unoptimized className="object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-neutral-500">
-                              <FileText className="w-4 h-4" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <Link
-                            href={`/artikel/${art.slug}`}
-                            target="_blank"
-                            className="font-black text-black dark:text-white hover:underline truncate block max-w-xs sm:max-w-md uppercase"
-                          >
-                            {art.title}
-                          </Link>
-                          <span className="text-[10px] text-neutral-500 uppercase">{art.category || "Tutorial"}</span>
-                        </div>
-                      </div>
-                    </td>
+      {/* Articles List */}
+      <div className="space-y-4">
+        {filteredArticles.length > 0 ? (
+          filteredArticles.map((art) => (
+            <div
+              key={art.id}
+              className="flex flex-col gap-4 rounded-[20px] border-4 border-black bg-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:bg-[#0E131F] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] md:flex-row md:items-center md:justify-between"
+            >
+              <div className="flex items-start gap-4 min-w-0">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden border-2 border-black bg-slate-200 dark:bg-slate-900">
+                  {art.thumbnail ? (
+                    <Image src={art.thumbnail} alt={art.title} fill unoptimized className="object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-neutral-500">
+                      <FileText className="h-6 w-6" />
+                    </div>
+                  )}
+                </div>
 
-                    <td className="py-3 px-4 whitespace-nowrap text-neutral-600 dark:text-neutral-400">
+                <div className="min-w-0 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-600 dark:text-neutral-300">
+                    <span>{art.category || "Tutorial"}</span>
+                    <span className="text-neutral-400">•</span>
+                    <span>
                       {new Date(art.created_at).toLocaleDateString("id-ID", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
-                    </td>
+                    </span>
+                  </div>
 
-                    <td className="py-3 px-4 text-center whitespace-nowrap">
-                      <span className="inline-block px-2 py-0.5 border border-black bg-[#FEF9C3] text-black text-[10px] font-black">
-                        ❤️ {art.likeCount} · 💬 {art.commentCount}
-                      </span>
-                    </td>
+                  <Link
+                    href={`/artikel/${art.slug}`}
+                    target="_blank"
+                    className="block max-w-xl truncate text-base font-black uppercase text-black hover:text-[#166534] dark:text-white dark:hover:text-[#EAB308]"
+                  >
+                    {art.title}
+                  </Link>
 
-                    <td className="py-3 px-4 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/artikel/${art.slug}`}
-                          target="_blank"
-                          className="p-1.5 border border-black bg-white dark:bg-slate-900 hover:bg-[#FFFF00] text-black dark:text-white transition-colors"
-                          title="Lihat Artikel"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </Link>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-black bg-[#FEF9C3] px-2.5 py-1 text-[10px] font-black uppercase text-black">
+                    <span>❤ {art.likeCount}</span>
+                    <span>•</span>
+                    <span>💬 {art.commentCount}</span>
+                  </div>
+                </div>
+              </div>
 
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEditModal(art)}
-                          className="p-1.5 border border-black bg-[#FFFF00] text-black hover:bg-black hover:text-white transition-colors cursor-pointer"
-                          title="Edit Artikel"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
+              <div className="flex items-center gap-2 md:justify-end">
+                <Link
+                  href={`/artikel/${art.slug}`}
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition hover:bg-[#FFFF00] dark:bg-slate-900 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
+                  title="Lihat Artikel"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span>Lihat</span>
+                </Link>
 
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(art.id, art.title)}
-                          className="p-1.5 border border-black bg-red-600 text-white hover:bg-red-800 transition-colors cursor-pointer"
-                          title="Hapus Artikel"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="py-8 text-center text-neutral-500 font-bold uppercase text-xs">
-                    {searchQuery ? "TIDAK ADA ARTIKEL BERDASARKAN PENCARIAN" : "BELUM ADA ARTIKEL"}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                <button
+                  type="button"
+                  onClick={() => handleOpenEditModal(art)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-[#FFFF00] px-3 py-2 text-[10px] font-black uppercase text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition hover:bg-[#EAB308]"
+                  title="Edit Artikel"
+                >
+                  <Edit3 className="h-3.5 w-3.5" />
+                  <span>Edit</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleDelete(art.id, art.title)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-red-600 px-3 py-2 text-[10px] font-black uppercase text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition hover:bg-red-800"
+                  title="Hapus Artikel"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>Hapus</span>
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-[20px] border-4 border-dashed border-black bg-white p-10 text-center text-xs font-black uppercase text-neutral-600 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:bg-[#0E131F] dark:text-neutral-300 dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+            {searchQuery ? "TIDAK ADA ARTIKEL BERDASARKAN PENCARIAN" : "BELUM ADA ARTIKEL"}
+          </div>
+        )}
       </div>
 
       {/* Comments Moderation Modal */}

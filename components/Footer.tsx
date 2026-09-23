@@ -75,12 +75,12 @@ export default function Footer({ isNight = false }: FooterProps) {
     },
     {
       name: "LinkedIn",
-      href: "www.linkedin.com/in/brimas-pradika-utama-4a8361422",
+      href: "www.linkedin.com/in/brimas-pradika-utama",
       icon: LinkedInIcon,
     },
     {
       name: "Instagram",
-      href: "https://instagram.com/Kluweks_02",
+      href: "https://instagram.com/kluweks_02",
       icon: InstagramIcon,
     },
     {
@@ -90,7 +90,7 @@ export default function Footer({ isNight = false }: FooterProps) {
     },
     {
       name: "TikTok",
-      href: "https://tiktok.com/@brimaspradika",
+      href: "https://tiktok.com/@kluweks_02",
       icon: TikTokIcon,
     },
   ];

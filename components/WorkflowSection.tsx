@@ -108,13 +108,13 @@ export default function WorkflowSection() {
         <div className="rounded-3xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-3 sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
             {WORKFLOW_STEPS.map((step, index) => (
-              <div key={step.id} className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+              <div key={step.id} className="relative flex items-center flex-1 min-w-0 sm:min-h-[82px]">
                 <button
                   type="button"
                   aria-current={index === activeStep ? "step" : undefined}
                   aria-label={`Open ${step.title} workflow step`}
                   onClick={() => goToStep(index)}
-                  className={`group relative flex w-full items-center gap-2.5 rounded-2xl border-2 px-2.5 py-2.5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#166534]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0E121D] ${
+                  className={`group relative z-10 flex w-full items-center gap-2.5 rounded-2xl border-2 px-2.5 py-2.5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#166534]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0E121D] ${
                     index === activeStep
                       ? "border-slate-900 bg-[#EAB308] text-slate-950 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
                       : index < activeStep
@@ -144,11 +144,28 @@ export default function WorkflowSection() {
                 </button>
 
                 {index < WORKFLOW_STEPS.length - 1 && (
-                  <div
-                    className={`hidden h-1 flex-1 rounded-full transition-all duration-300 sm:block ${
-                      connectorState[index].isActive ? "bg-[#166534]" : "bg-slate-200 dark:bg-slate-700"
-                    }`}
-                  />
+                  <div className="pointer-events-none absolute left-[calc(100%-0.35rem)] top-1/2 z-0 hidden h-[3px] -translate-y-1/2 sm:block">
+                    <div
+                      className={`h-full w-[calc(100%-0.6rem)] border-t-[3px] border-dashed transition-all duration-500 ease-out ${
+                        connectorState[index].isActive
+                          ? "border-[#166534]"
+                          : "border-slate-300 dark:border-slate-600"
+                      }`}
+                      style={{
+                        borderStyle: "dashed",
+                        borderTopWidth: "3px",
+                        borderImage: "none",
+                        width: "calc(100% - 0.8rem)",
+                        minWidth: "22px",
+                        maxWidth: "120px",
+                        background: "transparent",
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        paddingRight: "0.2rem",
+                        opacity: 1,
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             ))}

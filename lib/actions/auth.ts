@@ -130,6 +130,46 @@ export async function updateUserRole(userId: string, role: "ADMIN" | "USER") {
   }
 }
 
+export async function deleteUser(userId: string) {
+  try {
+    const currentUser = await getAuthenticatedUser();
+    const currentEmail = currentUser?.email?.toLowerCase().trim();
+
+    if (!currentEmail) {
+      return { error: "Sesi Anda tidak valid. Silakan login ulang." };
+    }
+
+    const isAdmin = await checkIsAdmin(currentEmail);
+    if (!isAdmin) {
+      return { error: "Anda tidak memiliki izin untuk menghapus user." };
+    }
+
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, role: true },
+    });
+
+    if (!targetUser) {
+      return { error: "User yang dipilih tidak ditemukan." };
+    }
+
+    if (targetUser.email.toLowerCase() === currentEmail) {
+      return { error: "Anda tidak dapat menghapus akun sendiri." };
+    }
+
+    await prisma.user.delete({ where: { id: userId } });
+
+    revalidatePath("/admin");
+    revalidatePath("/dashboard");
+    revalidatePath("/", "layout");
+
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to delete user:", err);
+    return { error: "Gagal menghapus user. Silakan coba lagi." };
+  }
+}
+
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---
 // Sesuaikan nama field (name, email, dst) dengan schema.prisma kamu.
 export async function syncUserToDatabase(
