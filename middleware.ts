@@ -12,9 +12,9 @@ export const config = {
      * - _next/static (file statis)
      * - _next/image (optimisasi image)
      * - favicon.ico, manifest.json, robots.txt, sitemap.xml
-     * - file publik (gambar, icons, dll)
+     * - file publik (gambar, icons, video, dll)
      * - api/auth/ (OAuth callback — jangan intercept)
      */
-    "/((?!_next/static|_next/image|favicon.ico|manifest.json|robots.txt|sitemap.xml|images/|icons/|animations/|api/auth/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|riv)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.json|robots.txt|sitemap.xml|images/|icons/|animations/|videos/|api/auth/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|riv|mp4|webm|mov)$).*)",
   ],
 };

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 const ONBOARDING_KEY = "brimas_onboarding_seen";
 const TRIGGER_AT_SECONDS = 8.0;
 const TRANSITION_DELAY_MS = 180;
+const VIDEO_ERROR_REDIRECT_DELAY_MS = 2500;
 
 export default function OnboardingSplash() {
   const router = useRouter();
@@ -54,8 +55,11 @@ export default function OnboardingSplash() {
       return () => window.clearTimeout(timer);
     }
 
-    const isMobileViewport = window.innerWidth < 768;
-    setVideoSource(isMobileViewport ? "/videos/onboarding-mobile.mp4" : "/videos/onboarding-desktop.mp4");
+    const resolvedSource = window.innerWidth < 768
+      ? "/Mobile_app_onboarding_animation_20260923230528 (1) (1) (1) (1).mp4"
+      : "/Minimalist_app_onboarding_animation_20260923230523 (1) (1) (1) (1).mp4";
+    console.log("[onboarding] resolved src:", resolvedSource);
+    setVideoSource(resolvedSource);
   }, [finishOnboarding, router]);
 
   useEffect(() => {
@@ -64,8 +68,8 @@ export default function OnboardingSplash() {
     const video = videoRef.current;
 
     const handleTimeUpdate = () => {
-      // Timing target: roughly when the stylized "B" reaches full-screen zoom.
-      // Adjust this number after preview in-browser if the impact feels slightly early/late.
+      // Timing target: the moment the stylized "B" reaches the full-screen zoom peak.
+      // Adjust this value after previewing the actual video in-browser.
       if (video.currentTime >= TRIGGER_AT_SECONDS) {
         finishOnboarding();
       }
@@ -76,9 +80,10 @@ export default function OnboardingSplash() {
     };
 
     const handleVideoError = () => {
+      console.error("[onboarding] video error:", video.error?.code, video.error?.message, video.currentSrc);
       window.setTimeout(() => {
         finishOnboarding();
-      }, 500);
+      }, VIDEO_ERROR_REDIRECT_DELAY_MS);
     };
 
     video.addEventListener("timeupdate", handleTimeUpdate);
@@ -111,18 +116,21 @@ export default function OnboardingSplash() {
         <video
           ref={videoRef}
           key={videoSource}
-          src={videoSource}
           autoPlay
           muted
           playsInline
           preload="auto"
           className="h-full w-full object-cover"
-          onError={() => {
+          onError={(event) => {
+            const element = event.currentTarget;
+            console.error("[onboarding] video error:", element.error?.code, element.error?.message, element.currentSrc);
             window.setTimeout(() => {
               finishOnboarding();
-            }, 500);
+            }, VIDEO_ERROR_REDIRECT_DELAY_MS);
           }}
-        />
+        >
+          <source src={videoSource} type="video/mp4" />
+        </video>
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-black text-white">
           <div className="select-none text-[18rem] font-black leading-none tracking-[-0.14em] sm:text-[24rem]">
