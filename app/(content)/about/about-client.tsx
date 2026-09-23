@@ -39,8 +39,8 @@ import { TECH_STACK_ITEMS } from "@/lib/tech-stack";
 const TIMELINE_EVENTS = [
   {
     year: "2026",
-    title_id: "Sertifikasi BCT Trial Class 2026",
-    title_en: "BCT Trial Class 2026 Certification",
+    title_id: "Sertifikasi BCT Trial Class 2025",
+    title_en: "BCT Trial Class 2025 Certification",
     school_id: "BCT X Trial Class",
     school_en: "BCT X Trial Class",
     desc_id: "Menyelesaikan kelas pelatihan intensif pemrograman dan integrasi sistem modern dengan nilai memuaskan.",
@@ -49,7 +49,7 @@ const TIMELINE_EVENTS = [
     color: "#EAB308",
   },
   {
-    year: "2025 - Present",
+    year: "2024 - 2027",
     title_id: "Siswa Rekayasa Perangkat Lunak (RPL)",
     title_en: "Software Engineering Student (RPL)",
     school_id: "SMK Bhakti Mulia Pare",
@@ -233,8 +233,8 @@ export default function AboutClient() {
             <div className="space-y-4 text-xs sm:text-sm leading-relaxed text-black dark:text-white">
               <p className="p-4 rounded-none border-3 border-black dark:border-white bg-[#FEF9C3] dark:bg-[#121824] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] font-bold">
                   {lang === "id"
-                    ? "Saya Brimas Pradika Utama, pengembang perangkat lunak dari Pare, Kediri. Saat ini saya menempuh pendidikan Rekayasa Perangkat Lunak (RPL) di SMK Bhakti Mulia Pare."
-                    : "I am Brimas Pradika Utama, a software developer from Pare, Kediri. I am currently studying Software Engineering at SMK Bhakti Mulia Pare."}
+                    ? "Saya Brimas Pradika Utama, Siswa Rekayasa Perangkat Lunak (RPL) di SMK Bhakti Mulia Pare. Saya tertarik pada dunia pemrograman dan senang mempelajari bagaimana sebuah ide dapat dikembangkan menjadi aplikasi yang nyata."
+                    : "I’m Brimas Pradika Utama, a Software Engineering student at SMK Bhakti Mulia Pare. I’m passionate about programming and enjoy learning how ideas can be turned into real-world applications."}
               </p>
 
               <p>
@@ -245,8 +245,8 @@ export default function AboutClient() {
 
               <p>
                 {lang === "id"
-                    ? "Di luar kegiatan sekolah, saya mengikuti pelatihan dan kegiatan teknologi seperti BCT Trial Class 2026, serta mengembangkan proyek fullstack dan AI sebagai bagian dari penguatan kompetensi."
-                    : "Outside school, I participate in technology training such as BCT Trial Class 2026 and develop fullstack and AI projects to strengthen my skills."}
+                    ? "Bagi saya, belajar coding bukan hanya tentang membuat program berjalan, tetapi juga memahami cara kerja, struktur, dan alasan di balik setiap kode. Saya terus mencoba berbagai project untuk memperluas pengalaman dan meningkatkan kemampuan sebagai developer."
+                    : "For me, learning to code is not just about making programs run, but also understanding how they work, their structure, and the reasoning behind each line of code. I continuously explore various projects to broaden my experience and enhance my skills as a developer."}
               </p>
             </div>
 

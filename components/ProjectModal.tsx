@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { X, ExternalLink, Code2 } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -26,6 +25,7 @@ interface ProjectModalProps {
 
 export default function ProjectModal({ project, onClose }: ProjectModalProps) {
   const { lang } = useLanguage();
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -34,8 +34,13 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
       }
     };
     if (project) {
+      setIsVisible(true);
       document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
+    } else {
+      setIsVisible(false);
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
     }
     return () => {
       document.body.style.overflow = "unset";
@@ -50,31 +55,31 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
     return trimmed.startsWith("http://") || trimmed.startsWith("https://");
   };
 
-  return (
-    <AnimatePresence>
-      {project && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto pointer-events-auto">
-          {/* Backdrop Blur Container */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            onClick={() => {
-              soundFx.playClick();
-              onClose();
-            }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md -z-10"
-          />
+  if (!project) return null;
 
-          {/* Modal Container */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 20 }}
-            transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className="w-full max-w-2xl bg-[#0D0D0E] border border-white/15 dark:border-[#26262A] rounded-2xl overflow-hidden text-[#F1EFE9] shadow-2xl relative flex flex-col max-h-[88vh] my-auto"
-          >
+  return (
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto pointer-events-auto transition-opacity duration-200 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      {/* Backdrop Blur Container */}
+      <button
+        type="button"
+        onClick={() => {
+          soundFx.playClick();
+          onClose();
+        }}
+        aria-label="Tutup modal proyek"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md -z-10"
+      />
+
+      {/* Modal Container */}
+      <div
+        className={`w-full max-w-2xl bg-[#0D0D0E] border border-white/15 dark:border-[#26262A] rounded-2xl overflow-hidden text-[#F1EFE9] shadow-2xl relative flex flex-col max-h-[88vh] my-auto transition-all duration-200 ease-out ${
+          isVisible ? "scale-100 translate-y-0 opacity-100" : "scale-95 translate-y-4 opacity-0"
+        }`}
+      >
             {/* Header Image / Thumbnail Banner */}
             <div className="relative w-full overflow-hidden bg-black shrink-0">
               <ProjectImageCarousel
@@ -151,9 +156,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 )}
               </div>
             </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+      </div>
+    </div>
   );
 }

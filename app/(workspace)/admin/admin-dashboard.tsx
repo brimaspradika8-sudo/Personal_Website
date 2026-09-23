@@ -19,6 +19,7 @@ import { soundFx } from "@/lib/audio/sound";
 import AdminSidebar, { AdminTab } from "@/components/admin/AdminSidebar";
 import AdminProjectsPanel from "@/components/admin/AdminProjectsPanel";
 import AdminArticlesPanel from "@/components/admin/AdminArticlesPanel";
+import AdminUsersPanel, { AdminUserItem } from "@/components/admin/AdminUsersPanel";
 import { ProjectItem } from "@/lib/actions/project";
 import { ArticleItem } from "@/lib/actions/article";
 
@@ -51,6 +52,7 @@ interface AdminDashboardProps {
   recentArticles: ArticleRecord[];
   allProjects?: ProjectItem[];
   allArticles?: ArticleItem[];
+  allUsers?: AdminUserItem[];
   initialTab?: AdminTab;
 }
 
@@ -62,6 +64,7 @@ export default function AdminDashboard({
   recentArticles,
   allProjects = [],
   allArticles = [],
+  allUsers = [],
   initialTab = "overview",
 }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
@@ -121,6 +124,7 @@ export default function AdminDashboard({
                 {activeTab === "overview" && "Dashboard Overview"}
                 {activeTab === "artikel" && "Kelola Artikel"}
                 {activeTab === "proyek" && "Kelola Proyek"}
+                {activeTab === "users" && "Kelola User"}
               </h1>
             </div>
           </div>
@@ -342,6 +346,7 @@ export default function AdminDashboard({
 
             {activeTab === "artikel" && <AdminArticlesPanel initialArticles={allArticles} />}
             {activeTab === "proyek" && <AdminProjectsPanel initialProjects={allProjects} />}
+            {activeTab === "users" && <AdminUsersPanel initialUsers={allUsers} />}
           </div>
         </div>
       </main>

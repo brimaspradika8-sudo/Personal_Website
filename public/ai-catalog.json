@@ -1,0 +1,32 @@
+{
+  "name": "Brimas Pradika Utama Portfolio",
+  "description": "Public portfolio, project showcase, and technical writing from Brimas Pradika Utama.",
+  "homepage": "https://brimas.vercel.app/",
+  "version": "1.0.0",
+  "resources": [
+    {
+      "type": "website",
+      "url": "https://brimas.vercel.app/",
+      "title": "Portfolio Home",
+      "description": "Main landing page and entry point"
+    },
+    {
+      "type": "profile",
+      "url": "https://brimas.vercel.app/about",
+      "title": "About",
+      "description": "Professional overview and background"
+    },
+    {
+      "type": "projects",
+      "url": "https://brimas.vercel.app/proyek",
+      "title": "Projects",
+      "description": "Featured software and product work"
+    },
+    {
+      "type": "articles",
+      "url": "https://brimas.vercel.app/artikel",
+      "title": "Articles",
+      "description": "Technical writing and notes"
+    }
+  ]
+}

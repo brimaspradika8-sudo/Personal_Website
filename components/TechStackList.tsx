@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React from "react";
 import { Sparkles } from "lucide-react";
 import { TECH_STACK_ITEMS } from "@/lib/tech-stack";
 
@@ -144,8 +143,6 @@ interface TechStackBentoProps {
 }
 
 export default function TechStackList({ lang }: TechStackBentoProps) {
-  const [isPaused, setIsPaused] = useState(false);
-
   return (
     <section
       id="skills"
@@ -174,22 +171,14 @@ export default function TechStackList({ lang }: TechStackBentoProps) {
 
         {/* Continuous technology strip: compact, legible, and easy to scan. */}
         <div className="overflow-hidden border-y-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] py-3">
-          <motion.div
-            className="flex w-max items-center gap-3 px-3"
-            animate={{ x: [0, -420] }}
-            transition={{ duration: 18, repeat: Infinity, ease: "linear", ...(isPaused ? { repeat: 0 } : {}) }}
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            onFocus={() => setIsPaused(true)}
-            onBlur={() => setIsPaused(false)}
-          >
-          {[...TECH_ITEMS, ...TECH_ITEMS].map((item, index) => (
-            <div key={`${item.id}-${index}`} className="flex items-center gap-2.5 min-w-47.5 px-3 py-2 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-              {item.logo}
-              <span className="whitespace-nowrap text-xs font-black text-slate-950 dark:text-white">{item.name}</span>
-            </div>
-          ))}
-          </motion.div>
+          <div className="animate-marquee flex w-max items-center gap-3 px-3">
+            {[...TECH_ITEMS, ...TECH_ITEMS].map((item, index) => (
+              <div key={`${item.id}-${index}`} className="flex min-w-[180px] items-center gap-2.5 px-3 py-2 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                {item.logo}
+                <span className="whitespace-nowrap text-xs font-black text-slate-950 dark:text-white">{item.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

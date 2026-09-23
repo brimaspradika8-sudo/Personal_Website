@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Mail, Send, Copy, Check, Sparkles, Globe, ExternalLink } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -42,11 +41,11 @@ export default function QuickContactFAB() {
     <>
       {/* Floating Action Button (FAB) */}
       <div className="fixed bottom-36 md:bottom-22 right-5 md:right-6 z-40">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <button
+          type="button"
           onClick={toggleOpen}
-          className="px-4 py-3 rounded-2xl bg-[#EAB308] border-2 sm:border-3 border-slate-900 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex items-center gap-2 cursor-pointer transition-all hover:bg-[#166534] hover:text-white"
+          aria-label={isOpen ? "Tutup panel kontak cepat" : "Buka panel kontak cepat"}
+          className="px-4 py-3 rounded-2xl bg-[#EAB308] border-2 sm:border-3 border-slate-900 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] flex items-center gap-2 cursor-pointer transition-all hover:bg-[#166534] hover:text-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
         >
           {isOpen ? (
             <>
@@ -59,30 +58,27 @@ export default function QuickContactFAB() {
               <span>{lang === "id" ? "HUBUNGI SAYA" : "CONTACT ME"}</span>
             </>
           )}
-        </motion.button>
+        </button>
       </div>
 
       {/* Quick Contact Modal / Bottom Sheet Popup */}
-      <AnimatePresence>
-        {isOpen && (
+      {isOpen && (
+        <div
+          onClick={toggleOpen}
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-slate-950/60 backdrop-blur-xs"
+        >
           <div
-            onClick={toggleOpen}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-slate-950/60 backdrop-blur-xs"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md bg-white dark:bg-[#0E121D] border-t-3 sm:border-3 border-slate-900 dark:border-white rounded-t-3xl sm:rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-5 text-left relative max-h-[85vh] overflow-y-auto"
           >
-            <motion.div
-              onClick={(e) => e.stopPropagation()}
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full max-w-md bg-white dark:bg-[#0E121D] border-t-3 sm:border-3 border-slate-900 dark:border-white rounded-t-3xl sm:rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] space-y-5 text-left relative max-h-[85vh] overflow-y-auto"
-            >
               {/* Mobile Bottom Sheet Drag Bar Pill */}
               <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto sm:hidden -mt-1 mb-2" />
 
               {/* Close Button */}
               <button
+                type="button"
                 onClick={toggleOpen}
+                aria-label="Tutup panel kontak"
                 className="absolute top-4 right-4 p-1 rounded-xl border-2 border-slate-900 dark:border-white bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white hover:bg-[#166534] hover:text-white transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -174,10 +170,9 @@ export default function QuickContactFAB() {
                   {toastMsg}
                 </div>
               )}
-            </motion.div>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </>
   );
 }

@@ -85,8 +85,11 @@ export default function ProjectImageCarousel({
           loop
           playsInline
           preload="metadata"
+          aria-label={`${title} video preview`}
           className="w-full h-full object-cover transition-opacity duration-300"
-        />
+        >
+          <track kind="captions" src="/captions/project-placeholder.vtt" srcLang="id" label="Indonesia" default />
+        </video>
       ) : (
         <Image
           key={currentMedia}
@@ -114,6 +117,7 @@ export default function ProjectImageCarousel({
             onClick={handlePrev}
             className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-black/80 text-white hover:bg-[#FFFF00] hover:text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
             title="Sebelumnya"
+            aria-label={`Lihat media sebelumnya untuk ${title}`}
           >
             <ChevronLeft className="w-4 h-4 stroke-[3]" />
           </button>
@@ -122,6 +126,7 @@ export default function ProjectImageCarousel({
             onClick={handleNext}
             className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-black/80 text-white hover:bg-[#FFFF00] hover:text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
             title="Berikutnya"
+            aria-label={`Lihat media berikutnya untuk ${title}`}
           >
             <ChevronRight className="w-4 h-4 stroke-[3]" />
           </button>
@@ -133,8 +138,10 @@ export default function ProjectImageCarousel({
                 key={idx}
                 type="button"
                 onClick={(e) => handleDotClick(e, idx)}
-                className={`w-2 h-2 rounded-none transition-all cursor-pointer border border-black ${
-                  currentIndex === idx ? "bg-[#FFFF00] scale-125" : "bg-white/60 hover:bg-white"
+                aria-label={`Pilih media ke-${idx + 1} untuk ${title}`}
+                title={`Pilih media ke-${idx + 1}`}
+                className={`w-4 h-4 rounded-full transition-all cursor-pointer border border-black ${
+                  currentIndex === idx ? "bg-[#FFFF00] scale-110" : "bg-white/60 hover:bg-white"
                 }`}
               />
             ))}

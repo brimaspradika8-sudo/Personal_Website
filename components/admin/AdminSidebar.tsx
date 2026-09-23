@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   FileText,
+  Users,
   Globe,
   ExternalLink,
   LogOut,
@@ -17,7 +18,7 @@ import {
 import { soundFx } from "@/lib/audio/sound";
 import { signOut } from "@/lib/actions/auth";
 
-export type AdminTab = "overview" | "artikel" | "proyek";
+export type AdminTab = "overview" | "artikel" | "proyek" | "users";
 
 interface AdminSidebarProps {
   activeTab: AdminTab;
@@ -46,6 +47,7 @@ export default function AdminSidebar({
     { label: "OVERVIEW", icon: LayoutDashboard, tab: "overview" },
     { label: "ARTIKEL (CRUD)", icon: FileText, tab: "artikel" },
     { label: "PROYEK (CRUD)", icon: FolderKanban, tab: "proyek" },
+    { label: "USER (ROLE)", icon: Users, tab: "users" },
     { label: "LIHAT WEBSITE", icon: Globe, href: "/dashboard", external: true },
   ];
 

@@ -26,7 +26,7 @@ export default async function AdminPage() {
     redirect("/dashboard");
   }
 
-  // 2. Fetch seluruh data stats & daftar project/artikel secara paralel
+  // 2. Fetch seluruh data stats & daftar project/artikel/user secara paralel
   const [
     projectsCount,
     articlesCount,
@@ -36,6 +36,7 @@ export default async function AdminPage() {
     recentArticlesRaw,
     allProjects,
     allArticles,
+    allUsersRaw,
   ] = await Promise.all([
     prisma.project.count().catch(() => 0),
     prisma.article.count().catch(() => 0),
@@ -45,6 +46,19 @@ export default async function AdminPage() {
     prisma.article.findMany({ take: 5, orderBy: { created_at: "desc" } }).catch(() => []),
     getProjects().catch(() => []),
     getArticles().catch(() => []),
+    prisma.user
+      .findMany({
+        orderBy: { created_at: "desc" },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          avatar: true,
+          role: true,
+          created_at: true,
+        },
+      })
+      .catch(() => []),
   ]);
 
   const recentProjects = recentProjectsRaw.map((p) => ({
@@ -63,6 +77,15 @@ export default async function AdminPage() {
 
   const plainDbUser = dbUser ? { name: dbUser.name, avatar: dbUser.avatar } : null;
 
+  const allUsers = allUsersRaw.map((u) => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    avatar: u.avatar,
+    role: u.role,
+    created_at: u.created_at ? u.created_at.toISOString() : new Date().toISOString(),
+  }));
+
   return (
     <AdminDashboard
       user={user}
@@ -72,6 +95,7 @@ export default async function AdminPage() {
       recentArticles={recentArticles}
       allProjects={allProjects}
       allArticles={allArticles}
+      allUsers={allUsers}
       initialTab="overview"
     />
   );

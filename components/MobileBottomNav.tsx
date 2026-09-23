@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { FolderGit2, BookOpen, Home, User, UserCheck } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useRouter, usePathname } from "next/navigation";
@@ -77,6 +76,7 @@ export default function MobileBottomNav() {
                   onClick={() => handleNav(item.id, item.href)}
                   onPointerEnter={() => router.prefetch(item.href)}
                   onFocus={() => router.prefetch(item.href)}
+                  aria-label={item.label}
                   className={`w-14 h-14 rounded-full border-4 border-black dark:border-white flex flex-col items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all cursor-pointer ${
                     isActive
                       ? "bg-[#FFFF00] text-black scale-110 ring-4 ring-[#166534]"
@@ -101,17 +101,14 @@ export default function MobileBottomNav() {
               onClick={() => handleNav(item.id, item.href)}
               onPointerEnter={() => router.prefetch(item.href)}
               onFocus={() => router.prefetch(item.href)}
+              aria-label={item.label}
               className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-200 relative ${
                 isActive ? "text-white font-black" : "text-neutral-400 hover:text-white"
               }`}
             >
               {/* Smooth Pill Active Tab Highlight Badge */}
               {isActive && (
-                <motion.div
-                  layoutId="activeMobileBottomTab"
-                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  className="absolute inset-0 bg-[#166534] border-2 border-black dark:border-white rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-0"
-                />
+                <div className="absolute inset-0 bg-[#166534] border-2 border-black dark:border-white rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-0" />
               )}
               
               <IconComponent className={`w-4 h-4 relative z-10 ${isActive ? "text-white" : "text-neutral-400"}`} />

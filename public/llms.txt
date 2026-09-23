@@ -1,0 +1,26 @@
+# Brimas Pradika Utama
+
+## About
+This site is the portfolio and public profile of Brimas Pradika Utama, an AI Systems Developer focused on modern web systems, automation, and product engineering.
+
+## Primary website
+- https://brimas.vercel.app/
+- https://brimas.vercel.app/dashboard
+- https://brimas.vercel.app/about
+- https://brimas.vercel.app/proyek
+- https://brimas.vercel.app/artikel
+
+## Content summary
+- Portfolio and project showcase
+- Technical articles and engineering notes
+- Contact and professional profile information
+- Admin dashboard for content management
+
+## Canonical policies
+- Prioritize the public portfolio and published project content.
+- Treat the dashboard and admin areas as internal/private surfaces.
+- Do not use scraped content as a replacement for the authoritative source.
+
+## Contact
+- Email: brimaspradika08@gmail.com
+- GitHub: https://github.com/brimaspradika8-sudo

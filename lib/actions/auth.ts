@@ -35,6 +35,7 @@ function formatAuthError(errorMsg: string): string {
 
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
+import { getAuthenticatedUser } from "@/lib/auth/get-user";
 
 const checkIsAdminMemoized = cache(async (email?: string | null, userRole?: string | null): Promise<boolean> => {
   if (!email) return false;
@@ -83,6 +84,50 @@ export async function checkIsAdmin(email?: string | null, userRole?: string | nu
 
 export async function checkIsOwner(email?: string | null, userRole?: string | null): Promise<boolean> {
   return checkIsAdmin(email, userRole);
+}
+
+export async function updateUserRole(userId: string, role: "ADMIN" | "USER") {
+  try {
+    const currentUser = await getAuthenticatedUser();
+    const currentEmail = currentUser?.email?.toLowerCase().trim();
+
+    if (!currentEmail) {
+      return { error: "Sesi Anda tidak valid. Silakan login ulang." };
+    }
+
+    const isAdmin = await checkIsAdmin(currentEmail);
+    if (!isAdmin) {
+      return { error: "Anda tidak memiliki izin untuk mengubah role user." };
+    }
+
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, role: true },
+    });
+
+    if (!targetUser) {
+      return { error: "User yang dipilih tidak ditemukan." };
+    }
+
+    if (targetUser.email.toLowerCase() === currentEmail && role === "USER") {
+      return { error: "Role admin Anda tidak dapat diubah menjadi user." };
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { role },
+      select: { id: true, role: true },
+    });
+
+    revalidatePath("/admin");
+    revalidatePath("/dashboard");
+    revalidatePath("/", "layout");
+
+    return { success: true, user: updatedUser };
+  } catch (err) {
+    console.error("Failed to update user role:", err);
+    return { error: "Gagal mengubah role pengguna. Silakan coba lagi." };
+  }
 }
 
 // --- Sinkronisasi user Supabase ke tabel `User` di database sendiri ---

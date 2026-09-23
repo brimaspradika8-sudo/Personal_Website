@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   User,
   MapPin,
@@ -28,10 +27,11 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
 import dynamic from "next/dynamic";
 import type { ProjectData } from "@/components/ProjectModal";
-import ProjectShowcase from "@/components/ProjectShowcase";
-import ExperienceTimeline from "@/components/ExperienceTimeline";
+const ProjectShowcase = dynamic(() => import("@/components/ProjectShowcase"), { ssr: false });
+const ExperienceTimeline = dynamic(() => import("@/components/ExperienceTimeline"), { ssr: false });
 import TechStackList from "@/components/TechStackList";
 import Footer from "@/components/Footer";
+import WorkflowSection from "@/components/WorkflowSection";
 import { signOut } from "@/lib/actions/auth";
 import { ArticleItem } from "@/lib/actions/article";
 import { ProjectItem } from "@/lib/actions/project";
@@ -114,6 +114,7 @@ export default function DashboardClient({
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [greetingIndex, setGreetingIndex] = useState(0);
+  const [showDeferredSections, setShowDeferredSections] = useState(false);
 
   const showToast = (msg: string) => {
     soundFx.playClick();
@@ -139,6 +140,24 @@ export default function DashboardClient({
       setGreetingIndex((prev) => (prev + 1) % GREETINGS.length);
     }, 2200);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const anchor = document.getElementById("dashboard-deferred-anchor");
+    if (!anchor) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShowDeferredSections(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "280px" }
+    );
+
+    observer.observe(anchor);
+    return () => observer.disconnect();
   }, []);
 
   const handleToggleMode = () => {
@@ -323,26 +342,12 @@ export default function DashboardClient({
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-12 sm:pt-14 pb-2 sm:pb-4 space-y-4 sm:space-y-6"
-        >
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-12 sm:pt-14 pb-2 sm:pb-4 space-y-4 sm:space-y-6">
           <h1 className="font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-3 sm:space-y-4">
             <span className="block min-h-[1.1em] overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={greetingIndex}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -14 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-5 py-1.5 rounded-2xl font-bold"
-                >
-                  {GREETINGS[greetingIndex]}
-                </motion.span>
-              </AnimatePresence>
+              <span className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-5 py-1.5 rounded-2xl font-bold">
+                {GREETINGS[greetingIndex]}
+              </span>
             </span>
             <span className="block">I’M BRIMAS PRADIKA</span>
             <span className="inline-flex items-center gap-2 text-[#166534] underline decoration-4 underline-offset-4">
@@ -360,28 +365,24 @@ export default function DashboardClient({
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
-            <motion.a
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
+            <a
               href="#projects"
               onClick={() => soundFx.playClick()}
               className="px-6 sm:px-8 py-3.5 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 sm:border-3 border-slate-900 dark:border-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
             >
               <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"} &rarr;</span>
-            </motion.a>
+            </a>
 
-            <motion.a
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
+            <a
               href="#about"
               onClick={() => soundFx.playClick()}
               className="px-6 sm:px-8 py-3.5 rounded-xl bg-[#166534] hover:bg-[#14532D] border-2 sm:border-3 border-slate-900 dark:border-white text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
             >
               <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"} &rarr;</span>
-            </motion.a>
+            </a>
           </div>
 
-        </motion.div>
+        </div>
       </section>
 
       <section
@@ -390,11 +391,7 @@ export default function DashboardClient({
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
           <div className="lg:col-span-5 flex justify-center items-center">
-            <motion.div
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-full max-w-xs sm:max-w-md h-[260px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-[#FFE600] dark:bg-[#0E121D] border-2 sm:border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-4"
-            >
+            <div className="relative w-full max-w-xs sm:max-w-md h-[260px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-[#FFE600] dark:bg-[#0E121D] border-2 sm:border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-4">
               <Image
                 src="/images/avatar.webp"
                 alt="Brimas Pradika Utama"
@@ -403,7 +400,7 @@ export default function DashboardClient({
                 unoptimized
                 className="object-contain object-bottom drop-shadow-xl hover:scale-105 transition-transform duration-300"
               />
-            </motion.div>
+            </div>
           </div>
 
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-left">
@@ -421,8 +418,8 @@ export default function DashboardClient({
               </p>
               <p className="text-xs sm:text-base font-medium leading-relaxed max-w-xl text-slate-800 dark:text-slate-200">
                 {lang === "id"
-                  ? "Siswa SMK Bhakti Mulia Pare yang aktif membangun aplikasi web end-to-end secara profesional. Berfokus pada Fullstack Development dengan PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, dan Docker."
-                  : "Student at SMK Bhakti Mulia Pare actively building end-to-end web applications. Specialized in Fullstack Development with PHP, Laravel, React, Next.js, MySQL/PostgreSQL, Prisma, Supabase, and Docker."}
+                  ? "Halo, saya **Brimas Pradika Utama**, seorang siswa Rekayasa Perangkat Lunak yang memiliki ketertarikan pada teknologi dan pengembangan software. Saya senang membuat website dan aplikasi sambil terus mempelajari teknologi baru. Saat ini, saya fokus mengembangkan kemampuan di bidang **Full-Stack Development** dan mengubah ide menjadi produk digital yang bermanfaat"
+                  : "Hi, I’m **Brimas Pradika Utama**, a Software Engineering student passionate about technology and software development. I enjoy building websites and applications while continuously learning new technologies. I’m currently focused on growing my skills in **Full-Stack Development** and turning ideas into useful, reliable digital products."}
               </p>
             </div>
 
@@ -453,7 +450,7 @@ export default function DashboardClient({
                   <span className="text-[11px] font-bold uppercase">STACK</span>
                 </div>
                 <p className="text-xs font-bold truncate text-slate-950 dark:text-white">
-                  Laravel &bull; Next.js
+                  Laravel 
                 </p>
               </div>
             </div>
@@ -480,12 +477,18 @@ export default function DashboardClient({
         </div>
       </section>
 
-      <TechStackList isNight={isNight} lang={lang} />
+      <WorkflowSection />
 
-      <section
-        id="articles"
-        className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 border-b-2 border-slate-900 dark:border-white text-left"
-      >
+      <div id="dashboard-deferred-anchor" aria-hidden="true" className="h-px w-full" />
+
+      {showDeferredSections ? (
+        <>
+          <TechStackList isNight={isNight} lang={lang} />
+
+          <section
+            id="articles"
+            className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 border-b-2 border-slate-900 dark:border-white text-left"
+          >
         <div className="space-y-6 sm:space-y-10">
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 pb-2">
@@ -566,14 +569,20 @@ export default function DashboardClient({
         </div>
       </section>
 
-      <ProjectShowcase
-        isNight={isNight}
-        lang={lang}
-        fetchedProjects={initialProjects}
-        onSelectProject={(proj) => setSelectedProject(proj)}
-      />
+          <ProjectShowcase
+            isNight={isNight}
+            lang={lang}
+            fetchedProjects={initialProjects}
+            onSelectProject={(proj) => setSelectedProject(proj)}
+          />
 
-      <ExperienceTimeline isNight={isNight} lang={lang} />
+          <ExperienceTimeline isNight={isNight} lang={lang} />
+        </>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-20 text-left">
+          <div className="h-52 rounded-2xl border-2 border-dashed border-slate-900/50 bg-white/40 animate-pulse" />
+        </div>
+      )}
 
       {toastMsg && (
         <div className="fixed bottom-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#166534] text-white font-bold text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">

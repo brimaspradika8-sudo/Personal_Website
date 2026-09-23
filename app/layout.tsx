@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
+import { AnalyticsWrapper } from "@/components/AnalyticsWrapper";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
@@ -83,22 +83,8 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="id" className={montserrat.variable}>
+    <html lang="id" className={montserrat.variable} suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  if (localStorage.getItem("theme_mode") !== "day") localStorage.setItem("theme_mode", "day");
-                  if (localStorage.getItem("landscape_mode") !== "day") localStorage.setItem("landscape_mode", "day");
-                  if (localStorage.getItem("dashboard_theme") !== "day") localStorage.setItem("dashboard_theme", "day");
-                  document.documentElement.classList.remove("dark");
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -108,7 +94,7 @@ export default function RootLayout({
         <LanguageProvider>
           {children}
         </LanguageProvider>
-        <Analytics />
+        <AnalyticsWrapper />
       </body>
     </html>
   );
