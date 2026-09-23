@@ -543,8 +543,8 @@ export async function createArticle(data: {
       },
     });
 
-    revalidatePath("/artikel");
-    revalidatePath("/admin/artikel");
+    revalidatePath("/articles");
+    revalidatePath("/admin/articles");
     revalidatePath("/dashboard");
     return { success: true, article: newArt };
   } catch (err: unknown) {
@@ -583,9 +583,9 @@ export async function deleteArticle(articleId: string) {
         await prisma.article.delete({ where: { id: articleId } });
       }
     }
-    revalidatePath("/artikel");
-    revalidatePath("/admin/artikel");
-    revalidatePath("/dashboard/artikel");
+    revalidatePath("/articles");
+    revalidatePath("/admin/articles");
+    revalidatePath("/dashboard/articles");
     return { success: true };
   } catch (err: unknown) {
     console.error("Error deleting article:", err);
@@ -669,9 +669,9 @@ export async function updateArticle(
       });
     }
 
-    revalidatePath("/artikel");
-    revalidatePath(`/artikel/${slugFormatted}`);
-    revalidatePath("/admin/artikel");
+    revalidatePath("/articles");
+    revalidatePath(`/articles/${slugFormatted}`);
+    revalidatePath("/admin/articles");
     revalidatePath("/dashboard");
     return { success: true, article: updatedArt };
   } catch (err: unknown) {

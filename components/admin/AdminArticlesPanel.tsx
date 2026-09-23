@@ -113,11 +113,11 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus komentar ini secara permanen?")) return;
+    if (!confirm("Are you sure you want to permanently delete this comment?")) return;
     soundFx.playClick();
     const res = await deleteArticleComment(commentId);
     if (res.error) {
-      alert(`Gagal menghapus komentar: ${res.error}`);
+      alert(`Failed to delete comment: ${res.error}`);
     } else {
       setAdminComments((prev) => prev.filter((c) => c.id !== commentId));
     }
@@ -132,7 +132,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
     setStatusMsg(null);
 
     if (!title.trim() || !content.trim()) {
-      setStatusMsg({ type: "error", text: "Judul dan konten wajib diisi." });
+      setStatusMsg({ type: "error", text: "Title and content are required." });
       return;
     }
 
@@ -149,7 +149,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
       if (res.error) {
         setStatusMsg({ type: "error", text: res.error });
       } else {
-        setStatusMsg({ type: "success", text: "Artikel berhasil diperbarui!" });
+        setStatusMsg({ type: "success", text: "Article updated successfully!" });
         setArticles((prev) =>
           prev.map((a) =>
             a.id === editingArticle.id
@@ -176,7 +176,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
       if (res.error) {
         setStatusMsg({ type: "error", text: res.error });
       } else {
-        setStatusMsg({ type: "success", text: "Artikel baru berhasil dibuat!" });
+        setStatusMsg({ type: "success", text: "New article created successfully!" });
         if (res.article) {
           const newArt: ArticleItem = {
             id: res.article.id,
@@ -201,11 +201,11 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
   };
 
   const handleDelete = async (id: string, articleTitle: string) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus artikel "${articleTitle}"?`)) return;
+    if (!confirm(`Are you sure you want to delete the article "${articleTitle}"?`)) return;
     soundFx.playClick();
     const res = await deleteArticle(id);
     if (res.error) {
-      alert(`Gagal menghapus: ${res.error}`);
+      alert(`Delete failed: ${res.error}`);
     } else {
       setArticles((prev) => prev.filter((a) => a.id !== id));
     }
@@ -235,7 +235,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
             className="px-4 py-2 bg-white dark:bg-[#0E131F] text-black dark:text-white border-3 border-black dark:border-white font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FEF9C3] dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
           >
             <MessageSquare className="w-4 h-4 text-red-600" />
-            <span>MODERASI KOMENTAR</span>
+            <span>COMMENT MODERATION</span>
           </button>
 
           <button
@@ -244,7 +244,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
             className="px-5 py-2 bg-[#166534] hover:bg-[#14532D] text-white border-3 border-black dark:border-white font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] transition-all cursor-pointer flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
-            <span>ARTIKEL BARU</span>
+            <span>NEW ARTICLE</span>
           </button>
         </div>
       </div>
@@ -257,13 +257,13 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari judul artikel atau slug..."
+            placeholder="Search article title or slug..."
             className="w-full pl-9 pr-4 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs text-black dark:text-white focus:outline-none"
           />
         </div>
 
         <div className="text-xs text-neutral-600 dark:text-neutral-400 font-black uppercase">
-          Total Terfilter: {filteredArticles.length}
+          Filtered total: {filteredArticles.length}
         </div>
       </div>
 
@@ -320,17 +320,17 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                   href={`/artikel/${art.slug}`}
                   target="_blank"
                   className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition hover:bg-[#FFFF00] dark:bg-slate-900 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
-                  title="Lihat Artikel"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                  <span>Lihat</span>
+title="View article"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    <span>View</span>
                 </Link>
 
                 <button
                   type="button"
                   onClick={() => handleOpenEditModal(art)}
                   className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-[#FFFF00] px-3 py-2 text-[10px] font-black uppercase text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition hover:bg-[#EAB308]"
-                  title="Edit Artikel"
+                  title="Edit article"
                 >
                   <Edit3 className="h-3.5 w-3.5" />
                   <span>Edit</span>
@@ -340,17 +340,17 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                   type="button"
                   onClick={() => handleDelete(art.id, art.title)}
                   className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-red-600 px-3 py-2 text-[10px] font-black uppercase text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition hover:bg-red-800"
-                  title="Hapus Artikel"
+                  title="Delete article"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  <span>Hapus</span>
+                  <span>Delete</span>
                 </button>
               </div>
             </div>
           ))
         ) : (
           <div className="rounded-[20px] border-4 border-dashed border-black bg-white p-10 text-center text-xs font-black uppercase text-neutral-600 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:bg-[#0E131F] dark:text-neutral-300 dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
-            {searchQuery ? "TIDAK ADA ARTIKEL BERDASARKAN PENCARIAN" : "BELUM ADA ARTIKEL"}
+            {searchQuery ? "NO ARTICLES MATCH THIS SEARCH" : "NO ARTICLES YET"}
           </div>
         )}
       </div>
@@ -362,7 +362,7 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
             <div className="flex items-center justify-between pb-3 border-b-3 border-black dark:border-white">
               <h2 className="text-base font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-red-600" />
-                <span>MODERASI KOMENTAR</span>
+                <span>COMMENT MODERATION</span>
               </h2>
               <button
                 type="button"
@@ -375,9 +375,9 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
 
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
               {loadingComments ? (
-                <div className="py-8 text-center text-xs text-neutral-500 font-bold">MEMUAT KOMENTAR...</div>
+                <div className="py-8 text-center text-xs text-neutral-500 font-bold">LOADING COMMENTS...</div>
               ) : adminComments.length === 0 ? (
-                <div className="py-8 text-center text-xs text-neutral-500 font-bold">BELUM ADA KOMENTAR.</div>
+                <div className="py-8 text-center text-xs text-neutral-500 font-bold">NO COMMENTS YET.</div>
               ) : (
                 adminComments.map((com) => (
                   <div key={com.id} className="p-4 border-2 border-black bg-slate-50 dark:bg-slate-900 space-y-2">
@@ -390,14 +390,14 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                         type="button"
                         onClick={() => handleDeleteComment(com.id)}
                         className="p-1 bg-red-600 text-white border border-black hover:bg-red-800 cursor-pointer"
-                        title="Hapus Komentar"
+                        title="Delete comment"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                     <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed ">{com.content}</p>
                     <div className="text-[10px] text-neutral-500 font-bold uppercase pt-1">
-                      ARTIKEL: {com.article.title}
+                      ARTICLE: {com.article.title}
                     </div>
                   </div>
                 ))
@@ -418,10 +418,10 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                 className="px-3 py-1.5 bg-slate-100 dark:bg-slate-900 border-2 border-black dark:border-white text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] hover:text-black transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>KEMBALI</span>
+                <span>BACK</span>
               </button>
               <span className="px-3 py-1 bg-[#FFFF00] text-black border-2 border-black text-xs font-black uppercase">
-                {editingArticle ? "EDIT ARTIKEL" : "TULIS ARTIKEL BARU"}
+                {editingArticle ? "EDIT ARTICLE" : "WRITE NEW ARTICLE"}
               </span>
             </div>
 
@@ -456,27 +456,27 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
               <div className="lg:col-span-8 space-y-4">
                 <div>
                   <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
-                    JUDUL ARTIKEL <span className="text-red-500">*</span>
+                    ARTICLE TITLE <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => handleTitleChange(e.target.value)}
-                    placeholder="Judul artikel utama..."
+                    placeholder="Main article title..."
                     className="w-full px-4 py-3 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-base sm:text-lg font-black focus:outline-none"
                   />
                   <div className="text-[11px] text-neutral-500 pt-1">
-                    Slug Preview: <span className="text-[#166534] font-bold">/artikel/{slug || "judul-artikel"}</span>
+                    Slug preview: <span className="text-[#166534] font-bold">/articles/{slug || "article-title"}</span>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
-                    KONTEN ARTIKEL <span className="text-red-500">*</span>
+                    ARTICLE CONTENT <span className="text-red-500">*</span>
                   </label>
                   <div className="border-3 border-black dark:border-white bg-white dark:bg-[#0E131F] p-1">
-                    <RichTextEditor content={content} onChange={setContent} placeholder="Tulis konten artikel di sini..." />
+                    <RichTextEditor content={content} onChange={setContent} placeholder="Write the article content here..." />
                   </div>
                 </div>
               </div>
@@ -498,12 +498,12 @@ export default function AdminArticlesPanel({ initialArticles = [] }: AdminArticl
                       type="url"
                       value={thumbnail}
                       onChange={(e) => setThumbnail(e.target.value)}
-                      placeholder="URL Gambar Thumbnail..."
+                      placeholder="Thumbnail image URL..."
                       className="w-full px-3 py-2 border-2 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-xs "
                     />
 
                     <label className="block w-full py-2.5 bg-[#FFFF00] text-black border-2 border-black text-center text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-colors cursor-pointer">
-                      {uploadingThumbnail ? "MENGUNGGAH..." : "UNGGAH GAMBAR COVER"}
+                      {uploadingThumbnail ? "UPLOADING..." : "UPLOAD COVER IMAGE"}
                       <input
                         type="file"
                         accept="image/*"

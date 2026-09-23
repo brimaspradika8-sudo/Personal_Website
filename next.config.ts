@@ -22,21 +22,14 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      {
-        source: "/projects",
-        destination: "/proyek",
-        permanent: true,
-      },
-      {
-        source: "/admin/projects",
-        destination: "/admin/proyek",
-        permanent: true,
-      },
-      {
-        source: "/admin/projects/:path*",
-        destination: "/admin/proyek/:path*",
-        permanent: true,
-      },
+      { source: "/proyek", destination: "/projects", permanent: true },
+      { source: "/artikel", destination: "/articles", permanent: true },
+      { source: "/dashboard/proyek", destination: "/dashboard/projects", permanent: true },
+      { source: "/dashboard/artikel", destination: "/dashboard/articles", permanent: true },
+      { source: "/admin/proyek", destination: "/admin/projects", permanent: true },
+      { source: "/admin/proyek/:path*", destination: "/admin/projects/:path*", permanent: true },
+      { source: "/admin/artikel", destination: "/admin/articles", permanent: true },
+      { source: "/admin/artikel/:path*", destination: "/admin/articles/:path*", permanent: true },
     ];
   },
   images: {

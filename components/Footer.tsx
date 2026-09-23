@@ -60,7 +60,7 @@ export default function Footer({ isNight = false }: FooterProps) {
   const isAllowedPage =
     pathname === "/" ||
     pathname === "/dashboard" ||
-    pathname.startsWith("/artikel");
+    pathname.startsWith("/articles");
 
   const scrollToTop = () => {
     soundFx.playClick();
@@ -127,7 +127,7 @@ export default function Footer({ isNight = false }: FooterProps) {
             </Link>
 
             <p className={`text-xs leading-relaxed max-w-sm font-bold ${textMuted}`}>
-              Membangun aplikasi web generasi terbaru, sistem berbasis kecerdasan buatan, serta antarmuka digital performa tinggi.
+              Building modern web applications, AI-powered systems, and high-performance digital interfaces.
             </p>
 
             <div className="flex items-center gap-2 pt-1">
@@ -144,32 +144,32 @@ export default function Footer({ isNight = false }: FooterProps) {
           {/* Quick Navigation Links Column */}
           <div className="md:col-span-3 space-y-3">
             <h4 className={`text-xs font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
-              NAVIGASI CEPAT
+              QUICK NAVIGATION
             </h4>
             <ul className="space-y-2 text-xs font-black">
               <li>
                 <Link href="/dashboard" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
-                  [ BERANDA ]
+                  [ HOME ]
                 </Link>
               </li>
               <li>
                 <Link href="/about" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
-                  [ TENTANG SAYA ]
+                  [ ABOUT ME ]
                 </Link>
               </li>
               <li>
                 <Link href="/dashboard#projects" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
-                  [ PROYEK UNGGULAN ]
+                  [ FEATURED PROJECTS ]
                 </Link>
               </li>
               <li>
-                <Link href="/artikel" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
-                  [ ARTIKEL ]
+                <Link href="/articles" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
+                  [ ARTICLES ]
                 </Link>
               </li>
               <li>
                 <Link href="/profile" onClick={() => soundFx.playClick()} className={`hover:text-[#166534] dark:hover:text-[#00E676] transition-colors block ${textMuted}`}>
-                  [ PROFIL SAYA ]
+                  [ MY PROFILE ]
                 </Link>
               </li>
             </ul>
@@ -178,10 +178,10 @@ export default function Footer({ isNight = false }: FooterProps) {
           {/* Social Media Column */}
           <div className="md:col-span-4 space-y-3">
             <h4 className={`text-xs font-black uppercase tracking-wider ${textColor} border-b-3 ${borderColor} pb-1 inline-block`}>
-              MEDIA SOSIAL
+              SOCIAL MEDIA
             </h4>
             <p className={`text-xs leading-relaxed font-bold ${textMuted}`}>
-              Hubungi saya atau ikuti pembaruan proyek terbaru melalui saluran media sosial berikut.
+              Contact me or follow the latest project updates through these social channels.
             </p>
 
             {/* Social Icons Grid */}
@@ -209,7 +209,7 @@ export default function Footer({ isNight = false }: FooterProps) {
         <div className={`pt-8 border-t-3 ${borderColor} flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-black ${textColor} uppercase`}>
           <p className="flex items-center gap-1.5 ">
             <span>© {new Date().getFullYear()} BRIMAS PRADIKA UTAMA. MADE WITH</span>
-            <span>IN INDONESIA.</span>
+            <span>PASSION.</span>
           </p>
 
           <div className="flex items-center gap-4">
@@ -219,7 +219,7 @@ export default function Footer({ isNight = false }: FooterProps) {
                 onClick={scrollToTop}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-none border-2 border-black dark:border-white bg-[#166534] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
               >
-                <span>KEMBALI KE ATAS</span>
+                <span>BACK TO TOP</span>
                 <ArrowUp className="w-3.5 h-3.5" />
               </button>
             )}

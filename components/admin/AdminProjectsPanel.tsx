@@ -83,7 +83,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
   };
 
   const handleDelete = async (id: string, projectTitle: string) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus proyek "${projectTitle}"?`)) return;
+    if (!confirm(`Are you sure you want to delete the project "${projectTitle}"?`)) return;
 
     soundFx.playClick();
     setDeletingId(id);
@@ -96,7 +96,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
       setStatusMsg({ type: "error", text: res.error });
     } else {
       setProjects((prev) => prev.filter((p) => p.id !== id));
-      setStatusMsg({ type: "success", text: `Proyek "${projectTitle}" berhasil dihapus.` });
+      setStatusMsg({ type: "success", text: `Project "${projectTitle}" deleted successfully.` });
     }
   };
 
@@ -105,7 +105,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
     setStatusMsg(null);
 
     if (!title.trim() || !description.trim()) {
-      setStatusMsg({ type: "error", text: "Judul dan deskripsi proyek wajib diisi." });
+      setStatusMsg({ type: "error", text: "Project title and description are required." });
       return;
     }
 
@@ -148,7 +148,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
       const isEdit = subView === "edit";
       setStatusMsg({
         type: "success",
-        text: isEdit ? "Proyek berhasil diperbarui!" : "Proyek baru berhasil ditambahkan!",
+        text: isEdit ? "Project updated successfully!" : "New project added successfully!",
       });
 
       if (res.project) {
@@ -191,10 +191,10 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
           <span className="px-3.5 py-1.5 bg-[#166534] text-white border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
             <FolderKanban className="w-4 h-4 text-[#FFFF00]" />
             {subView === "list"
-              ? `KELOLA PROYEK (${projects.length})`
+              ? `MANAGE PROJECTS (${projects.length})`
               : subView === "edit"
-              ? "EDIT PROYEK"
-              : "TAMBAH PROYEK BARU"}
+              ? "EDIT PROJECT"
+              : "ADD NEW PROJECT"}
           </span>
         </div>
 
@@ -205,7 +205,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             className="px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all cursor-pointer flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
-            <span>TAMBAH PROYEK</span>
+            <span>ADD PROJECT</span>
           </button>
         ) : (
           <button
@@ -217,7 +217,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             className="px-5 py-2.5 bg-slate-200 dark:bg-slate-900 text-black dark:text-white border-3 border-black dark:border-white font-black text-xs uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] hover:text-black transition-all cursor-pointer flex items-center gap-1.5"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>KEMBALI KE DAFTAR</span>
+            <span>BACK TO LIST</span>
           </button>
         )}
       </div>
@@ -255,13 +255,13 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             </div>
 
             <Link
-              href="/proyek"
+              href="/projects"
               target="_blank"
               onClick={() => soundFx.playClick()}
               className="px-3.5 py-2 border-2 border-black dark:border-white bg-[#EAB308] text-black text-xs font-black uppercase flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#d9a207]"
             >
               <Globe className="w-3.5 h-3.5 text-black" />
-              <span>Lihat Halaman Publik</span>
+              <span>View public page</span>
               <ExternalLink className="w-3 h-3" />
             </Link>
           </div>
@@ -271,7 +271,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             <div className="p-12 bg-white dark:bg-[#0E131F] border-4 border-black dark:border-white text-center space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <FolderGit2 className="w-10 h-10 text-[#166534] mx-auto opacity-70" />
               <p className="text-xs font-black uppercase text-black dark:text-white">
-                BELUM ADA PROYEK DALAM DATABASE
+                NO PROJECTS IN DATABASE YET
               </p>
               <button
                 type="button"
@@ -279,7 +279,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00FF66] text-black border-3 border-black text-xs font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>TAMBAH PROYEK PERTAMA</span>
+                <span>ADD YOUR FIRST PROJECT</span>
               </button>
             </div>
           ) : (
@@ -411,36 +411,36 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
               <span className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <FileText className="w-4 h-4 text-[#166534] dark:text-[#EAB308]" />
-                02. DETAIL PROYEK
+                02. PROJECT DETAILS
               </span>
-              <span className="text-[10px] font-bold text-red-500 uppercase">* WAJIB DIISI</span>
+              <span className="text-[10px] font-bold text-red-500 uppercase">* REQUIRED</span>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
-                  JUDUL PROYEK <span className="text-red-500">*</span>
+                  PROJECT TITLE <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Contoh: Portfolio & Article Studio Platform"
+                  placeholder="Example: Portfolio & Article Studio Platform"
                   className="w-full px-4 py-2.5 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-sm font-bold focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
-                  DESKRIPSI PROYEK <span className="text-red-500">*</span>
+                  PROJECT DESCRIPTION <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   required
                   rows={5}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Tuliskan gambaran umum proyek, fitur utama, teknologi yang digunakan..."
+                  placeholder="Describe the project overview, key features, and technologies used..."
                   className="w-full p-4 border-3 border-black dark:border-white bg-slate-50 dark:bg-slate-900 text-black dark:text-white text-xs font-medium focus:outline-none leading-relaxed"
                 />
               </div>
@@ -452,15 +452,15 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
             <div className="flex items-center justify-between border-b-3 border-black dark:border-white pb-3">
               <span className="text-xs font-black uppercase text-black dark:text-white flex items-center gap-2">
                 <Code2 className="w-4 h-4 text-[#166534] dark:text-[#EAB308]" />
-                03. TAUTAN REPOSITORI & DEPLOY
+                03. REPOSITORY & DEPLOY LINKS
               </span>
-              <span className="text-[10px] font-bold text-neutral-500 uppercase">OPSIONAL</span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase">OPTIONAL</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
-                  LINK REPO GITHUB
+                  GITHUB REPO LINK
                 </label>
                 <input
                   type="url"
@@ -473,7 +473,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
 
               <div>
                 <label className="block text-xs font-black uppercase text-black dark:text-white mb-1">
-                  LINK DEPLOY / LIVE DEMO
+                  DEPLOY / LIVE DEMO LINK
                 </label>
                 <input
                   type="url"
@@ -495,7 +495,7 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
               }}
               className="px-6 py-3 border-3 border-black dark:border-white bg-slate-200 dark:bg-slate-900 text-black dark:text-white text-xs font-black uppercase hover:bg-slate-300 transition-colors cursor-pointer"
             >
-              BATAL
+              CANCEL
             </button>
 
             <button
@@ -506,10 +506,10 @@ export default function AdminProjectsPanel({ initialProjects = [] }: AdminProjec
               <Save className="w-4 h-4" />
               <span>
                 {saving
-                  ? "MENYIMPAN PROYEK..."
+                  ? "SAVING PROJECT..."
                   : subView === "edit"
-                  ? "PERBARUI PROYEK"
-                  : "SIMPAN PROYEK"}
+                  ? "UPDATE PROJECT"
+                  : "SAVE PROJECT"}
               </span>
             </button>
           </div>

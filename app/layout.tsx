@@ -28,6 +28,11 @@ export const metadata: Metadata = {
   keywords: ["Brimas Pradika Utama", "AI Systems Developer", "Next.js", "React", "TypeScript", "Supabase", "Prisma"],
   authors: [{ name: "Brimas Pradika Utama" }],
   creator: "Brimas Pradika Utama",
+  icons: {
+    icon: "/icon.webp",
+    shortcut: "/icon.webp",
+    apple: "/icon.webp",
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -41,7 +46,7 @@ export const metadata: Metadata = {
     siteName: "Brimas Portfolio",
     images: [
       {
-        url: "/api/og",
+        url: "/icon.webp",
         width: 1200,
         height: 630,
         alt: "Brimas Pradika Utama Portfolio",
@@ -54,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
     description: "Personal Portfolio & Dashboard — AI Systems Developer.",
-    images: ["/api/og"],
+    images: ["/icon.webp"],
   },
   robots: {
     index: true,

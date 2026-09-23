@@ -15,24 +15,23 @@ export default function MobileBottomNav() {
   const activeTab = clickedTab ?? (
     pathname === "/profile" || pathname?.startsWith("/profile/")
       ? "profile"
-      : pathname === "/artikel" || pathname?.startsWith("/artikel")
-      ? "artikel"
+      : pathname === "/articles" || pathname?.startsWith("/articles")
+      ? "articles"
       : pathname === "/about" || pathname?.startsWith("/about")
       ? "about"
-      : pathname === "/proyek" || pathname?.startsWith("/proyek")
+      : pathname === "/projects" || pathname?.startsWith("/projects")
       ? "projects"
       : pathname === "/dashboard" || pathname === "/"
       ? "home"
       : ""
   );
 
-  // Exact order: Project -> Artikel -> Home (Center Floating) -> About -> Profile
   const navItems = [
-    { id: "projects", label: lang === "id" ? "PROYEK" : "PROJECT", href: "/proyek", Icon: FolderGit2, isCenter: false },
-    { id: "artikel", label: lang === "id" ? "ARTIKEL" : "ARTIKEL", href: "/artikel", Icon: BookOpen, isCenter: false },
-    { id: "home", label: lang === "id" ? "BERANDA" : "HOME", href: "/dashboard", Icon: Home, isCenter: true },
-    { id: "about", label: lang === "id" ? "TENTANG" : "ABOUT", href: "/about", Icon: User, isCenter: false },
-    { id: "profile", label: lang === "id" ? "PROFIL" : "PROFILE", href: "/profile", Icon: UserCheck, isCenter: false },
+    { id: "projects", label: "PROJECTS", href: "/projects", Icon: FolderGit2, isCenter: false },
+    { id: "articles", label: "ARTICLES", href: "/articles", Icon: BookOpen, isCenter: false },
+    { id: "home", label: "HOME", href: "/dashboard", Icon: Home, isCenter: true },
+    { id: "about", label: "ABOUT", href: "/about", Icon: User, isCenter: false },
+    { id: "profile", label: "PROFILE", href: "/profile", Icon: UserCheck, isCenter: false },
   ];
 
   const handleNav = (tabId: string, href: string) => {
@@ -55,7 +54,7 @@ export default function MobileBottomNav() {
     }
   };
 
-  if (pathname?.startsWith("/admin") || pathname?.startsWith("/dashboard/artikel")) {
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/dashboard/articles")) {
     return null;
   }
 

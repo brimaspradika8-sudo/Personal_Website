@@ -89,7 +89,7 @@ export async function updateSession(request: NextRequest) {
       pathname === "/dashboard/admin" ||
       pathname.startsWith("/admin/projects") ||
       pathname.startsWith("/admin/users") ||
-      pathname.startsWith("/dashboard/admin/proyek");
+      pathname.startsWith("/dashboard/admin/projects");
 
     // Fast-path: jika tidak ada cookie Supabase Auth dan bukan route /admin, hindari panggilan HTTP getUser()
     const hasAuthCookie = request.cookies.getAll().some((c) => c.name.startsWith("sb-") || c.name.includes("auth-token"));

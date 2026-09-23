@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import Image from "next/image";
 import { Crown, Search, ShieldCheck, Trash2, UserRound, Users } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 import { deleteUser, updateUserRole } from "@/lib/actions/auth";
@@ -143,7 +144,14 @@ export default function AdminUsersPanel({ initialUsers = [] }: AdminUsersPanelPr
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#d9d1c5] bg-[#efe2b8] text-sm font-bold text-slate-900">
                         {user.avatar ? (
-                          <img src={user.avatar} alt={user.name || user.email} className="h-full w-full object-cover" />
+                          <Image
+                            src={user.avatar}
+                            alt={user.name || user.email}
+                            width={44}
+                            height={44}
+                            unoptimized
+                            className="h-full w-full object-cover"
+                          />
                         ) : (
                           initials
                         )}

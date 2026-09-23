@@ -1,41 +1,97 @@
-## Project Structure
+# Personal Website
+
+A portfolio and editorial platform built with Next.js, Supabase, Prisma, and Tailwind. The app includes a public portfolio, article publishing, project showcase, dashboard, and admin tools.
+
+## Features
+
+- Public portfolio homepage and about page
+- Article browsing, article detail pages, reactions, and comments
+- Project showcase with media galleries and live links
+- Auth flows for login, registration, and password reset
+- User dashboard and admin management panel
+- Supabase-based storage, auth, and session middleware
+
+## Project structure
 
 ```text
 app/
-	(authentication)/  Login, register, forgot password, OAuth callback
-	(content)/         Public portfolio, articles, projects, legal pages
-	(workspace)/       Dashboard, profile, and admin workspace
-	api/               Route Handlers for comments, reactions, upload, TTS, OG
-components/          Shared UI components; admin UI lives in components/admin
+  (auth)/             Login, registration, password recovery, and OAuth callback
+  (public)/           Public portfolio pages, articles, and projects
+  (app)/              Dashboard, profile, and admin workspace
+  api/                Comment, reaction, upload, TTS, and OG endpoints
+components/
+  admin/              Admin-specific panels and sidebar
+  ...                 Shared UI components
 lib/
-	actions/           Server Actions grouped by domain
-	auth/              Authenticated-user helpers
-	security/          Input validation, sanitization, CSRF, rate limiting
-	supabase/           Supabase clients, middleware, storage, URL helpers
-	i18n/              Language context and dictionaries
-prisma/              Database schema and migrations
-public/              Static images and animations
+  actions/            Domain-based server actions
+  auth/               Auth helpers
+  security/           Validation, sanitization, CSRF, and rate limiting
+  supabase/           Supabase clients, storage logic, URL helpers, and middleware
+  i18n/               Language context and dictionaries
+prisma/
+  schema.prisma       Database schema
+  migrations/         Prisma migration history
+public/
+  ...                 Static assets, icons, animations, and generated media
 ```
 
-Route group names in parentheses are internal organization only. They do not change public URLs: `(authentication)/login` is still `/login`, and `(workspace)/dashboard` is still `/dashboard`.
+Route groups in parentheses are internal organization only. They do not change public URLs; for example, `(auth)/login` still resolves to `/login`, and `(app)/dashboard` still resolves to `/dashboard`.
 
-Naming convention: public route folders use the existing Indonesian URLs (`artikel`, `proyek`), while code files describe their role explicitly (`artikel-detail-client.tsx`, `proyek-list-client.tsx`).
+## Routes and naming
 
-## Deployment
+The app uses English public route names for clarity:
 
-Generate Prisma Client and apply committed migrations before starting the app:
+- `/dashboard`
+- `/about`
+- `/articles`
+- `/projects`
+- `/profile`
+- `/login`
+- `/register`
+- `/forgot-password`
+
+Legacy Indonesian routes redirect to their English equivalents via the Next.js redirect config.
+
+## Setup
+
+Install dependencies and generate the Prisma client:
 
 ```bash
+npm install
 npx prisma generate
+```
+
+Apply migrations and run production build:
+
+```bash
 npx prisma migrate deploy
 npm run build
 ```
 
-For rate limiting shared across multiple production instances, configure these optional environment variables:
+Start the app locally:
+
+```bash
+npm run dev
+```
+
+## Environment variables
+
+The app expects Supabase credentials and other runtime settings to be configured in your environment. Typical variables include:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+DATABASE_URL=...
+OWNER_EMAIL=...
+ADMIN_EMAILS=...
+```
+
+Optional rate-limit configuration for a multi-instance deployment:
 
 ```text
 UPSTASH_REDIS_REST_URL=...
 UPSTASH_REDIS_REST_TOKEN=...
 ```
 
-Without them, the app falls back to an in-memory limiter, which is suitable for local development but not consistent across server instances.
+If these are not configured, the app gracefully falls back to an in-memory limiter for local development.

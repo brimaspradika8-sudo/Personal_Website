@@ -45,10 +45,10 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
   const NAV_ITEMS: { label: string; icon: React.ElementType; tab?: AdminTab; href?: string; external?: boolean }[] = [
     { label: "OVERVIEW", icon: LayoutDashboard, tab: "overview" },
-    { label: "ARTIKEL (CRUD)", icon: FileText, tab: "artikel" },
-    { label: "PROYEK (CRUD)", icon: FolderKanban, tab: "proyek" },
-    { label: "USER (ROLE)", icon: Users, tab: "users" },
-    { label: "LIHAT WEBSITE", icon: Globe, href: "/dashboard", external: true },
+    { label: "ARTICLES (CRUD)", icon: FileText, tab: "artikel" },
+    { label: "PROJECTS (CRUD)", icon: FolderKanban, tab: "proyek" },
+    { label: "USERS (ROLE)", icon: Users, tab: "users" },
+    { label: "VIEW WEBSITE", icon: Globe, href: "/dashboard", external: true },
   ];
 
   const toggleCollapse = () => {
@@ -96,7 +96,7 @@ export default function AdminSidebar({
             type="button"
             onClick={toggleCollapse}
             className="hidden lg:flex h-9 w-9 items-center justify-center rounded-xl border border-[#d9d1c5] bg-white text-slate-700 shadow-sm hover:border-[#1F6F52] hover:text-[#1F6F52] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1F6F52]/30 focus-visible:ring-offset-2"
-            title={isCollapsed ? "Perluas Sidebar" : "Minimalkan Sidebar"}
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </button>
@@ -199,10 +199,10 @@ export default function AdminSidebar({
             className={`w-full flex items-center justify-center gap-2 ${
               isCollapsed ? "p-2.5" : "px-3 py-2.5"
             } rounded-xl bg-[#e85d5d] text-white text-xs font-semibold uppercase tracking-[0.12em] shadow-[0_10px_20px_rgba(232,93,93,0.18)] hover:bg-[#d84c4c] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#e85d5d]/30 focus-visible:ring-offset-2`}
-            title="Keluar (Logout)"
+            title="Log out"
           >
             <LogOut className="w-4 h-4" />
-            {!isCollapsed && <span>Keluar</span>}
+            {!isCollapsed && <span>Log out</span>}
           </button>
         </div>
       </aside>
