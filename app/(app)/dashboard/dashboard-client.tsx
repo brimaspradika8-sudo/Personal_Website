@@ -210,7 +210,7 @@ export default function DashboardClient({
 
   return (
     <div
-      className={`min-h-screen antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-[calc(92px+env(safe-area-inset-bottom))] md:pb-0 ${
+      className={`min-h-screen antialiased text-left selection:bg-[#DC2626] selection:text-white transition-colors duration-300 pb-[calc(100px+env(safe-area-inset-bottom))] md:pb-0 ${
         isNight ? "bg-[#0B0F17] text-slate-100" : "bg-[#F2F3F4] text-slate-900"
       }`}
     >
@@ -456,51 +456,53 @@ export default function DashboardClient({
                 >
                   {dict.nav.login.toUpperCase()}
                 </Link>
-              )}
+              )      {/* 2. HERO SECTION (Neo-Brutalism Style) */}
+      {/*
+        Ticker sits in document flow AFTER the fixed navbar gap.
+        pt-[72px] on mobile = ~10px top offset + ~52px navbar pill height + 10px gap.
+        This keeps the marquee stripe from ever overlapping the fixed pill header.
+      */}
+      <section id="hero" className="relative flex flex-col items-center justify-start overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
+        {/* Ticker — in-flow, clears the fixed navbar naturally via section padding-top */}
+        <div className="w-full pt-[72px] sm:pt-[88px]">
+          <div className="overflow-hidden py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 pointer-events-none font-bold text-[10px] sm:text-xs tracking-widest uppercase shadow-sm">
+            <div className="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-8">
+              <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
+              <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
+              <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
+              <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
             </div>
-          </div>
-        )}
-      </header>
-
-      {/* 2. HERO SECTION (Neo-Brutalism Style) */}
-      <section id="hero" className="relative flex flex-col items-center justify-start pt-10 pb-4 sm:pt-20 sm:pb-12 overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
-        <div className="absolute top-12 sm:top-24 inset-x-0 overflow-hidden py-1.5 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-bold text-[10px] sm:text-xs tracking-widest uppercase shadow-sm">
-          <div className="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-8">
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
-            <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-8 sm:pt-14 pb-2 sm:pb-4">
-          
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-8 sm:pt-14 pb-8 sm:pb-12">
+
           {/* Greeting Badge */}
-          <div className="mb-3 sm:mb-4">
-            <span className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-4 py-1.5 rounded-xl sm:px-5 sm:py-2 sm:rounded-2xl font-black text-xs sm:text-base uppercase">
+          <div className="mb-4 sm:mb-5">
+            <span className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-4 py-2 rounded-xl sm:px-5 sm:py-2 sm:rounded-2xl font-black text-xs sm:text-base uppercase">
               {GREETINGS[greetingIndex]}
             </span>
           </div>
 
           {/* Headline Title */}
-          <h1 className="font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-[-0.04em] leading-[1.05] uppercase mb-3 sm:mb-4">
-            <span className="block">I’M BRIMAS PRADIKA</span>
+          <h1 className="font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-[-0.04em] leading-[1.05] uppercase mb-4 sm:mb-5">
+            <span className="block">I'M BRIMAS PRADIKA</span>
             <span className="inline-flex items-center gap-2 text-[#166534] underline decoration-4 underline-offset-4">
               UTAMA
               <span className="w-3.5 h-3.5 sm:w-5 sm:h-5 bg-[#EAB308] border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block no-underline shrink-0" />
             </span>
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-xs sm:text-base md:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-medium mb-5 sm:mb-6">
-            Software &amp;{" "}
-            <span className="bg-[#EAB308] text-slate-950 px-1.5 py-0.5 border-2 border-slate-900 font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-xs sm:text-base">
+          {/* Subtitle — AI SYSTEM badge aligned inline with surrounding text */}
+          <p className="text-xs sm:text-base md:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-[1.8] font-medium mb-6 sm:mb-8">
+            Software &amp;
+            <span className="inline-block align-middle mx-1.5 bg-[#EAB308] text-slate-950 px-2 py-0.5 border-2 border-slate-900 font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-xs sm:text-base leading-normal">
               AI SYSTEM
-            </span>{" "}
+            </span>
             Developer berfokus pada arsitektur web modern, integrasi AI agent, dan solusi digital performa tinggi.
           </p>
 
-          {/* CTA Buttons - Vertical stack on mobile (<400px / sm) */}
+          {/* CTA Buttons */}
           <div className="w-full max-w-sm sm:max-w-none flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
             <a
               href="#projects"
@@ -521,16 +523,16 @@ export default function DashboardClient({
 
         </div>
       </section>
-
       {/* 3. ABOUT SECTION */}
       <section
         id="about"
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-16 md:py-20 border-t-2 border-b-2 border-slate-900 dark:border-white"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-10 sm:py-16 md:py-20 border-t-2 border-b-2 border-slate-900 dark:border-white"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
+
           {/* Profile Photo Yellow Box */}
-          <div className="lg:col-span-5 flex justify-center items-center">
-            <div className="relative w-full max-w-[240px] aspect-[4/5] sm:max-w-md sm:aspect-square flex items-center justify-center bg-[#FFE600] dark:bg-[#0E121D] border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-3 sm:p-4 overflow-hidden">
+          <div className="lg:col-span-5 flex justify-center items-start">
+            <div className="relative w-full max-w-[260px] aspect-[4/5] sm:max-w-md sm:aspect-square flex items-center justify-center bg-[#FFE600] dark:bg-[#0E121D] border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-3 sm:p-4 overflow-hidden">
               <Image
                 src="/images/avatar.webp"
                 alt="Brimas Pradika Utama"
@@ -545,81 +547,96 @@ export default function DashboardClient({
             </div>
           </div>
 
-          {/* Profile Details & Info Cards */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-left mt-5 sm:mt-0">
-            {/* Green Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#00E676] text-slate-950 border-2 border-slate-900 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-xs font-bold tracking-widest uppercase">
-              <User className="w-4 h-4 text-slate-950" />
-              <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
-            </div>
+          {/* Profile Card — chip + heading + role + bio + info cards + buttons all inside one card */}
+          <div className="lg:col-span-7 text-left">
+            <div className={`rounded-2xl border-2 border-slate-900 dark:border-white p-5 sm:p-6 space-y-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] ${
+              isNight ? "bg-[#0E121D]" : "bg-white"
+            }`}>
 
-            <div className="space-y-2 sm:space-y-3">
-              <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight leading-none text-slate-950 dark:text-white">
-                BRIMAS <span className="text-[#00C853]">PRADIKA UTAMA</span>
-              </h2>
-              <p className="text-xs sm:text-sm font-bold tracking-wide uppercase text-[#00C853]">
-                Junior Developer &bull; SMK Bhakti Mulia Pare
-              </p>
-              <p className="text-sm sm:text-base font-medium leading-relaxed max-w-xl text-slate-800 dark:text-slate-200">
+              {/* Row 1: Label chips — TENTANG SAYA inside the card, above the heading */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#00E676] text-slate-950 border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-xs font-bold tracking-widest uppercase">
+                  <User className="w-3.5 h-3.5 text-slate-950 shrink-0" />
+                  <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"}</span>
+                </div>
+              </div>
+
+              {/* Row 2: Name + role — clearly separated from chip above */}
+              <div className="space-y-1.5">
+                <h2 className="text-xl xs:text-2xl sm:text-4xl font-black uppercase tracking-tight leading-none text-slate-950 dark:text-white">
+                  BRIMAS <span className="text-[#00C853]">PRADIKA UTAMA</span>
+                </h2>
+                <p className="text-[11px] sm:text-sm font-bold tracking-wide uppercase text-[#00C853]">
+                  Junior Developer &bull; SMK Bhakti Mulia Pare
+                </p>
+              </div>
+
+              {/* Row 3: Bio text */}
+              <p className="text-sm sm:text-base font-medium leading-relaxed text-slate-700 dark:text-slate-300">
                 {lang === "id"
-                  ? "Halo, saya **Brimas Pradika Utama**, seorang siswa Rekayasa Perangkat Lunak yang memiliki ketertarikan pada teknologi dan pengembangan software. Saya senang membuat website dan aplikasi sambil terus mempelajari teknologi baru. Saat ini, saya fokus mengembangkan kemampuan di bidang **Full-Stack Development** dan mengubah ide menjadi produk digital yang bermanfaat"
-                  : "Hi, I’m **Brimas Pradika Utama**, a Software Engineering student passionate about technology and software development. I enjoy building websites and applications while continuously learning new technologies. I’m currently focused on growing my skills in **Full-Stack Development** and turning ideas into useful, reliable digital products."}
+                  ? "Halo, saya Brimas Pradika Utama, seorang siswa Rekayasa Perangkat Lunak yang tertarik pada teknologi dan pengembangan software. Saya senang membuat website dan aplikasi sambil terus belajar hal baru. Fokus saat ini: Full-Stack Development dan mengubah ide menjadi produk digital yang bermanfaat."
+                  : "Hi, I'm Brimas Pradika Utama, a Software Engineering student passionate about technology and software development. I enjoy building websites and apps while continuously learning. Currently focused on Full-Stack Development and turning ideas into useful digital products."}
               </p>
+
+              {/* Row 4: Info cards grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="p-3 sm:p-4 rounded-xl border-2 border-slate-900 dark:border-white bg-[#F2F3F4] dark:bg-[#161B27] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5 text-[#166534]">
+                    <MapPin className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[10px] font-bold uppercase">{lang === "id" ? "SEKOLAH" : "SCHOOL"}</span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white leading-tight">
+                    SMK Bhakti Mulia
+                  </p>
+                </div>
+
+                <div className="p-3 sm:p-4 rounded-xl border-2 border-slate-900 dark:border-white bg-[#F2F3F4] dark:bg-[#161B27] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5 text-[#166534]">
+                    <Code className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[10px] font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white leading-tight">
+                    Junior Developer
+                  </p>
+                </div>
+
+                <div className="col-span-2 sm:col-span-1 p-3 sm:p-4 rounded-xl border-2 border-slate-900 dark:border-white bg-[#F2F3F4] dark:bg-[#161B27] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.5)] flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5 text-[#166534]">
+                    <Layers className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[10px] font-bold uppercase">STACK</span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white leading-tight">
+                    Laravel / Next.js
+                  </p>
+                </div>
+              </div>
+
+              {/* Row 5: Action buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+                <a
+                  href="https://wa.me/6285854746684"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => soundFx.playClick()}
+                  className="flex-1 sm:flex-none px-5 py-3 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 border-slate-900 dark:border-white text-slate-950 font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4 shrink-0" />
+                  <span>{lang === "id" ? "HUBUNGI SAYA" : "CONTACT ME"}</span>
+                </a>
+
+                <Link
+                  href="/profile"
+                  onClick={() => soundFx.playClick()}
+                  className="flex-1 sm:flex-none px-5 py-3 rounded-xl bg-transparent border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+                >
+                  <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
+                </Link>
+              </div>
+
             </div>
-
-            {/* 3 Info Cards Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 items-stretch pt-2">
-              <div className="p-4 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] flex flex-col justify-between h-full space-y-1.5">
-                <div className="flex items-center gap-1.5 text-[#166534]">
-                  <MapPin className="w-4 h-4 shrink-0" />
-                  <span className="text-[11px] font-bold uppercase">{lang === "id" ? "SEKOLAH" : "SCHOOL"}</span>
-                </div>
-                <p className="text-xs sm:text-sm font-bold truncate text-slate-950 dark:text-white">
-                  SMK Bhakti Mulia
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] flex flex-col justify-between h-full space-y-1.5">
-                <div className="flex items-center gap-1.5 text-[#166534]">
-                  <Code className="w-4 h-4 shrink-0" />
-                  <span className="text-[11px] font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
-                </div>
-                <p className="text-xs sm:text-sm font-bold truncate text-slate-950 dark:text-white">
-                  Junior Developer
-                </p>
-              </div>
-
-              <div className="col-span-2 sm:col-span-1 p-4 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] flex flex-col justify-between h-full space-y-1.5">
-                <div className="flex items-center gap-1.5 text-[#166534]">
-                  <Layers className="w-4 h-4 shrink-0" />
-                  <span className="text-[11px] font-bold uppercase">STACK</span>
-                </div>
-                <p className="text-xs sm:text-sm font-bold truncate text-slate-950 dark:text-white">
-                  Laravel / Next.js
-                </p>
-              </div>
-            </div>
-
-            {/* Hubungi Saya & Full Profile Buttons Separated Below Grid */}
-            <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3">
-              <a
-                href="https://wa.me/6285854746684"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => soundFx.playClick()}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 border-slate-900 dark:border-white text-slate-950 font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>{lang === "id" ? "HUBUNGI SAYA" : "CONTACT ME"}</span>
-              </a>
-
-              <Link
-                href="/profile"
-                onClick={() => soundFx.playClick()}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-[#0E121D] border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
-              >
-                <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
-              </Link>
+          </div>
+        </div>
+      </section>ink>
             </div>
           </div>
         </div>
