@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -87,10 +88,14 @@ export default function OnboardingSplash() {
 
       {videoSource && !showStaticFallback ? (
         videoSource.toLowerCase().endsWith(".gif") ? (
-          <img
+          <Image
             key={videoSource}
             src={videoSource}
             alt="Onboarding animation"
+            width={1440}
+            height={900}
+            priority
+            unoptimized
             className="h-full w-full object-cover"
           />
         ) : (

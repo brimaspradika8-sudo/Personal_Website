@@ -2,9 +2,15 @@
   "name": "personal-website",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    ">0.3%",
+    "not dead",
+    "not op_mini all"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma migrate deploy && next build",
+    "build:analyze": "cross-env ANALYZE=true next build --webpack",
     "db:migrate": "prisma migrate deploy",
     "start": "next start",
     "lint": "eslint",
@@ -45,7 +51,9 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.3.4",
     "@tailwindcss/postcss": "^4",
+    "cross-env": "^10.0.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

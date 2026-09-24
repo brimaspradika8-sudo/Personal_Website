@@ -11,6 +11,10 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
+const isProductionEnv =
+  (process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV ?? "production") === "production";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://brimas.vercel.app";
+
 export const viewport: Viewport = {
   themeColor: "#0A0A0B",
   width: "device-width",
@@ -19,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://brimas.vercel.app"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
     template: "%s | Brimas Pradika Utama",
@@ -42,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
     description: "Personal Portfolio & Dashboard — AI Systems Developer.",
-    url: "https://brimas.vercel.app",
+    url: siteUrl,
     siteName: "Brimas Portfolio",
     images: [
       {
@@ -62,8 +66,9 @@ export const metadata: Metadata = {
     images: ["/icon.webp"],
   },
   robots: {
-    index: true,
-    follow: true,
+    index: isProductionEnv,
+    follow: isProductionEnv,
+    nocache: !isProductionEnv,
   },
   verification: {
     google: "googleb7d311d5ce44a83b",
@@ -79,7 +84,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Brimas Pradika Utama",
-    url: "https://brimas.vercel.app",
+    url: siteUrl,
     jobTitle: "AI Systems Developer",
     sameAs: [
       "https://github.com/brimaspradika8-sudo",
