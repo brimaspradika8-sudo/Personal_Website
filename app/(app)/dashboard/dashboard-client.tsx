@@ -11,16 +11,9 @@ import {
   ShieldCheck,
   ArrowRight,
   LogOut,
-  Calendar,
-  Clock,
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  Menu,
-  X,
-  Sun,
-  Moon,
-  Sparkles,
 } from "lucide-react";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -105,15 +98,11 @@ export default function DashboardClient({
   isAdmin = false,
 }: DashboardClientProps) {
   const { lang, toggleLang, dict } = useLanguage();
-  const [mode, setMode] = useState<"day" | "night">("day");
+  const [mode, setMode] = useState<"day" | "night">(() => getSavedTheme());
 
-  useEffect(() => {
-    setMode(getSavedTheme());
-  }, []);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [greetingIndex, setGreetingIndex] = useState(0);
   const [showDeferredSections, setShowDeferredSections] = useState(false);
   const [articleCarouselIndex, setArticleCarouselIndex] = useState(0);
@@ -184,10 +173,6 @@ export default function DashboardClient({
     currentArticlePage * articlePageSize,
     currentArticlePage * articlePageSize + articlePageSize
   );
-
-  useEffect(() => {
-    setArticleCarouselIndex((prev) => Math.min(prev, Math.max(0, totalArticlePages - 1)));
-  }, [totalArticlePages]);
 
   useEffect(() => {
     if (initialArticles.length <= 3) return;
@@ -356,8 +341,8 @@ export default function DashboardClient({
       </header>
 
       {/* 2. HERO SECTION (Neo-Brutalism Style) */}
-      <section id="hero" className="relative flex flex-col items-center justify-start pt-16 sm:pt-28 pb-4 sm:pb-12 overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
-        <div className="absolute top-16 sm:top-24 inset-x-0 overflow-hidden py-1 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-bold text-[9px] sm:text-xs tracking-widest uppercase shadow-sm">
+      <section id="hero" className="relative flex flex-col items-center justify-start pt-8 pb-2 sm:pt-20 sm:pb-10 overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
+        <div className="absolute top-12 sm:top-24 inset-x-0 overflow-hidden py-1 sm:py-2 bg-[#EAB308] border-y-2 border-slate-900 text-slate-950 z-0 pointer-events-none font-bold text-[9px] sm:text-xs tracking-widest uppercase shadow-sm">
           <div className="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-8">
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
             <span>{welcomeGreeting}, PERSONAL WEBSITE BRIMAS PRADIKA UTAMA &bull; JUNIOR WEB DEVELOPER &amp; AI SYSTEMS DEVELOPER </span>
@@ -366,33 +351,33 @@ export default function DashboardClient({
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-9 sm:pt-14 pb-1 sm:pb-4 space-y-3 sm:space-y-6">
-          <h1 className="font-black text-[1.9rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-tight leading-[0.96] uppercase space-y-2 sm:space-y-4">
+        <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-8 sm:pt-14 pb-1 sm:pb-4 space-y-2 sm:space-y-6">
+          <h1 className="font-black text-[1.45rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-[-0.04em] leading-[0.92] uppercase space-y-1.5 sm:space-y-4">
             <span className="block min-h-[1.1em] overflow-hidden">
-              <span className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-5 py-1.5 rounded-2xl font-bold">
+              <span className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-3 py-1 rounded-xl sm:px-5 sm:py-1.5 sm:rounded-2xl font-bold text-[0.92em]">
                 {GREETINGS[greetingIndex]}
               </span>
             </span>
             <span className="block">I’M BRIMAS PRADIKA</span>
-            <span className="inline-flex items-center gap-2 text-[#166534] underline decoration-4 underline-offset-4">
+            <span className="inline-flex items-center gap-2 text-[#166534] underline decoration-4 underline-offset-4 text-[0.96em]">
               UTAMA
-              <span className="w-4 h-4 sm:w-5 sm:h-5 bg-[#EAB308] border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block no-underline shrink-0" />
+              <span className="w-3.5 h-3.5 sm:w-5 sm:h-5 bg-[#EAB308] border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block no-underline shrink-0" />
             </span>
           </h1>
 
-          <p className="text-[11px] sm:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-medium pt-0.5 sm:pt-1">
+          <p className="text-[10px] sm:text-lg text-slate-800 dark:text-slate-200 max-w-2xl leading-relaxed font-medium pt-0.5 sm:pt-1">
             Software &amp;{" "}
-            <span className="bg-[#EAB308] text-slate-950 px-2 py-0.5 border-2 border-slate-900 font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <span className="bg-[#EAB308] text-slate-950 px-1.5 py-0.5 border-2 border-slate-900 font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-[10px] sm:text-lg">
               AI SYSTEM
             </span>{" "}
             Developer berfokus pada arsitektur web modern, integrasi AI agent, dan solusi digital performa tinggi.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 pt-1 sm:pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 pt-0.5 sm:pt-4">
             <a
               href="#projects"
               onClick={() => soundFx.playClick()}
-              className="px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 sm:border-3 border-slate-900 dark:border-white text-slate-950 font-bold text-[10px] sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+              className="px-3.5 sm:px-8 py-2 sm:py-3.5 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 sm:border-3 border-slate-900 dark:border-white text-slate-950 font-bold text-[9px] sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
             >
               <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"} &rarr;</span>
             </a>
@@ -400,7 +385,7 @@ export default function DashboardClient({
             <a
               href="#about"
               onClick={() => soundFx.playClick()}
-              className="px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl bg-[#166534] hover:bg-[#14532D] border-2 sm:border-3 border-slate-900 dark:border-white text-white font-bold text-[10px] sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+              className="px-3.5 sm:px-8 py-2 sm:py-3.5 rounded-xl bg-[#166534] hover:bg-[#14532D] border-2 sm:border-3 border-slate-900 dark:border-white text-white font-bold text-[9px] sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
             >
               <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"} &rarr;</span>
             </a>
@@ -411,11 +396,11 @@ export default function DashboardClient({
 
       <section
         id="about"
-        className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-20 border-t-2 border-b-2 border-slate-900 dark:border-white"
+        className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-20 border-t-2 border-b-2 border-slate-900 dark:border-white"
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-12 items-center">
           <div className="lg:col-span-5 flex justify-center items-center">
-            <div className="relative w-full max-w-[220px] sm:max-w-md h-[220px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-[#FFE600] dark:bg-[#0E121D] border-2 sm:border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-3 sm:p-4">
+            <div className="relative w-full max-w-[200px] sm:max-w-md h-[200px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-[#FFE600] dark:bg-[#0E121D] border-2 sm:border-3 border-slate-900 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] p-2.5 sm:p-4">
               <Image
                 src="/images/avatar.webp"
                 alt="Brimas Pradika Utama"
@@ -434,7 +419,7 @@ export default function DashboardClient({
             </div>
 
             <div className="space-y-2 sm:space-y-3">
-              <h2 className="text-[1.5rem] sm:text-5xl font-black uppercase tracking-tight leading-none text-slate-950 dark:text-white">
+              <h2 className="text-[1.35rem] sm:text-5xl font-black uppercase tracking-tight leading-none text-slate-950 dark:text-white">
                 BRIMAS <span className="text-[#00C853]">PRADIKA UTAMA</span>
               </h2>
               <p className="text-[10px] sm:text-sm font-bold tracking-wide uppercase text-[#00C853]">
@@ -447,7 +432,7 @@ export default function DashboardClient({
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1 sm:pt-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 pt-1 sm:pt-2">
               <div className="p-2.5 sm:p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534]">
                   <MapPin className="w-4 h-4" />
@@ -458,7 +443,7 @@ export default function DashboardClient({
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
+              <div className="p-2.5 sm:p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534]">
                   <Code className="w-4 h-4" />
                   <span className="text-[11px] font-bold uppercase">{lang === "id" ? "PERAN" : "ROLE"}</span>
@@ -468,22 +453,22 @@ export default function DashboardClient({
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
+              <div className="p-2.5 sm:p-3.5 rounded-xl border-2 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] space-y-1">
                 <div className="flex items-center gap-1.5 text-[#166534]">
                   <Layers className="w-4 h-4" />
                   <span className="text-[11px] font-bold uppercase">STACK</span>
                 </div>
                 <p className="text-xs font-bold truncate text-slate-950 dark:text-white">
-                  Laravel 
+                  Laravel
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-2 sm:pt-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1 sm:pt-3">
               <a
                 href="#projects"
                 onClick={() => soundFx.playClick()}
-                className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#EAB308] hover:bg-[#166534] hover:text-white border-2 border-slate-900 dark:border-white text-slate-950 font-bold text-[10px] sm:text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-3.5 sm:px-6 py-2 sm:py-3 rounded-xl bg-[#EAB308] hover:bg-[#166534] hover:text-white border-2 border-slate-900 dark:border-white text-slate-950 font-bold text-[9px] sm:text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -492,7 +477,7 @@ export default function DashboardClient({
               <Link
                 href="/profile"
                 onClick={() => soundFx.playClick()}
-                className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white dark:bg-[#0E121D] border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-3.5 sm:px-6 py-2 sm:py-3 rounded-xl bg-white dark:bg-[#0E121D] border-2 border-slate-900 dark:border-white text-slate-950 dark:text-white font-bold text-[9px] sm:text-xs uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <span>{lang === "id" ? "PROFIL LENGKAP" : "FULL PROFILE"}</span>
               </Link>
