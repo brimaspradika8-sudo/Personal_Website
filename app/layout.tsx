@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   authors: [{ name: "Brimas Pradika Utama" }],
   creator: "Brimas Pradika Utama",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

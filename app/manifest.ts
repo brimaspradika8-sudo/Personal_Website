@@ -13,27 +13,15 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["portfolio", "developer", "technology"],
     icons: [
       {
-        src: "/images/avatar.webp",
-        sizes: "192x192",
-        type: "image/webp",
+        src: "/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
         purpose: "any",
       },
       {
-        src: "/images/avatar.webp",
-        sizes: "512x512",
-        type: "image/webp",
-        purpose: "any",
-      },
-      {
-        src: "/images/avatar.webp",
-        sizes: "192x192",
-        type: "image/webp",
-        purpose: "maskable",
-      },
-      {
-        src: "/images/avatar.webp",
-        sizes: "512x512",
-        type: "image/webp",
+        src: "/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
         purpose: "maskable",
       },
     ],

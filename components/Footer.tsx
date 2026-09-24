@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { Heart, ArrowUp, Mail } from "lucide-react";
 import { soundFx } from "@/lib/audio/sound";
 
@@ -115,9 +116,14 @@ export default function Footer({ isNight = false }: FooterProps) {
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-none bg-[#166534] border-2 border-black dark:border-white flex items-center justify-center text-white font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                B
-              </div>
+              <Image
+                src="/icon.svg"
+                alt=""
+                width={32}
+                height={32}
+                className="w-8 h-8 border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                aria-hidden="true"
+              />
               <div>
                 <h3 className={`text-base font-black uppercase ${textColor}`}>
                   Brimas Pradika Utama
