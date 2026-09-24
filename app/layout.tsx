@@ -24,27 +24,48 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+
   title: {
-    default: "Brimas Pradika Utama",
+    default: "Brimas Pradika Utama | Personal Website",
     template: "%s | Brimas Pradika Utama",
   },
-  description: "Portfolio & Personal Retreat of Brimas Pradika Utama — AI Systems Developer.",
-  keywords: ["Brimas Pradika Utama", "Next.js", "React", "TypeScript", "Supabase", "Prisma"],
-  authors: [{ name: "Brimas Pradika Utama" }],
+
+  description:
+    "Personal website of Brimas Pradika Utama, a Software Engineering student and developer from Indonesia. Explore projects, articles, and web development work.",
+
+  keywords: [
+    "Brimas Pradika Utama",
+    "Brimas",
+    "Software Engineering",
+    "Web Developer",
+    "Full Stack Developer",
+    "Indonesia",
+  ],
+
+  authors: [
+    {
+      name: "Brimas Pradika Utama",
+    },
+  ],
+
   creator: "Brimas Pradika Utama",
+
+  alternates: {
+    canonical: siteUrl,
+  },
+
   icons: {
     icon: "/icon.webp",
     shortcut: "/icon.webp",
     apple: "/icon.webp",
   },
+
   manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Brimas Pradika Utama",
-  },
+
   openGraph: {
-    title: "Brimas Pradika Utama",
+    title: "Brimas Pradika Utama | Personal Website",
+    description:
+      "Personal website of Brimas Pradika Utama, featuring projects, articles, and web development work.",
     url: siteUrl,
     siteName: "Brimas Pradika Utama",
     images: [
@@ -58,21 +79,26 @@ export const metadata: Metadata = {
     locale: "id_ID",
     type: "website",
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
-    description: "Personal Portfolio & Dashboard — AI Systems Developer.",
+    title: "Brimas Pradika Utama | Personal Website",
+    description:
+      "Personal website of Brimas Pradika Utama.",
     images: ["/icon.webp"],
   },
+
   robots: {
     index: isProductionEnv,
     follow: isProductionEnv,
     nocache: !isProductionEnv,
   },
+
   verification: {
     google: "googleb7d311d5ce44a83b",
   },
 };
+ 
 
 export default function RootLayout({
   children,
