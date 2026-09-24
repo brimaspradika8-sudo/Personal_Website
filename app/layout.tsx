@@ -25,11 +25,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
+    default: "Brimas Pradika Utama",
     template: "%s | Brimas Pradika Utama",
   },
   description: "Portfolio & Personal Retreat of Brimas Pradika Utama — AI Systems Developer.",
-  keywords: ["Brimas Pradika Utama", "AI Systems Developer", "Next.js", "React", "TypeScript", "Supabase", "Prisma"],
+  keywords: ["Brimas Pradika Utama", "Next.js", "React", "TypeScript", "Supabase", "Prisma"],
   authors: [{ name: "Brimas Pradika Utama" }],
   creator: "Brimas Pradika Utama",
   icons: {
@@ -41,19 +41,18 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Brimas Portfolio",
+    title: "Brimas Pradika Utama",
   },
   openGraph: {
-    title: "Brimas Pradika Utama — AI Systems Developer & Personal Portfolio",
-    description: "Personal Portfolio & Dashboard — AI Systems Developer.",
+    title: "Brimas Pradika Utama",
     url: siteUrl,
-    siteName: "Brimas Portfolio",
+    siteName: "Brimas Pradika Utama",
     images: [
       {
         url: "/icon.webp",
         width: 1200,
         height: 630,
-        alt: "Brimas Pradika Utama Portfolio",
+        alt: "Brimas Pradika Utama",
       },
     ],
     locale: "id_ID",

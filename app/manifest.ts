@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Brimas Pradika Utama — AI Systems Developer",
+    name: "Brimas Pradika Utama",
     short_name: "Brimas",
     description: "AI Systems Developer & Personal Portfolio of Brimas Pradika Utama",
     start_url: "/",
