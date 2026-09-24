@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const ONBOARDING_KEY = "brimas_onboarding_seen";
-const TRANSITION_DELAY_MS = 180;
+const TRANSITION_DELAY_MS = 1100;
 const VIDEO_ERROR_REDIRECT_DELAY_MS = 2500;
-const ONBOARDING_DURATION_MS = 5200;
+const ONBOARDING_DURATION_MS = 9800;
 
 export default function OnboardingSplash() {
   const router = useRouter();
@@ -122,8 +122,8 @@ export default function OnboardingSplash() {
 
       <div
         className={[
-          "pointer-events-none absolute inset-0 bg-white transition-all duration-200 ease-out",
-          isTransitioning ? "opacity-100 scale-105" : "opacity-0 scale-100",
+          "pointer-events-none absolute inset-0 bg-white transition-all duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+          isTransitioning ? "opacity-100 scale-[1.24]" : "opacity-0 scale-100",
         ].join(" ")}
       />
     </div>
