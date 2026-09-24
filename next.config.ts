@@ -28,9 +28,13 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/proyek", destination: "/projects", permanent: true },
+      { source: "/proyek/:path*", destination: "/projects/:path*", permanent: true },
       { source: "/artikel", destination: "/articles", permanent: true },
+      { source: "/artikel/:path*", destination: "/articles/:path*", permanent: true },
       { source: "/dashboard/proyek", destination: "/dashboard/projects", permanent: true },
+      { source: "/dashboard/proyek/:path*", destination: "/dashboard/projects/:path*", permanent: true },
       { source: "/dashboard/artikel", destination: "/dashboard/articles", permanent: true },
+      { source: "/dashboard/artikel/:path*", destination: "/dashboard/articles/:path*", permanent: true },
       { source: "/admin/proyek", destination: "/admin/projects", permanent: true },
       { source: "/admin/proyek/:path*", destination: "/admin/projects/:path*", permanent: true },
       { source: "/admin/artikel", destination: "/admin/articles", permanent: true },

@@ -263,7 +263,7 @@ export default function ArtikelClient({ initialArticles, isAdmin }: ArtikelClien
             {filteredArticles.map((article) => (
               <Link
                 key={article.id}
-                href={`/artikel/${article.slug}`}
+                href={`/articles/${article.slug}`}
                 onClick={() => soundFx.playClick()}
                 className="group flex flex-col rounded-3xl border-3 border-slate-900 dark:border-white bg-white dark:bg-[#0E121D] overflow-hidden transition-all duration-200 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(22,101,52,1)] dark:hover:shadow-[8px_8px_0px_0px_rgba(234,179,8,1)] cursor-pointer"
               >
