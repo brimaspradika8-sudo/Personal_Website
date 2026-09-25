@@ -456,12 +456,7 @@ export default function DashboardClient({
                 >
                   {dict.nav.login.toUpperCase()}
                 </Link>
-              )      {/* 2. HERO SECTION (Neo-Brutalism Style) */}
-      {/*
-        Ticker sits in document flow AFTER the fixed navbar gap.
-        pt-[72px] on mobile = ~10px top offset + ~52px navbar pill height + 10px gap.
-        This keeps the marquee stripe from ever overlapping the fixed pill header.
-      */}
+              )     
       <section id="hero" className="relative flex flex-col items-center justify-start overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
         {/* Ticker — in-flow, clears the fixed navbar naturally via section padding-top */}
         <div className="w-full pt-[72px] sm:pt-[88px]">
@@ -478,8 +473,8 @@ export default function DashboardClient({
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-8 sm:pt-14 pb-8 sm:pb-12">
 
           {/* Greeting Badge */}
-          <div className="mb-4 sm:mb-5">
-            <span className="inline-block bg-[#EAB308] text-slate-950 border-2 sm:border-3 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-4 py-2 rounded-xl sm:px-5 sm:py-2 sm:rounded-2xl font-black text-xs sm:text-base uppercase">
+          <div className="mb-6 sm:mb-7 md:mb-8">
+            <span className="inline-block bg-[#EAB308] text-slate-950 border-[3px] border-slate-900 rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-5 py-2 text-base font-black uppercase tracking-[0.14em] sm:px-6 sm:py-2.5 sm:text-lg md:text-xl">
               {GREETINGS[greetingIndex]}
             </span>
           </div>
@@ -636,11 +631,8 @@ export default function DashboardClient({
             </div>
           </div>
         </div>
-      </section>ink>
-            </div>
-          </div>
-        </div>
       </section>
+
 
       <WorkflowSection />
 

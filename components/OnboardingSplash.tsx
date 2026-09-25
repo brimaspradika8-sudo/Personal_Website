@@ -9,18 +9,20 @@ const OnboardingIntro = dynamic(() => import("@/components/OnboardingIntro"), {
 });
 
 const SESSION_KEY = "hasSeenOnboarding";
+const LEGACY_SESSION_KEY = "brimas_onboarding_seen";
 
 function shouldSkip(): boolean {
   if (typeof window === "undefined") return true;
-  // prefers-reduced-motion → skip
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
-  // already seen this session → skip
+
   try {
-    if (sessionStorage.getItem(SESSION_KEY) === "1") return true;
+    const seenBySession = window.sessionStorage.getItem(SESSION_KEY) === "1";
+    const seenByLocal = window.localStorage.getItem(SESSION_KEY) === "1";
+    const seenByLegacy = window.localStorage.getItem(LEGACY_SESSION_KEY) === "true";
+    return seenBySession || seenByLocal || seenByLegacy;
   } catch {
-    /* noop */
+    return false;
   }
-  return false;
 }
 
 export default function OnboardingSplash() {
@@ -30,25 +32,26 @@ export default function OnboardingSplash() {
    * true  = show intro
    * false = skip straight to dashboard
    */
-  const [showIntro, setShowIntro] = useState<boolean | null>(null);
+  const [showIntro] = useState<boolean | null>(() =>
+    typeof window === "undefined" ? null : !shouldSkip()
+  );
 
   useEffect(() => {
     router.prefetch("/dashboard");
-    setShowIntro(!shouldSkip());
   }, [router]);
+
+  useEffect(() => {
+    if (showIntro === false) {
+      router.replace("/dashboard");
+    }
+  }, [showIntro, router]);
 
   const handleIntroDone = () => {
     router.replace("/dashboard");
   };
 
-  /* While detecting — render nothing (prevents blank flash) */
   if (showIntro === null) return null;
-
-  /* Skip intro: navigate immediately */
-  if (!showIntro) {
-    router.replace("/dashboard");
-    return null;
-  }
+  if (!showIntro) return null;
 
   return <OnboardingIntro onDone={handleIntroDone} />;
 }

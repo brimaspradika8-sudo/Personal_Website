@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const SESSION_KEY = "hasSeenOnboarding";
+const LEGACY_SESSION_KEY = "brimas_onboarding_seen";
 
 /** Desktop: original is 10 s — we cut at 9.3 s (drop HP mockup) */
 const DESKTOP_END = 9.3;
@@ -23,23 +24,11 @@ const LEAD_OUT = 1.0;
 type Phase = "playing" | "transitioning" | "done";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-function getReducedMotion(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function hasSeenOnboarding(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return sessionStorage.getItem(SESSION_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
 function markSeen(): void {
   try {
-    sessionStorage.setItem(SESSION_KEY, "1");
+    window.sessionStorage.setItem(SESSION_KEY, "1");
+    window.localStorage.setItem(SESSION_KEY, "1");
+    window.localStorage.setItem(LEGACY_SESSION_KEY, "true");
   } catch {
     /* noop */
   }
@@ -57,21 +46,27 @@ export default function OnboardingIntro({
 
   const [phase, setPhase] = useState<Phase>("playing");
   const [showSkip, setShowSkip] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
   const triggeredRef = useRef(false);
 
-  /* Decide viewport on mount (only client-side) */
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
-  /* Show skip button after 1 second */
   useEffect(() => {
     const t = setTimeout(() => setShowSkip(true), 1000);
     return () => clearTimeout(t);
   }, []);
 
-  /* Trigger exit transition */
+  useEffect(() => {
+    if (phase !== "transitioning") return;
+
+    router.prefetch("/dashboard");
+    const transitionTimer = window.setTimeout(() => {
+      router.replace("/dashboard");
+    }, 150);
+
+    return () => window.clearTimeout(transitionTimer);
+  }, [phase, router]);
+
   const triggerExit = useCallback(() => {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
@@ -79,7 +74,6 @@ export default function OnboardingIntro({
     setPhase("transitioning");
   }, []);
 
-  /* Monitor currentTime for trim point */
   const handleTimeUpdate = useCallback(() => {
     const vid = videoRef.current;
     if (!vid || triggeredRef.current) return;
@@ -89,43 +83,33 @@ export default function OnboardingIntro({
     }
   }, [isMobile, triggerExit]);
 
-  /* Safety net: if video ends naturally before our cut-point fires */
   const handleEnded = useCallback(() => {
     triggerExit();
   }, [triggerExit]);
 
-  /* Video error fallback */
   const handleError = useCallback(() => {
     triggerExit();
   }, [triggerExit]);
 
-  /* After transition completes, notify parent */
   const handleTransitionEnd = useCallback(() => {
     setPhase("done");
     onDone();
   }, [onDone]);
 
-  const videoSrc = isMobile
-    ? "/onboarding-mobile.mp4"
-    : "/onboarding-desktop.mp4";
-
-  const posterSrc = isMobile
-    ? "/icon.webp"
-    : "/icon.webp";
-
-  // Transition duration in ms (keep in sync with Framer Motion duration below)
-  const TRANS_DURATION = 0.6; // seconds
+  const videoSrc = isMobile ? "/onboarding-mobile.mp4" : "/onboarding-desktop.mp4";
+  const posterSrc = "/icon.webp";
+  const TRANS_DURATION = 0.6;
 
   return (
     <AnimatePresence onExitComplete={handleTransitionEnd}>
       {phase !== "done" && (
         <motion.div
           key="onboarding-overlay"
-          className="fixed inset-0 z-[9999] overflow-hidden bg-black"
+          className="fixed inset-0 z-[9999] overflow-hidden bg-transparent"
           initial={{ opacity: 1, scale: 1 }}
           animate={
             phase === "transitioning"
-              ? { opacity: 0, scale: 1.15 }
+              ? { opacity: 0, scale: 1.12 }
               : { opacity: 1, scale: 1 }
           }
           transition={{
@@ -133,7 +117,6 @@ export default function OnboardingIntro({
             ease: [0.4, 0, 0.2, 1],
           }}
         >
-          {/* ─── Video ────────────────────────────── */}
           <video
             ref={videoRef}
             key={videoSrc}
@@ -151,7 +134,6 @@ export default function OnboardingIntro({
             <source src={videoSrc} type="video/mp4" />
           </video>
 
-          {/* ─── Skip Button ──────────────────────── */}
           <AnimatePresence>
             {showSkip && phase === "playing" && (
               <motion.button
