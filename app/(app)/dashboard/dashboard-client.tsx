@@ -456,7 +456,12 @@ export default function DashboardClient({
                 >
                   {dict.nav.login.toUpperCase()}
                 </Link>
-              )     
+              )}
+            </div>
+          </div>
+        )}
+      </header>
+
       <section id="hero" className="relative flex flex-col items-center justify-start overflow-hidden text-center min-h-0 sm:min-h-[85vh]">
         {/* Ticker — in-flow, clears the fixed navbar naturally via section padding-top */}
         <div className="w-full pt-[72px] sm:pt-[88px]">
@@ -481,7 +486,7 @@ export default function DashboardClient({
 
           {/* Headline Title */}
           <h1 className="font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-[-0.04em] leading-[1.05] uppercase mb-4 sm:mb-5">
-            <span className="block">I'M BRIMAS PRADIKA</span>
+            <span className="block">I&apos;M BRIMAS PRADIKA</span>
             <span className="inline-flex items-center gap-2 text-[#166534] underline decoration-4 underline-offset-4">
               UTAMA
               <span className="w-3.5 h-3.5 sm:w-5 sm:h-5 bg-[#EAB308] border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block no-underline shrink-0" />

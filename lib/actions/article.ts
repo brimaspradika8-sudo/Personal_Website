@@ -563,7 +563,7 @@ export async function deleteArticle(articleId: string) {
   }
 
   const isAdmin = await checkIsAdmin(user.email);
-  let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+  const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
   if (!dbUser) {
     return { error: "Profil pengguna tidak ditemukan." };
   }
@@ -611,7 +611,7 @@ export async function updateArticle(
   }
 
   const isAdmin = await checkIsAdmin(user.email);
-  let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+  const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
   if (!dbUser) {
     return { error: "Profil pengguna tidak ditemukan." };
   }
