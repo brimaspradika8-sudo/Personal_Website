@@ -23,6 +23,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { soundFx } from "@/lib/audio/sound";
 import dynamic from "next/dynamic";
+import { motion, AnimatePresence } from "framer-motion";
 import type { ProjectData } from "@/components/ProjectModal";
 const ProjectShowcase = dynamic(() => import("@/components/ProjectShowcase"), { ssr: false });
 const ExperienceTimeline = dynamic(() => import("@/components/ExperienceTimeline"), { ssr: false });
@@ -477,11 +478,20 @@ export default function DashboardClient({
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-8 sm:pt-14 pb-8 sm:pb-12">
 
-          {/* Greeting Badge */}
-          <div className="mb-7 sm:mb-8 md:mb-10">
-            <span className="inline-block bg-[#EAB308] text-slate-950 border-4 sm:border-[5px] border-slate-900 rounded-full shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] dark:sm:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] px-7 py-3 text-xl xs:text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-[0.16em] transition-all hover:scale-105">
-              {GREETINGS[greetingIndex]}
-            </span>
+          {/* Plain Animated Text Greeting (No card/pill/badge) */}
+          <div className="w-full flex justify-center items-center text-center min-h-[48px] sm:min-h-[60px] md:min-h-[72px] mb-3 sm:mb-4">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={greetingIndex}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.45, ease: "easeInOut" }}
+                className="inline-block text-[#EAB308] font-black uppercase tracking-[0.2em] text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl drop-shadow-none"
+              >
+                {GREETINGS[greetingIndex]}
+              </motion.span>
+            </AnimatePresence>
           </div>
 
           {/* Headline Title */}

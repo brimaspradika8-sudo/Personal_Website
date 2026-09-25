@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRive } from "@rive-app/react-canvas";
+import { useRive, Layout, Fit, Alignment } from "@rive-app/react-canvas";
 
 interface RiveTeddyProps {
   nameText?: string;
@@ -27,6 +27,10 @@ export default function RiveTeddyAnimation({
       src: "/animations/auth-teddy.riv",
       stateMachine: STATE_MACHINE_NAME,
       autoplay: true,
+      layout: new Layout({
+        fit: Fit.Contain,
+        alignment: Alignment.Center,
+      }),
     },
     {
       shouldResizeCanvasToContainer: true,
@@ -39,13 +43,19 @@ export default function RiveTeddyAnimation({
   useEffect(() => {
     if (!rive) return;
     const inputsList = rive.stateMachineInputs(activeStateMachineName);
-    const isPrivateField = inputsList?.find((i) => i.name === "isPrivateField");
-    const isPrivateFieldShow = inputsList?.find((i) => i.name === "isPrivateFieldShow");
-    const isFocus = inputsList?.find((i) => i.name === "isFocus");
+    if (!inputsList) return;
 
-    if (isPrivateField) isPrivateField.value = isPasswordFocused;
-    if (isPrivateFieldShow) isPrivateFieldShow.value = showPassword;
-    if (isFocus) isFocus.value = !isPasswordFocused;
+    const isPrivateField = inputsList.find((i) => i.name === "isPrivateField");
+    const isFocus = inputsList.find((i) => i.name === "isFocus");
+
+    // Teddy covers eyes if password field is focused AND password is hidden
+    if (isPrivateField) {
+      isPrivateField.value = isPasswordFocused && !showPassword;
+    }
+
+    if (isFocus) {
+      isFocus.value = !isPasswordFocused;
+    }
   }, [rive, activeStateMachineName, isPasswordFocused, showPassword]);
 
   // Sync error & success triggers
@@ -70,10 +80,15 @@ export default function RiveTeddyAnimation({
     const numLook = inputsList?.find((i) => i.name === "numLook");
     if (numLook) {
       const activeText = nameText || emailText;
-      const targetLook = Math.min(Math.max((activeText.length > 0 ? activeText.length : 15) * 3.3, 0), 100);
+      const targetLook = Math.min(Math.max((activeText.length > 0 ? activeText.length : 0) * 3.3, 0), 100);
       numLook.value = targetLook;
     }
   }, [rive, activeStateMachineName, nameText, emailText, isPasswordFocused]);
 
-  return <RiveComponent className="w-full h-full min-w-[220px] min-h-[220px]" />;
+  return (
+    <div className="w-full h-full flex items-center justify-center min-h-[160px]">
+      <RiveComponent className="w-full h-full" />
+    </div>
+  );
 }
+

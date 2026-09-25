@@ -1,14 +1,16 @@
 "use client";
 
 import React from "react";
-import { GraduationCap, Code2, Award, Calendar } from "lucide-react";
+import { GraduationCap, Code2, Calendar } from "lucide-react";
 
 interface TimelineItem {
   id: string;
   year: string;
-  title: string;
+  title_id: string;
+  title_en: string;
   organization: string;
-  description: string;
+  description_id: string;
+  description_en: string;
   icon: typeof GraduationCap;
   highlights: string[];
 }
@@ -17,20 +19,40 @@ const timelineData: TimelineItem[] = [
   {
     id: "time-1",
     year: "2024 - 2026",
-    title: "Student Rekayasa Perangkat Lunak",
+    title_id: "Siswa Rekayasa Perangkat Lunak",
+    title_en: "Software Engineering Student",
     organization: "SMK Bhakti Mulia Pare",
-    description: "Membangun aplikasi berbasis web dan menggunakan teknologi AI untuk pengembangan sistem cerdas, termasuk pemrograman web, manajemen database,",
+    description_id:
+      "Membangun aplikasi berbasis web dan menggunakan teknologi AI untuk pengembangan sistem cerdas, termasuk pemrograman web, manajemen database, dan integrasi API.",
+    description_en:
+      "Building web-based applications and utilizing AI technologies for smart system development, including web programming, database management, and API integration.",
     icon: GraduationCap,
-    highlights: ["html" , "css", "javascript", "PHP", "MySQL"],
+    highlights: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
   },
   {
     id: "time-2",
     year: "2026",
-    title: "Internship",
+    title_id: "Magang IT (Internship)",
+    title_en: "IT & Web Internship",
     organization: "Language Center & IT",
-    description: "Pengalaman kerja praktik di bidang teknologi informasi, termasuk pengembangan aplikasi web, manajemen database, dan pemeliharaan sistem.",
+    description_id:
+      "Pengalaman kerja praktik di bidang teknologi informasi, termasuk pengembangan aplikasi web, manajemen database, dan pemeliharaan sistem.",
+    description_en:
+      "Practical work experience in information technology, including web application development, database management, and system maintenance.",
     icon: Code2,
-    highlights: ["Laravel", "Next.js", "React Native EXPO", "PostgreSQL", "Prisma ORM", "Docker", "Supabase", "node.js", "Github", "Vercel", "Figma",],
+    highlights: [
+      "Laravel",
+      "Next.js",
+      "React Native EXPO",
+      "PostgreSQL",
+      "Prisma ORM",
+      "Docker",
+      "Supabase",
+      "Node.js",
+      "GitHub",
+      "Vercel",
+      "Figma",
+    ],
   },
 ];
 
@@ -48,9 +70,10 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
         <div className="space-y-3 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-lg bg-[#166534] text-white border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-[11px] font-black tracking-widest uppercase">
             <GraduationCap className="w-3.5 h-3.5 text-white" />
+            <span>{lang === "id" ? "REKAM JEJAK" : "TIMELINE"}</span>
           </div>
           <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-none">
-            PENGALAMAN
+            {lang === "id" ? "PENGALAMAN & REKAM JEJAK" : "EXPERIENCE & TIMELINE"}
           </h2>
           <p className="text-xs sm:text-base text-black dark:text-white leading-relaxed font-bold">
             {lang === "id"
@@ -59,10 +82,12 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
           </p>
         </div>
 
-
         <div className="relative pl-6 sm:pl-10 border-l-4 border-black dark:border-white space-y-6 sm:space-y-10">
           {timelineData.map((item) => {
             const IconComponent = item.icon;
+            const title = lang === "id" ? item.title_id : item.title_en;
+            const description = lang === "id" ? item.description_id : item.description_en;
+
             return (
               <div key={item.id} className="relative group">
                 
@@ -83,7 +108,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
                         <Calendar className="w-3.5 h-3.5" />
                         <span>[{item.year}]</span>
                       </span>
-                      <h3 className="text-lg font-black uppercase text-black dark:text-white mt-0.5">{item.title}</h3>
+                      <h3 className="text-lg font-black uppercase text-black dark:text-white mt-0.5">{title}</h3>
                     </div>
                     <span className="text-xs font-black text-black bg-[#FFFF00] px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] self-start sm:self-auto uppercase">
                       {item.organization}
@@ -91,7 +116,7 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
                   </div>
 
                   <p className="text-xs sm:text-sm text-black dark:text-white font-bold leading-relaxed mt-2">
-                    {item.description}
+                    {description}
                   </p>
 
                   <div className="flex flex-wrap gap-1.5 pt-4">
@@ -116,3 +141,4 @@ export default function ExperienceTimeline({ isNight, lang }: ExperienceTimeline
     </section>
   );
 }
+

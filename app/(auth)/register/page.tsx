@@ -134,7 +134,7 @@ function RegisterForm() {
         {/* Left Rive Teddy Panel */}
         <div className="w-full md:w-[46%] bg-amber-400/20 dark:bg-amber-400/10 p-5 sm:p-8 flex flex-col justify-center items-center border-b-2 md:border-b-0 md:border-r-2 border-slate-900 dark:border-white shrink-0 relative">
           
-          <div className="w-full max-w-xs h-44 sm:h-56 flex items-center justify-center relative">
+          <div className="w-full max-w-xs h-48 sm:h-64 min-h-[190px] flex items-center justify-center relative">
             <RiveTeddyAnimation
               emailText={emailText}
               isPasswordFocused={isPasswordFocused}
