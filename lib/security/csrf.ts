@@ -1,6 +1,3 @@
-import { cookies, headers } from "next/headers";
-import crypto from "crypto";
-
 const CSRF_COOKIE_NAME = "csrf-token";
 const CSRF_HEADER_NAME = "x-csrf-token";
 const OFFICIAL_DOMAIN = "https://brimas.vercel.app";
@@ -39,7 +36,7 @@ function cleanupExpiredServerTokens() {
 
 /**
  * Constant-time comparison untuk cegah timing attack saat membandingkan string token.
- * Menggunakan crypto.timingSafeEqual dan menangani perbedaan panjang string secara aman tanpa error.
+ * Menggunakan Web Standard TextEncoder dan bitwise comparison (Edge & Node compatible).
  */
 export function constantTimeCompare(
   a: string | null | undefined,
@@ -50,19 +47,12 @@ export function constantTimeCompare(
   }
 
   try {
-    const bufA = Buffer.from(a, "utf-8");
-    const bufB = Buffer.from(b, "utf-8");
+    const encoder = new TextEncoder();
+    const bufA = encoder.encode(a);
+    const bufB = encoder.encode(b);
 
     if (bufA.length !== bufB.length) {
-      // Jalankan dummy timingSafeEqual agar timing tetap konstan walau panjang buffer beda
-      if (typeof crypto.timingSafeEqual === "function") {
-        crypto.timingSafeEqual(bufA, bufA);
-      }
       return false;
-    }
-
-    if (typeof crypto.timingSafeEqual === "function") {
-      return crypto.timingSafeEqual(bufA, bufB);
     }
 
     let result = 0;
@@ -145,11 +135,12 @@ export async function getCsrfTokenFromServer(
 }
 
 /**
- * Generate token CSRF cryptographically random 32-byte hex dan simpan di server-side store
+ * Generate token CSRF cryptographically random 32-byte hex dan simpan di server-side store.
+ * Menggunakan Web Crypto API (globalThis.crypto) agar 100% kompatibel dengan Edge Runtime.
  */
 export async function generateCsrfToken(sessionOrUserId?: string): Promise<string> {
   const buffer = new Uint8Array(32);
-  crypto.getRandomValues(buffer);
+  globalThis.crypto.getRandomValues(buffer);
   const token = Array.from(buffer, (byte) => byte.toString(16).padStart(2, "0")).join("");
   const expiresAt = Date.now() + DEFAULT_CSRF_EXPIRY_MS;
 
@@ -171,6 +162,7 @@ export async function generateCsrfToken(sessionOrUserId?: string): Promise<strin
  */
 export async function verifyRequestOrigin(): Promise<{ valid: boolean; reason?: string }> {
   try {
+    const { headers } = await import("next/headers");
     const headersList = await headers();
     const origin = headersList.get("origin");
     const referer = headersList.get("referer");
@@ -227,6 +219,7 @@ export async function verifyCsrfToken(
   sessionOrUserId?: string | null
 ): Promise<boolean> {
   try {
+    const { cookies, headers } = await import("next/headers");
     const cookieStore = await cookies();
     const cookieToken = cookieStore.get(CSRF_COOKIE_NAME)?.value;
 
@@ -272,4 +265,5 @@ export async function verifyCsrfToken(
 }
 
 export { CSRF_COOKIE_NAME, CSRF_HEADER_NAME };
+
 
