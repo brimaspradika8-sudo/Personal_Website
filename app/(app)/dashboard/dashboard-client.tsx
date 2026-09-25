@@ -478,8 +478,8 @@ export default function DashboardClient({
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 w-full flex flex-col items-center justify-center text-center relative z-10 pt-8 sm:pt-14 pb-8 sm:pb-12">
 
           {/* Greeting Badge */}
-          <div className="mb-6 sm:mb-7 md:mb-8">
-            <span className="inline-block bg-[#EAB308] text-slate-950 border-[3px] border-slate-900 rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] px-5 py-2 text-base font-black uppercase tracking-[0.14em] sm:px-6 sm:py-2.5 sm:text-lg md:text-xl">
+          <div className="mb-7 sm:mb-8 md:mb-10">
+            <span className="inline-block bg-[#EAB308] text-slate-950 border-4 sm:border-[5px] border-slate-900 rounded-full shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] dark:sm:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] px-7 py-3 text-xl xs:text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-[0.16em] transition-all hover:scale-105">
               {GREETINGS[greetingIndex]}
             </span>
           </div>
