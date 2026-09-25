@@ -124,7 +124,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
               "img-src 'self' data: blob: https://*.googleusercontent.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://api.dicebear.com https://*.supabase.co https://*.unsplash.com https://images.unsplash.com;",
               "font-src 'self' data: https://fonts.gstatic.com;",
-              "connect-src 'self' https://*.supabase.co https://api.elevenlabs.io https://vitals.vercel-insights.com;",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.elevenlabs.io https://vitals.vercel-insights.com;",
               "media-src 'self' blob: https://*.supabase.co;",
               "frame-ancestors 'none';",
               "upgrade-insecure-requests;",

@@ -4,13 +4,24 @@ import { getAuthenticatedUser } from "@/lib/auth/get-user";
 import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
 import { verifyCsrfToken, verifyRequestOrigin } from "@/lib/security/csrf";
 
+import { z } from "zod";
+
+const reactionBodySchema = z.object({
+  comment_id: z.string().uuid("ID komentar tidak valid.").optional(),
+  article_id: z.string().optional(),
+  type: z.enum(["LIKE", "DISLIKE"]).optional(),
+});
+
 export async function POST(request: NextRequest) {
   try {
+    const user = await getAuthenticatedUser();
     const origin = await verifyRequestOrigin();
-    if (!origin.valid || !(await verifyCsrfToken(request.headers.get("x-csrf-token")))) {
+    const csrfToken = request.headers.get("x-csrf-token");
+    const isCsrfValid = await verifyCsrfToken(csrfToken, user?.id);
+
+    if (!origin.valid || !isCsrfValid) {
       return NextResponse.json({ error: "Permintaan ditolak." }, { status: 403 });
     }
-    const user = await getAuthenticatedUser();
 
     if (!user || !user.email) {
       return NextResponse.json(
@@ -30,7 +41,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json().catch(() => ({}));
-    const { article_id, type, comment_id: commentId } = body;
+    const parseResult = reactionBodySchema.safeParse(body);
+    if (!parseResult.success) {
+      const errorMsg = parseResult.error.issues[0]?.message || "Input reaksi tidak valid.";
+      return NextResponse.json({ error: errorMsg }, { status: 400 });
+    }
+
+    const { article_id, type, comment_id: commentId } = parseResult.data;
 
     if (commentId !== undefined) {
       if (typeof commentId !== "string" || !/^[0-9a-fA-F-]{36}$/.test(commentId)) {

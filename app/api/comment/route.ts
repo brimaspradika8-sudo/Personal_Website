@@ -5,7 +5,29 @@ import { checkRateLimitDistributed, RATE_LIMIT_PRESETS } from "@/lib/security/ra
 import { getCommentModerationError, stripHtml } from "@/lib/security/sanitize";
 import { verifyCsrfToken, verifyRequestOrigin } from "@/lib/security/csrf";
 
-const MAX_COMMENT_LENGTH = 1000;
+import { z } from "zod";
+
+const MAX_COMMENT_LENGTH = 500;
+
+const postCommentSchema = z.object({
+  article_id: z.string().trim().min(1, "article_id wajib diisi."),
+  content: z
+    .string()
+    .transform((val) => stripHtml(val).trim())
+    .refine((val) => val.length > 0, { message: "Komentar tidak boleh kosong atau hanya whitespace." })
+    .refine((val) => val.length <= MAX_COMMENT_LENGTH, {
+      message: `Komentar terlalu panjang. Maksimal ${MAX_COMMENT_LENGTH} karakter.`,
+    }),
+  parent_id: z
+    .string()
+    .uuid("ID komentar induk tidak valid.")
+    .optional()
+    .nullable(),
+});
+
+const deleteCommentSchema = z.object({
+  comment_id: z.string().uuid("ID komentar tidak valid."),
+});
 
 async function getDbUser(user: NonNullable<Awaited<ReturnType<typeof getAuthenticatedUser>>>) {
   const email = user.email?.toLowerCase().trim();
@@ -24,11 +46,22 @@ async function getDbUser(user: NonNullable<Awaited<ReturnType<typeof getAuthenti
   });
 }
 
-async function guardRequest(request: NextRequest) {
+async function guardRequest(request: NextRequest, sessionOrUserId?: string | { id: string } | null) {
   const origin = await verifyRequestOrigin();
-  if (!origin.valid) return NextResponse.json({ error: "Permintaan ditolak." }, { status: 403 });
-  if (!(await verifyCsrfToken(request.headers.get("x-csrf-token")))) {
-    return NextResponse.json({ error: "Token keamanan tidak valid." }, { status: 403 });
+  if (!origin.valid) {
+    return NextResponse.json(
+      { error: origin.reason || "Permintaan ditolak. Origin tidak valid." },
+      { status: 403 }
+    );
+  }
+  const userId = typeof sessionOrUserId === "string" ? sessionOrUserId : sessionOrUserId?.id;
+  const csrfToken = request.headers.get("x-csrf-token");
+  const isCsrfValid = await verifyCsrfToken(csrfToken, userId);
+  if (!isCsrfValid) {
+    return NextResponse.json(
+      { error: "Token CSRF tidak valid atau telah kedaluwarsa." },
+      { status: 403 }
+    );
   }
   return null;
 }
@@ -80,10 +113,28 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const guard = await guardRequest(request);
-    if (guard) return guard;
+    // 1. Check Origin Header terlebih dahulu (Prioritas 3 & 5)
+    const origin = await verifyRequestOrigin();
+    if (!origin.valid) {
+      return NextResponse.json(
+        { error: origin.reason || "Permintaan ditolak. Origin tidak valid." },
+        { status: 403 }
+      );
+    }
+
     const user = await getAuthenticatedUser();
 
+    // 2. Check CSRF Token 3-arah (Prioritas 1, 2, & 5)
+    const csrfToken = request.headers.get("x-csrf-token");
+    const isCsrfValid = await verifyCsrfToken(csrfToken, user?.id);
+    if (!isCsrfValid) {
+      return NextResponse.json(
+        { error: "Token CSRF tidak valid atau telah kedaluwarsa." },
+        { status: 403 }
+      );
+    }
+
+    // 3. Check User Authentication
     if (!user || !user.email) {
       return NextResponse.json(
         { error: "Kamu harus login dulu untuk berkomentar" },
@@ -91,8 +142,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Rate Limiting Guard
-    const rateLimit = await checkRateLimitDistributed(`comment:${user.id || user.email}`, RATE_LIMIT_PRESETS.API_COMMENT.limit, RATE_LIMIT_PRESETS.API_COMMENT.windowMs);
+    // 4. Rate Limiting Guard (Tetap berjalan & terlindungi)
+    const rateLimit = await checkRateLimitDistributed(
+      `comment:${user.id || user.email}`,
+      RATE_LIMIT_PRESETS.API_COMMENT.limit,
+      RATE_LIMIT_PRESETS.API_COMMENT.windowMs
+    );
     if (!rateLimit.success) {
       const waitSeconds = Math.ceil(rateLimit.resetMs / 1000);
       return NextResponse.json(
@@ -102,22 +157,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json().catch(() => ({}));
-    const { article_id, content: rawContent, parent_id: parentId } = body;
-
-    const content = typeof rawContent === "string" ? stripHtml(rawContent) : "";
-
-    if (!article_id || !content || !content.trim()) {
-      return NextResponse.json(
-        { error: "article_id dan content komentar valid wajib diisi." },
-        { status: 400 }
-      );
+    const parseResult = postCommentSchema.safeParse(body);
+    if (!parseResult.success) {
+      const errorMsg = parseResult.error.issues[0]?.message || "Input komentar tidak valid.";
+      return NextResponse.json({ error: errorMsg }, { status: 400 });
     }
-    if (content.length > MAX_COMMENT_LENGTH) {
-      return NextResponse.json(
-        { error: `Komentar terlalu panjang. Maksimal ${MAX_COMMENT_LENGTH} karakter.` },
-        { status: 400 }
-      );
-    }
+
+    const { article_id, content, parent_id: parentId } = parseResult.data;
+
     const moderationError = getCommentModerationError(content);
     if (moderationError) return NextResponse.json({ error: moderationError }, { status: 422 });
 
@@ -210,21 +257,24 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const guard = await guardRequest(request);
-    if (guard) return guard;
     const user = await getAuthenticatedUser();
+    const guard = await guardRequest(request, user?.id);
+    if (guard) return guard;
     if (!user?.email) return NextResponse.json({ error: "Kamu harus login dulu." }, { status: 401 });
     const body = await request.json().catch(() => ({}));
-    if (typeof body.comment_id !== "string" || !/^[0-9a-fA-F-]{36}$/.test(body.comment_id)) {
-      return NextResponse.json({ error: "ID komentar tidak valid." }, { status: 400 });
+    const parseResult = deleteCommentSchema.safeParse(body);
+    if (!parseResult.success) {
+      const errorMsg = parseResult.error.issues[0]?.message || "ID komentar tidak valid.";
+      return NextResponse.json({ error: errorMsg }, { status: 400 });
     }
+    const { comment_id } = parseResult.data;
     const dbUser = await getDbUser(user);
     if (!dbUser) return NextResponse.json({ error: "Akun pengguna tidak valid." }, { status: 401 });
-    const comment = await prisma.comment.findUnique({ where: { id: body.comment_id }, select: { user_id: true } });
+    const comment = await prisma.comment.findUnique({ where: { id: comment_id }, select: { user_id: true } });
     if (!comment) return NextResponse.json({ error: "Komentar tidak ditemukan." }, { status: 404 });
     if (comment.user_id !== dbUser.id) return NextResponse.json({ error: "Kamu hanya dapat menghapus komentar milikmu sendiri." }, { status: 403 });
-    await prisma.comment.delete({ where: { id: body.comment_id } });
-    return NextResponse.json({ success: true, comment_id: body.comment_id });
+    await prisma.comment.delete({ where: { id: comment_id } });
+    return NextResponse.json({ success: true, comment_id });
   } catch (error) {
     console.error("Error in DELETE /api/comment:", error);
     return NextResponse.json({ error: "Gagal menghapus komentar." }, { status: 500 });

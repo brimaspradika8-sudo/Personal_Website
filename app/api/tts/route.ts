@@ -47,7 +47,15 @@ function setToCache(key: string, buffer: ArrayBuffer) {
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 12;
 const MAX_TTS_PAYLOAD_BYTES = 20 * 1024;
+import { z } from "zod";
+
 const VOICE_ID_PATTERN = /^[a-zA-Z0-9_-]{3,80}$/;
+
+const ttsSchema = z.object({
+  text: z.string().trim().min(1, "Teks tidak valid untuk audio.").max(4500, "Teks terlalu panjang."),
+  voiceId: z.string().regex(VOICE_ID_PATTERN, "Voice ID tidak valid.").optional().nullable(),
+  engine: z.enum(["edge", "elevenlabs"]).optional().default("edge"),
+});
 
 export async function POST(request: NextRequest) {
   const startTime = performance.now();
@@ -59,12 +67,14 @@ export async function POST(request: NextRequest) {
     const largeRequest = rejectLargeRequest(request, MAX_TTS_PAYLOAD_BYTES);
     if (largeRequest) return largeRequest;
 
-    const body = await request.json();
-    const { text, voiceId, engine = "edge" } = body;
-
-    if (!text || typeof text !== "string") {
-      return NextResponse.json({ error: "Teks tidak valid untuk audio" }, { status: 400 });
+    const body = await request.json().catch(() => ({}));
+    const parseResult = ttsSchema.safeParse(body);
+    if (!parseResult.success) {
+      const errorMsg = parseResult.error.issues[0]?.message || "Input TTS tidak valid.";
+      return NextResponse.json({ error: errorMsg }, { status: 400 });
     }
+
+    const { text, voiceId, engine } = parseResult.data;
 
     // Audio is public; rate-limit by IP so anonymous readers are supported safely.
     const rateLimit = checkRateLimit(

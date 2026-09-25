@@ -6,13 +6,11 @@ export const DEFAULT_SUPABASE_ANON_KEY =
 
 export function getSupabaseEnv() {
   const supabaseUrl =
-    process.env.SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
     DEFAULT_SUPABASE_URL;
 
   const supabaseAnonKey =
-    process.env.SUPABASE_SERVICE_KEY ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
     DEFAULT_SUPABASE_ANON_KEY;
 

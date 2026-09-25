@@ -74,10 +74,21 @@ export async function updateSession(request: NextRequest) {
               },
             });
 
-            cookiesToSet.forEach(({ name, value, options }) =>
-              supabaseResponse.cookies.set(name, value, options)
-            );
+            cookiesToSet.forEach(({ name, value, options }) => {
+              const isAuthCookie = name.startsWith("sb-") || name.includes("auth-token");
+              const enhancedOptions = {
+                ...options,
+                sameSite: "lax" as const,
+                secure: process.env.NODE_ENV === "production",
+                httpOnly: isAuthCookie ? true : options?.httpOnly ?? true,
+              };
+              supabaseResponse.cookies.set(name, value, enhancedOptions);
+            });
           },
+        },
+        cookieOptions: {
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
         },
       }
     );
@@ -95,6 +106,15 @@ export async function updateSession(request: NextRequest) {
     const hasAuthCookie = request.cookies.getAll().some((c) => c.name.startsWith("sb-") || c.name.includes("auth-token"));
 
     if (!hasAuthCookie && !isAdminRoute) {
+      if (!request.cookies.has(CSRF_COOKIE_NAME)) {
+        const csrf = await generateCsrfToken();
+        supabaseResponse.cookies.set(CSRF_COOKIE_NAME, csrf, {
+          path: "/",
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          httpOnly: false,
+        });
+      }
       return supabaseResponse;
     }
 
@@ -146,7 +166,8 @@ export async function updateSession(request: NextRequest) {
       });
 
       if (!request.cookies.has(CSRF_COOKIE_NAME)) {
-        finalResponse.cookies.set(CSRF_COOKIE_NAME, generateCsrfToken(), {
+        const csrfToken = await generateCsrfToken(user.id);
+        finalResponse.cookies.set(CSRF_COOKIE_NAME, csrfToken, {
           path: "/",
           sameSite: "lax",
           secure: process.env.NODE_ENV === "production",
@@ -165,7 +186,8 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (!request.cookies.has(CSRF_COOKIE_NAME)) {
-    supabaseResponse.cookies.set(CSRF_COOKIE_NAME, generateCsrfToken(), {
+    const csrfToken = await generateCsrfToken();
+    supabaseResponse.cookies.set(CSRF_COOKIE_NAME, csrfToken, {
       path: "/",
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
