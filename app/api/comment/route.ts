@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/auth/get-user";
-import { checkRateLimitDistributed, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
+import { checkRateLimitDistributed, getClientIp, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
 import { getCommentModerationError, stripHtml } from "@/lib/security/sanitize";
 import { verifyCsrfToken, verifyRequestOrigin } from "@/lib/security/csrf";
 
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Check Origin Header terlebih dahulu (Prioritas 3 & 5)
+    // 1. Check Origin Header terlebih dahulu
     const origin = await verifyRequestOrigin();
     if (!origin.valid) {
       return NextResponse.json(
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
 
     const user = await getAuthenticatedUser();
 
-    // 2. Check CSRF Token 3-arah (Prioritas 1, 2, & 5)
+    // 2. Check CSRF Token 3-arah
     const csrfToken = request.headers.get("x-csrf-token");
     const isCsrfValid = await verifyCsrfToken(csrfToken, user?.id);
     if (!isCsrfValid) {
@@ -142,9 +142,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Rate Limiting Guard (Tetap berjalan & terlindungi)
+    // 4. Rate Limiting Guard — 2 layer: per-IP (semua akun) + per-user
+    const clientIp = getClientIp(request);
+
+    // Layer 1: batasi total request dari satu IP, gabungan semua akun
+    const ipRateLimit = await checkRateLimitDistributed(
+      `comment:ip:${clientIp}`,
+      RATE_LIMIT_PRESETS.API_COMMENT_IP.limit,
+      RATE_LIMIT_PRESETS.API_COMMENT_IP.windowMs
+    );
+    if (!ipRateLimit.success) {
+      const waitSeconds = Math.ceil(ipRateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak aktivitas dari alamat ini. Coba lagi dalam ${waitSeconds} detik.` },
+        { status: 429 }
+      );
+    }
+
+    // Layer 2: batasi per akun (IP + user_id)
     const rateLimit = await checkRateLimitDistributed(
-      `comment:${user.id || user.email}`,
+      `comment:${clientIp}:${user.id || user.email}`,
       RATE_LIMIT_PRESETS.API_COMMENT.limit,
       RATE_LIMIT_PRESETS.API_COMMENT.windowMs
     );
@@ -171,7 +188,6 @@ export async function POST(request: NextRequest) {
     const dbUser = await getDbUser(user);
     if (!dbUser) return NextResponse.json({ error: "Akun pengguna tidak valid." }, { status: 401 });
 
-    // 2. Cari artikel berdasarkan UUID id atau slug
     const isValidUuid = (str: string) =>
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
 
@@ -211,7 +227,6 @@ export async function POST(request: NextRequest) {
       validParentId = parent.parent_id || parent.id;
     }
 
-    // 3. Simpan komentar baru ke tabel Comment
     const newComment = await prisma.comment.create({
       data: {
         article_id: articleExists.id,

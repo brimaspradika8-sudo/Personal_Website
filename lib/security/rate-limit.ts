@@ -3,6 +3,8 @@
  * Used to protect against Brute Force, Spam, and Denial of Service (DoS) attacks.
  */
 
+import { NextRequest } from "next/server";
+
 interface RateLimitRecord {
   timestamps: number[];
 }
@@ -33,6 +35,21 @@ export interface RateLimitResult {
   limit: number;
   remaining: number;
   resetMs: number;
+}
+
+/**
+ * Mengambil IP address asli client di belakang proxy/CDN (misal Vercel).
+ * x-forwarded-for bisa berisi banyak IP dipisah koma (proxy chain) — ambil yang pertama.
+ */
+export function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    const firstIp = forwardedFor.split(",")[0]?.trim();
+    if (firstIp) return firstIp;
+  }
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  return "unknown";
 }
 
 /**
@@ -68,11 +85,14 @@ export function checkRateLimit(
   validTimestamps.push(now);
   rateLimitStore.set(key, { timestamps: validTimestamps });
 
+  const oldestTimestamp = validTimestamps[0];
+  const resetMs = windowMs - (now - oldestTimestamp);
+
   return {
     success: true,
     limit,
     remaining: limit - validTimestamps.length,
-    resetMs: windowMs,
+    resetMs: Math.max(0, resetMs),
   };
 }
 
@@ -98,7 +118,7 @@ export async function checkRateLimitDistributed(
       cache: "no-store",
     });
     if (!response.ok) return checkRateLimit(key, limit, windowMs);
-    const results = await response.json() as Array<{ result: number }>;
+    const results = (await response.json()) as Array<{ result: number }>;
     const count = Number(results[1]?.result ?? 0);
     if (count >= limit) {
       return { success: false, limit, remaining: 0, resetMs: windowMs };
@@ -113,11 +133,12 @@ export async function checkRateLimitDistributed(
  * Predefined Rate Limiting Preset Rules
  */
 export const RATE_LIMIT_PRESETS = {
-  AUTH_LOGIN: { limit: 5, windowMs: 60 * 1000 },       // 5 login attempts / min
-  AUTH_SIGNUP: { limit: 3, windowMs: 60 * 1000 },      // 3 signup attempts / min
-  AUTH_OTP: { limit: 3, windowMs: 3 * 60 * 1000 },     // 3 OTP requests / 3 mins
-  API_COMMENT: { limit: 10, windowMs: 60 * 1000 },     // 10 comments / min
-  API_REACTION: { limit: 30, windowMs: 60 * 1000 },    // 30 reactions / min
-  API_UPLOAD: { limit: 10, windowMs: 60 * 1000 },      // 10 file uploads / min
-  API_GUESTBOOK: { limit: 5, windowMs: 60 * 1000 },    // 5 guestbook posts / min
+  AUTH_LOGIN: { limit: 5, windowMs: 60 * 1000 },
+  AUTH_SIGNUP: { limit: 3, windowMs: 60 * 1000 },
+  AUTH_OTP: { limit: 3, windowMs: 3 * 60 * 1000 },
+  API_COMMENT: { limit: 10, windowMs: 60 * 1000 },
+  API_COMMENT_IP: { limit: 30, windowMs: 60 * 1000 }, // batas gabungan semua akun dari 1 IP
+  API_REACTION: { limit: 30, windowMs: 60 * 1000 },
+  API_UPLOAD: { limit: 10, windowMs: 60 * 1000 },
+  API_GUESTBOOK: { limit: 5, windowMs: 60 * 1000 },
 };
