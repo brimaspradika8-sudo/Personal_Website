@@ -345,18 +345,9 @@ export default function AboutClient() {
                           <span className="font-black text-xs uppercase text-black dark:text-white w-36 shrink-0">
                             {item.name}
                           </span>
-                          <div className="flex-1 h-1.5 bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
-                            <motion.div
-                              className="h-full"
-                              style={{ backgroundColor: cat.accent }}
-                              initial={{ width: 0 }}
-                              whileInView={{ width: `${pct}%` }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 0.7, delay: i * 0.06, ease: "easeOut" }}
-                            />
-                          </div>
+                          <div className="flex-1 hidden sm:block border-b-2 border-dashed border-neutral-300 dark:border-neutral-700 mx-4 opacity-50"></div>
                           <span
-                            className="text-[9px] font-black uppercase px-2 py-0.5 border shrink-0"
+                            className="text-[10px] font-black uppercase px-2.5 py-1 border-2 shrink-0 bg-white dark:bg-[#0A0D14] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
                             style={{ color: cat.accent, borderColor: cat.accent }}
                           >
                             {item.level}

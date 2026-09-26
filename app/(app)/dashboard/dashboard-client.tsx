@@ -231,7 +231,7 @@ export default function DashboardClient({
               B
             </div>
             <span className="font-black text-xs sm:text-base tracking-tight uppercase text-slate-950 dark:text-white">
-              BRIMAS<span className="text-[#166534]"> Pradika</span>
+              BRIMAS<span className="text-[#166534] dark:text-[#EAB308]"> Pradika</span>
             </span>
           </Link>
 
@@ -265,6 +265,15 @@ export default function DashboardClient({
             >
               {dict.nav.articles.toUpperCase()}
             </Link>
+            <a
+              href="https://github.com/brimaspradika8-sudo"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => soundFx.playClick()}
+              className="px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#EAB308] hover:text-slate-950 transition-all flex items-center gap-1"
+            >
+              GITHUB
+            </a>
           </nav>
 
           {/* Right: Controls & Auth Buttons */}
@@ -404,6 +413,15 @@ export default function DashboardClient({
               <span>{dict.nav.articles.toUpperCase()}</span>
               <ChevronRight className="w-4 h-4" />
             </Link>
+            <a
+              href="https://github.com/brimaspradika8-sudo"
+              target="_blank"
+              rel="noreferrer"
+              className="px-3 py-2 rounded-xl font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#EAB308] hover:text-slate-950 transition-all flex items-center justify-between"
+            >
+              <span>GITHUB</span>
+              <ChevronRight className="w-4 h-4" />
+            </a>
 
             <div className="border-t border-slate-900/20 dark:border-white/20 pt-2 flex items-center justify-between gap-2">
               {isAdmin && (
@@ -497,9 +515,9 @@ export default function DashboardClient({
           {/* Headline Title */}
           <h1 className="font-black text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[84px] text-slate-950 dark:text-white tracking-[-0.04em] leading-[1.05] uppercase mb-4 sm:mb-5">
             <span className="block">I&apos;M BRIMAS PRADIKA</span>
-            <span className="inline-flex items-center gap-2 text-[#166534] underline decoration-4 underline-offset-4">
+            <span className="inline-flex items-center gap-2 text-[#166534] dark:text-[#EAB308] underline decoration-4 underline-offset-4">
               UTAMA
-              <span className="w-3.5 h-3.5 sm:w-5 sm:h-5 bg-[#EAB308] border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block no-underline shrink-0" />
+              <span className="w-3.5 h-3.5 sm:w-5 sm:h-5 bg-[#EAB308] border-2 border-slate-900 dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block no-underline shrink-0" />
             </span>
           </h1>
 
@@ -514,21 +532,21 @@ export default function DashboardClient({
 
           {/* CTA Buttons */}
           <div className="w-full max-w-sm sm:max-w-none flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
-            <a
-              href="#projects"
+            <Link
+              href="/projects"
               onClick={() => soundFx.playClick()}
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#EAB308] hover:bg-[#d9a207] border-2 sm:border-3 border-slate-900 dark:border-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
             >
               <span>{lang === "id" ? "LIHAT PROYEK" : "EXPLORE PROJECTS"} &rarr;</span>
-            </a>
+            </Link>
 
-            <a
-              href="#about"
+            <Link
+              href="/about"
               onClick={() => soundFx.playClick()}
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#166534] hover:bg-[#14532D] border-2 sm:border-3 border-slate-900 dark:border-white text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer inline-flex items-center justify-center gap-2"
             >
               <span>{lang === "id" ? "TENTANG SAYA" : "ABOUT ME"} &rarr;</span>
-            </a>
+            </Link>
           </div>
 
         </div>
@@ -670,9 +688,9 @@ export default function DashboardClient({
               </div>
               <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-none">
                 {lang === "id" ? (
-                  <>ARTIKEL &amp; <span className="text-[#166534] underline decoration-4 underline-offset-4">PANDUAN TEKNIS</span></>
+                  <>ARTIKEL &amp; <span className="text-[#166534] dark:text-[#EAB308] underline decoration-4 underline-offset-4">PANDUAN TEKNIS</span></>
                 ) : (
-                  <>LATEST ARTICLES &amp; <span className="text-[#166534] underline decoration-4 underline-offset-4">TECHNICAL GUIDES</span></>
+                  <>LATEST ARTICLES &amp; <span className="text-[#166534] dark:text-[#EAB308] underline decoration-4 underline-offset-4">TECHNICAL GUIDES</span></>
                 )}
               </h2>
               <p className="text-xs sm:text-base text-slate-800 dark:text-slate-200 font-medium max-w-xl leading-relaxed">

@@ -115,9 +115,6 @@ export default function Footer({ isNight = false }: FooterProps) {
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-none bg-[#166534] border-2 border-black dark:border-white flex items-center justify-center text-white font-black text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                B
-              </div>
               <div>
                 <h3 className={`text-base font-black uppercase ${textColor}`}>
                   Brimas Pradika Utama

@@ -228,7 +228,7 @@ export default function TechStackList({ lang }: TechStackBentoProps) {
             {[...TECH_ITEMS, ...TECH_ITEMS].map((item, index) => (
               <div
                 key={`${item.id}-${index}`}
-                className="group flex min-w-45 items-center gap-2.5 rounded-2xl border-2 border-slate-900 bg-slate-50 px-3 py-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#ECFDF5] dark:border-white dark:bg-slate-900 dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] dark:hover:bg-slate-800"
+                className="group flex min-w-[180px] items-center gap-2.5 rounded-2xl border-2 border-slate-900 bg-slate-50 px-3 py-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#ECFDF5] dark:border-white dark:bg-slate-900 dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] dark:hover:bg-slate-800"
               >
                 {item.logo}
                 <span className="whitespace-nowrap text-[11px] font-black uppercase tracking-[0.15em] text-slate-950 dark:text-white">
