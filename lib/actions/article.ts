@@ -448,7 +448,7 @@ export async function uploadArticleImage(formData: FormData) {
     return { error: "Harus login terlebih dahulu untuk mengunggah gambar artikel." };
   }
 
-  const isAdmin = await checkIsAdmin(user.email);
+  // Pastikan user ada di database (auto-create jika belum ada)
   let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
   if (!dbUser) {
     dbUser = await prisma.user.create({
@@ -459,10 +459,6 @@ export async function uploadArticleImage(formData: FormData) {
         role: "USER",
       },
     });
-  }
-
-  if (!isAdmin) {
-    return { error: "Akses ditolak. Hanya Admin yang dapat mengunggah gambar artikel." };
   }
 
   const file = formData.get("file") as File | null;
@@ -514,6 +510,15 @@ export async function createArticle(data: {
   }
 
   try {
+    // Cek duplikasi judul (case-insensitive)
+    const existingTitle = await prisma.article.findFirst({
+      where: { title: { equals: data.title.trim(), mode: "insensitive" } },
+      select: { id: true },
+    });
+    if (existingTitle) {
+      return { error: "Judul artikel sudah digunakan. Silakan gunakan judul yang berbeda." };
+    }
+
     const rawSlug = (data.slug && data.slug.trim()) ? data.slug : data.title;
     let slugFormatted = rawSlug
       .toLowerCase()
@@ -545,6 +550,7 @@ export async function createArticle(data: {
 
     revalidatePath("/articles");
     revalidatePath("/admin/articles");
+    revalidatePath("/dashboard/articles");
     revalidatePath("/dashboard");
     return { success: true, article: newArt };
   } catch (err: unknown) {

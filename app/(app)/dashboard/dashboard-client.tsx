@@ -265,15 +265,6 @@ export default function DashboardClient({
             >
               {dict.nav.articles.toUpperCase()}
             </Link>
-            <a
-              href="https://github.com/brimaspradika8-sudo"
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => soundFx.playClick()}
-              className="px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider text-slate-950 dark:text-white hover:bg-[#EAB308] hover:text-slate-950 transition-all flex items-center gap-1"
-            >
-              GITHUB
-            </a>
           </nav>
 
           {/* Right: Controls & Auth Buttons */}
@@ -329,25 +320,37 @@ export default function DashboardClient({
                     </span>
                   </Link>
 
-                  <button
-                    onClick={async () => {
-                      soundFx.playClick();
-                      await signOut();
-                    }}
-                    className="p-1.5 rounded-full hover:bg-emerald-500/10 text-slate-950 dark:text-white hover:text-[#166534] transition-colors cursor-pointer"
-                    title="Sign Out (Logout)"
+                  <a
+                    href="https://github.com/brimaspradika8-sudo"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => soundFx.playClick()}
+                    className="p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-950 dark:text-white transition-colors cursor-pointer"
+                    title="Visit GitHub"
                   >
-                    <LogOut className="w-4 h-4" />
-                  </button>
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                  </a>
                 </div>
               ) : (
-                <Link
-                  href="/login"
-                  onClick={() => soundFx.playClick()}
-                  className="px-4 py-1.5 rounded-full bg-[#EAB308] border-2 border-slate-900 dark:border-white text-slate-950 text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-                >
-                  {dict.nav.login.toUpperCase()}
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/login"
+                    onClick={() => soundFx.playClick()}
+                    className="px-4 py-1.5 rounded-full bg-[#EAB308] border-2 border-slate-900 dark:border-white text-slate-950 text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  >
+                    {dict.nav.login.toUpperCase()}
+                  </Link>
+                  <a
+                    href="https://github.com/brimaspradika8-sudo"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => soundFx.playClick()}
+                    className="p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-950 dark:text-white transition-colors cursor-pointer"
+                    title="Visit GitHub"
+                  >
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                  </a>
+                </div>
               )}
             </div>
 

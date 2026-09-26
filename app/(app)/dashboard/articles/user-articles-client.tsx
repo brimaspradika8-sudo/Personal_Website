@@ -135,12 +135,12 @@ export default function UserArticlesClient({
 
           <div className="flex flex-wrap items-center gap-2">
             <Link
-              href="/admin/artikel/tambah"
+              href="/dashboard/articles/tambah"
               onClick={() => soundFx.playClick()}
               className="inline-flex items-center justify-center gap-2.5 px-6 py-4 min-h-12 border-3 border-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-[#00FF66] text-slate-950 hover:bg-[#EAB308] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
             >
               <PlusCircle className="w-5 h-5" />
-              <span>Add article</span>
+              <span>Tulis Artikel</span>
             </Link>
           </div>
         </div>
@@ -237,12 +237,12 @@ export default function UserArticlesClient({
 
               {!searchQuery && (
                 <Link
-                  href="/admin/artikel/tambah"
+                  href="/dashboard/articles/tambah"
                   onClick={() => soundFx.playClick()}
                   className="inline-flex items-center gap-2 px-5 py-3 bg-[#00FF66] text-black border-3 border-black font-black text-xs uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#EAB308] transition-all"
                 >
                   <PlusCircle className="w-4 h-4" />
-                  <span>Write your first article</span>
+                  <span>Tulis artikel pertama kamu</span>
                 </Link>
               )}
             </div>
